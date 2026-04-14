@@ -1,10 +1,12 @@
 package posgrados.ufps.demo.service;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,56 +17,84 @@ import posgrados.ufps.demo.entity.TipoDocumentoEntity;
 import posgrados.ufps.demo.repository.DocumentoRepository;
 import posgrados.ufps.demo.repository.EstadoDocumentoRepository;
 import posgrados.ufps.demo.repository.TipoDocumentoRepository;
+import software.amazon.awssdk.core.ResponseBytes;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 @Service
 public class DocumentoServiceImpl implements DocumentoService {
 
-    @Autowired
-    private S3Client s3Client;
+        @Autowired
+        private S3Client s3Client;
 
-    @Value("${aws.bucket.name}")
-    private String bucketName;
+        @Value("${aws.bucket.name}")
+        private String bucketName;
 
-    @Autowired
-    private DocumentoRepository documentoRepository;
+        @Autowired
+        private DocumentoRepository documentoRepository;
 
-    @Autowired
-    private TipoDocumentoRepository tipoDocumentoRepository;
+        @Autowired
+        private TipoDocumentoRepository tipoDocumentoRepository;
 
-    @Autowired
-    private EstadoDocumentoRepository estadoDocumentoRepository;
+        @Autowired
+        private EstadoDocumentoRepository estadoDocumentoRepository;
 
-    @Override
-    public DocumentoEntity cargarDocumento(DocumentoDTO dto, MultipartFile file) throws IOException {
+        @Override
+        public DocumentoEntity cargarDocumento(DocumentoDTO dto, MultipartFile file) throws IOException {
 
-        DocumentoEntity documento = new DocumentoEntity();
+                DocumentoEntity documento = new DocumentoEntity();
 
-        TipoDocumentoEntity tipoDocumento = tipoDocumentoRepository.findById(dto.getTipoDocumento())
-                .orElseThrow(() -> new RuntimeException("Tipo de documento no encontrado"));
-        // Falta el aspirante
-        EstadoDocumentoEntity estadoDocumento = estadoDocumentoRepository.findById(dto.getEstado())
-                .orElseThrow(() -> new RuntimeException("Estado de documento no encontrado"));
+                TipoDocumentoEntity tipoDocumento = tipoDocumentoRepository.findById(dto.getTipoDocumento())
+                                .orElseThrow(() -> new RuntimeException("Tipo de documento no encontrado"));
 
-        String key = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+                // Falta el aspirante !!!!
 
-        documento.setAspirante(dto.getAspirante());
-        documento.setTipoDocumento(tipoDocumento);
-        documento.setEstado(estadoDocumento);
-        documento.setUrl("/download/" + key);
-        documento.setKeyFile(key);
-        documento.setFormato(dto.getFormato());
+                EstadoDocumentoEntity estadoDocumento = estadoDocumentoRepository.findById(dto.getEstado())
+                                .orElseThrow(() -> new RuntimeException("Estado de documento no encontrado"));
 
-        documentoRepository.save(documento);
+                String key = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
 
-        s3Client.putObject(PutObjectRequest.builder()
-                .bucket(bucketName)
-                .key(key)
-                .build(),
-                RequestBody.fromBytes(file.getBytes()));
-        return documento;
-    }
+                documento.setAspirante(dto.getAspirante());
+                documento.setTipoDocumento(tipoDocumento);
+                documento.setEstado(estadoDocumento);
+                documento.setUrl("/download/" + key);
+                documento.setKeyFile(key);
+                documento.setFormato(file.getContentType());
 
+                documentoRepository.save(documento);
+
+                s3Client.putObject(PutObjectRequest.builder()
+                                .bucket(bucketName)
+                                .key(key)
+                                .build(),
+                                RequestBody.fromBytes(file.getBytes()));
+                return documento;
+        }
+
+        @Override
+        public List<DocumentoEntity> listarDocumentos(Integer IdAspirante) {
+                return documentoRepository.findByAspirante(IdAspirante);
+        }
+
+        @Override
+        public byte[] descargarDocumento(Integer idDocumento) {
+                DocumentoEntity documento = documentoRepository.findById(idDocumento)
+                                .orElseThrow(() -> new RuntimeException("Documento no encontrado"));
+                String key = documento.getKeyFile();
+                ResponseBytes<GetObjectResponse> objectAsBytes = s3Client.getObjectAsBytes(
+                                GetObjectRequest.builder()
+                                                .bucket(bucketName)
+                                                .key(key)
+                                                .build());
+                return objectAsBytes.asByteArray();
+        }
+
+        @Override
+        public DocumentoEntity buscarPorId(Integer idDocumento) {
+                return documentoRepository.findById(idDocumento)
+                                .orElseThrow(() -> new RuntimeException("Documento no encontrado"));
+        }
 }
