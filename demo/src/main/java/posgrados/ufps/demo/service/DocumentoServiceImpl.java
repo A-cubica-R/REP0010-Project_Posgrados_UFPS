@@ -57,9 +57,9 @@ public class DocumentoServiceImpl implements DocumentoRequeridoService {
 
                 String key = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
 
-                documento.setAspirante(dto.getAspirante());
-                documento.setTipoDocumentoRequerido(tipoDocumento);
-                documento.setEstado(estadoDocumento);
+                documento.setIdAspirante(dto.getAspirante());
+                documento.setIdTipoDocumentoRequerido(tipoDocumento);
+                documento.setIdEstadoDocumento(estadoDocumento);
                 documento.setUrl("/download/" + key);
                 documento.setKeyFile(key);
 

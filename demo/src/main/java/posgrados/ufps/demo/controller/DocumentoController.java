@@ -45,7 +45,7 @@ public class DocumentoController {
         System.out.println(originalFilename);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + originalFilename + "\"")
-                .contentType(MediaType.parseMediaType(documento.getTipoDocumentoRequerido().getFormato()))
+                .contentType(MediaType.parseMediaType(documento.getIdTipoDocumentoRequerido().getFormato()))
                 .contentLength(data.length)
                 .body(data);
     }

@@ -67,36 +67,36 @@ public class DocumentoEntity {
         this.id = id;
     }
 
-    public Integer getAspirante() {
-        return aspirante;
+    public Integer getIdAspirante() {
+        return idAspirante;
     }
 
-    public void setAspirante(Integer aspirante) {
-        this.aspirante = aspirante;
+    public void setIdAspirante(Integer idAspirante) {
+        this.idAspirante = idAspirante;
     }
 
-    public TipoDocumentoRequeridoEntity getTipoDocumentoRequerido() {
-        return tipoDocumentoRequerido;
+    public TipoDocumentoRequeridoEntity getIdTipoDocumentoRequerido() {
+        return idTipoDocumentoRequerido;
     }
 
-    public void setTipoDocumentoRequerido(TipoDocumentoRequeridoEntity tipoDocumentoRequerido) {
-        this.tipoDocumentoRequerido = tipoDocumentoRequerido;
+    public void setIdTipoDocumentoRequerido(TipoDocumentoRequeridoEntity idTipoDocumentoRequerido) {
+        this.idTipoDocumentoRequerido = idTipoDocumentoRequerido;
     }
 
-    public EstadoDocumentoEntity getEstado() {
-        return estado;
+    public EstadoDocumentoEntity getIdEstadoDocumento() {
+        return idEstadoDocumento;
     }
 
-    public void setEstado(EstadoDocumentoEntity estado) {
-        this.estado = estado;
+    public void setIdEstadoDocumento(EstadoDocumentoEntity idEstadoDocumento) {
+        this.idEstadoDocumento = idEstadoDocumento;
     }
 
-    public Integer getAdministrativoReviso() {
-        return administrativoReviso;
+    public Integer getIdAdministrativoReviso() {
+        return idAdministrativoReviso;
     }
 
-    public void setAdministrativoReviso(Integer administrativoReviso) {
-        this.administrativoReviso = administrativoReviso;
+    public void setIdAdministrativoReviso(Integer idAdministrativoReviso) {
+        this.idAdministrativoReviso = idAdministrativoReviso;
     }
 
     public Date getFechaMaximaCargue() {
