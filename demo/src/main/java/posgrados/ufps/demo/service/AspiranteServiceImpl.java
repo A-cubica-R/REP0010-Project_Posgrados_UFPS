@@ -4,13 +4,10 @@ import lombok.RequiredArgsConstructor;
 import posgrados.ufps.demo.dto.Aspirante.AspiranteRequestDTO;
 import posgrados.ufps.demo.dto.Aspirante.AspiranteResponseDTO;
 import posgrados.ufps.demo.entity.AspiranteEntity;
-import posgrados.ufps.demo.entity.BarrioEntity;
-import posgrados.ufps.demo.entity.DepartamentoEntity;
 import posgrados.ufps.demo.entity.EstadoAspiranteEntity;
 import posgrados.ufps.demo.entity.GeneroEntity;
-import posgrados.ufps.demo.entity.MunicipioEntity;
 import posgrados.ufps.demo.entity.OfertaAcademicaEntity;
-import posgrados.ufps.demo.entity.PaisEntity;
+import posgrados.ufps.demo.entity.ResidenciaEntity;
 import posgrados.ufps.demo.entity.TipoDocumentoEntity;
 import posgrados.ufps.demo.repository.AspiranteRepository;
 
@@ -28,7 +25,7 @@ public class AspiranteServiceImpl implements AspiranteService {
     @Override
     public AspiranteResponseDTO crear(AspiranteRequestDTO dto) {
 
-        AspiranteEntity aspirante = toEntity(dto);
+        AspiranteEntity aspirante = toEntity(dto, dto.getIdResidencia());
 
         AspiranteEntity guardado = repository.save(aspirante);
 
@@ -74,7 +71,7 @@ public class AspiranteServiceImpl implements AspiranteService {
         repository.deleteById(id);
     }
 
-    private AspiranteEntity toEntity(AspiranteRequestDTO dto) {
+    private AspiranteEntity toEntity(AspiranteRequestDTO dto, ResidenciaEntity residencia) {
         AspiranteEntity a = new AspiranteEntity();
         a.setIdTipoDocumento(dto.getIdTipoDocumento() != null
                 ? TipoDocumentoEntity.builder().id(dto.getIdTipoDocumento()).build()
@@ -87,25 +84,11 @@ public class AspiranteServiceImpl implements AspiranteService {
         a.setIdGenero(dto.getIdGenero() != null
                 ? GeneroEntity.builder().id(dto.getIdGenero()).build()
                 : null);
-        a.setIdPaisResidencia(dto.getIdPaisResidencia() != null
-                ? PaisEntity.builder().id(dto.getIdPaisResidencia()).build()
+        a.setIdResidencia(residencia != null
+                ? ResidenciaEntity.builder().id(residencia.getId() != null ? residencia.getId().intValue() : null).build()
                 : null);
-        a.setIdDepartamentoResidencia(dto.getIdDepartamentoResidencia() != null
-                ? DepartamentoEntity.builder().id(dto.getIdDepartamentoResidencia()).build()
-                : null);
-        a.setIdMunicipioResidencia(dto.getIdMunicipioResidencia() != null
-                ? MunicipioEntity.builder().id(dto.getIdMunicipioResidencia()).build()
-                : null);
-        a.setIdBarrioResidencia(dto.getIdBarrioResidencia() != null
-                ? BarrioEntity.builder().id(dto.getIdBarrioResidencia()).build()
-                : null);
-        a.setEgresado_ufps(dto.getEgresado_ufps());
-        a.setTituloPregrado(dto.getTituloPregrado());
-        a.setUniversidadEgreso(dto.getUniversidadEgreso());
-        a.setFechaGraduacion(dto.getFechaGraduacion());
         a.setTelefono(dto.getTelefono());
         a.setCelular(dto.getCelular());
-        a.setDireccion(dto.getDireccion());
         a.setCorreoElectronico(dto.getCorreoElectronico());
         a.setFechaNacimiento(dto.getFechaNacimiento());
         a.setIdOfertaAcademica(dto.getIdOfertaAcademica() != null
@@ -122,9 +105,6 @@ public class AspiranteServiceImpl implements AspiranteService {
                 .id(a.getId() != null ? a.getId().longValue() : null)
                 .numeroDocumento(a.getNumeroDocumento())
                 .nombreCompleto(a.getPrimerNombre() + " " + a.getPrimerApellido())
-                .tituloPregrado(a.getTituloPregrado())
-                .universidadEgreso(a.getUniversidadEgreso())
-                .fechaGraduacion(a.getFechaGraduacion())
                 .celular(a.getCelular())
                 .correoElectronico(a.getCorreoElectronico())
                 .build();

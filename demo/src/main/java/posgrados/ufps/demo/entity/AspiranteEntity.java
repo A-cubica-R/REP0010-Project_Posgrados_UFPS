@@ -41,41 +41,14 @@ public class AspiranteEntity {
     private GeneroEntity idGenero;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_pais_residencia", nullable = false)
-    private PaisEntity idPaisResidencia;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_departamento_residencia", nullable = false)
-    private DepartamentoEntity idDepartamentoResidencia;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_municipio_residencia", nullable = false)
-    private MunicipioEntity idMunicipioResidencia;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_barrio_residencia", nullable = false)
-    private BarrioEntity idBarrioResidencia;
-
-    @Column(name = "egresado_ufps", nullable = false)
-    private Boolean egresado_ufps;
+    @JoinColumn(name = "id_residencia")
+    private ResidenciaEntity idResidencia;
 
     @Column(name = "telefono", length = 20)
     private String telefono;
 
     @Column(name = "celular", nullable = false, length = 20)
     private String celular;
-
-    @Column(name = "direccion", nullable = false, columnDefinition = "TEXT")
-    private String direccion;
-
-    @Column(name = "titulo_pregrado", nullable = false, length = 50)
-    private String tituloPregrado;
-
-    @Column(name = "universidad_egreso", nullable = false, length = 50)
-    private String universidadEgreso;
-
-    @Column(name = "fecha_graduacion", nullable = false)
-    private LocalDate fechaGraduacion;
 
     @Column(name = "correo_electronico", nullable = false, unique = true, length = 50)
     private String correoElectronico;

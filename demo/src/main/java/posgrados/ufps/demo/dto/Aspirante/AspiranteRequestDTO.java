@@ -2,6 +2,8 @@ package posgrados.ufps.demo.dto.Aspirante;
 
 import jakarta.validation.constraints.*;
 import lombok.Data;
+import posgrados.ufps.demo.entity.ResidenciaEntity;
+
 import java.time.LocalDate;
 
 @Data
@@ -26,19 +28,19 @@ public class AspiranteRequestDTO {//entrada
     @NotNull
     private Integer idGenero;
 
-    @NotNull
-    private Integer idPaisResidencia;
-
-    private Integer idDepartamentoResidencia;
-
-    private Integer idMunicipioResidencia;
 
 
-    //verificar si es necesario el barrio, o mejor direccion completa
-    private Integer idBarrioResidencia;
+
+    private ResidenciaEntity idResidencia;
+
+
+
 
     private Boolean egresado_ufps;
 
+
+
+    
     private String telefono;
 
     @NotBlank
