@@ -2,18 +2,13 @@ package posgrados.ufps.demo.dto.Aspirante;
 
 import jakarta.validation.constraints.*;
 import lombok.Data;
-import posgrados.ufps.demo.entity.EstadoAspiranteEntity;
-import posgrados.ufps.demo.entity.OfertaAcademicaEntity;
-import posgrados.ufps.demo.entity.TipoDocumentoEntity;
-
-import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Data
-public class AspiranteRequestDTO {
+public class AspiranteRequestDTO {//entrada
 
     @NotNull
-    private TipoDocumentoEntity TipoDocumento;
+    private Integer idTipoDocumento;
 
     @NotBlank
     private String numeroDocumento;
@@ -28,14 +23,21 @@ public class AspiranteRequestDTO {
 
     private String segundoApellido;
 
-    @NotBlank
-    private String tituloPregrado;
-
-    @NotBlank
-    private String universidadEgreso;
+    @NotNull
+    private Integer idGenero;
 
     @NotNull
-    private LocalDate fechaGraduacion;
+    private Integer idPaisResidencia;
+
+    private Integer idDepartamentoResidencia;
+
+    private Integer idMunicipioResidencia;
+
+
+    //verificar si es necesario el barrio, o mejor direccion completa
+    private Integer idBarrioResidencia;
+
+    private Boolean egresado_ufps;
 
     private String telefono;
 
@@ -45,6 +47,15 @@ public class AspiranteRequestDTO {
     @NotBlank
     private String direccion;
 
+    @NotBlank
+    private String tituloPregrado;
+
+    @NotBlank
+    private String universidadEgreso;
+
+    @NotNull
+    private LocalDate fechaGraduacion;
+
     @Email
     @NotBlank
     private String correoElectronico;
@@ -52,12 +63,9 @@ public class AspiranteRequestDTO {
     @NotNull
     private LocalDate fechaNacimiento;
 
-    @DecimalMin("0.0")
-    @DecimalMax("5.0")
-    private BigDecimal promedioAcumulado;
+    @NotNull
+    private Integer idOfertaAcademica;
 
     @NotNull
-    private OfertaAcademicaEntity OfertaAcademica;
-
-    private EstadoAspiranteEntity EstadoAspirante;
+    private Integer idEstadoAspirante;
 }

@@ -34,7 +34,7 @@ public class AspiranteController {
 
     @PutMapping("/{id}")
     public AspiranteResponseDTO actualizar(@PathVariable Long id,
-                                           @Valid @RequestBody AspiranteRequestDTO dto) {
+            @Valid @RequestBody AspiranteRequestDTO dto) {
         return service.actualizar(id, dto);
     }
 

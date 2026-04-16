@@ -2,7 +2,6 @@ package posgrados.ufps.demo.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
@@ -20,7 +19,7 @@ public class AspiranteEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_tipo_documento", nullable = false)
-    private TipoDocumentoEntity tipoDocumento;
+    private TipoDocumentoEntity idTipoDocumento;
 
     @Column(name = "numero_documento", nullable = false, length = 20)
     private String numeroDocumento;
@@ -37,14 +36,28 @@ public class AspiranteEntity {
     @Column(name = "segundo_apellido", length = 50)
     private String segundoApellido;
 
-    @Column(name = "titulo_pregrado", nullable = false, length = 50)
-    private String tituloPregrado;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_genero", nullable = false)
+    private GeneroEntity idGenero;
 
-    @Column(name = "universidad_egreso", nullable = false, length = 50)
-    private String universidadEgreso;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_pais_residencia", nullable = false)
+    private PaisEntity idPaisResidencia;
 
-    @Column(name = "fecha_graduacion", nullable = false)
-    private LocalDate fechaGraduacion;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_departamento_residencia", nullable = false)
+    private DepartamentoEntity idDepartamentoResidencia;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_municipio_residencia", nullable = false)
+    private MunicipioEntity idMunicipioResidencia;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_barrio_residencia", nullable = false)
+    private BarrioEntity idBarrioResidencia;
+
+    @Column(name = "egresado_ufps", nullable = false)
+    private Boolean egresado_ufps;
 
     @Column(name = "telefono", length = 20)
     private String telefono;
@@ -55,20 +68,26 @@ public class AspiranteEntity {
     @Column(name = "direccion", nullable = false, columnDefinition = "TEXT")
     private String direccion;
 
+    @Column(name = "titulo_pregrado", nullable = false, length = 50)
+    private String tituloPregrado;
+
+    @Column(name = "universidad_egreso", nullable = false, length = 50)
+    private String universidadEgreso;
+
+    @Column(name = "fecha_graduacion", nullable = false)
+    private LocalDate fechaGraduacion;
+
     @Column(name = "correo_electronico", nullable = false, unique = true, length = 50)
     private String correoElectronico;
 
     @Column(name = "fecha_nacimiento", nullable = false)
     private LocalDate fechaNacimiento;
 
-    @Column(name = "promedio_acumulado", precision = 3, scale = 2)
-    private BigDecimal promedioAcumulado;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_oferta_academica", nullable = false)
-    private OfertaAcademicaEntity ofertaAcademica;
+    private OfertaAcademicaEntity idOfertaAcademica;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_estado_aspirante")
-    private EstadoAspiranteEntity estadoAspirante;
+    private EstadoAspiranteEntity idEstadoAspirante;
 }
