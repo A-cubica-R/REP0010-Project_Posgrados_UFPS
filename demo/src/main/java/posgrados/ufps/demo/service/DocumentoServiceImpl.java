@@ -13,7 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import posgrados.ufps.demo.dto.DocumentoDTO;
 import posgrados.ufps.demo.entity.DocumentoEntity;
 import posgrados.ufps.demo.entity.EstadoDocumentoEntity;
-import posgrados.ufps.demo.entity.TipoDocumentoEntity;
+import posgrados.ufps.demo.entity.TipoDocumentoRequeridoEntity;
 import posgrados.ufps.demo.repository.DocumentoRepository;
 import posgrados.ufps.demo.repository.EstadoDocumentoRepository;
 import posgrados.ufps.demo.repository.TipoDocumentoRepository;
@@ -25,7 +25,7 @@ import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 @Service
-public class DocumentoServiceImpl implements DocumentoService {
+public class DocumentoServiceImpl implements DocumentoRequeridoService {
 
         @Autowired
         private S3Client s3Client;
@@ -47,7 +47,7 @@ public class DocumentoServiceImpl implements DocumentoService {
 
                 DocumentoEntity documento = new DocumentoEntity();
 
-                TipoDocumentoEntity tipoDocumento = tipoDocumentoRepository.findById(dto.getTipoDocumento())
+                TipoDocumentoRequeridoEntity tipoDocumento = tipoDocumentoRepository.findById(dto.getTipoDocumento())
                                 .orElseThrow(() -> new RuntimeException("Tipo de documento no encontrado"));
 
                 // Falta el aspirante !!!!
@@ -58,11 +58,10 @@ public class DocumentoServiceImpl implements DocumentoService {
                 String key = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
 
                 documento.setAspirante(dto.getAspirante());
-                documento.setTipoDocumento(tipoDocumento);
+                documento.setTipoDocumentoRequerido(tipoDocumento);
                 documento.setEstado(estadoDocumento);
                 documento.setUrl("/download/" + key);
                 documento.setKeyFile(key);
-                documento.setFormato(file.getContentType());
 
                 documentoRepository.save(documento);
 

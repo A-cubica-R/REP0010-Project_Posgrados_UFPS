@@ -6,7 +6,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 
-// Clase de configuración para que Spring Security no bloquee los endpoints y funcione la conexión con S3
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {

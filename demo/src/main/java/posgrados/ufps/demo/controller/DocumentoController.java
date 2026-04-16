@@ -15,13 +15,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import posgrados.ufps.demo.dto.DocumentoDTO;
 import posgrados.ufps.demo.entity.DocumentoEntity;
-import posgrados.ufps.demo.service.DocumentoService;
+import posgrados.ufps.demo.service.DocumentoRequeridoService;
 
 @RestController
 public class DocumentoController {
 
     @Autowired
-    private DocumentoService documentoService;
+    private DocumentoRequeridoService documentoService;
 
     @PostMapping("/upload")
     public ResponseEntity<String> upload(
@@ -45,7 +45,7 @@ public class DocumentoController {
         System.out.println(originalFilename);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + originalFilename + "\"")
-                .contentType(MediaType.parseMediaType(documento.getFormato()))
+                .contentType(MediaType.parseMediaType(documento.getTipoDocumentoRequerido().getFormato()))
                 .contentLength(data.length)
                 .body(data);
     }

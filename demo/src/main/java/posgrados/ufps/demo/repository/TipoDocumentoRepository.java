@@ -2,8 +2,8 @@ package posgrados.ufps.demo.repository;
 
 import org.springframework.data.repository.CrudRepository;
 
-import posgrados.ufps.demo.entity.TipoDocumentoEntity;
+import posgrados.ufps.demo.entity.TipoDocumentoRequeridoEntity;
 
-public interface TipoDocumentoRepository extends CrudRepository<TipoDocumentoEntity, Integer>{
+public interface TipoDocumentoRepository extends CrudRepository<TipoDocumentoRequeridoEntity, Integer>{
 
 }
