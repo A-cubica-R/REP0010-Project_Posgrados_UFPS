@@ -1,10 +1,10 @@
-package posgrados.ufps.demo;
+package ufps.edu.co.posgrados;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class DemoApplicationTests {
+class PosgradosApplicationTests {
 
 	@Test
 	void contextLoads() {
