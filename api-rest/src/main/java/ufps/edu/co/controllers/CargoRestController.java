@@ -23,7 +23,7 @@ import ufps.edu.co.rest.dto.CargoDTO;
 import ufps.edu.co.services.CargoService;
 
 @RestController
-@RequestMapping(value = "/api/v1/cargo", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/cargo", produces = MediaType.APPLICATION_JSON_VALUE)
 public class CargoRestController {
 
     @Autowired

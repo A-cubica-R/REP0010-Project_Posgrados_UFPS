@@ -23,7 +23,7 @@ import ufps.edu.co.rest.dto.OfertaAcademicaDTO;
 import ufps.edu.co.services.OfertaAcademicaService;
 
 @RestController
-@RequestMapping(value = "/api/v1/ofertaacademica", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/ofertaacademica", produces = MediaType.APPLICATION_JSON_VALUE)
 public class OfertaAcademicaRestController {
 
     @Autowired

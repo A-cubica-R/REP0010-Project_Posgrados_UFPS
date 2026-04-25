@@ -23,7 +23,7 @@ import ufps.edu.co.rest.dto.DocumentoDTO;
 import ufps.edu.co.services.DocumentoService;
 
 @RestController
-@RequestMapping(value = "/api/v1/documento", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/documento", produces = MediaType.APPLICATION_JSON_VALUE)
 public class DocumentoRestController {
 
     @Autowired

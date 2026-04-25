@@ -23,7 +23,7 @@ import ufps.edu.co.rest.dto.ResidenciaDTO;
 import ufps.edu.co.services.ResidenciaService;
 
 @RestController
-@RequestMapping(value = "/api/v1/residencia", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/residencia", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ResidenciaRestController {
 
     @Autowired

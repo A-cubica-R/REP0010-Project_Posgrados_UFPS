@@ -23,7 +23,7 @@ import ufps.edu.co.rest.dto.PaisDTO;
 import ufps.edu.co.services.PaisService;
 
 @RestController
-@RequestMapping(value = "/api/v1/pais", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/pais", produces = MediaType.APPLICATION_JSON_VALUE)
 public class PaisRestController {
 
     @Autowired

@@ -23,7 +23,7 @@ import ufps.edu.co.rest.dto.EtapaCompletadaDTO;
 import ufps.edu.co.services.EtapaCompletadaService;
 
 @RestController
-@RequestMapping(value = "/api/v1/etapacompletada", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/etapacompletada", produces = MediaType.APPLICATION_JSON_VALUE)
 public class EtapaCompletadaRestController {
 
     @Autowired

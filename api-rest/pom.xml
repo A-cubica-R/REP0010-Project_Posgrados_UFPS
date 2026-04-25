@@ -13,9 +13,16 @@
     <artifactId>api-rest</artifactId>
 
     <dependencies>
+
         <dependency>
             <groupId>ufps.edu.co</groupId>
             <artifactId>api-base</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ufps.edu.co</groupId>
+            <artifactId>api-core</artifactId>
             <version>${project.version}</version>
         </dependency>
         

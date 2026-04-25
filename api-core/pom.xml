@@ -14,4 +14,37 @@
     <artifactId>api-core</artifactId>
     <name>api-core</name>
 
+    <dependencies>
+        <!-- Spring Framework (business logic layer) -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
+        </dependency>
+
+        <!-- Persistence layer dependency (api-base) -->
+        <dependency>
+            <groupId>ufps.edu.co</groupId>
+            <artifactId>api-base</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- ModelMapper for DTO transformations -->
+        <dependency>
+            <groupId>org.modelmapper</groupId>
+            <artifactId>modelmapper</artifactId>
+        </dependency>
+
+        <!-- Lombok for reducing boilerplate -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
+
 </project>

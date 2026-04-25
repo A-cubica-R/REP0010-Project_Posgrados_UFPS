@@ -23,7 +23,7 @@ import ufps.edu.co.rest.dto.ProgramaPosgradoDTO;
 import ufps.edu.co.services.ProgramaPosgradoService;
 
 @RestController
-@RequestMapping(value = "/api/v1/programaposgrado", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/programaposgrado", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ProgramaPosgradoRestController {
 
     @Autowired

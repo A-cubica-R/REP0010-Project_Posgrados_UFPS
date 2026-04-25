@@ -23,7 +23,7 @@ import ufps.edu.co.rest.dto.CohorteDTO;
 import ufps.edu.co.services.CohorteService;
 
 @RestController
-@RequestMapping(value = "/api/v1/cohorte", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/cohorte", produces = MediaType.APPLICATION_JSON_VALUE)
 public class CohorteRestController {
 
     @Autowired

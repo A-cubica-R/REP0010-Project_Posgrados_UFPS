@@ -23,7 +23,7 @@ import ufps.edu.co.rest.dto.FacultadDTO;
 import ufps.edu.co.services.FacultadService;
 
 @RestController
-@RequestMapping(value = "/api/v1/facultad", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/facultad", produces = MediaType.APPLICATION_JSON_VALUE)
 public class FacultadRestController {
 
     @Autowired

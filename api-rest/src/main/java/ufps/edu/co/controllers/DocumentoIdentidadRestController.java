@@ -23,7 +23,7 @@ import ufps.edu.co.rest.dto.DocumentoIdentidadDTO;
 import ufps.edu.co.services.DocumentoIdentidadService;
 
 @RestController
-@RequestMapping(value = "/api/v1/documentoidentidad", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/documentoidentidad", produces = MediaType.APPLICATION_JSON_VALUE)
 public class DocumentoIdentidadRestController {
 
     @Autowired

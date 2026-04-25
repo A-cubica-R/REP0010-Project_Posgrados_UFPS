@@ -23,7 +23,7 @@ import ufps.edu.co.rest.dto.RolDTO;
 import ufps.edu.co.services.RolService;
 
 @RestController
-@RequestMapping(value = "/api/v1/rol", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/rol", produces = MediaType.APPLICATION_JSON_VALUE)
 public class RolRestController {
 
     @Autowired

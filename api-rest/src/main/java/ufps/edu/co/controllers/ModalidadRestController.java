@@ -23,7 +23,7 @@ import ufps.edu.co.rest.dto.ModalidadDTO;
 import ufps.edu.co.services.ModalidadService;
 
 @RestController
-@RequestMapping(value = "/api/v1/modalidad", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/modalidad", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ModalidadRestController {
 
     @Autowired

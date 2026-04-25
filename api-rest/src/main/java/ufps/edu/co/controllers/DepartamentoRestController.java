@@ -23,7 +23,7 @@ import ufps.edu.co.rest.dto.DepartamentoDTO;
 import ufps.edu.co.services.DepartamentoService;
 
 @RestController
-@RequestMapping(value = "/api/v1/departamento", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/departamento", produces = MediaType.APPLICATION_JSON_VALUE)
 public class DepartamentoRestController {
 
     @Autowired

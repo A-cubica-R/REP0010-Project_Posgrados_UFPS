@@ -23,7 +23,7 @@ import ufps.edu.co.rest.dto.GeneroDTO;
 import ufps.edu.co.services.GeneroService;
 
 @RestController
-@RequestMapping(value = "/api/v1/genero", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/genero", produces = MediaType.APPLICATION_JSON_VALUE)
 public class GeneroRestController {
 
     @Autowired

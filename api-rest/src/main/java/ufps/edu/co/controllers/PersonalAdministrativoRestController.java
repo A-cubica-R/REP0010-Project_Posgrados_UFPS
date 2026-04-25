@@ -23,7 +23,7 @@ import ufps.edu.co.rest.dto.PersonalAdministrativoDTO;
 import ufps.edu.co.services.PersonalAdministrativoService;
 
 @RestController
-@RequestMapping(value = "/api/v1/personaladministrativo", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/personaladministrativo", produces = MediaType.APPLICATION_JSON_VALUE)
 public class PersonalAdministrativoRestController {
 
     @Autowired

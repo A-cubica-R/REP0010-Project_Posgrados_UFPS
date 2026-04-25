@@ -23,7 +23,7 @@ import ufps.edu.co.rest.dto.EstadoAspiranteDTO;
 import ufps.edu.co.services.EstadoAspiranteService;
 
 @RestController
-@RequestMapping(value = "/api/v1/estadoaspirante", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/estadoaspirante", produces = MediaType.APPLICATION_JSON_VALUE)
 public class EstadoAspiranteRestController {
 
     @Autowired

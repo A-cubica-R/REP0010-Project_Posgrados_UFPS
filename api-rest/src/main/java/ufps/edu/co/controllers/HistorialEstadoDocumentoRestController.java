@@ -23,7 +23,7 @@ import ufps.edu.co.rest.dto.HistorialEstadoDocumentoDTO;
 import ufps.edu.co.services.HistorialEstadoDocumentoService;
 
 @RestController
-@RequestMapping(value = "/api/v1/historialestadodocumento", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/historialestadodocumento", produces = MediaType.APPLICATION_JSON_VALUE)
 public class HistorialEstadoDocumentoRestController {
 
     @Autowired

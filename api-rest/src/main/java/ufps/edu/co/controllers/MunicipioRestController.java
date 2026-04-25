@@ -18,12 +18,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import ufps.edu.co.rest.dto.MunicipioDTO;
 import ufps.edu.co.services.MunicipioService;
 
 @RestController
-@RequestMapping(value = "/api/v1/municipio", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/municipio", produces = MediaType.APPLICATION_JSON_VALUE)
 public class MunicipioRestController {
 
     @Autowired
