@@ -1,0 +1,17 @@
+{"properties": [
+  {
+    "name": "app.module.name.api-base",
+    "type": "java.lang.String",
+    "description": "Name of the api-base module, used for logging and other purposes."
+  },
+  {
+    "name": "app.module.name.api-core",
+    "type": "java.lang.String",
+    "description": "Name of the api-core module, used for logging and other purposes."
+  },
+  {
+    "name": "app.module.name.api-rest",
+    "type": "java.lang.String",
+    "description": "Name of the api-rest module, used for logging and other purposes."
+  }
+]}
