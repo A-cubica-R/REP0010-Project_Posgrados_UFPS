@@ -42,7 +42,7 @@ public class PaisRestController {
      * @param id
      * @return 200 con DTO o 404 si no existe
      */
-    @GetMapping("/{id}")
+    @GetMapping("/list/{id}")
     public ResponseEntity<PaisOutput> findById(@PathVariable int id) {
         PaisOutput paisOutput = processor.findById(id);
         if (paisOutput != null) {
@@ -71,7 +71,7 @@ public class PaisRestController {
      * @param departamentoDTO
      * @return 200 con DTO actualizado o 404 si no existe
      */
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<PaisOutput> update(@PathVariable int id, @RequestBody UPDATE request) {
         try {
             PaisOutput updated = processor.update(id, request);
@@ -87,7 +87,7 @@ public class PaisRestController {
      * @param id
      * @return 204 eliminado o 404 si no existe
      */
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable int id) {
         try {
             processor.deleteById(id);

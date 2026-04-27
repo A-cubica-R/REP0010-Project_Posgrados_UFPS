@@ -1,6 +1,8 @@
 package ufps.edu.co.processor;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ufps.edu.co.maps.PaisMap;
@@ -37,25 +39,44 @@ public class PaisProcessor implements GlobalUseCase<PaisInput.CREATE, PaisInput.
 
     @Override
     public PaisOutput update(Integer id, UPDATE input) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'update'");
+        try {
+            PaisDTO dto = map.toDto(input, id);
+            try {
+                PaisOutput output = map.toOutput(service.update(id, dto));
+                return output;
+            } catch (Exception e) {
+                throw new RuntimeException("Error updating Pais: " + e.getMessage(), e);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error updating Pais: " + e.getMessage(), e);
+        }
     }
 
     @Override
     public PaisOutput findById(Integer id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findById'");
+        try {
+            PaisOutput output = map.toOutput(service.findById(id));
+            return output;
+        } catch (Exception e) {
+            throw new RuntimeException("Error finding Pais by ID: " + e.getMessage(), e);
+        }
     }
 
     @Override
     public List<PaisOutput> findAll() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findAll'");
+        try {
+            return service.findAll().stream().map(map::toOutput).collect(Collectors.toList());
+        } catch (Exception e) {
+            throw new RuntimeException("Error finding all Paises: " + e.getMessage(), e);
+        }
     }
 
     @Override
     public void deleteById(Integer id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteById'");
+        try {
+            service.deleteById(id);
+        } catch (Exception e) {
+            throw new RuntimeException("Error deleting Pais by ID: " + e.getMessage(), e);
+        }
     }
 }
