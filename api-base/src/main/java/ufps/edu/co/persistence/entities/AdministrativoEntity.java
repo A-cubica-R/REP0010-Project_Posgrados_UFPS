@@ -12,22 +12,23 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.time.LocalDate;
+import java.util.List;
 
 
 /**
- * JPA entity class for "Cohorte"
+ * JPA entity class for "Administrativo"
  *
  * @author Telosys
  *
  */
 @Entity
-@Table(name = "cohorte")
+@Table(name = "administrativo")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CohorteEntity implements Serializable {
+public class AdministrativoEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -38,21 +39,38 @@ public class CohorteEntity implements Serializable {
     private int        id ;
 
     //--- OTHER DATA FIELDS 
-    @Column(name="nombre", nullable=false, length=100)
-    private String     nombre ;
+    @Column(name="id_persona", nullable=false)
+    private int        idPersona ;
+
+    @Column(name="fechainicio", nullable=false)
+    private LocalDate  fechainicio ;
+
+    @Column(name="fechasalida")
+    private LocalDate  fechasalida ;
 
     @Column(name="id_estado", nullable=false)
     private int        idEstado ;
 
-    @Column(name="fecha_inicio", nullable=false)
-    private LocalDate  fechaInicio ;
-
-    @Column(name="fecha_fin", nullable=false)
-    private LocalDate  fechaFin ;
+    @Column(name="id_cargo", nullable=false)
+    private int        idCargo ;
 
     //--- LINKS ( RELATIONSHIPS )
     @ManyToOne
+    @JoinColumn(name="id_persona", referencedColumnName="id", insertable=false, updatable=false)
+    private PersonaEntity    persona ; 
+
+    @ManyToOne
     @JoinColumn(name="id_estado", referencedColumnName="id", insertable=false, updatable=false)
     private EstadoEntity     estado ; 
+
+    @ManyToOne
+    @JoinColumn(name="id_cargo", referencedColumnName="id", insertable=false, updatable=false)
+    private CargoEntity      cargo ; 
+
+    @OneToMany(mappedBy="administrativo")
+    private List<FacultadEntity> facultadList ; 
+
+    @OneToMany(mappedBy="administrativo")
+    private List<ProgramaEntity> programaList ; 
 
 }

@@ -15,19 +15,19 @@ import java.util.List;
 
 
 /**
- * JPA entity class for "Municipio"
+ * JPA entity class for "Otrosvalores"
  *
  * @author Telosys
  *
  */
 @Entity
-@Table(name = "municipio")
+@Table(name = "otrosvalores")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class MunicipioEntity implements Serializable {
+public class OtrosvaloresEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -38,18 +38,17 @@ public class MunicipioEntity implements Serializable {
     private int        id ;
 
     //--- OTHER DATA FIELDS 
-    @Column(name="nombre", nullable=false, length=100)
-    private String     nombre ;
+    @Column(name="carnet", nullable=false)
+    private boolean    carnet ;
 
-    @Column(name="id_departamento", nullable=false)
-    private int        idDepartamento ;
+    @Column(name="estampilla", nullable=false)
+    private boolean    estampilla ;
+
+    @Column(name="seguro", nullable=false)
+    private boolean    seguro ;
 
     //--- LINKS ( RELATIONSHIPS )
-    @ManyToOne
-    @JoinColumn(name="id_departamento", referencedColumnName="id", insertable=false, updatable=false)
-    private DepartamentoEntity departamento ; 
-
-    @OneToMany(mappedBy="municipio")
-    private List<UbicacionEntity> ubicacionList ; 
+    @OneToMany(mappedBy="otrosvalores")
+    private List<ProgramaEntity> programaList ; 
 
 }

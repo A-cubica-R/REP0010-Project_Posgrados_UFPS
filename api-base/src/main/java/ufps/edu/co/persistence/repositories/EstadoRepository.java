@@ -7,10 +7,10 @@ package ufps.edu.co.persistence.repositories;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import ufps.edu.co.persistence.entities.PaisEntity;
+import ufps.edu.co.persistence.entities.EstadoEntity;
 
 /**
- * Spring Data JPA repository for the PaisEntity entity.
+ * Spring Data JPA repository for the EstadoEntity entity.
  *
  * This interface extends {@link JpaRepository}, so it automatically inherits
  * standard persistence operations, including:
@@ -35,17 +35,17 @@ import ufps.edu.co.persistence.entities.PaisEntity;
  *
  */
 @Repository
-public interface PaisRepository extends JpaRepository<PaisEntity, Integer> {
+public interface EstadoRepository extends JpaRepository<EstadoEntity, Integer> {
 
 	// Insert specific finders here 
 
-	//List<PaisEntity> findByXxx(String xxx);
+	//List<EstadoEntity> findByXxx(String xxx);
 
-	//List<PaisEntity> findByXxxStartingWith(String xxx);
+	//List<EstadoEntity> findByXxxStartingWith(String xxx);
 
-	//List<PaisEntity> findByXxxContaining(String xxx);
+	//List<EstadoEntity> findByXxxContaining(String xxx);
 
-	//List<PaisEntity> findByYyy(BigDecimal yyy);
+	//List<EstadoEntity> findByYyy(BigDecimal yyy);
 
-	//List<PaisEntity> findByXxxContainingAndYyy(String xxx, BigDecimal yyy);
+	//List<EstadoEntity> findByXxxContainingAndYyy(String xxx, BigDecimal yyy);
 }

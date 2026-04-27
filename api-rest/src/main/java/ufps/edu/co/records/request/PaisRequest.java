@@ -3,11 +3,10 @@ package ufps.edu.co.records.request;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-public enum MunicipioRequest {;
+public enum PaisRequest {;
 
     public record CREATE(
-        @NotBlank String nombre,
-        @NotNull Integer departamentoId
+        @NotBlank String nombre
     ) {};
 
     public record DELETE(
@@ -16,14 +15,12 @@ public enum MunicipioRequest {;
 
     public record UPDATE(
         @NotNull Integer id,
-        @NotBlank String nombre,
-        @NotNull Integer departamentoId
+        @NotBlank String nombre
     ) {};
 
     public record PATCH(
         @NotNull Integer id,
-        String nombre,
-        Integer departamentoId
+        @NotBlank String nombre
     ) {};
 
     public record FIND(
