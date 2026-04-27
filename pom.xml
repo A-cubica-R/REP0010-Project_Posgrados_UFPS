@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>4.0.6</version>
+		<relativePath /> <!-- lookup parent from repository -->
+	</parent>
+	<groupId>ufps.edu.co</groupId>
+	<artifactId>posgrados</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<modules>
+		<module>api-base</module>
+		<module>api-core</module>
+		<module>api-rest</module>
+		<module>spring-app</module>
+	</modules>
+
+	<name>Posgrados API</name>
+	<description />
+	<url></url>
+	<licenses>
+		<license />
+	</licenses>
+
+	<developers>
+		<developer>
+			<id>gpinto</id>
+			<name>Gabriel Pinto</name>
+			<email>gabriel@tu-dominio.com</email>
+			<url>https://github.com/GabrielPinto21</url>
+			<organization>UFPS</organization>
+			<organizationUrl>https://ww2.ufps.edu.co</organizationUrl>
+			<roles>
+				<role>lead</role>
+				<role>developer</role>
+			</roles>
+			<timezone>America/Bogota</timezone>
+		</developer>
+		<developer>
+			<id>a-cubica-r</id>
+			<name>Adolfo Alejandro Arenas Ramos</name>
+			<email>adolfoalejandroarenasramos@outlook.com</email>
+			<url>https://github.com/a-cubica-r/</url>
+			<organization>UFPS</organization>
+			<organizationUrl>https://ww2.ufps.edu.co</organizationUrl>
+			<roles>
+				<role>Lead</role>
+				<role>Developer</role>
+				<role>Product Owner</role>
+			</roles>
+			<timezone>America/Bogota</timezone>
+		</developer>
+	</developers>
+	<scm>
+
+		<connection />
+		<developerConnection />
+		<tag />
+		<url>https://github.com/GabrielPinto21/Proyecto_Posgrados_backend/</url>
+	</scm>
+
+	<properties>
+		<java.version>21</java.version>
+		<modelmapper.version>3.2.4</modelmapper.version>
+		<springdoc.version>3.0.2</springdoc.version>
+	</properties>
+
+	<dependencyManagement>
+		<dependencies>
+
+			<!-- Spring Boot BOM -->
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-dependencies</artifactId>
+				<version>4.0.6</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+
+			<!-- ModelMapper -->
+			<dependency>
+				<groupId>org.modelmapper</groupId>
+				<artifactId>modelmapper</artifactId>
+				<version>${modelmapper.version}</version>
+			</dependency>
+
+			<!-- SpringDoc -->
+			<dependency>
+				<groupId>org.springdoc</groupId>
+				<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+				<version>${springdoc.version}</version>
+			</dependency>
+
+		</dependencies>
+	</dependencyManagement>
+
+	<build>
+		<pluginManagement>
+			<plugins>
+
+				<plugin>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-maven-plugin</artifactId>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<configuration>
+						<parameters>true</parameters>
+					</configuration>
+				</plugin>
+
+			</plugins>
+		</pluginManagement>
+	</build>
+
+</project>
