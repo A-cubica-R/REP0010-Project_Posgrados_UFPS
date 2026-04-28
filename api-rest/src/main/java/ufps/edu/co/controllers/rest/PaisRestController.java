@@ -42,9 +42,9 @@ public class PaisRestController {
      * @param id
      * @return 200 con DTO o 404 si no existe
      */
-    @GetMapping("/list/{id}")
-    public ResponseEntity<PaisOutput> findById(@PathVariable int id) {
-        PaisOutput paisOutput = processor.findById(id);
+    @GetMapping("/list")
+    public ResponseEntity<PaisOutput> findById(@PathVariable PAIS_FIND find) {
+        PaisOutput paisOutput = processor.findById(find);
         if (paisOutput != null) {
             return ResponseEntity.ok(paisOutput); // 200 OK
         } else {
@@ -59,7 +59,7 @@ public class PaisRestController {
      * @return 201 creado o 409 si ya existe
      */
     @PostMapping("/create")
-    public ResponseEntity<PaisOutput> create(@RequestBody CREATE request) {
+    public ResponseEntity<PaisOutput> create(@RequestBody PAIS_CREATE request) {
         PaisOutput output = processor.create(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(output);
     }
@@ -71,10 +71,10 @@ public class PaisRestController {
      * @param departamentoDTO
      * @return 200 con DTO actualizado o 404 si no existe
      */
-    @PutMapping("/update/{id}")
-    public ResponseEntity<PaisOutput> update(@PathVariable int id, @RequestBody UPDATE request) {
+    @PutMapping("/update")
+    public ResponseEntity<PaisOutput> update(@RequestBody PAIS_UPDATE request) {
         try {
-            PaisOutput updated = processor.update(id, request);
+            PaisOutput updated = processor.update(request);
             return ResponseEntity.ok(updated); // 200 OK
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build(); // 404 Not found
@@ -88,7 +88,7 @@ public class PaisRestController {
      * @return 204 eliminado o 404 si no existe
      */
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> deleteById(@PathVariable int id) {
+    public ResponseEntity<Void> deleteById(@PathVariable PAIS_DELETE id) {
         try {
             processor.deleteById(id);
             return ResponseEntity.noContent().build(); // 204 No content

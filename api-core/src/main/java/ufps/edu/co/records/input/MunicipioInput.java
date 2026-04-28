@@ -7,29 +7,29 @@ import ufps.edu.co.records.InputRequest;
 public enum MunicipioInput implements InputRequest {
         ;
 
-        public record CREATE(
+        public record MUNICIPIO_CREATE(
                         @NotBlank String nombre,
                         @NotNull Integer idDepartamento)
                         implements InputRequest {
         };
 
-        public record DELETE(
+        public record MUNICIPIO_DELETE(
                         @NotNull Integer id) implements InputRequest {
         };
 
-        public record UPDATE(
+        public record MUNICIPIO_UPDATE(
                         @NotNull Integer id,
                         @NotBlank String nombre,
                         @NotNull Integer idDepartamento) implements InputRequest {
         };
 
-        public record PATCH(
+        public record MUNICIPIO_PATCH(
                         @NotNull Integer id,
                         String nombre,
                         Integer idDepartamento) implements InputRequest {
         };
 
-        public record FIND(
+        public record MUNICIPIO_FIND(
                         @NotNull Integer id) implements InputRequest {
         };
 }

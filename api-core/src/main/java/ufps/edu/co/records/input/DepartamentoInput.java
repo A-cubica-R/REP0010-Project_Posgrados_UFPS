@@ -4,35 +4,42 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import ufps.edu.co.records.InputRequest;
+import ufps.edu.co.records.contracts.CreateType;
+import ufps.edu.co.records.contracts.DeleteType;
+import ufps.edu.co.records.contracts.FindType;
+import ufps.edu.co.records.contracts.PatchType;
+import ufps.edu.co.records.contracts.UpdateType;
 
-public enum DepartamentoInput {
+public enum DepartamentoInput implements InputRequest {
         ;
 
-        public record CREATE(
+        public record DEPARTAMENTO_CREATE(
                         @NotBlank @Getter String nombre,
                         @NotNull @Getter Integer idPais)
-                        implements InputRequest {
+                        implements CreateType {
         };
 
-        public record DELETE(
+        public record DEPARTAMENTO_DELETE(
                         @NotNull @Getter Integer id)
-                        implements InputRequest {
+                        implements DeleteType {
         };
 
-        public record UPDATE(
+        public record DEPARTAMENTO_UPDATE(
+                        @NotNull @Getter Integer id,
                         @NotBlank @Getter String nombre,
                         @NotNull @Getter Integer idPais)
-                        implements InputRequest {
+                        implements UpdateType {
         };
 
-        public record PATCH(
+        public record DEPARTAMENTO_PATCH(
+                        @NotNull @Getter Integer id,
                         @Getter String nombre,
                         @Getter Integer idPais)
-                        implements InputRequest {
+                        implements PatchType {
         };
 
-        public record FIND(
+        public record DEPARTAMENTO_FIND(
                         @NotNull @Getter Integer id)
-                        implements InputRequest {
+                        implements FindType {
         };
 }
