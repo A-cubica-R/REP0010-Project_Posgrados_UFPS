@@ -1,10 +1,8 @@
 package ufps.edu.co.processor;
 
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import ufps.edu.co.domain.exceptions.DomainException;
 import ufps.edu.co.domain.exceptions.errorcodes.SedeErrorCode;
 import ufps.edu.co.maps.specific.SedeMap;
