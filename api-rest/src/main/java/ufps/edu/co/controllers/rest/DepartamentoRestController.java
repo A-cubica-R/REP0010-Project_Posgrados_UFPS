@@ -10,15 +10,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import ufps.edu.co.processor.DepartamentoProcessor;
 import ufps.edu.co.records.input.DepartamentoInput.DEPARTAMENTO_CREATE;
+import ufps.edu.co.records.input.DepartamentoInput.DEPARTAMENTO_DELETE;
 import ufps.edu.co.records.input.DepartamentoInput.DEPARTAMENTO_FIND;
+import ufps.edu.co.records.input.DepartamentoInput.DEPARTAMENTO_UPDATE;
 import ufps.edu.co.records.output.DepartamentoOutput;
 
 @RestController
@@ -63,16 +67,15 @@ public class DepartamentoRestController {
      * @param departamentoDTO
      * @return 200 con DTO actualizado o 404 si no existe
      */
-    // @PutMapping("/{id}")
-    // public ResponseEntity<DepartamentoDTO> update(@RequestBody int id, @RequestBody DepartamentoDTO departamentoDTO) {
-    //     // try {
-    //     //     DepartamentoDTO updated = service.update(id, departamentoDTO);
-    //     //     return ResponseEntity.ok(updated); // 200 OK
-    //     // } catch (RuntimeException e) {
-    //     //     return ResponseEntity.notFound().build(); // 404 Not found
-    //     // }
-    //     return null;
-    // }
+    @PutMapping("/update")
+    public ResponseEntity<DepartamentoOutput> update(@RequestBody DEPARTAMENTO_UPDATE request) {
+        try {
+            DepartamentoOutput updated = processor.update(request);
+            return ResponseEntity.ok(updated); // 200 OK
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build(); // 404 Not found
+        }
+    }
 
     /**
      * Delete by PK
@@ -80,14 +83,13 @@ public class DepartamentoRestController {
      * @param id
      * @return 204 eliminado o 404 si no existe
      */
-    // @DeleteMapping("/{id}")
-    // public ResponseEntity<Void> deleteById(@RequestBody int id) {
-    //     // try {
-    //     //     service.deleteById(id);
-    //     //     return ResponseEntity.noContent().build(); // 204 No content
-    //     // } catch (RuntimeException e) {
-    //     //     return ResponseEntity.notFound().build(); // 404 Not found
-    //     // }
-    //     return null;
-    // }
+    @DeleteMapping("/delete")
+    public ResponseEntity<Void> deleteById(@RequestBody DEPARTAMENTO_DELETE request) {
+        try {
+            processor.deleteById(request);
+            return ResponseEntity.noContent().build(); // 204 No content
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build(); // 404 Not found
+        }
+    }
 }

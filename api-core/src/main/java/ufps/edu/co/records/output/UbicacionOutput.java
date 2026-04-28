@@ -4,8 +4,9 @@ import lombok.Builder;
 import ufps.edu.co.records.OutputResponse;
 
 @Builder
-public record MunicipioOutput(
+public record UbicacionOutput(
         Integer id,
-        String nombre,
-        Integer idDepartamento
-) implements OutputResponse {}
+        String direccion,
+        Integer idMunicipio
+) implements OutputResponse {
+}

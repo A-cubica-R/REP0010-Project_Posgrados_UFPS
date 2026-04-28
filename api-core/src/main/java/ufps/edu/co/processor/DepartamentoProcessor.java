@@ -37,31 +37,61 @@ public class DepartamentoProcessor
 
     @Override
     public DepartamentoOutput update(DEPARTAMENTO_UPDATE input) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'update'");
+        try {
+            DepartamentoDTO dto = map.toDto(input);
+            try {
+                DepartamentoOutput output = map.toOutput(service.update(dto.getId(), dto));
+                return output;
+            } catch (Exception e) {
+                throw new RuntimeException("Error updating Departamento: " + e.getMessage(), e);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error updating Departamento: " + e.getMessage(), e);
+        }
     }
 
     @Override
     public DepartamentoOutput findById(DEPARTAMENTO_FIND input) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findById'");
+        try {
+            DepartamentoDTO dto = map.toDto(input);
+            try {
+                DepartamentoOutput output = map.toOutput(service.findById(dto.getId()));
+                return output;
+            } catch (Exception e) {
+                throw new RuntimeException("Error finding Departamento: " + e.getMessage(), e);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error finding Departamento: " + e.getMessage(), e);
+        }
     }
 
     @Override
     public List<DepartamentoOutput> findAll() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findAll'");
+        try {
+            List<DepartamentoDTO> dtoList = service.findAll();
+            List<DepartamentoOutput> outputList = map.toOutputList(dtoList);
+            return outputList;
+        } catch (Exception e) {
+            throw new RuntimeException("Error finding all Departamentos: " + e.getMessage(), e);
+        }
     }
 
     @Override
     public void deleteById(DEPARTAMENTO_DELETE input) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteById'");
+        try {
+            DepartamentoDTO dto = map.toDto(input);
+            try {
+                service.deleteById(dto.getId());
+            } catch (Exception e) {
+                throw new RuntimeException("Error deleting Departamento: " + e.getMessage(), e);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error deleting Departamento: " + e.getMessage(), e);
+        }
     }
 
     @Override
     public DepartamentoOutput patch(DEPARTAMENTO_PATCH input) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'patch'");
+        throw new UnsupportedOperationException("Patch operation is not supported for Departamento");
     }
 }

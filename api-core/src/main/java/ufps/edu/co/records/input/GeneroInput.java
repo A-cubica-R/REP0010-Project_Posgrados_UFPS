@@ -8,17 +8,17 @@ public enum GeneroInput {
         ;
 
         public record GENERO_CREATE(
-                @NotBlank String nombre) implements CreateType {
+                        @NotBlank String nombre) implements CreateType {
         }
 
         public record GENERO_UPDATE(
-                @NotNull Integer id,
-                @NotBlank String nombre) implements UpdateType {
+                        @NotNull Integer id,
+                        @NotBlank String nombre) implements UpdateType {
         }
 
         public record GENERO_PATCH(
-                @NotNull Integer id,
-                @NotBlank String nombre) implements PatchType {
+                        @NotNull Integer id,
+                        @NotBlank String nombre) implements PatchType {
         }
 
         public record GENERO_DELETE(@NotNull Integer id) implements DeleteType {
