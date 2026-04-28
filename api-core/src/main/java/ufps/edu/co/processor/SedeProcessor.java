@@ -6,20 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import ufps.edu.co.domain.exceptions.DomainException;
-import ufps.edu.co.domain.exceptions.errorcodes.DepartamentoErrorCode;
 import ufps.edu.co.domain.exceptions.errorcodes.SedeErrorCode;
 import ufps.edu.co.maps.specific.SedeMap;
-import ufps.edu.co.maps.specific.UbicacionMap;
 import ufps.edu.co.records.input.SedeInput.*;
 import ufps.edu.co.records.input.UbicacionInput.UBICACION_CREATE;
 import ufps.edu.co.records.output.SedeOutput;
 import ufps.edu.co.records.output.UbicacionOutput;
-import ufps.edu.co.rest.dto.DepartamentoDTO;
 import ufps.edu.co.rest.dto.SedeDTO;
-import ufps.edu.co.rest.dto.UbicacionDTO;
-import ufps.edu.co.rest.services.DepartamentoService;
 import ufps.edu.co.rest.services.SedeService;
-import ufps.edu.co.rest.services.UbicacionService;
 import ufps.edu.co.usecase.GlobalUseCase;
 
 @Service
