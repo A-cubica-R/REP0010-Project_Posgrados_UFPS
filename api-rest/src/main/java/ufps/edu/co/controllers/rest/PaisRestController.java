@@ -8,7 +8,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -43,7 +42,7 @@ public class PaisRestController {
      * @return 200 con DTO o 404 si no existe
      */
     @GetMapping("/list")
-    public ResponseEntity<PaisOutput> findById(@PathVariable PAIS_FIND find) {
+    public ResponseEntity<PaisOutput> findById(@RequestBody PAIS_FIND find) {
         PaisOutput paisOutput = processor.findById(find);
         if (paisOutput != null) {
             return ResponseEntity.ok(paisOutput); // 200 OK
@@ -87,10 +86,10 @@ public class PaisRestController {
      * @param id
      * @return 204 eliminado o 404 si no existe
      */
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> deleteById(@PathVariable PAIS_DELETE id) {
+    @DeleteMapping("/delete")
+    public ResponseEntity<Void> deleteById(@RequestBody PAIS_DELETE request) {
         try {
-            processor.deleteById(id);
+            processor.deleteById(request);
             return ResponseEntity.noContent().build(); // 204 No content
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build(); // 404 Not found

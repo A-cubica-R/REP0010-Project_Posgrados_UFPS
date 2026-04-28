@@ -13,27 +13,26 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import ufps.edu.co.processor.ModalidadProcessor;
-import ufps.edu.co.records.input.ModalidadInput.*;
-import ufps.edu.co.records.output.ModalidadOutput;
+import ufps.edu.co.processor.OtrosvaloresProcessor;
+import ufps.edu.co.records.input.OtrosvaloresInput.*;
+import ufps.edu.co.records.output.OtrosvaloresOutput;
 
 @RestController
-@RequestMapping(value = "/modalidad", produces = MediaType.APPLICATION_JSON_VALUE)
-public class ModalidadRestController {
+@RequestMapping(value = "/otrosvalores", produces = MediaType.APPLICATION_JSON_VALUE)
+public class OtrosvaloresRestController {
 
     @Autowired
-    private ModalidadProcessor processor;
+    private OtrosvaloresProcessor processor;
 
     @GetMapping("/listall")
-    public ResponseEntity<List<ModalidadOutput>> findAll() {
-        List<ModalidadOutput> list = processor.findAll();
+    public ResponseEntity<List<OtrosvaloresOutput>> findAll() {
+        List<OtrosvaloresOutput> list = processor.findAll();
         return ResponseEntity.ok(list);
     }
 
     @GetMapping("/list")
-    public ResponseEntity<ModalidadOutput> findById(@RequestBody MODALIDAD_FIND request) {
-        ModalidadOutput output = processor.findById(request);
+    public ResponseEntity<OtrosvaloresOutput> findById(@RequestBody OTROSVALORES_FIND request) {
+        OtrosvaloresOutput output = processor.findById(request);
         if (output != null) {
             return ResponseEntity.ok(output);
         } else {
@@ -42,15 +41,15 @@ public class ModalidadRestController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<ModalidadOutput> create(@RequestBody MODALIDAD_CREATE request) {
-        ModalidadOutput output = processor.create(request);
+    public ResponseEntity<OtrosvaloresOutput> create(@RequestBody OTROSVALORES_CREATE request) {
+        OtrosvaloresOutput output = processor.create(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(output);
     }
 
     @PutMapping("/update")
-    public ResponseEntity<ModalidadOutput> update(@RequestBody MODALIDAD_UPDATE request) {
+    public ResponseEntity<OtrosvaloresOutput> update(@RequestBody OTROSVALORES_UPDATE request) {
         try {
-            ModalidadOutput updated = processor.update(request);
+            OtrosvaloresOutput updated = processor.update(request);
             return ResponseEntity.ok(updated);
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
@@ -58,7 +57,7 @@ public class ModalidadRestController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<Void> deleteById(@RequestBody MODALIDAD_DELETE request) {
+    public ResponseEntity<Void> deleteById(@RequestBody OTROSVALORES_DELETE request) {
         try {
             processor.deleteById(request);
             return ResponseEntity.noContent().build();

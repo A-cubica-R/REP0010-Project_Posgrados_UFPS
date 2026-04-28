@@ -11,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,14 +28,14 @@ public class DepartamentoRestController {
     @Autowired
     private DepartamentoProcessor processor;
 
-    @GetMapping("")
+    @GetMapping("/listall")
     public ResponseEntity<List<DepartamentoOutput>> findAll() {
         List<DepartamentoOutput> list = processor.findAll();
         return ResponseEntity.ok(list); // 200 OK
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<DepartamentoOutput> findById(@PathVariable DEPARTAMENTO_FIND request) {
+    @GetMapping("/list")
+    public ResponseEntity<DepartamentoOutput> findById(@RequestBody DEPARTAMENTO_FIND request) {
         DepartamentoOutput departamentoOutput = processor.findById(request);
         if ( departamentoOutput != null ) {
             return ResponseEntity.ok(departamentoOutput); // 200 OK
@@ -65,7 +64,7 @@ public class DepartamentoRestController {
      * @return 200 con DTO actualizado o 404 si no existe
      */
     // @PutMapping("/{id}")
-    // public ResponseEntity<DepartamentoDTO> update(@PathVariable int id, @RequestBody DepartamentoDTO departamentoDTO) {
+    // public ResponseEntity<DepartamentoDTO> update(@RequestBody int id, @RequestBody DepartamentoDTO departamentoDTO) {
     //     // try {
     //     //     DepartamentoDTO updated = service.update(id, departamentoDTO);
     //     //     return ResponseEntity.ok(updated); // 200 OK
@@ -82,7 +81,7 @@ public class DepartamentoRestController {
      * @return 204 eliminado o 404 si no existe
      */
     // @DeleteMapping("/{id}")
-    // public ResponseEntity<Void> deleteById(@PathVariable int id) {
+    // public ResponseEntity<Void> deleteById(@RequestBody int id) {
     //     // try {
     //     //     service.deleteById(id);
     //     //     return ResponseEntity.noContent().build(); // 204 No content

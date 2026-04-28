@@ -8,7 +8,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,7 +32,7 @@ public class JornadaRestController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<JornadaOutput> findById(@PathVariable JORNADA_FIND request) {
+    public ResponseEntity<JornadaOutput> findById(@RequestBody JORNADA_FIND request) {
         JornadaOutput output = processor.findById(request);
         if (output != null) {
             return ResponseEntity.ok(output);
@@ -49,7 +48,7 @@ public class JornadaRestController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<JornadaOutput> update(@PathVariable int id, @RequestBody JORNADA_UPDATE request) {
+    public ResponseEntity<JornadaOutput> update(@RequestBody int id, @RequestBody JORNADA_UPDATE request) {
         try {
             JornadaOutput updated = processor.update(request);
             return ResponseEntity.ok(updated);
@@ -59,7 +58,7 @@ public class JornadaRestController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<Void> deleteById(@PathVariable JORNADA_DELETE request) {
+    public ResponseEntity<Void> deleteById(@RequestBody JORNADA_DELETE request) {
         try {
             processor.deleteById(request);
             return ResponseEntity.noContent().build();
