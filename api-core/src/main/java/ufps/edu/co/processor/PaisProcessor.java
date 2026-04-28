@@ -5,8 +5,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ufps.edu.co.maps.PaisMap;
-import ufps.edu.co.records.input.PaisInput;
+import ufps.edu.co.maps.specific.PaisMap;
 import ufps.edu.co.records.input.PaisInput.*;
 import ufps.edu.co.records.output.PaisOutput;
 import ufps.edu.co.rest.dto.PaisDTO;
@@ -14,7 +13,7 @@ import ufps.edu.co.rest.services.PaisService;
 import ufps.edu.co.usecase.GlobalUseCase;
 
 @Service
-public class PaisProcessor implements GlobalUseCase<PaisInput.CREATE, PaisInput.UPDATE, PaisOutput, Integer> {
+public class PaisProcessor implements GlobalUseCase<PAIS_CREATE, PAIS_UPDATE, PAIS_DELETE, PAIS_PATCH, PAIS_FIND, PaisOutput> {
 
     @Autowired
     private PaisService service;
@@ -23,7 +22,7 @@ public class PaisProcessor implements GlobalUseCase<PaisInput.CREATE, PaisInput.
     private PaisMap map;
 
     @Override
-    public PaisOutput create(CREATE input) {
+    public PaisOutput create(PAIS_CREATE input) {
         try {
             PaisDTO dto = map.toDto(input);
             try {
@@ -38,11 +37,11 @@ public class PaisProcessor implements GlobalUseCase<PaisInput.CREATE, PaisInput.
     }
 
     @Override
-    public PaisOutput update(Integer id, UPDATE input) {
+    public PaisOutput update(PAIS_UPDATE input) {
         try {
-            PaisDTO dto = map.toDto(input, id);
+            PaisDTO dto = map.toDto(input);
             try {
-                PaisOutput output = map.toOutput(service.update(id, dto));
+                PaisOutput output = map.toOutput(service.update(dto.getId(), dto));
                 return output;
             } catch (Exception e) {
                 throw new RuntimeException("Error updating Pais: " + e.getMessage(), e);
@@ -53,9 +52,9 @@ public class PaisProcessor implements GlobalUseCase<PaisInput.CREATE, PaisInput.
     }
 
     @Override
-    public PaisOutput findById(Integer id) {
+    public PaisOutput findById(PAIS_FIND input) {
         try {
-            PaisOutput output = map.toOutput(service.findById(id));
+            PaisOutput output = map.toOutput(service.findById(input.id()));
             return output;
         } catch (Exception e) {
             throw new RuntimeException("Error finding Pais by ID: " + e.getMessage(), e);
@@ -72,11 +71,17 @@ public class PaisProcessor implements GlobalUseCase<PaisInput.CREATE, PaisInput.
     }
 
     @Override
-    public void deleteById(Integer id) {
+    public void deleteById(PAIS_DELETE input) {
         try {
-            service.deleteById(id);
+            service.deleteById(input.id());
         } catch (Exception e) {
             throw new RuntimeException("Error deleting Pais by ID: " + e.getMessage(), e);
         }
+    }
+
+    @Override
+    public PaisOutput patch(PAIS_PATCH input) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'patch'");
     }
 }

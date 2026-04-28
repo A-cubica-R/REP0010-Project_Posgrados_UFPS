@@ -21,7 +21,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ufps.edu.co.processor.DepartamentoProcessor;
 import ufps.edu.co.records.input.DepartamentoInput;
-import ufps.edu.co.records.input.DepartamentoInput.CREATE;
+import ufps.edu.co.records.input.DepartamentoInput.DEPARTAMENTO_CREATE;
+import ufps.edu.co.records.input.DepartamentoInput.DEPARTAMENTO_FIND;
 import ufps.edu.co.records.output.DepartamentoOutput;
 import ufps.edu.co.rest.dto.DepartamentoDTO;
 import ufps.edu.co.rest.services.DepartamentoService;
@@ -33,34 +34,21 @@ public class DepartamentoRestController {
     @Autowired
     private DepartamentoProcessor processor;
 
-    /**
-     * Get ALL
-     *
-     * @return 200 con lista de DTO
-     */
-    // @GetMapping("")
-    // public ResponseEntity<List<DepartamentoDTO>> findAll() {
-    //     // List<DepartamentoDTO> list = service.findAll();
-    //     // return ResponseEntity.ok(list); // 200 OK
-    //     return null;
-    // }
+    @GetMapping("")
+    public ResponseEntity<List<DepartamentoOutput>> findAll() {
+        List<DepartamentoOutput> list = processor.findAll();
+        return ResponseEntity.ok(list); // 200 OK
+    }
 
-    /**
-     * Get ONE identified by the given PK
-     *
-     * @param id
-     * @return 200 con DTO o 404 si no existe
-     */
-    // @GetMapping("/{id}")
-    // public ResponseEntity<DepartamentoDTO> findById(@PathVariable int id) {
-    //     // DepartamentoDTO departamentoDTO = service.findById(id);
-    //     // if ( departamentoDTO != null ) {
-    //     //     return ResponseEntity.ok(departamentoDTO); // 200 OK
-    //     // } else {
-    //     //     return ResponseEntity.notFound().build(); // 404 Not found
-    //     // }
-    //     return null;
-    // }
+    @GetMapping("/{id}")
+    public ResponseEntity<DepartamentoOutput> findById(@PathVariable DEPARTAMENTO_FIND request) {
+        DepartamentoOutput departamentoOutput = processor.findById(request);
+        if ( departamentoOutput != null ) {
+            return ResponseEntity.ok(departamentoOutput); // 200 OK
+        } else {
+            return ResponseEntity.notFound().build(); // 404 Not found
+        }
+    }
 
     /**
      * Create
@@ -69,7 +57,7 @@ public class DepartamentoRestController {
      * @return 201 creado o 409 si ya existe
      */
     @PostMapping("/create")
-    public ResponseEntity<DepartamentoOutput> create(@RequestBody CREATE request) {
+    public ResponseEntity<DepartamentoOutput> create(@RequestBody DEPARTAMENTO_CREATE request) {
         DepartamentoOutput output = processor.create(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(output);
     }
