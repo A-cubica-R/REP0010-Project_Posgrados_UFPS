@@ -2,12 +2,7 @@ package ufps.edu.co.maps.specific;
 
 import org.springframework.stereotype.Component;
 import ufps.edu.co.maps.GlobalMapper;
-import ufps.edu.co.records.input.DepartamentoInput;
-import ufps.edu.co.records.input.DepartamentoInput.DEPARTAMENTO_CREATE;
-import ufps.edu.co.records.input.DepartamentoInput.DEPARTAMENTO_DELETE;
-import ufps.edu.co.records.input.DepartamentoInput.DEPARTAMENTO_FIND;
-import ufps.edu.co.records.input.DepartamentoInput.DEPARTAMENTO_PATCH;
-import ufps.edu.co.records.input.DepartamentoInput.DEPARTAMENTO_UPDATE;
+import ufps.edu.co.records.input.DepartamentoInput.*;
 import ufps.edu.co.records.output.DepartamentoOutput;
 import ufps.edu.co.rest.dto.DepartamentoDTO;
 
