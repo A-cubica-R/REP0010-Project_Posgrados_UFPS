@@ -11,6 +11,11 @@ public enum UbicacionInput {
             @NotBlank String direccion,
             @NotNull Integer idMunicipio)
             implements CreateType {
+
+                public UBICACION_CREATE(UBICACION_CREATE ubicacion) {
+                    this(ubicacion.direccion(), ubicacion.idMunicipio());
+                }
+
     };
 
     public record UBICACION_DELETE(

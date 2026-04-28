@@ -66,4 +66,15 @@ public class UbicacionMap extends
         return null;
     }
 
+    public UbicacionDTO toDtoWithMunicipio (UbicacionOutput output) {
+        if (output != null) {
+            UbicacionDTO dto = new UbicacionDTO();
+            dto.setId(output.id());
+            dto.setDireccion(output.direccion());
+            dto.setIdMunicipio(output.idMunicipio());
+            return dto;
+        }
+        return null;
+    }
+
 }
