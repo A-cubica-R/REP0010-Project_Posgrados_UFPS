@@ -1,11 +1,7 @@
 package ufps.edu.co.records.input;
 
 import jakarta.validation.constraints.NotNull;
-import ufps.edu.co.records.contracts.CreateType;
-import ufps.edu.co.records.contracts.DeleteType;
-import ufps.edu.co.records.contracts.FindType;
-import ufps.edu.co.records.contracts.PatchType;
-import ufps.edu.co.records.contracts.UpdateType;
+import ufps.edu.co.records.contracts.*;
 import ufps.edu.co.records.input.UbicacionInput.UBICACION_CREATE;
 
 public enum SedeInput {
