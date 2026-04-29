@@ -31,7 +31,7 @@ public class JornadaRestController {
         return ResponseEntity.ok(list);
     }
 
-    @GetMapping("/list")
+    @PostMapping(value = "/list", consumes   = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<JornadaOutput> findById(@RequestBody JORNADA_FIND request) {
         JornadaOutput output = processor.findById(request);
         if (output != null) {

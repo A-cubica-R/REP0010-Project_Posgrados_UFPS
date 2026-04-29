@@ -38,7 +38,7 @@ public class DepartamentoRestController {
         return ResponseEntity.ok(list); // 200 OK
     }
 
-    @GetMapping("/list")
+    @PostMapping(value = "/list", consumes   = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<DepartamentoOutput> findById(@RequestBody DEPARTAMENTO_FIND request) {
         DepartamentoOutput departamentoOutput = processor.findById(request);
         if ( departamentoOutput != null ) {

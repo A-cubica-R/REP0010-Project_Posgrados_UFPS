@@ -30,7 +30,7 @@ public class GeneroRestController {
         return ResponseEntity.ok(list);
     }
 
-    @GetMapping("/list")
+    @PostMapping(value = "/list", consumes   = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<GeneroOutput> findById(@RequestBody GENERO_FIND request) {
         GeneroOutput output = processor.findById(request);
         if (output != null) {

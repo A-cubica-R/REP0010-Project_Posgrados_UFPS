@@ -32,7 +32,7 @@ public class MunicipioRestController {
         return ResponseEntity.ok(list);
     }
 
-    @GetMapping("/list")
+    @PostMapping(value = "/list", consumes   = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MunicipioOutput> findById(@RequestBody MUNICIPIO_FIND request) {
         MunicipioOutput output = processor.findById(request);
         if (output != null) {
