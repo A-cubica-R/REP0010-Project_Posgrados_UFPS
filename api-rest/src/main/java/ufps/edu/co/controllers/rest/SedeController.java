@@ -31,7 +31,7 @@ public class SedeController {
         return ResponseEntity.ok(list);
     }
 
-    @GetMapping("/list")
+    @PostMapping(value ="/list", consumes   = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SedeOutput> findById(@RequestBody SEDE_FIND request) {
         SedeOutput output = processor.findById(request);
         if (output != null) {

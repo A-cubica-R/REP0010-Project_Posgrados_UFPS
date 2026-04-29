@@ -31,7 +31,7 @@ public class ModalidadRestController {
         return ResponseEntity.ok(list);
     }
 
-    @GetMapping("/list")
+    @PostMapping(value = "/list", consumes   = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ModalidadOutput> findById(@RequestBody MODALIDAD_FIND request) {
         ModalidadOutput output = processor.findById(request);
         if (output != null) {

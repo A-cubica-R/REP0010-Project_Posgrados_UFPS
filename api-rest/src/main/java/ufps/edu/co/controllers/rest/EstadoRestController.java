@@ -31,7 +31,7 @@ public class EstadoRestController {
         return ResponseEntity.ok(list);
     }
 
-    @GetMapping("/list")
+    @PostMapping(value = "/list", consumes   = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<EstadoOutput> findById(@RequestBody ESTADO_FIND request) {
         EstadoOutput output = processor.findById(request);
         if (output != null) {

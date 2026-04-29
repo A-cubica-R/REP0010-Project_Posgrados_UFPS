@@ -41,7 +41,7 @@ public class PaisRestController {
      * @param id
      * @return 200 con DTO o 404 si no existe
      */
-    @GetMapping("/list")
+    @PostMapping(value = "/list", consumes   = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PaisOutput> findById(@RequestBody PAIS_FIND find) {
         PaisOutput paisOutput = processor.findById(find);
         if (paisOutput != null) {

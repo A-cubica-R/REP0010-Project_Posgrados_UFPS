@@ -30,7 +30,7 @@ public class OtrosvaloresRestController {
         return ResponseEntity.ok(list);
     }
 
-    @GetMapping("/list")
+    @PostMapping(value = "/list", consumes   = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<OtrosvaloresOutput> findById(@RequestBody OTROSVALORES_FIND request) {
         OtrosvaloresOutput output = processor.findById(request);
         if (output != null) {

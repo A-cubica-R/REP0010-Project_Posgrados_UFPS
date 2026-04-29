@@ -29,7 +29,7 @@ public class UbicacionRestController {
         return ResponseEntity.ok(list);
     }
 
-    @GetMapping("/list")
+    @PostMapping(value = "/list", consumes   = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UbicacionOutput> findById(@RequestBody UBICACION_FIND request) {
         UbicacionOutput output = processor.findById(request);
         if (output != null) {
