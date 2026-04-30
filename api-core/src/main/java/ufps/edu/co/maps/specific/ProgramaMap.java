@@ -30,7 +30,7 @@ public class ProgramaMap extends
         ProgramaDTO dto = new ProgramaDTO();
         dto.setCodigo(input.codigo());
         dto.setNombre(input.nombre());
-        dto.setSemestres(input.semestres());
+        dto.setDuracion(input.semestres());
         dto.setCorreo(input.correo());
         dto.setRegistrosnies(input.registrosnies());
         dto.setNivelformacion(input.nivelformacion());
@@ -52,7 +52,7 @@ public class ProgramaMap extends
         dto.setId(input.id());
         dto.setCodigo(input.codigo());
         dto.setNombre(input.nombre());
-        dto.setSemestres(input.semestres());
+        dto.setDuracion(input.semestres());
         dto.setCorreo(input.correo());
         dto.setRegistrosnies(input.registrosnies());
         dto.setNivelformacion(input.nivelformacion());
@@ -84,7 +84,7 @@ public class ProgramaMap extends
         if (input.nombre() != null)
             dto.setNombre(input.nombre());
         if (input.semestres() != null)
-            dto.setSemestres(input.semestres());
+            dto.setDuracion(input.semestres());
         if (input.correo() != null)
             dto.setCorreo(input.correo());
         if (input.registrosnies() != null)
@@ -188,7 +188,7 @@ public class ProgramaMap extends
                 .id(dto.getId())
                 .codigo(dto.getCodigo())
                 .nombre(dto.getNombre())
-                .semestres(dto.getSemestres())
+                .semestres(dto.getDuracion())
                 .correo(dto.getCorreo())
                 .registrosnies(dto.getRegistrosnies())
                 .nivelformacion(dto.getNivelformacion())
