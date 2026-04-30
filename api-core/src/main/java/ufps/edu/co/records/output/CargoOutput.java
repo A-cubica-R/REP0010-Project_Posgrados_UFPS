@@ -4,9 +4,9 @@ import lombok.Builder;
 import ufps.edu.co.records.OutputResponse;
 
 @Builder
-public record SedeOutput(
+public record CargoOutput(
         Integer id,
         String nombre,
-        UbicacionOutput ubicacion
-) implements OutputResponse {
+        String descripcion,
+        Integer idPrograma) implements OutputResponse {
 }
