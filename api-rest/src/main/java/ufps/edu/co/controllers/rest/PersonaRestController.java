@@ -13,26 +13,27 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ufps.edu.co.processor.CohorteProcessor;
-import ufps.edu.co.records.input.CohorteInput.*;
-import ufps.edu.co.records.output.CohorteOutput;
+
+import ufps.edu.co.processor.PersonaProcessor;
+import ufps.edu.co.records.input.PersonaInput.*;
+import ufps.edu.co.records.output.PersonaOutput;
 
 @RestController
-@RequestMapping(value = "/cohorte", produces = MediaType.APPLICATION_JSON_VALUE)
-public class CohorteRestController {
+@RequestMapping(value = "/persona", produces = MediaType.APPLICATION_JSON_VALUE)
+public class PersonaRestController {
 
     @Autowired
-    private CohorteProcessor processor;
+    private PersonaProcessor processor;
 
     @GetMapping("/listall")
-    public ResponseEntity<List<CohorteOutput>> findAll() {
-        List<CohorteOutput> list = processor.findAll();
+    public ResponseEntity<List<PersonaOutput>> findAll() {
+        List<PersonaOutput> list = processor.findAll();
         return ResponseEntity.ok(list);
     }
 
-    @PostMapping(value = "/list", consumes   = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CohorteOutput> findById(@RequestBody COHORTE_FIND request) {
-        CohorteOutput output = processor.findById(request);
+    @PostMapping(value = "/list", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<PersonaOutput> findById(@RequestBody PERSONA_FIND request) {
+        PersonaOutput output = processor.findById(request);
         if (output != null) {
             return ResponseEntity.ok(output);
         } else {
@@ -41,15 +42,15 @@ public class CohorteRestController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<CohorteOutput> create(@RequestBody COHORTE_CREATE request) {
-        CohorteOutput output = processor.create(request);
+    public ResponseEntity<PersonaOutput> create(@RequestBody PERSONA_CREATE request) {
+        PersonaOutput output = processor.create(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(output);
     }
 
     @PutMapping("/update")
-    public ResponseEntity<CohorteOutput> update(@RequestBody COHORTE_UPDATE request) {
+    public ResponseEntity<PersonaOutput> update(@RequestBody PERSONA_UPDATE request) {
         try {
-            CohorteOutput updated = processor.update(request);
+            PersonaOutput updated = processor.update(request);
             return ResponseEntity.ok(updated);
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
@@ -57,7 +58,7 @@ public class CohorteRestController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<Void> deleteById(@RequestBody COHORTE_DELETE request) {
+    public ResponseEntity<Void> deleteById(@RequestBody PERSONA_DELETE request) {
         try {
             processor.deleteById(request);
             return ResponseEntity.noContent().build();

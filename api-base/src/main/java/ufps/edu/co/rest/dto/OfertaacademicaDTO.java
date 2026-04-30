@@ -4,8 +4,11 @@
  */
 package ufps.edu.co.rest.dto;
 
-import java.io.Serializable;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+
+import java.io.Serializable;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
@@ -18,6 +21,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+@Builder
+@AllArgsConstructor
 public class OfertaacademicaDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;

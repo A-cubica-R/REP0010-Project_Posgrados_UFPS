@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 
 /**
  * DTO class for "Genero"
@@ -19,6 +21,8 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
+@Builder
+@AllArgsConstructor
 public class GeneroDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
