@@ -9,19 +9,19 @@ public enum SedeInput {
 
     public record SEDE_CREATE(
             @NotNull String nombre,
-            @NotNull Integer idDireccion) implements CreateType {
+            @NotNull Integer idUbicacion) implements CreateType {
     }
 
     public record SEDE_UPDATE(
             @NotNull Integer id,
             @NotNull String nombre,
-            @NotNull Integer idDireccion) implements UpdateType {
+            @NotNull Integer idUbicacion) implements UpdateType {
     }
 
     public record SEDE_PATCH(
             @NotNull Integer id,
             @NotNull String nombre,
-            @NotNull Integer idDireccion) implements PatchType {
+            @NotNull Integer idUbicacion) implements PatchType {
     }
 
     public record SEDE_DELETE(

@@ -17,7 +17,7 @@ public class SedeMap extends GlobalMapper <SEDE_CREATE, SEDE_UPDATE, SEDE_DELETE
     public SedeDTO toDtoCreate(SEDE_CREATE create) {
         SedeDTO dto = new SedeDTO();
         dto.setNombre(create.nombre());
-        dto.setIdUbicacion(create.idDireccion());
+        dto.setIdUbicacion(create.idUbicacion());
         return dto;
     }
 
@@ -25,7 +25,7 @@ public class SedeMap extends GlobalMapper <SEDE_CREATE, SEDE_UPDATE, SEDE_DELETE
     public SedeDTO toDtoUpdate(SEDE_UPDATE input) {
         SedeDTO dto = new SedeDTO();
         dto.setNombre(input.nombre());
-        dto.setIdUbicacion(input.idDireccion());
+        dto.setIdUbicacion(input.idUbicacion());
         return dto;
     }
 
@@ -33,7 +33,7 @@ public class SedeMap extends GlobalMapper <SEDE_CREATE, SEDE_UPDATE, SEDE_DELETE
     public SedeDTO toDtoPatch(SEDE_PATCH input) {
         SedeDTO dto = new SedeDTO();
         dto.setNombre(input.nombre());
-        dto.setIdUbicacion(input.idDireccion());
+        dto.setIdUbicacion(input.idUbicacion());
         return dto;
     }
 
