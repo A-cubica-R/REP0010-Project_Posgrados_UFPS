@@ -15,7 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 @RestController
-@RequestMapping(value = "/sedes", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/sedesEsp", produces = MediaType.APPLICATION_JSON_VALUE)
 public class SedeRestCase {
 
     @Autowired
