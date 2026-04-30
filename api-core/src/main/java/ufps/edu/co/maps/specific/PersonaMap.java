@@ -1,0 +1,143 @@
+package ufps.edu.co.maps.specific;
+
+import java.util.List;
+
+import org.springframework.stereotype.Component;
+
+import ufps.edu.co.maps.GlobalMapper;
+import ufps.edu.co.records.input.PersonaInput.PERSONA_CREATE;
+import ufps.edu.co.records.input.PersonaInput.PERSONA_DELETE;
+import ufps.edu.co.records.input.PersonaInput.PERSONA_FIND;
+import ufps.edu.co.records.input.PersonaInput.PERSONA_PATCH;
+import ufps.edu.co.records.input.PersonaInput.PERSONA_UPDATE;
+import ufps.edu.co.records.output.GeneroOutput;
+import ufps.edu.co.records.output.PersonaOutput;
+import ufps.edu.co.records.output.UbicacionOutput;
+import ufps.edu.co.rest.dto.PersonaDTO;
+
+@Component
+public class PersonaMap extends
+        GlobalMapper<PERSONA_CREATE, PERSONA_UPDATE, PERSONA_DELETE, PERSONA_PATCH, PERSONA_FIND, PersonaOutput, PersonaDTO> {
+
+    public PersonaMap() {
+        super(PERSONA_CREATE.class, PERSONA_UPDATE.class, PERSONA_DELETE.class, PERSONA_PATCH.class,
+                PERSONA_FIND.class);
+    }
+
+    @Override
+    protected PersonaDTO toDtoCreate(PERSONA_CREATE input) {
+        PersonaDTO dto = new PersonaDTO();
+        dto.setNombres(input.nombres());
+        dto.setApellidos(input.apellidos());
+        dto.setCorreo(input.correo());
+        dto.setFechanacimiento(input.fechanacimiento());
+        dto.setCelular(input.celular());
+        dto.setTelefono(input.telefono());
+        dto.setIdUbicacion(input.idUbicacion());
+        dto.setIdGenero(input.idGenero());
+        return dto;
+    }
+
+    @Override
+    protected PersonaDTO toDtoUpdate(PERSONA_UPDATE input) {
+        PersonaDTO dto = new PersonaDTO();
+        dto.setId(input.id());
+        dto.setNombres(input.nombres());
+        dto.setApellidos(input.apellidos());
+        dto.setCorreo(input.correo());
+        dto.setFechanacimiento(input.fechanacimiento());
+        dto.setCelular(input.celular());
+        dto.setTelefono(input.telefono());
+        dto.setIdUbicacion(input.idUbicacion());
+        dto.setIdGenero(input.idGenero());
+        return dto;
+    }
+
+    @Override
+    protected PersonaDTO toDtoDelete(PERSONA_DELETE input) {
+        PersonaDTO dto = new PersonaDTO();
+        dto.setId(input.id());
+        return dto;
+    }
+
+    @Override
+    protected PersonaDTO toDtoPatch(PERSONA_PATCH input) {
+        PersonaDTO.PersonaDTOBuilder builder = PersonaDTO.builder()
+                .id(input.id());
+
+        if (input.nombres() != null) {
+            builder.nombres(input.nombres());
+        }
+        if (input.apellidos() != null) {
+            builder.apellidos(input.apellidos());
+        }
+        if (input.correo() != null) {
+            builder.correo(input.correo());
+        }
+        if (input.fechanacimiento() != null) {
+            builder.fechanacimiento(input.fechanacimiento());
+        }
+        if (input.celular() != null) {
+            builder.celular(input.celular());
+        }
+        if (input.telefono() != null) {
+            builder.telefono(input.telefono());
+        }
+        if (input.idUbicacion() != null) {
+            builder.idUbicacion(input.idUbicacion());
+        }
+        if (input.idGenero() != null) {
+            builder.idGenero(input.idGenero());
+        }
+
+        return builder.build();
+    }
+
+    @Override
+    protected PersonaDTO toDtoFind(PERSONA_FIND input) {
+        PersonaDTO dto = new PersonaDTO();
+        dto.setId(input.id());
+        return dto;
+    }
+
+    @Override
+    public PersonaOutput toOutput(PersonaDTO dto) {
+        if (dto == null) {
+            return null;
+        }
+
+        UbicacionOutput ubicacion = null;
+        if (dto.getUbicacion() != null) {
+            ubicacion = UbicacionOutput.builder()
+                    .id(dto.getUbicacion().getId())
+                    .direccion(dto.getUbicacion().getDireccion())
+                    .idMunicipio(dto.getUbicacion().getIdMunicipio())
+                    .build();
+        }
+
+        GeneroOutput genero = null;
+        if (dto.getGenero() != null) {
+            genero = GeneroOutput.builder()
+                    .id(dto.getGenero().getId())
+                    .nombre(dto.getGenero().getNombre())
+                    .build();
+        }
+
+        return new PersonaOutput(
+                dto.getId(),
+                dto.getNombres(),
+                dto.getApellidos(),
+                dto.getCorreo(),
+                dto.getFechanacimiento(),
+                dto.getCelular(),
+                dto.getTelefono(),
+                dto.getIdUbicacion(),
+                dto.getIdGenero(),
+                ubicacion,
+                genero);
+    }
+
+    public List<PersonaOutput> toOutputList(List<PersonaDTO> dtoList) {
+        return dtoList.stream().map(this::toOutput).toList();
+    }
+}
