@@ -1,0 +1,29 @@
+package ufps.edu.co.controllers.cases;
+
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import ufps.edu.co.processor.SedeProcessor;
+import ufps.edu.co.records.input.SedeInput.SEDE_CREATE_WITH_UBICACION;
+import ufps.edu.co.records.output.SedeOutput;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+
+@RestController
+@RequestMapping(value = "/sedesEsp", produces = MediaType.APPLICATION_JSON_VALUE)
+public class SedeRestCase {
+
+    @Autowired
+    private SedeProcessor processor;
+
+    @PostMapping("/createWithUbicacion")
+    public ResponseEntity<SedeOutput> createWithUbicacion(@RequestBody SEDE_CREATE_WITH_UBICACION request) {
+        SedeOutput output = processor.createWithUbicacion(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(output);
+    }
+}

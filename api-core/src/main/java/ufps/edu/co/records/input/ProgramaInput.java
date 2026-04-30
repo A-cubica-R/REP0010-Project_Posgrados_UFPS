@@ -1,0 +1,66 @@
+package ufps.edu.co.records.input;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import ufps.edu.co.records.contracts.*;
+
+public enum ProgramaInput {
+    ;
+
+    public record PROGRAMA_CREATE(
+            @NotNull Integer codigo,
+            @NotBlank String nombre,
+            @NotNull Integer semestres,
+            String correo,
+            String registrosnies,
+            String nivelformacion,
+            String titulo,
+            String rcmineducacion,
+            Integer creditos,
+            String periodicidad,
+            Float valormatricula,
+            @NotNull Integer idSede,
+            @NotNull Integer idAdministrativo,
+            @NotNull Integer idFacultad,
+            @NotNull Integer idOtros) implements CreateType {}
+
+    public record PROGRAMA_UPDATE(
+            @NotNull Integer id,
+            @NotNull Integer codigo,
+            @NotBlank String nombre,
+            @NotNull Integer semestres,
+            String correo,
+            String registrosnies,
+            String nivelformacion,
+            String titulo,
+            String rcmineducacion,
+            Integer creditos,
+            String periodicidad,
+            Float valormatricula,
+            @NotNull Integer idSede,
+            @NotNull Integer idAdministrativo,
+            @NotNull Integer idFacultad,
+            @NotNull Integer idOtros) implements UpdateType {}
+
+    public record PROGRAMA_PATCH(
+            @NotNull Integer id,
+            Integer codigo,
+            String nombre,
+            Integer semestres,
+            String correo,
+            String registrosnies,
+            String nivelformacion,
+            String titulo,
+            String rcmineducacion,
+            Integer creditos,
+            String periodicidad,
+            Float valormatricula,
+            Integer idSede,
+            Integer idAdministrativo,
+            Integer idFacultad,
+            Integer idOtros) implements PatchType {}
+
+    public record PROGRAMA_DELETE(@NotNull Integer id) implements DeleteType {}
+
+    public record PROGRAMA_FIND(@NotNull Integer id) implements FindType {}
+}
