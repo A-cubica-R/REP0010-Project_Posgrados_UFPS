@@ -6,6 +6,5 @@ import ufps.edu.co.records.OutputResponse;
 @Builder
 public record DepartamentoOutput(
         Integer id,
-        String nombre,
-        Integer idPais
+        String nombre
 ) implements OutputResponse {}

@@ -68,9 +68,6 @@ public class OfertaacademicaMap extends GlobalMapper<OFERTAACADEMICA_CREATE, OFE
         return OfertaacademicaOutput.builder()
                 .id(dto.getId())
                 .encuentros(dto.getEncuentros())
-                .idPrograma(dto.getIdPrograma())
-                .idModalidad(dto.getIdModalidad())
-                .idJornada(dto.getIdJornada())
                 .build();
     }
 

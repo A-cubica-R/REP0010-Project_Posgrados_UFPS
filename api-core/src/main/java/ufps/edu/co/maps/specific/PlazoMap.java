@@ -82,7 +82,7 @@ public class PlazoMap extends
                     .build();
         }
 
-        return new PlazoOutput(dto.getId(), dto.getFechainicio(), dto.getFechafin(), dto.getIdTipoplazo(), tipoplazo);
+        return new PlazoOutput(dto.getId(), dto.getFechainicio(), dto.getFechafin(), tipoplazo);
     }
 
     public List<PlazoOutput> toOutputList(List<PlazoDTO> dtoList) {

@@ -7,6 +7,5 @@ import ufps.edu.co.records.OutputResponse;
 public record CargoOutput(
         Integer id,
         String nombre,
-        String descripcion,
-        Integer idPrograma) implements OutputResponse {
+        String descripcion) implements OutputResponse {
 }

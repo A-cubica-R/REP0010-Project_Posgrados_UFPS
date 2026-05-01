@@ -101,7 +101,6 @@ public class EntrevistaMap extends
         if (dto.getEntrevistador() != null) {
             entrevistador = EntrevistadorOutput.builder()
                     .id(dto.getEntrevistador().getId())
-                    .idAdministrativo(dto.getEntrevistador().getIdAdministrativo())
                     .observaciones(dto.getEntrevistador().getObservaciones())
                     .build();
         }
@@ -110,7 +109,6 @@ public class EntrevistaMap extends
         if (dto.getAspirante() != null) {
             aspirante = AspiranteOutput.builder()
                     .id(dto.getAspirante().getId())
-                    .idPersona(dto.getAspirante().getIdPersona())
                     .build();
         }
 
@@ -122,8 +120,7 @@ public class EntrevistaMap extends
                     .build();
         }
 
-        return new EntrevistaOutput(dto.getId(), dto.getFecha(), dto.getCalificacion(), dto.getIdTipoentrevista(),
-                dto.getIdEntrevistador(), dto.getIdAspirante(), dto.getIdEstado(), tipoentrevista, entrevistador, aspirante, estado);
+        return new EntrevistaOutput(dto.getId(), dto.getFecha(), dto.getCalificacion(), tipoentrevista, entrevistador, aspirante, estado);
     }
 
     public List<EntrevistaOutput> toOutputList(List<EntrevistaDTO> dtoList) {

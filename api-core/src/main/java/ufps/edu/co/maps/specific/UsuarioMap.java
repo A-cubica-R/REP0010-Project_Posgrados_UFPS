@@ -74,19 +74,16 @@ public class UsuarioMap extends
 
     @Override
     public UsuarioOutput toOutput(UsuarioDTO dto) {
+
         if (dto == null) {
             return null;
         }
 
-        PersonaOutput persona = null;
-        if (dto.getPersona() != null) {
-            persona = PersonaOutput.builder()
-                    .id(dto.getPersona().getId())
-                    .nombres(dto.getPersona().getNombres())
-                    .apellidos(dto.getPersona().getApellidos())
-                    .correo(dto.getPersona().getCorreo())
-                    .build();
-        }
+        PersonaMap personaMap = new PersonaMap();
+
+        PersonaOutput persona = dto.getPersona() != null
+                ? personaMap.toOutput(dto.getPersona())
+                : null;
 
         RolOutput rol = null;
         if (dto.getRol() != null) {
@@ -103,8 +100,7 @@ public class UsuarioMap extends
                     .build();
         }
 
-        return new UsuarioOutput(dto.getId(), dto.getNombreusuario(), dto.getIdPersona(), dto.getIdRol(),
-                dto.getIdClave(), persona, rol, clave);
+        return new UsuarioOutput(dto.getId(), dto.getNombreusuario(), persona, rol, clave);
     }
 
     public List<UsuarioOutput> toOutputList(List<UsuarioDTO> dtoList) {

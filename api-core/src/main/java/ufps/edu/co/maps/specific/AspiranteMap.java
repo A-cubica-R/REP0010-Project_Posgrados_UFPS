@@ -62,7 +62,7 @@ public class AspiranteMap extends
         if (dto == null) {
             return null;
         }
-        return new AspiranteOutput(dto.getId(), dto.getIdPersona(), null);
+        return new AspiranteOutput(dto.getId(), null);
     }
 
     public List<AspiranteOutput> toOutputList(List<AspiranteDTO> dtoList) {

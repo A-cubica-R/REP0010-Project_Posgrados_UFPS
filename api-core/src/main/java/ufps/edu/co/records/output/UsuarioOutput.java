@@ -7,9 +7,6 @@ import ufps.edu.co.records.OutputResponse;
 public record UsuarioOutput(
         Integer id,
         String nombreusuario,
-        Integer idPersona,
-        Integer idRol,
-        Integer idClave,
         PersonaOutput persona,
         RolOutput rol,
         ClaveOutput clave

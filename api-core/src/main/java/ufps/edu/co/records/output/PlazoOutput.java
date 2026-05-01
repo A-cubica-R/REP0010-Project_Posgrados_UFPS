@@ -10,6 +10,5 @@ public record PlazoOutput(
         Integer id,
         LocalDate fechainicio,
         LocalDate fechafin,
-        Integer idTipoplazo,
         TipoplazoOutput tipoplazo
 ) implements OutputResponse {}
