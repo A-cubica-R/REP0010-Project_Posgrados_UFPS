@@ -12,9 +12,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ufps.edu.co.processor.TipoplazoProcessor;
-import ufps.edu.co.records.input.TipoplazoInput.*;
-import ufps.edu.co.records.output.TipoplazoOutput;
+
+import ufps.edu.co.processor.crud.TipoplazoProcessor;
+import ufps.edu.co.records.input.entity.TipoplazoInput.*;
+import ufps.edu.co.records.output.entity.TipoplazoOutput;
 
 @RestController
 @RequestMapping(value = "/tipoplazo", produces = MediaType.APPLICATION_JSON_VALUE)

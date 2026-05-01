@@ -12,9 +12,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ufps.edu.co.processor.EntrevistaProcessor;
-import ufps.edu.co.records.input.EntrevistaInput.*;
-import ufps.edu.co.records.output.EntrevistaOutput;
+
+import ufps.edu.co.processor.crud.EntrevistaProcessor;
+import ufps.edu.co.records.input.entity.EntrevistaInput.*;
+import ufps.edu.co.records.output.entity.EntrevistaOutput;
 
 @RestController
 @RequestMapping(value = "/entrevista", produces = MediaType.APPLICATION_JSON_VALUE)

@@ -12,9 +12,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ufps.edu.co.processor.CambiodocumentoProcessor;
-import ufps.edu.co.records.input.CambiodocumentoInput.*;
-import ufps.edu.co.records.output.CambiodocumentoOutput;
+
+import ufps.edu.co.processor.crud.CambiodocumentoProcessor;
+import ufps.edu.co.records.input.entity.CambiodocumentoInput.*;
+import ufps.edu.co.records.output.entity.CambiodocumentoOutput;
 
 @RestController
 @RequestMapping(value = "/cambiodocumento", produces = MediaType.APPLICATION_JSON_VALUE)

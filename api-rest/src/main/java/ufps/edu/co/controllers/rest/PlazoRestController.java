@@ -12,9 +12,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ufps.edu.co.processor.PlazoProcessor;
-import ufps.edu.co.records.input.PlazoInput.*;
-import ufps.edu.co.records.output.PlazoOutput;
+
+import ufps.edu.co.processor.crud.PlazoProcessor;
+import ufps.edu.co.records.input.entity.PlazoInput.*;
+import ufps.edu.co.records.output.entity.PlazoOutput;
 
 @RestController
 @RequestMapping(value = "/plazo", produces = MediaType.APPLICATION_JSON_VALUE)

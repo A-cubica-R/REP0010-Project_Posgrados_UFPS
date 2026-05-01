@@ -7,9 +7,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ufps.edu.co.processor.UbicacionProcessor;
-import ufps.edu.co.records.input.UbicacionInput.*;
-import ufps.edu.co.records.output.UbicacionOutput;
+
+import ufps.edu.co.processor.crud.UbicacionProcessor;
+import ufps.edu.co.records.input.entity.UbicacionInput.*;
+import ufps.edu.co.records.output.entity.UbicacionOutput;
+
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

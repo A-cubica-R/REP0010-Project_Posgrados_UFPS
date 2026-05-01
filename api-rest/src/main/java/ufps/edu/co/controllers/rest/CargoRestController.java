@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import ufps.edu.co.processor.CargoProcessor;
-import ufps.edu.co.records.input.CargoInput.*;
-import ufps.edu.co.records.output.CargoOutput;
+import ufps.edu.co.processor.crud.CargoProcessor;
+import ufps.edu.co.records.input.entity.CargoInput.*;
+import ufps.edu.co.records.output.entity.CargoOutput;
 
 @RestController
 @RequestMapping(value = "/cargo", produces = MediaType.APPLICATION_JSON_VALUE)

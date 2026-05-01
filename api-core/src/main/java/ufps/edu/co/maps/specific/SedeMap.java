@@ -3,8 +3,8 @@ package ufps.edu.co.maps.specific;
 import org.springframework.stereotype.Component;
 
 import ufps.edu.co.maps.GlobalMapper;
-import ufps.edu.co.records.input.SedeInput.*;
-import ufps.edu.co.records.output.SedeOutput;
+import ufps.edu.co.records.input.entity.SedeInput.*;
+import ufps.edu.co.records.output.entity.SedeOutput;
 import ufps.edu.co.rest.dto.SedeDTO;
 
 @Component

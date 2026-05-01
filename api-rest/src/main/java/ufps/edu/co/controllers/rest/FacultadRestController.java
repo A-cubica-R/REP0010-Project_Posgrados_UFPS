@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import ufps.edu.co.processor.FacultadProcessor;
-import ufps.edu.co.records.input.FacultadInput.*;
-import ufps.edu.co.records.output.FacultadOutput;
+import ufps.edu.co.processor.crud.FacultadProcessor;
+import ufps.edu.co.records.input.entity.FacultadInput.*;
+import ufps.edu.co.records.output.entity.FacultadOutput;
 
 @RestController
 @RequestMapping(value = "/facultad", produces = MediaType.APPLICATION_JSON_VALUE)

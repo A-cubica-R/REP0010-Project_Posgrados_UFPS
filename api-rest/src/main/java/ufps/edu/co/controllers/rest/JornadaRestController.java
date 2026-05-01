@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import ufps.edu.co.processor.JornadaProcessor;
-import ufps.edu.co.records.input.JornadaInput.*;
-import ufps.edu.co.records.output.JornadaOutput;
+import ufps.edu.co.processor.crud.JornadaProcessor;
+import ufps.edu.co.records.input.entity.JornadaInput.*;
+import ufps.edu.co.records.output.entity.JornadaOutput;
 
 @RestController
 @RequestMapping(value = "/jornada", produces = MediaType.APPLICATION_JSON_VALUE)
