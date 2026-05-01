@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import ufps.edu.co.processor.MunicipioProcessor;
-import ufps.edu.co.records.input.MunicipioInput.*;
-import ufps.edu.co.records.output.MunicipioOutput;
+import ufps.edu.co.processor.crud.MunicipioProcessor;
+import ufps.edu.co.records.input.entity.MunicipioInput.*;
+import ufps.edu.co.records.output.entity.MunicipioOutput;
 
 import java.util.List;
 

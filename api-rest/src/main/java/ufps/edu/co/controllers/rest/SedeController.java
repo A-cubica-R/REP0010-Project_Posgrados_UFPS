@@ -8,9 +8,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import ufps.edu.co.processor.SedeProcessor;
-import ufps.edu.co.records.input.SedeInput.*;
-import ufps.edu.co.records.output.SedeOutput;
+import ufps.edu.co.processor.crud.SedeProcessor;
+import ufps.edu.co.records.input.entity.SedeInput.*;
+import ufps.edu.co.records.output.entity.SedeOutput;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;

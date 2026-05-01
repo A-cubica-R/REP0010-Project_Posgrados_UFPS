@@ -3,8 +3,8 @@ package ufps.edu.co.maps.specific;
 import org.springframework.stereotype.Component;
 
 import ufps.edu.co.maps.GlobalMapper;
-import ufps.edu.co.records.input.JornadaInput.*;
-import ufps.edu.co.records.output.JornadaOutput;
+import ufps.edu.co.records.input.entity.JornadaInput.*;
+import ufps.edu.co.records.output.entity.JornadaOutput;
 import ufps.edu.co.rest.dto.JornadaDTO;
 import java.util.List;
 

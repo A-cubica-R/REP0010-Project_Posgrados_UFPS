@@ -18,12 +18,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import ufps.edu.co.processor.DepartamentoProcessor;
-import ufps.edu.co.records.input.DepartamentoInput.DEPARTAMENTO_CREATE;
-import ufps.edu.co.records.input.DepartamentoInput.DEPARTAMENTO_DELETE;
-import ufps.edu.co.records.input.DepartamentoInput.DEPARTAMENTO_FIND;
-import ufps.edu.co.records.input.DepartamentoInput.DEPARTAMENTO_UPDATE;
-import ufps.edu.co.records.output.DepartamentoOutput;
+import ufps.edu.co.processor.crud.DepartamentoProcessor;
+import ufps.edu.co.records.input.entity.DepartamentoInput.DEPARTAMENTO_CREATE;
+import ufps.edu.co.records.input.entity.DepartamentoInput.DEPARTAMENTO_DELETE;
+import ufps.edu.co.records.input.entity.DepartamentoInput.DEPARTAMENTO_FIND;
+import ufps.edu.co.records.input.entity.DepartamentoInput.DEPARTAMENTO_UPDATE;
+import ufps.edu.co.records.output.entity.DepartamentoOutput;
 
 @RestController
 @RequestMapping(value = "/departamento", produces = MediaType.APPLICATION_JSON_VALUE)

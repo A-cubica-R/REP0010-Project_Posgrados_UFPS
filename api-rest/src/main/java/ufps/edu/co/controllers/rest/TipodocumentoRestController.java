@@ -12,9 +12,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ufps.edu.co.processor.TipodocumentoProcessor;
-import ufps.edu.co.records.input.TipodocumentoInput.*;
-import ufps.edu.co.records.output.TipodocumentoOutput;
+
+import ufps.edu.co.processor.crud.TipodocumentoProcessor;
+import ufps.edu.co.records.input.entity.TipodocumentoInput.*;
+import ufps.edu.co.records.output.entity.TipodocumentoOutput;
 
 @RestController
 @RequestMapping(value = "/tipodocumento", produces = MediaType.APPLICATION_JSON_VALUE)

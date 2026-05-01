@@ -3,8 +3,8 @@ package ufps.edu.co.maps.specific;
 import java.util.List;
 import org.springframework.stereotype.Component;
 import ufps.edu.co.maps.GlobalMapper;
-import ufps.edu.co.records.input.TipoentrevistaInput.*;
-import ufps.edu.co.records.output.TipoentrevistaOutput;
+import ufps.edu.co.records.input.entity.TipoentrevistaInput.*;
+import ufps.edu.co.records.output.entity.TipoentrevistaOutput;
 import ufps.edu.co.rest.dto.TipoentrevistaDTO;
 
 @Component

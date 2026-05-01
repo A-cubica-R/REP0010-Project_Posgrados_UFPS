@@ -5,9 +5,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import ufps.edu.co.processor.SedeProcessor;
-import ufps.edu.co.records.input.SedeInput.SEDE_CREATE_WITH_UBICACION;
-import ufps.edu.co.records.output.SedeOutput;
+import ufps.edu.co.processor.crud.SedeProcessor;
+import ufps.edu.co.records.input.entity.SedeInput.SEDE_CREATE_WITH_UBICACION;
+import ufps.edu.co.records.output.entity.SedeOutput;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

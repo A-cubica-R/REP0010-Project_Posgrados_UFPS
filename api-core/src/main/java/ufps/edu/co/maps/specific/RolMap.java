@@ -3,8 +3,8 @@ package ufps.edu.co.maps.specific;
 import java.util.List;
 import org.springframework.stereotype.Component;
 import ufps.edu.co.maps.GlobalMapper;
-import ufps.edu.co.records.input.RolInput.*;
-import ufps.edu.co.records.output.RolOutput;
+import ufps.edu.co.records.input.entity.RolInput.*;
+import ufps.edu.co.records.output.entity.RolOutput;
 import ufps.edu.co.rest.dto.RolDTO;
 
 @Component
