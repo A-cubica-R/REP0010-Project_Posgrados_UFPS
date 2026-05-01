@@ -62,7 +62,7 @@ public class DepartamentoMap extends GlobalMapper<DEPARTAMENTO_CREATE, DEPARTAME
 
     @Override
     public DepartamentoOutput toOutput(DepartamentoDTO dto) {
-        return new DepartamentoOutput(dto.getId(), dto.getNombre(), dto.getIdPais());
+        return new DepartamentoOutput(dto.getId(), dto.getNombre());
     }
 
     public List<DepartamentoOutput> toOutputList(List<DepartamentoDTO> dtoList) {

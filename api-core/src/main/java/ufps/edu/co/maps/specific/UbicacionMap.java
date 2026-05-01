@@ -60,7 +60,6 @@ public class UbicacionMap extends
             return UbicacionOutput.builder()
                     .id(dto.getId())
                     .direccion(dto.getDireccion())
-                    .idMunicipio(dto.getIdMunicipio())
                     .build();
         }
         return null;
@@ -71,7 +70,6 @@ public class UbicacionMap extends
             UbicacionDTO dto = new UbicacionDTO();
             dto.setId(output.id());
             dto.setDireccion(output.direccion());
-            dto.setIdMunicipio(output.idMunicipio());
             return dto;
         }
         return null;

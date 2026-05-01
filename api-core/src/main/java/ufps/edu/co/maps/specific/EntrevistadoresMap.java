@@ -74,10 +74,6 @@ public class EntrevistadoresMap extends
                     .id(dto.getEntrevista().getId())
                     .fecha(dto.getEntrevista().getFecha())
                     .calificacion(dto.getEntrevista().getCalificacion())
-                    .idTipoentrevista(dto.getEntrevista().getIdTipoentrevista())
-                    .idEntrevistador(dto.getEntrevista().getIdEntrevistador())
-                    .idAspirante(dto.getEntrevista().getIdAspirante())
-                    .idEstado(dto.getEntrevista().getIdEstado())
                     .build();
         }
 
@@ -85,11 +81,10 @@ public class EntrevistadoresMap extends
         if (dto.getAdministrativo() != null) {
             administrativo = AdministrativoOutput.builder()
                     .id(dto.getAdministrativo().getId())
-                    .idPersona(dto.getAdministrativo().getIdPersona())
                     .build();
         }
 
-        return new EntrevistadoresOutput(dto.getId(), dto.getIdEntrevista(), dto.getIdAdministrativo(), entrevista, administrativo);
+        return new EntrevistadoresOutput(dto.getId(), entrevista, administrativo);
     }
 
     public List<EntrevistadoresOutput> toOutputList(List<EntrevistadoresDTO> dtoList) {

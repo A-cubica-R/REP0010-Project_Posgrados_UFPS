@@ -70,7 +70,7 @@ public class AdministrativoMap extends GlobalMapper<ADMINISTRATIVO_CREATE, ADMIN
         if (dto == null) return null;
         PersonaOutput persona = null;
         if (dto.getPersona() != null) {
-            persona = new PersonaOutput(dto.getPersona().getId(), dto.getPersona().getNombres(), dto.getPersona().getApellidos(), dto.getPersona().getCorreo(), dto.getPersona().getFechanacimiento(), dto.getPersona().getCelular(), dto.getPersona().getTelefono(), dto.getPersona().getIdUbicacion(), dto.getPersona().getIdGenero(), null, null);
+            persona = new PersonaOutput(dto.getPersona().getId(), dto.getPersona().getNombres(), dto.getPersona().getApellidos(), dto.getPersona().getCorreo(), dto.getPersona().getFechanacimiento(), dto.getPersona().getCelular(), dto.getPersona().getTelefono(), null, null);
         }
         EstadoOutput estado = null;
         if (dto.getEstado() != null) {
@@ -78,15 +78,12 @@ public class AdministrativoMap extends GlobalMapper<ADMINISTRATIVO_CREATE, ADMIN
         }
         CargoOutput cargo = null;
         if (dto.getCargo() != null) {
-            cargo = new CargoOutput(dto.getCargo().getId(), dto.getCargo().getNombre(), dto.getCargo().getDescripcion(), dto.getCargo().getIdPrograma());
+            cargo = new CargoOutput(dto.getCargo().getId(), dto.getCargo().getNombre(), dto.getCargo().getDescripcion());
         }
         return AdministrativoOutput.builder()
                 .id(dto.getId())
-                .idPersona(dto.getIdPersona())
                 .fechainicio(dto.getFechainicio())
                 .fechasalida(dto.getFechasalida())
-                .idEstado(dto.getIdEstado())
-                .idCargo(dto.getIdCargo())
                 .persona(persona)
                 .estado(estado)
                 .cargo(cargo)

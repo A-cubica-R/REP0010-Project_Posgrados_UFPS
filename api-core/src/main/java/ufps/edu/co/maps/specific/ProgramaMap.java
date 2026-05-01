@@ -145,11 +145,8 @@ public class ProgramaMap extends
         if (dto.getAdministrativo() != null) {
             administrativo = AdministrativoOutput.builder()
                     .id(dto.getAdministrativo().getId())
-                    .idPersona(dto.getAdministrativo().getIdPersona())
                     .fechainicio(dto.getAdministrativo().getFechainicio())
                     .fechasalida(dto.getAdministrativo().getFechasalida())
-                    .idEstado(dto.getAdministrativo().getIdEstado())
-                    .idCargo(dto.getAdministrativo().getIdCargo())
                     .build();
         }
 
@@ -159,7 +156,6 @@ public class ProgramaMap extends
                     .id(dto.getFacultad().getId())
                     .nombre(dto.getFacultad().getNombre())
                     .correo(dto.getFacultad().getCorreo())
-                    .idAdministrativo(dto.getFacultad().getIdAdministrativo())
                     .build();
         }
 
@@ -169,7 +165,6 @@ public class ProgramaMap extends
                     .id(c.getId())
                     .nombre(c.getNombre())
                     .descripcion(c.getDescripcion())
-                    .idPrograma(c.getIdPrograma())
                     .build()).collect(Collectors.toList());
         }
 
@@ -178,9 +173,6 @@ public class ProgramaMap extends
             ofertaList = dto.getOfertaacademicaList().stream().map(o -> OfertaacademicaOutput.builder()
                     .id(o.getId())
                     .encuentros(o.getEncuentros())
-                    .idPrograma(o.getIdPrograma())
-                    .idModalidad(o.getIdModalidad())
-                    .idJornada(o.getIdJornada())
                     .build()).collect(Collectors.toList());
         }
 
@@ -197,10 +189,6 @@ public class ProgramaMap extends
                 .creditos(dto.getCreditos())
                 .periodicidad(dto.getPeriodicidad())
                 .valormatricula(dto.getValormatricula())
-                .idSede(dto.getIdSede())
-                .idAdministrativo(dto.getIdAdministrativo())
-                .idFacultad(dto.getIdFacultad())
-                .idOtros(dto.getIdOtros())
                 .sede(sede)
                 .administrativo(administrativo)
                 .facultad(facultad)

@@ -66,7 +66,6 @@ public class CargoMap extends GlobalMapper<CARGO_CREATE, CARGO_UPDATE, CARGO_DEL
                 .id(dto.getId())
                 .nombre(dto.getNombre())
                 .descripcion(dto.getDescripcion())
-                .idPrograma(dto.getIdPrograma())
                 .build();
     }
 

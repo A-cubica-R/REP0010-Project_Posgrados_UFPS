@@ -72,11 +72,10 @@ public class EntrevistadorMap extends
         if (dto.getAdministrativo() != null) {
             administrativo = AdministrativoOutput.builder()
                     .id(dto.getAdministrativo().getId())
-                    .idPersona(dto.getAdministrativo().getIdPersona())
                     .build();
         }
 
-        return new EntrevistadorOutput(dto.getId(), dto.getIdAdministrativo(), dto.getObservaciones(), administrativo);
+        return new EntrevistadorOutput(dto.getId(), dto.getObservaciones(), administrativo);
     }
 
     public List<EntrevistadorOutput> toOutputList(List<EntrevistadorDTO> dtoList) {

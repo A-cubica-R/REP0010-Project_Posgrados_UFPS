@@ -7,7 +7,6 @@ import ufps.edu.co.records.OutputResponse;
 public record FacultadOutput(
         Integer id,
         String nombre,
-        String correo,
-        Integer idAdministrativo)
+        String correo)
         implements OutputResponse {
 }
