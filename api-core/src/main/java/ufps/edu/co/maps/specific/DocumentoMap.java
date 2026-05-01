@@ -94,7 +94,6 @@ public class DocumentoMap extends
                     .id(dto.getPlazo().getId())
                     .fechainicio(dto.getPlazo().getFechainicio())
                     .fechafin(dto.getPlazo().getFechafin())
-                    .idTipoplazo(dto.getPlazo().getIdTipoplazo())
                     .build();
         }
 
@@ -121,7 +120,6 @@ public class DocumentoMap extends
         if (dto.getAdministrativo() != null) {
             administrativo = AdministrativoOutput.builder()
                     .id(dto.getAdministrativo().getId())
-                    .idPersona(dto.getAdministrativo().getIdPersona())
                     .build();
         }
 
@@ -129,13 +127,10 @@ public class DocumentoMap extends
         if (dto.getAspirante() != null) {
             aspirante = AspiranteOutput.builder()
                     .id(dto.getAspirante().getId())
-                    .idPersona(dto.getAspirante().getIdPersona())
                     .build();
         }
 
-        return new DocumentoOutput(dto.getId(), dto.getFechacargue(), dto.getIdEstadodocumento(), 
-                dto.getIdTipodocumento(), dto.getIdAdministrativo(), dto.getIdPlazo(), 
-                dto.getIdAspirante(), plazo, tipodocumento, estadodocumento, administrativo, aspirante);
+        return new DocumentoOutput(dto.getId(), dto.getFechacargue(), plazo, tipodocumento, estadodocumento, administrativo, aspirante);
     }
 
     public List<DocumentoOutput> toOutputList(List<DocumentoDTO> dtoList) {

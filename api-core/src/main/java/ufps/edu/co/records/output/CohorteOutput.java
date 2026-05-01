@@ -7,7 +7,6 @@ import ufps.edu.co.records.OutputResponse;
 public record CohorteOutput(
     Integer id,
     String nombre,
-    Integer idEstado,
     String fechaInicio,
     String fechaFin
 ) implements OutputResponse {}

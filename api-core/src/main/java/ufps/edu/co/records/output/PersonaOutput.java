@@ -15,8 +15,6 @@ public record PersonaOutput(
         LocalDate fechanacimiento,
         String celular,
         String telefono,
-        Integer idUbicacion,
-        Integer idGenero,
         UbicacionOutput ubicacion,
         GeneroOutput genero) implements OutputResponse {
 }

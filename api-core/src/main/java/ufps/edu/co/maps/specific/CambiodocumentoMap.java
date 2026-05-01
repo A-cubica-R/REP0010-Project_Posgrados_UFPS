@@ -67,7 +67,7 @@ public class CambiodocumentoMap extends
         if (dto == null) {
             return null;
         }
-        return new CambiodocumentoOutput(dto.getId(), dto.getIdDocumentoanterior(), dto.getIdDocumentoactual(), null, null);
+        return new CambiodocumentoOutput(dto.getId(), null, null);
     }
 
     public List<CambiodocumentoOutput> toOutputList(List<CambiodocumentoDTO> dtoList) {

@@ -18,21 +18,26 @@ public class ClaveMap extends
 
     @Override
     protected ClaveDTO toDtoCreate(CLAVE_CREATE input) {
-        ClaveDTO dto = new ClaveDTO();
+        ClaveDTO dto = ClaveDTO.builder()
+                .valor(input.valor())
+                .build();
         return dto;
     }
 
     @Override
     protected ClaveDTO toDtoUpdate(CLAVE_UPDATE input) {
-        ClaveDTO dto = new ClaveDTO();
-        dto.setId(input.id());
+        ClaveDTO dto = ClaveDTO.builder()
+                .id(input.id())
+                .valor(input.valor())
+                .build();
         return dto;
     }
 
     @Override
     protected ClaveDTO toDtoDelete(CLAVE_DELETE input) {
-        ClaveDTO dto = new ClaveDTO();
-        dto.setId(input.id());
+        ClaveDTO dto = ClaveDTO.builder()
+                .id(input.id())
+                .build();
         return dto;
     }
 
@@ -46,8 +51,9 @@ public class ClaveMap extends
 
     @Override
     protected ClaveDTO toDtoFind(CLAVE_FIND input) {
-        ClaveDTO dto = new ClaveDTO();
-        dto.setId(input.id());
+        ClaveDTO dto = ClaveDTO.builder()
+                .id(input.id())
+                .build();
         return dto;
     }
 

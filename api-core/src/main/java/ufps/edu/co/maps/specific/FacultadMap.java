@@ -66,7 +66,6 @@ public class FacultadMap extends GlobalMapper<FACULTAD_CREATE, FACULTAD_UPDATE, 
                 .id(dto.getId())
                 .nombre(dto.getNombre())
                 .correo(dto.getCorreo())
-                .idAdministrativo(dto.getIdAdministrativo())
                 .build();
     }
 

@@ -111,7 +111,6 @@ public class PersonaMap extends
             ubicacion = UbicacionOutput.builder()
                     .id(dto.getUbicacion().getId())
                     .direccion(dto.getUbicacion().getDireccion())
-                    .idMunicipio(dto.getUbicacion().getIdMunicipio())
                     .build();
         }
 
@@ -131,8 +130,6 @@ public class PersonaMap extends
                 dto.getFechanacimiento(),
                 dto.getCelular(),
                 dto.getTelefono(),
-                dto.getIdUbicacion(),
-                dto.getIdGenero(),
                 ubicacion,
                 genero);
     }
