@@ -4,7 +4,6 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 import ufps.edu.co.maps.GlobalMapper;
 import ufps.edu.co.records.input.entity.UsuarioInput.*;
-import ufps.edu.co.records.output.*;
 import ufps.edu.co.records.output.entity.ClaveOutput;
 import ufps.edu.co.records.output.entity.PersonaOutput;
 import ufps.edu.co.records.output.entity.RolOutput;
