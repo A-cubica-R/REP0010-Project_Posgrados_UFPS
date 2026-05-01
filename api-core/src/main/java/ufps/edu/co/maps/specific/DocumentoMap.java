@@ -25,6 +25,9 @@ public class DocumentoMap extends
         dto.setIdAdministrativo(input.idAdministrativo());
         dto.setIdPlazo(input.idPlazo());
         dto.setIdAspirante(input.idAspirante());
+        dto.setEnlaceurl(input.enlaceurl()); // ← faltaba
+        dto.setKeyfile(input.keyfile()); // ← faltaba
+        dto.setObservaciones(input.observaciones()); // ← faltaba
         return dto;
     }
 
@@ -38,6 +41,9 @@ public class DocumentoMap extends
         dto.setIdAdministrativo(input.idAdministrativo());
         dto.setIdPlazo(input.idPlazo());
         dto.setIdAspirante(input.idAspirante());
+        dto.setEnlaceurl(input.enlaceurl()); // ← faltaba
+        dto.setKeyfile(input.keyfile()); // ← faltaba
+        dto.setObservaciones(input.observaciones()); // ← faltaba
         return dto;
     }
 
@@ -70,6 +76,15 @@ public class DocumentoMap extends
         }
         if (input.idAspirante() != null) {
             builder.idAspirante(input.idAspirante());
+        }
+        if (input.enlaceurl() != null) {
+            builder.enlaceurl(input.enlaceurl());
+        }
+        if (input.keyfile() != null) {
+            builder.keyfile(input.keyfile());
+        }
+        if (input.observaciones() != null) {
+            builder.observaciones(input.observaciones());
         }
 
         return builder.build();
@@ -130,7 +145,17 @@ public class DocumentoMap extends
                     .build();
         }
 
-        return new DocumentoOutput(dto.getId(), dto.getFechacargue(), plazo, tipodocumento, estadodocumento, administrativo, aspirante);
+        return new DocumentoOutput(
+                dto.getId(),
+                dto.getFechacargue(),
+                dto.getEnlaceurl(),
+                dto.getKeyfile(),
+                dto.getObservaciones(),
+                plazo,
+                tipodocumento,
+                estadodocumento,
+                administrativo,
+                aspirante);
     }
 
     public List<DocumentoOutput> toOutputList(List<DocumentoDTO> dtoList) {

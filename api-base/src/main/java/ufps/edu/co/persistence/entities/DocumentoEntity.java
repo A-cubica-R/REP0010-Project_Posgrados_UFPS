@@ -48,13 +48,13 @@ public class DocumentoEntity implements Serializable {
     @Column(name="id_tipodocumento", nullable=false)
     private int        idTipodocumento ;
 
-    @Column(name="id_administrativo", nullable=false)
+    @Column(name="id_administrativo", nullable=true)
     private int        idAdministrativo ;
 
-    @Column(name="id_plazo", nullable=false)
+    @Column(name="id_plazo", nullable=true)
     private int        idPlazo ;
 
-    @Column(name="id_aspirante", nullable=false)
+    @Column(name="id_aspirante", nullable=true)
     private int        idAspirante ;
 
     @Column(name="enlaceurl", nullable=false, length=65535)
