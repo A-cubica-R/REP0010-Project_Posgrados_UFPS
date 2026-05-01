@@ -12,7 +12,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.time.LocalDate;
-import java.util.List;
 
 
 /**
@@ -67,11 +66,11 @@ public class DocumentoEntity implements Serializable {
     private String     observaciones ;
 
     //--- LINKS ( RELATIONSHIPS )
-    @OneToMany
-    private List<CambiodocumentoEntity> cambiodocumentoList ; 
+    // @OneToMany
+    // private List<CambiodocumentoEntity> cambiodocumentoList ; 
 
-    @OneToMany
-    private List<CambiodocumentoEntity> cambiodocumentoList2 ; 
+    // @OneToMany
+    // private List<CambiodocumentoEntity> cambiodocumentoList2 ; 
 
     @ManyToOne
     @JoinColumn(name="id_plazo", referencedColumnName="id", insertable=false, updatable=false)

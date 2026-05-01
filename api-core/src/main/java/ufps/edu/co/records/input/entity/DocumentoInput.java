@@ -49,4 +49,6 @@ public enum DocumentoInput {
     public record DOCUMENTO_DELETE(@NotNull Integer id) implements DeleteType {}
 
     public record DOCUMENTO_FIND(@NotNull Integer id) implements FindType {}
+
+    public record DOCUMENTO_REJECT(@NotNull Integer id, @NotBlank String observaciones) implements PatchType {}
 }
