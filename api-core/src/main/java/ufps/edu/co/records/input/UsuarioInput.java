@@ -2,7 +2,6 @@ package ufps.edu.co.records.input;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import java.time.LocalDate;
 import ufps.edu.co.records.contracts.*;
 
 public enum UsuarioInput {
