@@ -37,6 +37,25 @@
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
+
+         <dependency>
+            <groupId>ufps.edu.co</groupId>
+            <artifactId>api-base</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ufps.edu.co</groupId>
+            <artifactId>api-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ufps.edu.co</groupId>
+            <artifactId>api-rest</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
     </dependencies>
 
     <build>
