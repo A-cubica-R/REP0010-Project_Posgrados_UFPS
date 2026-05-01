@@ -12,9 +12,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ufps.edu.co.processor.RolProcessor;
-import ufps.edu.co.records.input.RolInput.*;
-import ufps.edu.co.records.output.RolOutput;
+
+import ufps.edu.co.processor.crud.RolProcessor;
+import ufps.edu.co.records.input.entity.RolInput.*;
+import ufps.edu.co.records.output.entity.RolOutput;
 
 @RestController
 @RequestMapping(value = "/rol", produces = MediaType.APPLICATION_JSON_VALUE)

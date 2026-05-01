@@ -13,9 +13,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ufps.edu.co.processor.GeneroProcessor;
-import ufps.edu.co.records.input.GeneroInput.*;
-import ufps.edu.co.records.output.GeneroOutput;
+
+import ufps.edu.co.processor.crud.GeneroProcessor;
+import ufps.edu.co.records.input.entity.GeneroInput.*;
+import ufps.edu.co.records.output.entity.GeneroOutput;
 
 @RestController
 @RequestMapping(value = "/genero", produces = MediaType.APPLICATION_JSON_VALUE)

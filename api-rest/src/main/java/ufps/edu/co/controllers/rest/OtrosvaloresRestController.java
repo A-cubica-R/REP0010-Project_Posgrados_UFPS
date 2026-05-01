@@ -13,9 +13,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ufps.edu.co.processor.OtrosvaloresProcessor;
-import ufps.edu.co.records.input.OtrosvaloresInput.*;
-import ufps.edu.co.records.output.OtrosvaloresOutput;
+
+import ufps.edu.co.processor.crud.OtrosvaloresProcessor;
+import ufps.edu.co.records.input.entity.OtrosvaloresInput.*;
+import ufps.edu.co.records.output.entity.OtrosvaloresOutput;
 
 @RestController
 @RequestMapping(value = "/otrosvalores", produces = MediaType.APPLICATION_JSON_VALUE)

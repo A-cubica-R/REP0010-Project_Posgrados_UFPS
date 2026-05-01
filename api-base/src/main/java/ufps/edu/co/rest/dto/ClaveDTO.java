@@ -25,22 +25,22 @@ import java.util.List;
 @AllArgsConstructor
 public class ClaveDTO implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    //--- PRIMARY KEY 
-    private Integer id ;
-    //--- OTHER DATA FIELDS 
-    private String valor ;
-    //--- LINKS ( RELATIONSHIPS )
-    private List<UsuarioDTO> usuarioList ; 
+	// --- PRIMARY KEY
+	private Integer id;
+	// --- OTHER DATA FIELDS
+	private String valor;
+	// --- LINKS ( RELATIONSHIPS )
+	private List<UsuarioDTO> usuarioList;
 
-    @Override
-	public String toString() { 
+	@Override
+	public String toString() {
 		String separator = "|";
 		StringBuilder sb = new StringBuilder();
 		sb.append("Clave[");
 		sb.append("id=").append(id);
-		// attribute 'valor' (type String) not usable in toString() 
+		sb.append(separator).append("valor=").append(valor);
 		sb.append("]");
 		return sb.toString();
 	}

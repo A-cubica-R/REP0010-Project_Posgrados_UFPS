@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import ufps.edu.co.processor.ModalidadProcessor;
-import ufps.edu.co.records.input.ModalidadInput.*;
-import ufps.edu.co.records.output.ModalidadOutput;
+import ufps.edu.co.processor.crud.ModalidadProcessor;
+import ufps.edu.co.records.input.entity.ModalidadInput.*;
+import ufps.edu.co.records.output.entity.ModalidadOutput;
 
 @RestController
 @RequestMapping(value = "/modalidad", produces = MediaType.APPLICATION_JSON_VALUE)

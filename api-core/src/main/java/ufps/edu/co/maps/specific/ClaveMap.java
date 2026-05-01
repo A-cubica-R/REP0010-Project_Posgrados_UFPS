@@ -3,8 +3,8 @@ package ufps.edu.co.maps.specific;
 import java.util.List;
 import org.springframework.stereotype.Component;
 import ufps.edu.co.maps.GlobalMapper;
-import ufps.edu.co.records.input.ClaveInput.*;
-import ufps.edu.co.records.output.ClaveOutput;
+import ufps.edu.co.records.input.entity.ClaveInput.*;
+import ufps.edu.co.records.output.entity.ClaveOutput;
 import ufps.edu.co.rest.dto.ClaveDTO;
 
 @Component

@@ -2,12 +2,12 @@ package ufps.edu.co.maps.specific;
 
 import org.springframework.stereotype.Component;
 import ufps.edu.co.maps.GlobalMapper;
-import ufps.edu.co.records.input.AdministrativoInput.*;
-import ufps.edu.co.records.output.AdministrativoOutput;
+import ufps.edu.co.records.input.entity.AdministrativoInput.*;
+import ufps.edu.co.records.output.entity.AdministrativoOutput;
+import ufps.edu.co.records.output.entity.CargoOutput;
+import ufps.edu.co.records.output.entity.EstadoOutput;
+import ufps.edu.co.records.output.entity.PersonaOutput;
 import ufps.edu.co.rest.dto.AdministrativoDTO;
-import ufps.edu.co.records.output.PersonaOutput;
-import ufps.edu.co.records.output.EstadoOutput;
-import ufps.edu.co.records.output.CargoOutput;
 
 @Component
 public class AdministrativoMap extends GlobalMapper<ADMINISTRATIVO_CREATE, ADMINISTRATIVO_UPDATE, ADMINISTRATIVO_DELETE, ADMINISTRATIVO_PATCH, ADMINISTRATIVO_FIND, AdministrativoOutput, AdministrativoDTO> {

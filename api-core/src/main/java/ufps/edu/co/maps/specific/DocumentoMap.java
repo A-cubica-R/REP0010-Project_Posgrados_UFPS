@@ -3,8 +3,13 @@ package ufps.edu.co.maps.specific;
 import java.util.List;
 import org.springframework.stereotype.Component;
 import ufps.edu.co.maps.GlobalMapper;
-import ufps.edu.co.records.input.DocumentoInput.*;
-import ufps.edu.co.records.output.*;
+import ufps.edu.co.records.input.entity.DocumentoInput.*;
+import ufps.edu.co.records.output.entity.AdministrativoOutput;
+import ufps.edu.co.records.output.entity.AspiranteOutput;
+import ufps.edu.co.records.output.entity.DocumentoOutput;
+import ufps.edu.co.records.output.entity.EstadodocumentoOutput;
+import ufps.edu.co.records.output.entity.PlazoOutput;
+import ufps.edu.co.records.output.entity.TipodocumentoOutput;
 import ufps.edu.co.rest.dto.DocumentoDTO;
 
 @Component

@@ -5,14 +5,14 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 import ufps.edu.co.maps.GlobalMapper;
-import ufps.edu.co.records.input.PersonaInput.PERSONA_CREATE;
-import ufps.edu.co.records.input.PersonaInput.PERSONA_DELETE;
-import ufps.edu.co.records.input.PersonaInput.PERSONA_FIND;
-import ufps.edu.co.records.input.PersonaInput.PERSONA_PATCH;
-import ufps.edu.co.records.input.PersonaInput.PERSONA_UPDATE;
-import ufps.edu.co.records.output.GeneroOutput;
-import ufps.edu.co.records.output.PersonaOutput;
-import ufps.edu.co.records.output.UbicacionOutput;
+import ufps.edu.co.records.input.entity.PersonaInput.PERSONA_CREATE;
+import ufps.edu.co.records.input.entity.PersonaInput.PERSONA_DELETE;
+import ufps.edu.co.records.input.entity.PersonaInput.PERSONA_FIND;
+import ufps.edu.co.records.input.entity.PersonaInput.PERSONA_PATCH;
+import ufps.edu.co.records.input.entity.PersonaInput.PERSONA_UPDATE;
+import ufps.edu.co.records.output.entity.GeneroOutput;
+import ufps.edu.co.records.output.entity.PersonaOutput;
+import ufps.edu.co.records.output.entity.UbicacionOutput;
 import ufps.edu.co.rest.dto.PersonaDTO;
 
 @Component

@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import ufps.edu.co.processor.EstadoProcessor;
-import ufps.edu.co.records.input.EstadoInput.*;
-import ufps.edu.co.records.output.EstadoOutput;
+import ufps.edu.co.processor.crud.EstadoProcessor;
+import ufps.edu.co.records.input.entity.EstadoInput.*;
+import ufps.edu.co.records.output.entity.EstadoOutput;
 
 @RestController
 @RequestMapping(value = "/estado", produces = MediaType.APPLICATION_JSON_VALUE)

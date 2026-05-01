@@ -6,15 +6,15 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
 import ufps.edu.co.maps.GlobalMapper;
-import ufps.edu.co.records.input.ProgramaInput.*;
-import ufps.edu.co.records.output.ProgramaOutput;
+import ufps.edu.co.records.input.entity.ProgramaInput.*;
+import ufps.edu.co.records.output.entity.AdministrativoOutput;
+import ufps.edu.co.records.output.entity.CargoOutput;
+import ufps.edu.co.records.output.entity.FacultadOutput;
+import ufps.edu.co.records.output.entity.OfertaacademicaOutput;
+import ufps.edu.co.records.output.entity.ProgramaOutput;
+import ufps.edu.co.records.output.entity.SedeOutput;
+import ufps.edu.co.records.output.entity.UbicacionOutput;
 import ufps.edu.co.rest.dto.ProgramaDTO;
-import ufps.edu.co.records.output.SedeOutput;
-import ufps.edu.co.records.output.UbicacionOutput;
-import ufps.edu.co.records.output.AdministrativoOutput;
-import ufps.edu.co.records.output.FacultadOutput;
-import ufps.edu.co.records.output.CargoOutput;
-import ufps.edu.co.records.output.OfertaacademicaOutput;
 
 @Component
 public class ProgramaMap extends

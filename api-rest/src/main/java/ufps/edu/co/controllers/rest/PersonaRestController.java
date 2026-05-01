@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import ufps.edu.co.processor.PersonaProcessor;
-import ufps.edu.co.records.input.PersonaInput.*;
-import ufps.edu.co.records.output.PersonaOutput;
+import ufps.edu.co.processor.crud.PersonaProcessor;
+import ufps.edu.co.records.input.entity.PersonaInput.*;
+import ufps.edu.co.records.output.entity.PersonaOutput;
 
 @RestController
 @RequestMapping(value = "/persona", produces = MediaType.APPLICATION_JSON_VALUE)

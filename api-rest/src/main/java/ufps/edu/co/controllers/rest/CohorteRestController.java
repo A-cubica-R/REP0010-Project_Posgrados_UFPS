@@ -13,9 +13,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ufps.edu.co.processor.CohorteProcessor;
-import ufps.edu.co.records.input.CohorteInput.*;
-import ufps.edu.co.records.output.CohorteOutput;
+
+import ufps.edu.co.processor.crud.CohorteProcessor;
+import ufps.edu.co.records.input.entity.CohorteInput.*;
+import ufps.edu.co.records.output.entity.CohorteOutput;
 
 @RestController
 @RequestMapping(value = "/cohorte", produces = MediaType.APPLICATION_JSON_VALUE)

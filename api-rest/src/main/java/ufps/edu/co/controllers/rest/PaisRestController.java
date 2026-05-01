@@ -13,9 +13,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ufps.edu.co.processor.PaisProcessor;
-import ufps.edu.co.records.input.PaisInput.*;
-import ufps.edu.co.records.output.PaisOutput;
+
+import ufps.edu.co.processor.crud.PaisProcessor;
+import ufps.edu.co.records.input.entity.PaisInput.*;
+import ufps.edu.co.records.output.entity.PaisOutput;
 
 @RestController
 @RequestMapping(value = "/pais", produces = MediaType.APPLICATION_JSON_VALUE)

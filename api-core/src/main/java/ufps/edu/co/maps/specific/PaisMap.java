@@ -3,8 +3,8 @@ package ufps.edu.co.maps.specific;
 import org.springframework.stereotype.Component;
 
 import ufps.edu.co.maps.GlobalMapper;
-import ufps.edu.co.records.input.PaisInput.*;
-import ufps.edu.co.records.output.PaisOutput;
+import ufps.edu.co.records.input.entity.PaisInput.*;
+import ufps.edu.co.records.output.entity.PaisOutput;
 import ufps.edu.co.rest.dto.PaisDTO;
 
 import java.util.List;

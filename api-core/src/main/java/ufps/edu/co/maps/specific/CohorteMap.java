@@ -6,8 +6,8 @@ import org.springframework.stereotype.Component;
 
 import ufps.edu.co.maps.GlobalMapper;
 import ufps.edu.co.rest.dto.CohorteDTO;
-import ufps.edu.co.records.input.CohorteInput.*;
-import ufps.edu.co.records.output.CohorteOutput;
+import ufps.edu.co.records.input.entity.CohorteInput.*;
+import ufps.edu.co.records.output.entity.CohorteOutput;
 
 @Component
 public class CohorteMap extends GlobalMapper<COHORTE_CREATE, COHORTE_UPDATE, COHORTE_DELETE, COHORTE_PATCH, COHORTE_FIND, CohorteOutput, CohorteDTO> {

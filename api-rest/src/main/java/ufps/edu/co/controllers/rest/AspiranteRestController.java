@@ -12,9 +12,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ufps.edu.co.processor.AspiranteProcessor;
-import ufps.edu.co.records.input.AspiranteInput.*;
-import ufps.edu.co.records.output.AspiranteOutput;
+
+import ufps.edu.co.processor.crud.AspiranteProcessor;
+import ufps.edu.co.records.input.entity.AspiranteInput.*;
+import ufps.edu.co.records.output.entity.AspiranteOutput;
 
 @RestController
 @RequestMapping(value = "/aspirante", produces = MediaType.APPLICATION_JSON_VALUE)

@@ -5,8 +5,8 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 import ufps.edu.co.maps.GlobalMapper;
-import ufps.edu.co.records.input.EstadoInput.*;
-import ufps.edu.co.records.output.EstadoOutput;
+import ufps.edu.co.records.input.entity.EstadoInput.*;
+import ufps.edu.co.records.output.entity.EstadoOutput;
 import ufps.edu.co.rest.dto.EstadoDTO;
 
 @Component

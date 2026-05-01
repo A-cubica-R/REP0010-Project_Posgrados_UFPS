@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import ufps.edu.co.processor.AdministrativoProcessor;
-import ufps.edu.co.records.input.AdministrativoInput.*;
-import ufps.edu.co.records.output.AdministrativoOutput;
+import ufps.edu.co.processor.crud.AdministrativoProcessor;
+import ufps.edu.co.records.input.entity.AdministrativoInput.*;
+import ufps.edu.co.records.output.entity.AdministrativoOutput;
 
 @RestController
 @RequestMapping(value = "/administrativo", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -60,7 +60,7 @@ public class AdministrativoRestController {
     @DeleteMapping("/delete")
     public ResponseEntity<Void> deleteById(@RequestBody ADMINISTRATIVO_DELETE request) {
         try {
-            processor.deleteById(request);
+            processor.delete(request);
             return ResponseEntity.noContent().build();
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
