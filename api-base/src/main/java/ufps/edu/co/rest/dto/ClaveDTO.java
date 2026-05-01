@@ -35,8 +35,7 @@ public class ClaveDTO implements Serializable {
     private List<UsuarioDTO> usuarioList ; 
 
     @Override
-	public String toString() { 
-		String separator = "|";
+	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Clave[");
 		sb.append("id=").append(id);
