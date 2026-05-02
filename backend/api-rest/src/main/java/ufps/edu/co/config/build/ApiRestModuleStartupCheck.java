@@ -1,0 +1,31 @@
+package ufps.edu.co.config.build;
+
+import jakarta.annotation.PostConstruct;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+@Component
+public class ApiRestModuleStartupCheck {
+
+    private static final Logger logger = LoggerFactory.getLogger(ApiRestModuleStartupCheck.class);
+
+    @Value("${app.module.name.api-rest}")
+    private String moduleName;
+
+    @PostConstruct
+    void validateAndLogModuleLoad() {
+        if (moduleName == null || moduleName.isBlank()) {
+            throw new IllegalStateException("app.module.name.api-rest is required for api-rest module");
+        }
+
+        String banner = """
+                ======================================================
+                =                MODULE %s LOADED                    =
+                ======================================================
+                """.formatted(moduleName);
+
+        logger.warn("\n" + banner);
+    }
+}

@@ -14,11 +14,15 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<modules>
-		<module>api-base</module>
-		<module>api-core</module>
-		<module>api-rest</module>
-		<module>api-storage</module>
-		<module>spring-app</module>
+		<!-- BACKEND -->
+		<module>backend/api-base</module>
+		<module>backend/api-core</module>
+		<module>backend/api-rest</module>
+		<module>backend/api-storage</module>
+
+		<!-- PLATFORM -->
+		<module>platform/application</module>
+		<module>platform/security</module>
 	</modules>
 
 	<name>Posgrados API</name>
@@ -80,7 +84,7 @@
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
-	
+
 	<dependencyManagement>
 		<dependencies>
 
@@ -92,6 +96,14 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
+
+			<dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+            <version>3.5.3</version>
+			<type>pom</type>
+			<scope>import</scope>
+        </dependency>
 
 			<!-- ModelMapper -->
 			<dependency>
