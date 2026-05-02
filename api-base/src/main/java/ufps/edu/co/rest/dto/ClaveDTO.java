@@ -40,7 +40,7 @@ public class ClaveDTO implements Serializable {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Clave[");
 		sb.append("id=").append(id);
-		// attribute 'valor' (type String) not usable in toString() 
+		sb.append(separator).append("valor=").append(valor);
 		sb.append("]");
 		return sb.toString();
 	}
