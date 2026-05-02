@@ -17,6 +17,7 @@
 		<module>api-base</module>
 		<module>api-core</module>
 		<module>api-rest</module>
+		<module>api-storage</module>
 		<module>spring-app</module>
 	</modules>
 

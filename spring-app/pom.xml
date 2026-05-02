@@ -38,6 +38,12 @@
             <version>${project.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>ufps.edu.co</groupId>
+            <artifactId>api-storage</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!-- Dependencies for SWAGGER UI -->
         <dependency>
             <groupId>org.springdoc</groupId>

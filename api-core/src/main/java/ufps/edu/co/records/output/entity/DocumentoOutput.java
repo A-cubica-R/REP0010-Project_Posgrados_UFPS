@@ -9,6 +9,9 @@ import java.time.LocalDate;
 public record DocumentoOutput(
         Integer id,
         LocalDate fechacargue,
+        String enlaceurl,
+        String keyfile,
+        String observaciones,
         PlazoOutput plazo,
         TipodocumentoOutput tipodocumento,
         EstadodocumentoOutput estadodocumento,

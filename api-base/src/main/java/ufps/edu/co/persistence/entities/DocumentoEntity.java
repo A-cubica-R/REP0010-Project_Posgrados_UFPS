@@ -12,7 +12,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.time.LocalDate;
-import java.util.List;
 
 
 /**
@@ -51,10 +50,10 @@ public class DocumentoEntity implements Serializable {
     @Column(name="id_administrativo")
     private Integer    idAdministrativo ;
 
-    @Column(name="id_plazo", nullable=false)
+    @Column(name="id_plazo", nullable=true)
     private int        idPlazo ;
 
-    @Column(name="id_aspirante", nullable=false)
+    @Column(name="id_aspirante", nullable=true)
     private int        idAspirante ;
 
     @Column(name="enlaceurl", nullable=false, length=65535)
@@ -67,11 +66,11 @@ public class DocumentoEntity implements Serializable {
     private String     observaciones ;
 
     //--- LINKS ( RELATIONSHIPS )
-    @OneToMany
-    private List<CambiodocumentoEntity> cambiodocumentoList ; 
+    // @OneToMany
+    // private List<CambiodocumentoEntity> cambiodocumentoList ; 
 
-    @OneToMany
-    private List<CambiodocumentoEntity> cambiodocumentoList2 ; 
+    // @OneToMany
+    // private List<CambiodocumentoEntity> cambiodocumentoList2 ; 
 
     @ManyToOne
     @JoinColumn(name="id_plazo", referencedColumnName="id", insertable=false, updatable=false)
