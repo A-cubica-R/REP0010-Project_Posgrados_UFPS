@@ -22,6 +22,12 @@
 
         <dependency>
             <groupId>ufps.edu.co</groupId>
+            <artifactId>api-auth</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+      
+      <dependency>
+        <groupId>ufps.edu.co</groupId>
             <artifactId>mail-module</artifactId>
             <version>${project.version}</version>
         </dependency>
