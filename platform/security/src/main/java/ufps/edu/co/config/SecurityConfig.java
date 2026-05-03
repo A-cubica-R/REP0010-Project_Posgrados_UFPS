@@ -15,7 +15,7 @@ import ufps.edu.co.security.JwtAuthenticationFilter;
 public class SecurityConfig {
 
         private static final String[] SUPER_ADMIN_PATHS = {
-                        "**"
+                        "/**"
         };
 
         private static final String[] PUBLIC_PATHS = {
