@@ -25,8 +25,8 @@
     "description": "Prefix for general REST endpoints, e.g., /api/dev/endpoint/**"
   },
   {
-    "name": "app.module.name.spring-sec",
+    "name": "app.module.name.security",
     "type": "java.lang.String",
-    "description": "Name of the spring-sec module, used for logging and other purposes."
+    "description": "A description for 'app.module.name.security'"
   }
 ]}
