@@ -11,8 +11,8 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <artifactId>api-storage</artifactId>
-    <name>api-storage</name>
+    <artifactId>s3-storage</artifactId>
+    <name>s3-storage</name>
 
     <dependencies>
         <dependency>
@@ -47,12 +47,6 @@
         <dependency>
             <groupId>ufps.edu.co</groupId>
             <artifactId>api-core</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>ufps.edu.co</groupId>
-            <artifactId>api-rest</artifactId>
             <version>${project.version}</version>
         </dependency>
 

@@ -4,11 +4,14 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ufps.edu.co.maps.specific.DocumentoMap;
+import ufps.edu.co.maps.specific.PersonaMap;
 import ufps.edu.co.records.input.entity.AspiranteInput.ASPIRANTE_FIND;
 import ufps.edu.co.records.input.entity.DocumentoInput.*;
 import ufps.edu.co.records.output.entity.DocumentoOutput;
+import ufps.edu.co.records.output.entity.PersonaOutput;
 import ufps.edu.co.rest.dto.DocumentoDTO;
 import ufps.edu.co.rest.dto.EstadodocumentoDTO;
+import ufps.edu.co.rest.dto.PersonaDTO;
 import ufps.edu.co.rest.services.DocumentoService;
 import ufps.edu.co.rest.services.EstadodocumentoService;
 import ufps.edu.co.usecase.GlobalUseCase;
@@ -25,6 +28,9 @@ public class DocumentoProcessor implements
 
     @Autowired
     private EstadodocumentoService estadodocumentoService;
+
+    @Autowired
+    private PersonaMap personaMap;
 
     @Override
     public DocumentoOutput create(DOCUMENTO_CREATE input) {
@@ -117,5 +123,11 @@ public class DocumentoProcessor implements
         } catch (Exception e) {
             throw new RuntimeException("Error finding Documentos by Aspirante ID: " + e.getMessage(), e);
         }
+    }
+
+    public PersonaOutput findPersonByDocument(DOCUMENTO_FIND input){
+        DocumentoDTO documento = service.findById(input.id());
+        PersonaDTO persona = documento.getAspirante().getPersona();
+        return personaMap.toOutput(persona);
     }
 }

@@ -54,7 +54,7 @@
 
         <dependency>
             <groupId>ufps.edu.co</groupId>
-            <artifactId>api-storage</artifactId>
+            <artifactId>s3-storage</artifactId>
             <version>${project.version}</version>
         </dependency>
 
