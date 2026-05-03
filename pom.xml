@@ -18,7 +18,8 @@
 		<module>backend/api-base</module>
 		<module>backend/api-core</module>
 		<module>backend/api-rest</module>
-		<module>backend/api-storage</module>
+		<module>backend/s3-storage</module>
+		<module>backend/mail-module</module>
 
 		<!-- PLATFORM -->
 		<module>platform/application</module>
