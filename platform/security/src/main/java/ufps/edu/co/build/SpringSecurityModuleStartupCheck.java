@@ -11,13 +11,13 @@ public class SpringSecurityModuleStartupCheck {
 
     private static final Logger logger = LoggerFactory.getLogger(SpringSecurityModuleStartupCheck.class);
 
-    @Value("${app.module.name.spring-sec}")
+    @Value("${app.module.name.security}")
     private String moduleName;
 
     @PostConstruct
     void validateAndLogModuleLoad() {
         if (moduleName == null || moduleName.isBlank()) {
-            throw new IllegalStateException("app.module.name.spring-sec is required for spring-sec module");
+            throw new IllegalStateException("app.module.name.security is required for security module");
         }
 
         String banner = """
