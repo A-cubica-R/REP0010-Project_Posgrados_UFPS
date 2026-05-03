@@ -4,8 +4,11 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ufps.edu.co.maps.specific.EntrevistadoresMap;
+import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_FIND;
 import ufps.edu.co.records.input.entity.EntrevistadoresInput.*;
+import ufps.edu.co.records.output.entity.EntrevistaOutput;
 import ufps.edu.co.records.output.entity.EntrevistadoresOutput;
+import ufps.edu.co.rest.dto.EntrevistaDTO;
 import ufps.edu.co.rest.dto.EntrevistadoresDTO;
 import ufps.edu.co.rest.services.EntrevistadoresService;
 import ufps.edu.co.usecase.GlobalUseCase;
@@ -16,6 +19,9 @@ public class EntrevistadoresProcessor implements
 
     @Autowired
     private EntrevistadoresService service;
+
+    @Autowired
+    private EntrevistaProcessor entrevistaProcessor;
 
     @Autowired
     private EntrevistadoresMap map;
@@ -44,7 +50,22 @@ public class EntrevistadoresProcessor implements
 
     @Override
     public EntrevistadoresOutput patch(ENTREVISTADORES_PATCH input) {
-        throw new UnsupportedOperationException("Patch operation is not supported for Entrevistadores");
+        try {
+            EntrevistadoresDTO existing = service.findById(input.id());
+
+            if (input.idEntrevista() != null) {
+                existing.setIdEntrevista(input.idEntrevista());
+            }
+            if (input.idAdministrativo() != null) {
+                existing.setIdAdministrativo(input.idAdministrativo());
+            }
+
+            EntrevistadoresDTO patched = service.update(input.id(), existing);
+            return map.toOutput(patched);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error patching Entrevistadores: " + e.getMessage(), e);
+        }
     }
 
     @Override
@@ -72,6 +93,19 @@ public class EntrevistadoresProcessor implements
             service.deleteById(input.id());
         } catch (Exception e) {
             throw new RuntimeException("Error deleting Entrevistadores by ID: " + e.getMessage(), e);
+        }
+    }
+
+    public void deleteAllByEntrevistaId(ENTREVISTA_FIND input) {
+        try {
+            List<EntrevistadoresDTO> list = service.findAll().stream()
+            .filter(dto -> Integer.valueOf(dto.getIdEntrevista()).equals(Integer.valueOf(input.id())))
+            .toList();
+            for (EntrevistadoresDTO dto : list) {
+                service.deleteById(dto.getId());
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error deleting Entrevistadores by Entrevista ID: " + e.getMessage(), e);
         }
     }
 }
