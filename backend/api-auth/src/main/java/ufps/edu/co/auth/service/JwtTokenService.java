@@ -3,6 +3,7 @@ package ufps.edu.co.auth.service;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.crypto.SecretKey;
 
@@ -37,7 +38,8 @@ public class JwtTokenService implements TokenIssuer, AccessTokenValidator {
     @Override
     public LoginOutput issueTokens(AuthPrincipal principal) {
         String accessToken = createToken(principal, TokenType.ACCESS, properties.getJwt().getAccessExpirationMinutes());
-        String refreshToken = createToken(principal, TokenType.REFRESH, properties.getJwt().getRefreshExpirationMinutes());
+        String refreshToken = createToken(principal, TokenType.REFRESH,
+                properties.getJwt().getRefreshExpirationMinutes());
         return new LoginOutput(accessToken, refreshToken, principal.userId(), principal.username(), principal.roles());
     }
 
@@ -90,8 +92,10 @@ public class JwtTokenService implements TokenIssuer, AccessTokenValidator {
 
             Integer userId = claims.get("uid", Integer.class);
             String username = claims.getSubject();
-            List<String> roles = claims.get("roles", List.class);
-            return new AuthPrincipal(userId, username, roles == null ? List.of() : List.copyOf(roles));
+            Object rolesObj = claims.get("roles");
+            List<String> roles = rolesObj == null ? List.of()
+                    : ((List<?>) rolesObj).stream().map(Object::toString).collect(Collectors.toList());
+            return new AuthPrincipal(userId, username, List.copyOf(roles));
         } catch (ExpiredJwtException ex) {
             throw new InvalidTokenException("Token expired", ex);
         } catch (JwtException | IllegalArgumentException ex) {

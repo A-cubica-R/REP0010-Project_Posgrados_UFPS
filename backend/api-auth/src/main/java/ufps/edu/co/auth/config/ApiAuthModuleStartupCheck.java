@@ -1,7 +1,6 @@
 package ufps.edu.co.auth.config;
 
 import jakarta.annotation.PostConstruct;
-import ufps.edu.co.config.ApiBaseModuleStartupCheck;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
