@@ -27,6 +27,12 @@
             <version>${project.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>ufps.edu.co</groupId>
+            <artifactId>api-auth</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!-- MODULES DEPENDENCIES -->
         <dependency>
             <groupId>ufps.edu.co</groupId>
@@ -48,7 +54,7 @@
 
         <dependency>
             <groupId>ufps.edu.co</groupId>
-            <artifactId>api-storage</artifactId>
+            <artifactId>s3-storage</artifactId>
             <version>${project.version}</version>
         </dependency>
 

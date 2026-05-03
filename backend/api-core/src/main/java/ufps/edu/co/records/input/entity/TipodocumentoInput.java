@@ -2,6 +2,7 @@ package ufps.edu.co.records.input.entity;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import ufps.edu.co.records.contracts.*;
 
 public enum TipodocumentoInput {
@@ -15,5 +16,6 @@ public enum TipodocumentoInput {
 
     public record TIPODOCUMENTO_DELETE(@NotNull Integer id) implements DeleteType {}
 
+    @Builder
     public record TIPODOCUMENTO_FIND(@NotNull Integer id) implements FindType {}
 }
