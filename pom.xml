@@ -18,6 +18,7 @@
 		<module>backend/api-base</module>
 		<module>backend/api-core</module>
 		<module>backend/api-rest</module>
+		<module>backend/api-auth</module>
 		<module>backend/api-storage</module>
 
 		<!-- PLATFORM -->
@@ -74,6 +75,7 @@
 		<modelmapper.version>3.2.4</modelmapper.version>
 		<springdoc.version>3.0.2</springdoc.version>
 		<lombok.version>1.18.38</lombok.version>
+		<jjwt.version>0.12.6</jjwt.version>
 	</properties>
 
 	<dependencies>
@@ -98,12 +100,22 @@
 			</dependency>
 
 			<dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
-            <version>3.5.3</version>
-			<type>pom</type>
-			<scope>import</scope>
-        </dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-starter-security</artifactId>
+				<version>3.5.3</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+
+			<!-- JACKSON -->
+			<!-- Source: https://mvnrepository.com/artifact/tools.jackson.core/jackson-core -->
+			<dependency>
+				<groupId>tools.jackson.core</groupId>
+				<artifactId>jackson-core</artifactId>
+				<version>3.1.3</version>
+				<type>pom</type>
+				<scope>compile</scope>
+			</dependency>
 
 			<!-- ModelMapper -->
 			<dependency>
@@ -117,6 +129,25 @@
 				<groupId>org.springdoc</groupId>
 				<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
 				<version>${springdoc.version}</version>
+			</dependency>
+
+			<!-- JJWT -->
+			<dependency>
+				<groupId>io.jsonwebtoken</groupId>
+				<artifactId>jjwt-api</artifactId>
+				<version>${jjwt.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.jsonwebtoken</groupId>
+				<artifactId>jjwt-impl</artifactId>
+				<version>${jjwt.version}</version>
+				<scope>runtime</scope>
+			</dependency>
+			<dependency>
+				<groupId>io.jsonwebtoken</groupId>
+				<artifactId>jjwt-jackson</artifactId>
+				<version>${jjwt.version}</version>
+				<scope>runtime</scope>
 			</dependency>
 
 		</dependencies>
