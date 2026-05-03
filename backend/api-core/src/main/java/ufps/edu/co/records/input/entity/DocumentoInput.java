@@ -2,6 +2,8 @@ package ufps.edu.co.records.input.entity;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
+
 import java.time.LocalDate;
 import ufps.edu.co.records.contracts.*;
 
@@ -48,6 +50,7 @@ public enum DocumentoInput {
 
     public record DOCUMENTO_DELETE(@NotNull Integer id) implements DeleteType {}
 
+    @Builder
     public record DOCUMENTO_FIND(@NotNull Integer id) implements FindType {}
 
     public record DOCUMENTO_REJECT(@NotNull Integer id, @NotBlank String observaciones) implements PatchType {}
