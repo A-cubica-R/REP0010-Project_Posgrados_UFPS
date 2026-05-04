@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import ufps.edu.co.processor.crud.EntrevistaProcessor;
+import ufps.edu.co.processor.crud.EntrevistadoresProcessor;
 import ufps.edu.co.records.input.entity.EntrevistaInput.*;
 import ufps.edu.co.records.output.entity.EntrevistaOutput;
 
@@ -23,6 +24,9 @@ public class EntrevistaRestController {
 
     @Autowired
     private EntrevistaProcessor processor;
+
+    @Autowired
+    private EntrevistadoresProcessor entrevistadoresProcessor;
 
     @GetMapping("/listall")
     public ResponseEntity<List<EntrevistaOutput>> findAll() {
@@ -59,6 +63,7 @@ public class EntrevistaRestController {
     @DeleteMapping("/delete")
     public ResponseEntity<Void> deleteById(@RequestBody ENTREVISTA_DELETE request) {
         try {
+            entrevistadoresProcessor.deleteAllByEntrevistaId(new ENTREVISTA_FIND(request.id()));
             processor.deleteById(request);
             return ResponseEntity.noContent().build();
         } catch (RuntimeException e) {

@@ -3,6 +3,8 @@ package ufps.edu.co.processor.crud;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import ufps.edu.co.maps.specific.EntrevistaMap;
 import ufps.edu.co.records.input.entity.EntrevistaInput.*;
 import ufps.edu.co.records.output.entity.EntrevistaOutput;
@@ -48,6 +50,7 @@ public class EntrevistaProcessor implements
     }
 
     @Override
+    @Transactional(readOnly = true)
     public EntrevistaOutput findById(ENTREVISTA_FIND input) {
         try {
             EntrevistaDTO dto = service.findById(input.id());
@@ -58,6 +61,7 @@ public class EntrevistaProcessor implements
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<EntrevistaOutput> findAll() {
         try {
             return service.findAll().stream().map(map::toOutput).toList();

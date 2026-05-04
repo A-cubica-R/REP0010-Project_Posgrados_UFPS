@@ -7,7 +7,7 @@ import ufps.edu.co.records.contracts.*;
 public enum EntrevistaInput {
     ;
 
-    public record ENTREVISTA_CREATE(@NotNull LocalDate fecha, @NotNull Float calificacion, @NotNull Integer idTipoentrevista, @NotNull Integer idEntrevistador, @NotNull Integer idAspirante, @NotNull Integer idEstado) implements CreateType {}
+    public record ENTREVISTA_CREATE(@NotNull LocalDate fecha, @NotNull Float calificacion, @NotNull Integer idTipoentrevista, @NotNull Integer idEntrevistador, @NotNull Integer idAspirante, @NotNull Integer idEstado, @NotNull Integer idUbicacion) implements CreateType {}
 
     public record ENTREVISTA_UPDATE(@NotNull Integer id, @NotNull LocalDate fecha, @NotNull Float calificacion, @NotNull Integer idTipoentrevista, @NotNull Integer idEntrevistador, @NotNull Integer idAspirante, @NotNull Integer idEstado) implements UpdateType {}
 

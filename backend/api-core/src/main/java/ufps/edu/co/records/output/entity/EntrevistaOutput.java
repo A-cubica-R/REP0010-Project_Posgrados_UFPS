@@ -4,6 +4,7 @@ import lombok.Builder;
 import ufps.edu.co.records.OutputResponse;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Builder
 public record EntrevistaOutput(
@@ -13,5 +14,7 @@ public record EntrevistaOutput(
         TipoentrevistaOutput tipoentrevista,
         EntrevistadorOutput entrevistador,
         AspiranteOutput aspirante,
-        EstadoOutput estado
+        EstadoOutput estado,
+        String nombreAspirante,
+        List<String> nombresEntrevistadores
 ) implements OutputResponse {}

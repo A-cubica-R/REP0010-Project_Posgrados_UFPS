@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -61,6 +62,16 @@ public class EntrevistadoresRestController {
         try {
             processor.deleteById(request);
             return ResponseEntity.noContent().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PatchMapping(value = "/patch", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<EntrevistadoresOutput> patch(@RequestBody ENTREVISTADORES_PATCH request) {
+        try {
+            EntrevistadoresOutput output = processor.patch(request);
+            return ResponseEntity.ok(output);
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }

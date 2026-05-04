@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import ufps.edu.co.maps.specific.AdministrativoMap;
 import ufps.edu.co.processor.abstracts.contract.CrudProcessor;
@@ -49,6 +50,7 @@ public class AdministrativoProcessor implements CrudProcessor<ADMINISTRATIVO_CRE
     }
 
     @Override
+    @Transactional(readOnly = true)
     public AdministrativoOutput findById(ADMINISTRATIVO_FIND input) {
         try {
             return map.toOutput(service.findById(input.id()));
