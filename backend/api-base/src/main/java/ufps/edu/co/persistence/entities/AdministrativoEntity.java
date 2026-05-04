@@ -55,7 +55,7 @@ public class AdministrativoEntity implements Serializable {
     private int        idCargo ;
 
     //--- LINKS ( RELATIONSHIPS )
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="id_persona", referencedColumnName="id", insertable=false, updatable=false)
     private PersonaEntity    persona ; 
 
