@@ -9,9 +9,7 @@ import ufps.edu.co.records.input.entity.PersonaInput.PERSONA_FIND;
 import ufps.edu.co.records.output.entity.AdministrativoOutput;
 import ufps.edu.co.records.output.entity.CargoOutput;
 import ufps.edu.co.records.output.entity.EstadoOutput;
-import ufps.edu.co.records.output.entity.GeneroOutput;
 import ufps.edu.co.records.output.entity.PersonaOutput;
-import ufps.edu.co.records.output.entity.UbicacionOutput;
 import ufps.edu.co.rest.dto.AdministrativoDTO;
 
 @Component

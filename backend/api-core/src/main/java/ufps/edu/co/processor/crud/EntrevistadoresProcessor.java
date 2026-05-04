@@ -6,9 +6,7 @@ import org.springframework.stereotype.Service;
 import ufps.edu.co.maps.specific.EntrevistadoresMap;
 import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_FIND;
 import ufps.edu.co.records.input.entity.EntrevistadoresInput.*;
-import ufps.edu.co.records.output.entity.EntrevistaOutput;
 import ufps.edu.co.records.output.entity.EntrevistadoresOutput;
-import ufps.edu.co.rest.dto.EntrevistaDTO;
 import ufps.edu.co.rest.dto.EntrevistadoresDTO;
 import ufps.edu.co.rest.services.EntrevistadoresService;
 import ufps.edu.co.usecase.GlobalUseCase;
@@ -19,9 +17,6 @@ public class EntrevistadoresProcessor implements
 
     @Autowired
     private EntrevistadoresService service;
-
-    @Autowired
-    private EntrevistaProcessor entrevistaProcessor;
 
     @Autowired
     private EntrevistadoresMap map;
