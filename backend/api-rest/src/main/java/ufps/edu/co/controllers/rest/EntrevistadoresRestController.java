@@ -67,12 +67,6 @@ public class EntrevistadoresRestController {
         }
     }
 
-    @GetMapping("/listall")
-    public ResponseEntity<List<EntrevistadoresOutput>> listAll() {
-        List<EntrevistadoresOutput> list = processor.findAll();
-        return ResponseEntity.ok(list);
-    }
-
     @PatchMapping(value = "/patch", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<EntrevistadoresOutput> patch(@RequestBody ENTREVISTADORES_PATCH request) {
         try {

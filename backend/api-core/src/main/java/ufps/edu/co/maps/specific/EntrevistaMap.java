@@ -1,19 +1,28 @@
 package ufps.edu.co.maps.specific;
 
 import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ufps.edu.co.maps.GlobalMapper;
+import ufps.edu.co.processor.crud.PersonaProcessor;
 import ufps.edu.co.records.input.entity.EntrevistaInput.*;
+import ufps.edu.co.records.input.entity.PersonaInput.PERSONA_FIND;
 import ufps.edu.co.records.output.entity.AspiranteOutput;
 import ufps.edu.co.records.output.entity.EntrevistaOutput;
 import ufps.edu.co.records.output.entity.EntrevistadorOutput;
 import ufps.edu.co.records.output.entity.EstadoOutput;
+import ufps.edu.co.records.output.entity.PersonaOutput;
 import ufps.edu.co.records.output.entity.TipoentrevistaOutput;
 import ufps.edu.co.rest.dto.EntrevistaDTO;
 
 @Component
 public class EntrevistaMap extends
         GlobalMapper<ENTREVISTA_CREATE, ENTREVISTA_UPDATE, ENTREVISTA_DELETE, ENTREVISTA_PATCH, ENTREVISTA_FIND, EntrevistaOutput, EntrevistaDTO> {
+
+    @Autowired
+    private PersonaProcessor personaProcessor;
+
 
     public EntrevistaMap() {
         super(ENTREVISTA_CREATE.class, ENTREVISTA_UPDATE.class, ENTREVISTA_DELETE.class, ENTREVISTA_PATCH.class,
@@ -124,7 +133,24 @@ public class EntrevistaMap extends
                     .build();
         }
 
-        return new EntrevistaOutput(dto.getId(), dto.getFecha(), dto.getCalificacion(), tipoentrevista, entrevistador, aspirante, estado);
+        String nombreAspirante = dto.getAspirante() != null
+                ? personaProcessor.findById(new PERSONA_FIND(dto.getAspirante().getId())).nombres() + " "
+                        + personaProcessor.findById(new PERSONA_FIND(dto.getAspirante().getId())).apellidos()
+                : "Sin aspirante";
+
+        List<String> nombresEntrevistadores = dto.getEntrevistadoresList() != null
+                ? dto.getEntrevistadoresList().stream().map(
+                        entrevistadorItem -> {
+                            PERSONA_FIND find = new PERSONA_FIND(entrevistadorItem.getId());
+                            PersonaOutput persona = personaProcessor.findById(find);
+                            return persona.nombres() + " " + persona.apellidos();
+                        }
+
+                ).toList()
+                : List.of();
+
+        return new EntrevistaOutput(dto.getId(), dto.getFecha(), dto.getCalificacion(), tipoentrevista, entrevistador,
+                aspirante, estado, nombreAspirante, nombresEntrevistadores);
     }
 
     public List<EntrevistaOutput> toOutputList(List<EntrevistaDTO> dtoList) {
