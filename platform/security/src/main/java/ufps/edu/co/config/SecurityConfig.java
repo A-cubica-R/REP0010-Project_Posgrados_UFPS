@@ -14,8 +14,8 @@ import ufps.edu.co.security.JwtAuthenticationFilter;
 @Configuration
 public class SecurityConfig {
 
-        private static final String[] SUPER_ADMIN_CRUD_PATHS = {
-                        "/api/dev/endpoint/**"
+        private static final String[] SUPER_ADMIN_PATHS = {
+                        "/**"
         };
 
         private static final String[] PUBLIC_PATHS = {
@@ -47,7 +47,7 @@ public class SecurityConfig {
                                                 .permitAll()
 
                                                 // Rutas protegidas para el rol SUPER_ADMINISTRADOR
-                                                .requestMatchers(SUPER_ADMIN_CRUD_PATHS)
+                                                .requestMatchers(SUPER_ADMIN_PATHS)
                                                 .hasRole("SUPER_ADMINISTRADOR")
 
                                                 // Denegar cualquier otra solicitud no especificada
