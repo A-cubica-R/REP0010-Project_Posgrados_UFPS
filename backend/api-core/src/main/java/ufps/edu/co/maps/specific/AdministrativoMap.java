@@ -1,8 +1,11 @@
 package ufps.edu.co.maps.specific;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ufps.edu.co.maps.GlobalMapper;
+import ufps.edu.co.processor.crud.PersonaProcessor;
 import ufps.edu.co.records.input.entity.AdministrativoInput.*;
+import ufps.edu.co.records.input.entity.PersonaInput.PERSONA_FIND;
 import ufps.edu.co.records.output.entity.AdministrativoOutput;
 import ufps.edu.co.records.output.entity.CargoOutput;
 import ufps.edu.co.records.output.entity.EstadoOutput;
@@ -14,6 +17,9 @@ import ufps.edu.co.rest.dto.AdministrativoDTO;
 @Component
 public class AdministrativoMap extends
         GlobalMapper<ADMINISTRATIVO_CREATE, ADMINISTRATIVO_UPDATE, ADMINISTRATIVO_DELETE, ADMINISTRATIVO_PATCH, ADMINISTRATIVO_FIND, AdministrativoOutput, AdministrativoDTO> {
+
+    @Autowired
+    private PersonaProcessor personaProcessor;
 
     public AdministrativoMap() {
         super(ADMINISTRATIVO_CREATE.class, ADMINISTRATIVO_UPDATE.class, ADMINISTRATIVO_DELETE.class,
@@ -79,26 +85,8 @@ public class AdministrativoMap extends
         if (dto == null)
             return null;
         PersonaOutput persona = null;
-        UbicacionOutput ubicacion = null;
-        GeneroOutput genero = null;
-        if (dto.getPersona() != null) {
-            if (dto.getPersona().getUbicacion() != null) {
-                UbicacionMap ubicacionMap = new UbicacionMap();
-                ubicacion = ubicacionMap.toOutput(dto.getPersona().getUbicacion());
-            }
-            if (dto.getPersona().getGenero() != null) {
-                GeneroMap generoMap = new GeneroMap();
-                genero = generoMap.toOutput(dto.getPersona().getGenero());
-            }
-            persona = new PersonaOutput(dto.getPersona().getId(),
-                    dto.getPersona().getNombres(),
-                    dto.getPersona().getApellidos(),
-                    dto.getPersona().getCorreo(),
-                    dto.getPersona().getFechanacimiento(),
-                    dto.getPersona().getCelular(),
-                    dto.getPersona().getTelefono(),
-                    ubicacion,
-                    genero);
+        if (dto.getIdPersona() != 0) {
+            persona = personaProcessor.findById(new PERSONA_FIND(dto.getIdPersona()));
         }
         EstadoOutput estado = null;
         if (dto.getEstado() != null) {
