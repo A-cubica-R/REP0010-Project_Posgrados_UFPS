@@ -28,6 +28,14 @@ public class SecurityConfig {
                         "/error"
         };
 
+        private static final String[] DIRECTOR_FACULTAD_PATHS = {
+                        "/facultades/**",
+                        "/programas/**",
+                        "/profesores/**",
+                        "/estudiantes/**",
+                        "/proyectos/**"
+        };
+
         @Bean
         public SecurityFilterChain filterChain(HttpSecurity http, CorsConfigurationSource corsConfigurationSource,
                         JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
@@ -49,6 +57,9 @@ public class SecurityConfig {
                                                 // Rutas protegidas para el rol SUPER_ADMINISTRADOR
                                                 .requestMatchers(SUPER_ADMIN_PATHS)
                                                 .hasRole("SUPER_ADMINISTRADOR")
+
+                                                .requestMatchers(DIRECTOR_FACULTAD_PATHS)
+                                                .hasRole("DIRECTOR_FACULTAD")
 
                                                 // Denegar cualquier otra solicitud no especificada
                                                 .anyRequest().denyAll())
