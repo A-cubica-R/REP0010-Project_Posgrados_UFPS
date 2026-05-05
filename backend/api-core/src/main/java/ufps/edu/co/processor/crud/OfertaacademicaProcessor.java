@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import ufps.edu.co.maps.specific.OfertaacademicaMap;
-import ufps.edu.co.records.input.entity.PlazoInput;
 import ufps.edu.co.records.input.entity.OfertaacademicaInput.*;
 import ufps.edu.co.records.output.entity.OfertaacademicaOutput;
 import ufps.edu.co.rest.dto.OfertaacademicaDTO;
