@@ -14,7 +14,6 @@ import lombok.Setter;
 import java.time.LocalDate;
 import java.util.List;
 
-
 /**
  * JPA entity class for "Entrevista"
  *
@@ -32,49 +31,56 @@ public class EntrevistaEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    //--- PRIMARY KEY 
+    // --- PRIMARY KEY
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    @Column(name="id", nullable=false)
-    private Integer id ;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
+    private Integer id;
 
-    //--- OTHER DATA FIELDS 
-    @Column(name="fecha", nullable=false)
-    private LocalDate  fecha ;
+    // --- OTHER DATA FIELDS
+    @Column(name = "fecha", nullable = false)
+    private LocalDate fecha;
 
-    @Column(name="calificacion", nullable=false)
-    private float      calificacion ;
+    @Column(name = "calificacion", nullable = false)
+    private float calificacion;
 
-    @Column(name="id_tipoentrevista", nullable=false)
-    private int        idTipoentrevista ;
+    @Column(name = "id_tipoentrevista", nullable = false)
+    private int idTipoentrevista;
 
-    @Column(name="id_entrevistador", nullable=false)
-    private int        idEntrevistador ;
+    @Column(name = "id_entrevistador", nullable = false)
+    private int idEntrevistador;
 
-    @Column(name="id_aspirante", nullable=false)
-    private int        idAspirante ;
+    @Column(name = "id_aspirante", nullable = false)
+    private int idAspirante;
 
-    @Column(name="id_estado", nullable=false)
-    private int        idEstado ;
+    @Column(name = "id_estado", nullable = false)
+    private int idEstado;
 
-    //--- LINKS ( RELATIONSHIPS )
+    @Column(name = "id_ubicacion", nullable = false)
+    private int idUbicacion;
+
+    // --- LINKS ( RELATIONSHIPS )
     @ManyToOne
-    @JoinColumn(name="id_tipoentrevista", referencedColumnName="id", insertable=false, updatable=false)
-    private TipoentrevistaEntity tipoentrevista ; 
+    @JoinColumn(name = "id_ubicacion", referencedColumnName = "id", insertable = false, updatable = false)
+    private UbicacionEntity ubicacion;
+
+    @ManyToOne
+    @JoinColumn(name = "id_tipoentrevista", referencedColumnName = "id", insertable = false, updatable = false)
+    private TipoentrevistaEntity tipoentrevista;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="id_entrevistador", referencedColumnName="id", insertable=false, updatable=false)
-    private EntrevistadorEntity entrevistador ; 
+    @JoinColumn(name = "id_entrevistador", referencedColumnName = "id", insertable = false, updatable = false)
+    private EntrevistadorEntity entrevistador;
 
     @ManyToOne
-    @JoinColumn(name="id_aspirante", referencedColumnName="id", insertable=false, updatable=false)
-    private AspiranteEntity  aspirante ; 
+    @JoinColumn(name = "id_aspirante", referencedColumnName = "id", insertable = false, updatable = false)
+    private AspiranteEntity aspirante;
 
     @ManyToOne
-    @JoinColumn(name="id_estado", referencedColumnName="id", insertable=false, updatable=false)
-    private EstadoEntity     estado ; 
+    @JoinColumn(name = "id_estado", referencedColumnName = "id", insertable = false, updatable = false)
+    private EstadoEntity estado;
 
-    @OneToMany(mappedBy="entrevista")
-    private List<EntrevistadoresEntity> entrevistadoresList ; 
+    @OneToMany(mappedBy = "entrevista")
+    private List<EntrevistadoresEntity> entrevistadoresList;
 
 }
