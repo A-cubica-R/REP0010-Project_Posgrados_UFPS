@@ -1,10 +1,19 @@
 package ufps.edu.co.maps.specific;
 
 import java.util.List;
+
 import org.springframework.stereotype.Component;
+
 import ufps.edu.co.maps.GlobalMapper;
-import ufps.edu.co.records.input.entity.AspiranteInput.*;
+import ufps.edu.co.records.input.entity.AspiranteInput.ASPIRANTE_CREATE;
+import ufps.edu.co.records.input.entity.AspiranteInput.ASPIRANTE_DELETE;
+import ufps.edu.co.records.input.entity.AspiranteInput.ASPIRANTE_FIND;
+import ufps.edu.co.records.input.entity.AspiranteInput.ASPIRANTE_PATCH;
+import ufps.edu.co.records.input.entity.AspiranteInput.ASPIRANTE_UPDATE;
 import ufps.edu.co.records.output.entity.AspiranteOutput;
+import ufps.edu.co.records.output.entity.GeneroOutput;
+import ufps.edu.co.records.output.entity.PersonaOutput;
+import ufps.edu.co.records.output.entity.UbicacionOutput;
 import ufps.edu.co.rest.dto.AspiranteDTO;
 
 @Component
@@ -60,9 +69,39 @@ public class AspiranteMap extends
     @Override
     public AspiranteOutput toOutput(AspiranteDTO dto) {
         if (dto == null) {
-            return null;
+            throw new RuntimeException("AspiranteDTO is null");
         }
-        return new AspiranteOutput(dto.getId(), null);
+        PersonaOutput persona = null;
+        if (dto.getPersona() != null) {
+            UbicacionOutput ubicacion = null;
+            if (dto.getPersona().getUbicacion() != null) {
+                ubicacion = UbicacionOutput.builder()
+                        .id(dto.getPersona().getUbicacion().getId())
+                        .direccion(dto.getPersona().getUbicacion().getDireccion())
+                        .build();
+            }
+
+            GeneroOutput genero = null;
+            if (dto.getPersona().getGenero() != null) {
+                genero = GeneroOutput.builder()
+                        .id(dto.getPersona().getGenero().getId())
+                        .nombre(dto.getPersona().getGenero().getNombre())
+                        .build();
+            }
+
+            persona = PersonaOutput.builder()
+                    .id(dto.getPersona().getId())
+                    .nombres(dto.getPersona().getNombres())
+                    .apellidos(dto.getPersona().getApellidos())
+                    .correo(dto.getPersona().getCorreo())
+                    .fechanacimiento(dto.getPersona().getFechanacimiento())
+                    .celular(dto.getPersona().getCelular())
+                    .telefono(dto.getPersona().getTelefono())
+                    .ubicacion(ubicacion)
+                    .genero(genero)
+                    .build();
+        }
+        return new AspiranteOutput(dto.getId(), persona);
     }
 
     public List<AspiranteOutput> toOutputList(List<AspiranteDTO> dtoList) {
