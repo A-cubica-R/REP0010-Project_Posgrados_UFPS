@@ -14,7 +14,8 @@ import ufps.edu.co.rest.dto.AdministrativoDTO;
 import ufps.edu.co.rest.services.AdministrativoService;
 
 @Service
-public class AdministrativoProcessor implements CrudProcessor<ADMINISTRATIVO_CREATE, ADMINISTRATIVO_UPDATE, ADMINISTRATIVO_DELETE, ADMINISTRATIVO_PATCH, ADMINISTRATIVO_FIND, AdministrativoOutput> {
+public class AdministrativoProcessor implements
+        CrudProcessor<ADMINISTRATIVO_CREATE, ADMINISTRATIVO_UPDATE, ADMINISTRATIVO_DELETE, ADMINISTRATIVO_PATCH, ADMINISTRATIVO_FIND, AdministrativoOutput> {
 
     @Autowired
     private AdministrativoService service;
@@ -76,4 +77,5 @@ public class AdministrativoProcessor implements CrudProcessor<ADMINISTRATIVO_CRE
             throw new RuntimeException("Error deleting Administrativo: " + e.getMessage(), e);
         }
     }
+
 }
