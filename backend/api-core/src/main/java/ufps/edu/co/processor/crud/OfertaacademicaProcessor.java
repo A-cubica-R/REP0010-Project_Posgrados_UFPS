@@ -6,14 +6,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import ufps.edu.co.maps.specific.OfertaacademicaMap;
+import ufps.edu.co.records.input.entity.PlazoInput;
 import ufps.edu.co.records.input.entity.OfertaacademicaInput.*;
 import ufps.edu.co.records.output.entity.OfertaacademicaOutput;
 import ufps.edu.co.rest.dto.OfertaacademicaDTO;
+import ufps.edu.co.rest.dto.PlazoDTO;
 import ufps.edu.co.rest.services.OfertaacademicaService;
 import ufps.edu.co.usecase.GlobalUseCase;
 
 @Service
-public class OfertaacademicaProcessor implements GlobalUseCase<OFERTAACADEMICA_CREATE, OFERTAACADEMICA_UPDATE, OFERTAACADEMICA_DELETE, OFERTAACADEMICA_PATCH, OFERTAACADEMICA_FIND, OfertaacademicaOutput> {
+public class OfertaacademicaProcessor implements
+        GlobalUseCase<OFERTAACADEMICA_CREATE, OFERTAACADEMICA_UPDATE, OFERTAACADEMICA_DELETE, OFERTAACADEMICA_PATCH, OFERTAACADEMICA_FIND, OfertaacademicaOutput> {
 
     @Autowired
     private OfertaacademicaService service;
@@ -29,6 +32,25 @@ public class OfertaacademicaProcessor implements GlobalUseCase<OFERTAACADEMICA_C
             return map.toOutput(created);
         } catch (Exception e) {
             throw new RuntimeException("Error creating OfertaAcademica: " + e.getMessage(), e);
+        }
+    }
+
+    public OfertaacademicaOutput createWithPlazo(OFERTAACADEMICA_CREATE_WITH_PLAZO input) {
+        try {
+            PlazoDTO plazoDto = null;
+            if (input.plazo() != null) {
+                plazoDto = PlazoDTO.builder()
+                        .idTipoplazo(input.plazo().idTipoplazo())
+                        .fechainicio(input.plazo().fechainicio())
+                        .fechafin(input.plazo().fechafin())
+                        .build();
+            }
+            OfertaacademicaDTO dto = map.toDto(input);
+            dto.setPlazo(plazoDto);
+            OfertaacademicaDTO created = service.create(dto);
+            return map.toOutput(created);
+        } catch (Exception e) {
+            throw new RuntimeException("Error creating OfertaAcademica with Plazo: " + e.getMessage(), e);
         }
     }
 

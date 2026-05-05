@@ -5,5 +5,13 @@ import ufps.edu.co.records.OutputResponse;
 
 @Builder
 public record OfertaacademicaOutput(
-	Integer id,
-	String encuentros) implements OutputResponse {}
+		Integer id,
+		String encuentros,
+		Integer cupos,
+		ProgramaOutput programa,
+		ModalidadOutput modalidad,
+		JornadaOutput jornada,
+		CohorteOutput cohorte,
+		PlazoOutput plazo)
+		implements OutputResponse {
+}
