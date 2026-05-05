@@ -11,6 +11,7 @@ import ufps.edu.co.records.output.entity.OfertaacademicaOutput;
 import ufps.edu.co.rest.dto.OfertaacademicaDTO;
 import ufps.edu.co.rest.dto.PlazoDTO;
 import ufps.edu.co.rest.services.OfertaacademicaService;
+import ufps.edu.co.rest.services.PlazoService;
 import ufps.edu.co.usecase.GlobalUseCase;
 
 @Service
@@ -22,6 +23,9 @@ public class OfertaacademicaProcessor implements
 
     @Autowired
     private OfertaacademicaMap map;
+
+    @Autowired
+    private PlazoService plazoService;
 
     @Override
     public OfertaacademicaOutput create(OFERTAACADEMICA_CREATE input) {
@@ -45,7 +49,9 @@ public class OfertaacademicaProcessor implements
                         .build();
             }
             OfertaacademicaDTO dto = map.toDto(input);
-            dto.setPlazo(plazoDto);
+            Integer plazoId = plazoService.create(plazoDto).getId();
+            dto.setIdPlazo(plazoId);
+
             OfertaacademicaDTO created = service.create(dto);
             return map.toOutput(created);
         } catch (Exception e) {
