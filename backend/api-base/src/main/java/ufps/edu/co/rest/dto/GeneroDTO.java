@@ -10,7 +10,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-import java.util.List;
 
 /**
  * DTO class for "Genero"
@@ -31,8 +30,6 @@ public class GeneroDTO implements Serializable {
     private Integer id ;
     //--- OTHER DATA FIELDS 
     private String nombre ;
-    //--- LINKS ( RELATIONSHIPS )
-    private List<PersonaDTO> personaList ; 
 
     @Override
 	public String toString() { 

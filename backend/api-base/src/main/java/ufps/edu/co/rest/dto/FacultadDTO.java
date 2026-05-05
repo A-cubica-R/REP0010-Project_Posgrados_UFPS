@@ -10,7 +10,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-import java.util.List;
 
 /**
  * DTO class for "Facultad"
@@ -35,7 +34,6 @@ public class FacultadDTO implements Serializable {
     private int idAdministrativo ;
     //--- LINKS ( RELATIONSHIPS )
     private AdministrativoDTO administrativo ; 
-    private List<ProgramaDTO> programaList ; 
 
     @Override
 	public String toString() { 

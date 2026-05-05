@@ -10,7 +10,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-import java.util.List;
 
 /**
  * DTO class for "Departamento"
@@ -34,7 +33,6 @@ public class DepartamentoDTO implements Serializable {
     private int idPais ;
     //--- LINKS ( RELATIONSHIPS )
     private PaisDTO pais ; 
-    private List<MunicipioDTO> municipioList ; 
 
     @Override
 	public String toString() { 

@@ -6,10 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import ufps.edu.co.maps.GlobalMapper;
-import ufps.edu.co.processor.crud.AdministrativoProcessor;
 import ufps.edu.co.processor.crud.EntrevistadorProcessor;
 import ufps.edu.co.processor.crud.PersonaProcessor;
-import ufps.edu.co.records.input.entity.AdministrativoInput.ADMINISTRATIVO_FIND;
 import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_CREATE;
 import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_DELETE;
 import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_FIND;
@@ -35,9 +33,6 @@ public class EntrevistaMap extends
 
     @Autowired
     private EntrevistadorProcessor entrevistadorProcessor;
-
-    @Autowired
-    private AdministrativoProcessor administrativoProcessor;
 
     public EntrevistaMap() {
         super(ENTREVISTA_CREATE.class, ENTREVISTA_UPDATE.class, ENTREVISTA_DELETE.class, ENTREVISTA_PATCH.class,
@@ -153,24 +148,10 @@ public class EntrevistaMap extends
                 ? aspirante.persona().nombres() + " " + aspirante.persona().apellidos()
                 : "Sin aspirante";
 
-        List<String> nombresEntrevistadores = dto.getEntrevistadoresList() != null
-                ? dto.getEntrevistadoresList().stream().map(
-                        entrevistadorItem -> {
-                            if (entrevistadorItem.getIdAdministrativo() == 0) {
-                                return "Sin nombre";
-                            }
-                            AdministrativoOutput admin = administrativoProcessor.findById(
-                                    new ADMINISTRATIVO_FIND(entrevistadorItem.getIdAdministrativo()));
-                            if (admin == null || admin.persona() == null) {
-                                return "Sin nombre";
-                            }
-                            return admin.persona().nombres() + " " + admin.persona().apellidos();
-                        })
-                        .toList()
-                : List.of();
+        List<AdministrativoOutput> entrevistadores = List.of();
 
         return new EntrevistaOutput(dto.getId(), dto.getFecha(), dto.getCalificacion(), tipoentrevista, entrevistador,
-                aspirante, estado, nombreAspirante, nombresEntrevistadores);
+                aspirante, estado, nombreAspirante, entrevistadores);
     }
 
     public List<EntrevistaOutput> toOutputList(List<EntrevistaDTO> dtoList) {

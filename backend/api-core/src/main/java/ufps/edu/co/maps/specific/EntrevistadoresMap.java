@@ -1,6 +1,8 @@
 package ufps.edu.co.maps.specific;
 
 import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ufps.edu.co.maps.GlobalMapper;
 import ufps.edu.co.records.input.entity.EntrevistadoresInput.*;
@@ -13,8 +15,15 @@ import ufps.edu.co.rest.dto.EntrevistadoresDTO;
 public class EntrevistadoresMap extends
         GlobalMapper<ENTREVISTADORES_CREATE, ENTREVISTADORES_UPDATE, ENTREVISTADORES_DELETE, ENTREVISTADORES_PATCH, ENTREVISTADORES_FIND, EntrevistadoresOutput, EntrevistadoresDTO> {
 
+    @Autowired
+    private EntrevistaMap entrevistaMap;
+
+    @Autowired
+    private AdministrativoMap administrativoMap;
+
     public EntrevistadoresMap() {
-        super(ENTREVISTADORES_CREATE.class, ENTREVISTADORES_UPDATE.class, ENTREVISTADORES_DELETE.class, ENTREVISTADORES_PATCH.class,
+        super(ENTREVISTADORES_CREATE.class, ENTREVISTADORES_UPDATE.class, ENTREVISTADORES_DELETE.class,
+                ENTREVISTADORES_PATCH.class,
                 ENTREVISTADORES_FIND.class);
     }
 
@@ -70,21 +79,8 @@ public class EntrevistadoresMap extends
             return null;
         }
 
-        EntrevistaOutput entrevista = null;
-        if (dto.getEntrevista() != null) {
-            entrevista = EntrevistaOutput.builder()
-                    .id(dto.getEntrevista().getId())
-                    .fecha(dto.getEntrevista().getFecha())
-                    .calificacion(dto.getEntrevista().getCalificacion())
-                    .build();
-        }
-
-        AdministrativoOutput administrativo = null;
-        if (dto.getAdministrativo() != null) {
-            administrativo = AdministrativoOutput.builder()
-                    .id(dto.getAdministrativo().getId())
-                    .build();
-        }
+        EntrevistaOutput entrevista = entrevistaMap.toOutput(dto.getEntrevista());
+        AdministrativoOutput administrativo = administrativoMap.toOutput(dto.getAdministrativo());
 
         return new EntrevistadoresOutput(dto.getId(), entrevista, administrativo);
     }

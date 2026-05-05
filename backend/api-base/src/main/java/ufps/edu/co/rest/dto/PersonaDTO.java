@@ -11,7 +11,6 @@ import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import java.time.LocalDate;
-import java.util.List;
 
 /**
  * DTO class for "Persona"
@@ -40,11 +39,8 @@ public class PersonaDTO implements Serializable {
     private int idUbicacion ;
     private int idGenero ;
     //--- LINKS ( RELATIONSHIPS )
-    private List<AdministrativoDTO> administrativoList ; 
-    private List<AspiranteDTO> aspiranteList ; 
     private UbicacionDTO ubicacion ; 
     private GeneroDTO genero ; 
-    private List<UsuarioDTO> usuarioList ; 
 
     @Override
 	public String toString() { 
