@@ -16,5 +16,6 @@ public record PersonaOutput(
         String celular,
         String telefono,
         UbicacionOutput ubicacion,
-        GeneroOutput genero) implements OutputResponse {
+        GeneroOutput genero
+) implements OutputResponse {
 }

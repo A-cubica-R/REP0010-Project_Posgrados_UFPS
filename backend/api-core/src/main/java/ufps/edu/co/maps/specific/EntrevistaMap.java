@@ -1,19 +1,43 @@
 package ufps.edu.co.maps.specific;
 
 import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
 import ufps.edu.co.maps.GlobalMapper;
-import ufps.edu.co.records.input.entity.EntrevistaInput.*;
+import ufps.edu.co.processor.crud.AdministrativoProcessor;
+import ufps.edu.co.processor.crud.EntrevistadorProcessor;
+import ufps.edu.co.processor.crud.PersonaProcessor;
+import ufps.edu.co.records.input.entity.AdministrativoInput.ADMINISTRATIVO_FIND;
+import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_CREATE;
+import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_DELETE;
+import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_FIND;
+import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_PATCH;
+import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_UPDATE;
+import ufps.edu.co.records.input.entity.EntrevistadorInput.ENTREVISTADOR_FIND;
+import ufps.edu.co.records.input.entity.PersonaInput.PERSONA_FIND;
+import ufps.edu.co.records.output.entity.AdministrativoOutput;
 import ufps.edu.co.records.output.entity.AspiranteOutput;
 import ufps.edu.co.records.output.entity.EntrevistaOutput;
 import ufps.edu.co.records.output.entity.EntrevistadorOutput;
 import ufps.edu.co.records.output.entity.EstadoOutput;
+import ufps.edu.co.records.output.entity.PersonaOutput;
 import ufps.edu.co.records.output.entity.TipoentrevistaOutput;
 import ufps.edu.co.rest.dto.EntrevistaDTO;
 
 @Component
 public class EntrevistaMap extends
         GlobalMapper<ENTREVISTA_CREATE, ENTREVISTA_UPDATE, ENTREVISTA_DELETE, ENTREVISTA_PATCH, ENTREVISTA_FIND, EntrevistaOutput, EntrevistaDTO> {
+
+    @Autowired
+    private PersonaProcessor personaProcessor;
+
+    @Autowired
+    private EntrevistadorProcessor entrevistadorProcessor;
+
+    @Autowired
+    private AdministrativoProcessor administrativoProcessor;
 
     public EntrevistaMap() {
         super(ENTREVISTA_CREATE.class, ENTREVISTA_UPDATE.class, ENTREVISTA_DELETE.class, ENTREVISTA_PATCH.class,
@@ -103,16 +127,17 @@ public class EntrevistaMap extends
 
         EntrevistadorOutput entrevistador = null;
         if (dto.getEntrevistador() != null) {
-            entrevistador = EntrevistadorOutput.builder()
-                    .id(dto.getEntrevistador().getId())
-                    .observaciones(dto.getEntrevistador().getObservaciones())
-                    .build();
+            entrevistador = entrevistadorProcessor.findById(
+                    new ENTREVISTADOR_FIND(dto.getEntrevistador().getId()));
         }
 
         AspiranteOutput aspirante = null;
         if (dto.getAspirante() != null) {
+            PersonaOutput persona = personaProcessor.findById(
+                    new PERSONA_FIND(dto.getAspirante().getIdPersona()));
             aspirante = AspiranteOutput.builder()
                     .id(dto.getAspirante().getId())
+                    .persona(persona) // ✅ poblado
                     .build();
         }
 
@@ -124,7 +149,28 @@ public class EntrevistaMap extends
                     .build();
         }
 
-        return new EntrevistaOutput(dto.getId(), dto.getFecha(), dto.getCalificacion(), tipoentrevista, entrevistador, aspirante, estado);
+        String nombreAspirante = aspirante != null && aspirante.persona() != null
+                ? aspirante.persona().nombres() + " " + aspirante.persona().apellidos()
+                : "Sin aspirante";
+
+        List<String> nombresEntrevistadores = dto.getEntrevistadoresList() != null
+                ? dto.getEntrevistadoresList().stream().map(
+                        entrevistadorItem -> {
+                            if (entrevistadorItem.getIdAdministrativo() == 0) {
+                                return "Sin nombre";
+                            }
+                            AdministrativoOutput admin = administrativoProcessor.findById(
+                                    new ADMINISTRATIVO_FIND(entrevistadorItem.getIdAdministrativo()));
+                            if (admin == null || admin.persona() == null) {
+                                return "Sin nombre";
+                            }
+                            return admin.persona().nombres() + " " + admin.persona().apellidos();
+                        })
+                        .toList()
+                : List.of();
+
+        return new EntrevistaOutput(dto.getId(), dto.getFecha(), dto.getCalificacion(), tipoentrevista, entrevistador,
+                aspirante, estado, nombreAspirante, nombresEntrevistadores);
     }
 
     public List<EntrevistaOutput> toOutputList(List<EntrevistaDTO> dtoList) {

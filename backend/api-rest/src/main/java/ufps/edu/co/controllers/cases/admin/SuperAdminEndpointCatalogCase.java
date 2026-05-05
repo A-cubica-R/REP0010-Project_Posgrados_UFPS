@@ -109,9 +109,6 @@ public class SuperAdminEndpointCatalogCase {
             if (!pathPatterns.isEmpty()) {
                 return pathPatterns.stream().sorted().findFirst().orElse("");
             }
-            if (info.getPatternsCondition() != null) {
-                return info.getPatternsCondition().getPatterns().stream().sorted().findFirst().orElse("");
-            }
             return "";
         }
 

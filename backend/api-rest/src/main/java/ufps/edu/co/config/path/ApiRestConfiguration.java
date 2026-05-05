@@ -24,12 +24,16 @@ public class ApiRestConfiguration implements WebMvcConfigurer {
 
     private String casesPrefix;
 
+    private String commandPrefix;
+
     private String mediaType = "application/json";
 
     @Override
     public void configurePathMatch(PathMatchConfigurer configurer) {
         configurer.addPathPrefix(casesPrefix,
                 HandlerTypePredicate.forBasePackage("ufps.edu.co.controllers.cases"));
+        configurer.addPathPrefix(commandPrefix,
+                HandlerTypePredicate.forBasePackage("ufps.edu.co.controllers.cases.command"));
         configurer.addPathPrefix(prefix,
                 HandlerTypePredicate.forBasePackage("ufps.edu.co.controllers.rest"));
     }

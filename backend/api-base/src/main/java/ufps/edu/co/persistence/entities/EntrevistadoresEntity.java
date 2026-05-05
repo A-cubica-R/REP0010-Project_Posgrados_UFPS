@@ -48,7 +48,7 @@ public class EntrevistadoresEntity implements Serializable {
     @JoinColumn(name="id_entrevista", referencedColumnName="id", insertable=false, updatable=false)
     private EntrevistaEntity entrevista ; 
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="id_administrativo", referencedColumnName="id", insertable=false, updatable=false)
     private AdministrativoEntity administrativo ; 
 
