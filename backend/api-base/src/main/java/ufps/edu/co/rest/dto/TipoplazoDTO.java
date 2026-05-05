@@ -10,7 +10,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-import java.util.List;
 
 /**
  * DTO class for "Tipoplazo"
@@ -31,9 +30,7 @@ public class TipoplazoDTO implements Serializable {
     private Integer id ;
     //--- OTHER DATA FIELDS 
     private String nombre ;
-    private String descripcion ;
-    //--- LINKS ( RELATIONSHIPS )
-    private List<PlazoDTO> plazoList ; 
+    private String descripcion ; 
 
     @Override
 	public String toString() { 

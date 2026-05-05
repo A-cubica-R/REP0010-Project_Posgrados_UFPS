@@ -10,7 +10,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-import java.util.List;
 
 /**
  * DTO class for "Cargo"
@@ -34,7 +33,6 @@ public class CargoDTO implements Serializable {
     private String descripcion ;
     private int idPrograma ;
     //--- LINKS ( RELATIONSHIPS )
-    private List<AdministrativoDTO> administrativoList ; 
     private ProgramaDTO programa ; 
 
     @Override

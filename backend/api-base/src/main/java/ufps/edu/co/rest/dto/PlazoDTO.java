@@ -11,7 +11,6 @@ import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import java.time.LocalDate;
-import java.util.List;
 
 /**
  * DTO class for "Plazo"
@@ -35,8 +34,6 @@ public class PlazoDTO implements Serializable {
     private LocalDate fechafin ;
     private int idTipoplazo ;
     //--- LINKS ( RELATIONSHIPS )
-    private List<DocumentoDTO> documentoList ; 
-    private List<OfertaacademicaDTO> ofertaacademicaList ; 
     private TipoplazoDTO tipoplazo ; 
 
     @Override
