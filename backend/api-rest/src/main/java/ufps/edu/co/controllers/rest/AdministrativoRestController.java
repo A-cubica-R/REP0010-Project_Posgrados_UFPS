@@ -66,4 +66,14 @@ public class AdministrativoRestController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @GetMapping("/listPosibleDirector")
+    public ResponseEntity<List<AdministrativoOutput>> findByIdCargo() {
+        List<AdministrativoOutput> list = processor.findAll();
+        List<AdministrativoOutput> filteredList = list.stream()
+                .filter(administrativoOutput -> !administrativoOutput.cargo().id().equals(1)) // Assuming 1 is the ID for "Director"
+                .toList();
+
+        return ResponseEntity.ok(filteredList);
+    }
 }

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import ufps.edu.co.processor.crud.ProgramaProcessor;
+import ufps.edu.co.records.input.entity.FacultadInput.FACULTAD_FIND;
 import ufps.edu.co.records.input.entity.ProgramaInput.*;
 import ufps.edu.co.records.output.entity.ProgramaOutput;
 
@@ -65,5 +66,11 @@ public class ProgramaRestController {
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @PostMapping(value = "/listbyfacultad", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<ProgramaOutput>> findByIdFacultad(@RequestBody FACULTAD_FIND request) {
+        List<ProgramaOutput> list = processor.findByIdFacultad(request.id());
+        return ResponseEntity.ok(list);
     }
 }

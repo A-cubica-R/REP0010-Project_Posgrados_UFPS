@@ -178,4 +178,9 @@ public class ProgramaMap extends
     public List<ProgramaOutput> toOutputList(List<ProgramaDTO> dtoList) {
         return dtoList.stream().map(this::toOutput).toList();
     }
+
+    public List<ProgramaDTO> toDtoList(List<PROGRAMA_FIND> inputList) {
+        return inputList.stream().map(this::toDtoFind).toList();
+    }
+
 }

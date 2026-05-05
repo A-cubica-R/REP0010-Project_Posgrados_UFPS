@@ -74,4 +74,12 @@ public class ProgramaProcessor implements GlobalUseCase<PROGRAMA_CREATE, PROGRAM
             throw new RuntimeException("Error deleting Programa: " + e.getMessage(), e);
         }
     }
+
+    public List<ProgramaOutput> findByIdFacultad(int idFacultad) {
+        try {
+            return service.findByIdFacultad(idFacultad).stream().map(map::toOutput).toList();
+        } catch (Exception e) {
+            throw new RuntimeException("Error finding Programas by Facultad ID: " + e.getMessage(), e);
+        }
+    }
 }

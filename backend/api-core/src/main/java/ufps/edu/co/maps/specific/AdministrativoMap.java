@@ -108,4 +108,8 @@ public class AdministrativoMap extends
     public java.util.List<AdministrativoOutput> toOutputList(java.util.List<AdministrativoDTO> dtoList) {
         return dtoList.stream().map(this::toOutput).toList();
     }
+
+    public java.util.List<AdministrativoDTO> toDtoList(java.util.List<ADMINISTRATIVO_FIND> inputList) {
+        return inputList.stream().map(this::toDtoFind).toList();
+    }
 }

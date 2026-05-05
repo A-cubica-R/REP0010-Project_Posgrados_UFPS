@@ -4,6 +4,8 @@
  */
 package ufps.edu.co.persistence.repositories;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -36,6 +38,8 @@ import ufps.edu.co.persistence.entities.ProgramaEntity;
  */
 @Repository
 public interface ProgramaRepository extends JpaRepository<ProgramaEntity, Integer> {
+
+	List<ProgramaEntity> findByIdFacultad(int idFacultad);
 
 	// Insert specific finders here 
 
