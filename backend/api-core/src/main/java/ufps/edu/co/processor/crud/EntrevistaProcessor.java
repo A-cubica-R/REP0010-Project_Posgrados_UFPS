@@ -85,10 +85,11 @@ public class EntrevistaProcessor implements
             ENTREVISTA_UPDATE rate = new ENTREVISTA_UPDATE(
                     updated.getId(),
                     updated.getFecha(),
-                    updated.getHora(),
+                    updated.getTiempo(),
                     input.calificacion(),
                     updated.getIdTipoentrevista(),
                     updated.getIdEntrevistador(),
+                    updated.getIdAspirante(),
                     updated.getIdEstado(),
                     updated.getIdUbicacion()
             );

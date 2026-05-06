@@ -69,7 +69,7 @@ public class AspiranteMap extends
     @Override
     public AspiranteOutput toOutput(AspiranteDTO dto) {
         if (dto == null) {
-            throw new RuntimeException("AspiranteDTO is null");
+            return null;
         }
         PersonaOutput persona = null;
         if (dto.getPersona() != null) {

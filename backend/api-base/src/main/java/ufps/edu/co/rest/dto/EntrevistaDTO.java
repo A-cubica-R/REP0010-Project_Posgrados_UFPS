@@ -39,7 +39,7 @@ public class EntrevistaDTO implements Serializable {
     private int idAspirante ;
     private int idEstado ;
     private int idUbicacion;
-    private LocalTime hora;
+    private LocalTime tiempo;
     //--- LINKS ( RELATIONSHIPS )
     private TipoentrevistaDTO tipoentrevista ; 
     private EntrevistadorDTO entrevistador ; 
