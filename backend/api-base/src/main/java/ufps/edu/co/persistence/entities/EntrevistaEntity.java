@@ -65,6 +65,10 @@ public class EntrevistaEntity implements Serializable {
     private Integer        idUbicacion ;
 
     //--- LINKS ( RELATIONSHIPS )
+    @Column(name = "tiempo", nullable = false)
+    private LocalTime tiempo;
+
+    // --- LINKS ( RELATIONSHIPS )
     @ManyToOne
     @JoinColumn(name="id_tipoentrevista", referencedColumnName="id", insertable=false, updatable=false)
     private TipoentrevistaEntity tipoentrevista ; 
