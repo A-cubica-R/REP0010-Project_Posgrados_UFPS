@@ -122,20 +122,20 @@ public class ProgramaMap extends
             return null;
 
         UbicacionOutput ubicacion = null;
-        if (dto.getSede().getUbicacion() != null) {
-            ubicacion = UbicacionOutput.builder()
-                    .id(dto.getSede().getUbicacion().getId())
-                    .direccion(dto.getSede().getUbicacion().getDireccion())
-                    .build();
-        }
-
         SedeOutput sede = null;
         if (dto.getSede() != null) {
+            if (dto.getSede().getUbicacion() != null) {
+            ubicacion = UbicacionOutput.builder()
+                .id(dto.getSede().getUbicacion().getId())
+                .direccion(dto.getSede().getUbicacion().getDireccion())
+                .build();
+            }
+
             sede = SedeOutput.builder()
-                    .id(dto.getSede().getId())
-                    .nombre(dto.getSede().getNombre())
-                    .ubicacion(ubicacion)
-                    .build();
+                .id(dto.getSede().getId())
+                .nombre(dto.getSede().getNombre())
+                .ubicacion(ubicacion)
+                .build();
         }
 
         AdministrativoOutput administrativo = null;
@@ -178,4 +178,9 @@ public class ProgramaMap extends
     public List<ProgramaOutput> toOutputList(List<ProgramaDTO> dtoList) {
         return dtoList.stream().map(this::toOutput).toList();
     }
+
+    public List<ProgramaDTO> toDtoList(List<PROGRAMA_FIND> inputList) {
+        return inputList.stream().map(this::toDtoFind).toList();
+    }
+
 }

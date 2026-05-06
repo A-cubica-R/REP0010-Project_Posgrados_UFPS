@@ -40,17 +40,11 @@ public class OfertaacademicaProcessor implements
 
     public OfertaacademicaOutput createWithPlazo(OFERTAACADEMICA_CREATE_WITH_PLAZO input) {
         try {
-            PlazoDTO plazoDto = null;
-            if (input.plazo() != null) {
-                plazoDto = PlazoDTO.builder()
-                        .idTipoplazo(input.plazo().idTipoplazo())
-                        .fechainicio(input.plazo().fechainicio())
-                        .fechafin(input.plazo().fechafin())
-                        .build();
-            }
             OfertaacademicaDTO dto = map.toDto(input);
-            Integer plazoId = plazoService.create(plazoDto).getId();
-            dto.setIdPlazo(plazoId);
+            PlazoDTO plazoDto = dto.getPlazo();
+            PlazoDTO createdPlazo = plazoService.create(plazoDto);
+            dto.setIdPlazo(createdPlazo.getId());
+            dto.setPlazo(null); // remove transient plazo reference to avoid Hibernate transient property error
 
             OfertaacademicaDTO created = service.create(dto);
             return map.toOutput(created);
@@ -63,6 +57,12 @@ public class OfertaacademicaProcessor implements
     public OfertaacademicaOutput update(OFERTAACADEMICA_UPDATE input) {
         try {
             OfertaacademicaDTO dto = map.toDto(input);
+            // Preserve idPlazo from existing record to avoid overwriting with default 0
+            OfertaacademicaDTO existing = service.findById(input.id());
+            if (existing == null) {
+                throw new RuntimeException("Ofertaacademica no encontrado con id: " + input.id());
+            }
+            dto.setIdPlazo(existing.getIdPlazo());
             OfertaacademicaDTO updated = service.update(input.id(), dto);
             return map.toOutput(updated);
         } catch (Exception e) {

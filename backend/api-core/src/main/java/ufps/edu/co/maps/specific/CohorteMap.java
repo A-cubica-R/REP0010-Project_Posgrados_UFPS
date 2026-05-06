@@ -78,7 +78,14 @@ public class CohorteMap extends GlobalMapper<COHORTE_CREATE, COHORTE_UPDATE, COH
 
     @Override
     public CohorteOutput toOutput(CohorteDTO dto) {
-        return new CohorteOutput(dto.getId(), dto.getNombre(), dto.getFechaInicio().toString(), dto.getFechaFin().toString());
+        if (dto == null) {
+            return null;
+        }
+
+        String fechaInicio = dto.getFechaInicio() != null ? dto.getFechaInicio().toString() : null;
+        String fechaFin = dto.getFechaFin() != null ? dto.getFechaFin().toString() : null;
+
+        return new CohorteOutput(dto.getId(), dto.getNombre(), fechaInicio, fechaFin);
     }
 
     public List<CohorteOutput> toOutputList(List<CohorteDTO> dtoList) {

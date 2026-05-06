@@ -12,7 +12,12 @@ import ufps.edu.co.records.output.entity.ModalidadOutput;
 import ufps.edu.co.records.output.entity.OfertaacademicaOutput;
 import ufps.edu.co.records.output.entity.PlazoOutput;
 import ufps.edu.co.records.output.entity.ProgramaOutput;
+import ufps.edu.co.rest.dto.CohorteDTO;
+import ufps.edu.co.rest.dto.JornadaDTO;
+import ufps.edu.co.rest.dto.ModalidadDTO;
 import ufps.edu.co.rest.dto.OfertaacademicaDTO;
+import ufps.edu.co.rest.dto.PlazoDTO;
+import ufps.edu.co.rest.dto.ProgramaDTO;
 
 @Component
 public class OfertaacademicaMap extends
@@ -33,14 +38,53 @@ public class OfertaacademicaMap extends
         return dto;
     }
 
+    public OfertaacademicaDTO toDto(OFERTAACADEMICA_CREATE_WITH_PLAZO input) {
+        ProgramaDTO programa = null;
+        ModalidadDTO modalidad = null;
+        JornadaDTO jornada = null;
+        CohorteDTO cohorte = null;
+        PlazoDTO plazo = null;
+        if (input.idPrograma() != null) {
+            programa = ProgramaDTO.builder().id(input.idPrograma()).build();
+        }
+        if (input.idModalidad() != null) {
+            modalidad = ModalidadDTO.builder().id(input.idModalidad()).build();
+        }
+        if (input.idJornada() != null) {
+            jornada = JornadaDTO.builder().id(input.idJornada()).build();
+        }
+        if (input.idCohorte() != null) {
+            cohorte = CohorteDTO.builder().id(input.idCohorte()).build();
+        }
+        if (input.plazo() != null) {
+            PlazoMap map = new PlazoMap();
+            plazo = map.toDto(input.plazo());
+        }
+        return OfertaacademicaDTO.builder()
+                .encuentros(input.encuentros())
+                .cupos(input.cupos())
+                .idPrograma(input.idPrograma())
+                .idModalidad(input.idModalidad())
+                .idJornada(input.idJornada())
+                .idCohorte(input.idCohorte())
+                .programa(programa)
+                .modalidad(modalidad)
+                .jornada(jornada)
+                .cohorte(cohorte)
+                .plazo(plazo)
+                .build();
+    }
+
     @Override
     protected OfertaacademicaDTO toDtoUpdate(OFERTAACADEMICA_UPDATE input) {
         OfertaacademicaDTO dto = new OfertaacademicaDTO();
         dto.setId(input.id());
+        dto.setCupos(input.cupos());
         dto.setEncuentros(input.encuentros());
         dto.setIdPrograma(input.idPrograma());
         dto.setIdModalidad(input.idModalidad());
         dto.setIdJornada(input.idJornada());
+        dto.setIdCohorte(input.idCohorte());
         return dto;
     }
 

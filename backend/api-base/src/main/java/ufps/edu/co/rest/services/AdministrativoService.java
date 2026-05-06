@@ -55,4 +55,5 @@ public class AdministrativoService extends GenericService<AdministrativoEntity, 
                 .orElseThrow(() -> new RuntimeException("Administrativo no encontrado con id: " + id));
         repository.deleteById(id);
     }
+
 }
