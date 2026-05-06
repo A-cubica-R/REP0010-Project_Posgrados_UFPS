@@ -126,8 +126,8 @@ public class EntrevistaMap extends
                 ? aspirante.persona().nombres() + " " + aspirante.persona().apellidos()
                 : "Sin aspirante";
 
-        List<AdministrativoOutput> entrevistadores = dto.getEntrevistadores() != null
-                ? dto.getEntrevistadores().stream()
+        List<AdministrativoOutput> entrevistadores = dto.getEntrevistadoresList() != null
+                ? dto.getEntrevistadoresList().stream()
                         .map(entre -> administrativoMap.toOutput(entre.getAdministrativo()))
                         .collect(Collectors.toList())
                 : List.of();
