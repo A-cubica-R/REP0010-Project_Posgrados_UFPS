@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import ufps.edu.co.maps.GlobalMapper;
 import ufps.edu.co.records.input.entity.SedeInput.*;
 import ufps.edu.co.records.output.entity.SedeOutput;
+import ufps.edu.co.records.output.entity.UbicacionOutput;
 import ufps.edu.co.rest.dto.SedeDTO;
 
 @Component
@@ -53,8 +54,19 @@ public class SedeMap extends GlobalMapper <SEDE_CREATE, SEDE_UPDATE, SEDE_DELETE
 
     @Override
     public SedeOutput toOutput(SedeDTO dto) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'toOutput'");
+        if (dto == null) {
+            return null;
+        }
+        UbicacionOutput ubicacion = null;
+        if (dto.getUbicacion() != null) {
+            UbicacionMap map = new UbicacionMap();
+            ubicacion = map.toOutput(dto.getUbicacion());
+        }
+        return SedeOutput.builder()
+                .id(dto.getId())
+                .nombre(dto.getNombre())
+                .ubicacion(ubicacion)
+                .build();
     }
     
 }
