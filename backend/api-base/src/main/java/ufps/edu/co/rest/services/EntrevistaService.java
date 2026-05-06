@@ -12,6 +12,8 @@ import ufps.edu.co.persistence.entities.EntrevistaEntity;
 import ufps.edu.co.persistence.repositories.EntrevistaRepository;
 import ufps.edu.co.rest.dto.EntrevistaDTO;
 import ufps.edu.co.rest.services.commons.GenericService;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 /**
  * REST service for entity "Entrevista" <br>
@@ -24,6 +26,9 @@ public class EntrevistaService extends GenericService<EntrevistaEntity, Entrevis
 
     @Autowired
     private EntrevistaRepository repository;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public EntrevistaService() {
         super(EntrevistaEntity.class, EntrevistaDTO.class);
@@ -40,14 +45,20 @@ public class EntrevistaService extends GenericService<EntrevistaEntity, Entrevis
     }
 
     public EntrevistaDTO create(EntrevistaDTO dto) {
-        return entityToDto(repository.save(dtoToEntity(dto)));
+        EntrevistaEntity saved = repository.save(dtoToEntity(dto));
+        entityManager.flush();
+        entityManager.refresh(saved);
+        return entityToDto(saved);
     }
 
     public EntrevistaDTO update(Integer id, EntrevistaDTO dto) {
         repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Entrevista no encontrado con id: " + id));
         dto.setId(id);
-        return entityToDto(repository.save(dtoToEntity(dto)));
+        EntrevistaEntity saved = repository.save(dtoToEntity(dto));
+        entityManager.flush();
+        entityManager.refresh(saved);
+        return entityToDto(saved);
     }
 
     public void deleteById(Integer id) {

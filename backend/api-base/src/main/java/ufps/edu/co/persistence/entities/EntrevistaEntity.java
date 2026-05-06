@@ -12,6 +12,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 /**
@@ -59,6 +60,9 @@ public class EntrevistaEntity implements Serializable {
     @Column(name = "id_ubicacion", nullable = false)
     private Integer idUbicacion;
 
+    @Column(name = "tiempo", nullable = false)
+    private LocalTime tiempo;
+
     // --- LINKS ( RELATIONSHIPS )
     @ManyToOne
     @JoinColumn(name = "id_ubicacion", referencedColumnName = "id", insertable = false, updatable = false)
@@ -82,5 +86,4 @@ public class EntrevistaEntity implements Serializable {
 
     @OneToMany(mappedBy = "entrevista")
     private List<EntrevistadoresEntity> entrevistadoresList;
-
 }
