@@ -19,10 +19,11 @@ public class PlazoMap extends
 
     @Override
     protected PlazoDTO toDtoCreate(PLAZO_CREATE input) {
-        PlazoDTO dto = new PlazoDTO();
-        dto.setFechainicio(input.fechainicio());
-        dto.setFechafin(input.fechafin());
-        dto.setIdTipoplazo(input.idTipoplazo());
+        PlazoDTO dto = PlazoDTO.builder()
+                .fechainicio(input.fechainicio())
+                .fechafin(input.fechafin())
+                .idTipoplazo(input.idTipoplazo())
+                .build();
         return dto;
     }
 
