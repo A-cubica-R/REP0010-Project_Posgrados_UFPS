@@ -18,7 +18,6 @@ import ufps.edu.co.records.output.entity.EntrevistaOutput;
 import ufps.edu.co.records.output.entity.EntrevistadorOutput;
 import ufps.edu.co.records.output.entity.UbicacionOutput;
 import ufps.edu.co.rest.dto.EntrevistaDTO;
-import ufps.edu.co.rest.dto.EntrevistadorDTO;
 
 @Component
 public class EntrevistaMap extends
