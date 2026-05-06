@@ -46,7 +46,7 @@ public class PlazoEntity implements Serializable {
     private LocalDate  fechafin ;
 
     @Column(name="id_tipoplazo", nullable=false)
-    private int        idTipoplazo ;
+    private Integer        idTipoplazo ;
 
     //--- LINKS ( RELATIONSHIPS )
     @OneToMany(mappedBy="plazo")

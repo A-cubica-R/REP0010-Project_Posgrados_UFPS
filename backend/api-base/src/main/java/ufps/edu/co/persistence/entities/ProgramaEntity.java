@@ -39,13 +39,13 @@ public class ProgramaEntity implements Serializable {
 
     //--- OTHER DATA FIELDS 
     @Column(name="codigo", nullable=false)
-    private int        codigo ;
+    private Integer        codigo ;
 
     @Column(name="nombre", nullable=false, length=100)
     private String     nombre ;
 
     @Column(name="duracion", nullable=false)
-    private int        duracion ;
+    private Integer        duracion ;
 
     @Column(name="correo", length=100)
     private String     correo ;
@@ -72,16 +72,16 @@ public class ProgramaEntity implements Serializable {
     private Float      valormatricula ;
 
     @Column(name="id_sede", nullable=false)
-    private int        idSede ;
+    private Integer        idSede ;
 
     @Column(name="id_administrativo")
     private Integer    idAdministrativo ;
 
     @Column(name="id_facultad", nullable=false)
-    private int        idFacultad ;
+    private Integer        idFacultad ;
 
     @Column(name="id_otros")
-    private int        idOtros ;
+    private Integer    idOtros ;
 
     //--- LINKS ( RELATIONSHIPS )
     @OneToMany(mappedBy="programa")

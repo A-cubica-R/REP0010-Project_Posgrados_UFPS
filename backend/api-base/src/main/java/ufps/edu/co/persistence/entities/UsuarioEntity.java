@@ -41,13 +41,13 @@ public class UsuarioEntity implements Serializable {
     private String     nombreusuario ;
 
     @Column(name="id_persona", nullable=false)
-    private int        idPersona ;
+    private Integer        idPersona ;
 
     @Column(name="id_rol", nullable=false)
-    private int        idRol ;
+    private Integer        idRol ;
 
     @Column(name="id_clave", nullable=false)
-    private int        idClave ;
+    private Integer        idClave ;
 
     //--- LINKS ( RELATIONSHIPS )
     @ManyToOne

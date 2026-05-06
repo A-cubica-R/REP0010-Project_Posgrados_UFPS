@@ -41,22 +41,22 @@ public class OfertaacademicaEntity implements Serializable {
     private String     encuentros ;
 
     @Column(name="cupos", nullable=false)
-    private int        cupos ;
+    private Integer        cupos ;
 
     @Column(name="id_programa", nullable=false)
-    private int        idPrograma ;
+    private Integer        idPrograma ;
 
     @Column(name="id_modalidad", nullable=false)
-    private int        idModalidad ;
+    private Integer        idModalidad ;
 
     @Column(name="id_jornada", nullable=false)
-    private int        idJornada ;
+    private Integer        idJornada ;
 
     @Column(name="id_cohorte", nullable=false)
-    private int        idCohorte ;
+    private Integer        idCohorte ;
 
     @Column(name="id_plazo", nullable=false)
-    private int        idPlazo ;
+    private Integer        idPlazo ;
 
     //--- LINKS ( RELATIONSHIPS )
     @ManyToOne

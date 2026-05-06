@@ -45,7 +45,7 @@ public class FacultadEntity implements Serializable {
     private String     correo ;
 
     @Column(name="id_administrativo", nullable=false)
-    private int        idAdministrativo ;
+    private Integer        idAdministrativo ;
 
     //--- LINKS ( RELATIONSHIPS )
     @ManyToOne

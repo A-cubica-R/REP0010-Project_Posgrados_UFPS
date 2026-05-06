@@ -58,10 +58,10 @@ public class PersonaEntity implements Serializable {
     private String     telefono ;
 
     @Column(name="id_ubicacion", nullable=false)
-    private int        idUbicacion ;
+    private Integer        idUbicacion ;
 
     @Column(name="id_genero", nullable=false)
-    private int        idGenero ;
+    private Integer        idGenero ;
 
     //--- LINKS ( RELATIONSHIPS )
     @OneToMany(mappedBy="persona")
