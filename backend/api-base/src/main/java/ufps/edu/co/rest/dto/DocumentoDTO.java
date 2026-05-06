@@ -11,7 +11,6 @@ import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import java.time.LocalDate;
-import java.util.List;
 
 /**
  * DTO class for "Documento"
@@ -41,8 +40,6 @@ public class DocumentoDTO implements Serializable {
     private String keyfile ;
     private String observaciones ;
     //--- LINKS ( RELATIONSHIPS )
-    private List<CambiodocumentoDTO> cambiodocumentoList ; 
-    private List<CambiodocumentoDTO> cambiodocumentoList2 ; 
     private PlazoDTO plazo ; 
     private TipodocumentoDTO tipodocumento ; 
     private EstadodocumentoDTO estadodocumento ; 

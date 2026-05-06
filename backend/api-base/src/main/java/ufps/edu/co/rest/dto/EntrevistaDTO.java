@@ -37,12 +37,14 @@ public class EntrevistaDTO implements Serializable {
     private int idEntrevistador ;
     private int idAspirante ;
     private int idEstado ;
+    private int idUbicacion;
     //--- LINKS ( RELATIONSHIPS )
     private TipoentrevistaDTO tipoentrevista ; 
     private EntrevistadorDTO entrevistador ; 
     private AspiranteDTO aspirante ; 
     private EstadoDTO estado ; 
-    private List<EntrevistadoresDTO> entrevistadoresList ; 
+    private UbicacionDTO ubicacion ;
+    private List<EntrevistadorDTO> entrevistadores ;
 
     @Override
 	public String toString() { 
@@ -56,6 +58,8 @@ public class EntrevistaDTO implements Serializable {
 		sb.append(separator).append("idEntrevistador=").append(idEntrevistador);
 		sb.append(separator).append("idAspirante=").append(idAspirante);
 		sb.append(separator).append("idEstado=").append(idEstado);
+		sb.append(separator).append("idUbicacion=").append(idUbicacion);
+		sb.append(separator).append("entrevistadores=").append(entrevistadores);
 		sb.append("]");
 		return sb.toString();
 	}

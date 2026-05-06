@@ -11,7 +11,6 @@ import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import java.time.LocalDate;
-import java.util.List;
 
 /**
  * DTO class for "Cohorte"
@@ -37,7 +36,6 @@ public class CohorteDTO implements Serializable {
     private LocalDate fechaFin ;
     //--- LINKS ( RELATIONSHIPS )
     private EstadoDTO estado ; 
-    private List<OfertaacademicaDTO> ofertaacademicaList ; 
 
     @Override
 	public String toString() { 

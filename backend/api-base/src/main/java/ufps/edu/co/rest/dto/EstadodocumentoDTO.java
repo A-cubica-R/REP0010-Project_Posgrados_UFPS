@@ -10,7 +10,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-import java.util.List;
 
 /**
  * DTO class for "Estadodocumento"
@@ -31,8 +30,6 @@ public class EstadodocumentoDTO implements Serializable {
     private Integer id ;
     //--- OTHER DATA FIELDS 
     private String estado ;
-    //--- LINKS ( RELATIONSHIPS )
-    private List<DocumentoDTO> documentoList ; 
 
     @Override
 	public String toString() { 

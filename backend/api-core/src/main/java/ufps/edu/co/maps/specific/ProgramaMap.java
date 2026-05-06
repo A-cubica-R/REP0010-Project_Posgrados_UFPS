@@ -1,16 +1,13 @@
 package ufps.edu.co.maps.specific;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
 import ufps.edu.co.maps.GlobalMapper;
 import ufps.edu.co.records.input.entity.ProgramaInput.*;
 import ufps.edu.co.records.output.entity.AdministrativoOutput;
-import ufps.edu.co.records.output.entity.CargoOutput;
 import ufps.edu.co.records.output.entity.FacultadOutput;
-import ufps.edu.co.records.output.entity.OfertaacademicaOutput;
 import ufps.edu.co.records.output.entity.ProgramaOutput;
 import ufps.edu.co.records.output.entity.SedeOutput;
 import ufps.edu.co.records.output.entity.UbicacionOutput;
@@ -159,23 +156,6 @@ public class ProgramaMap extends
                     .build();
         }
 
-        List<CargoOutput> cargoList = null;
-        if (dto.getCargoList() != null) {
-            cargoList = dto.getCargoList().stream().map(c -> CargoOutput.builder()
-                    .id(c.getId())
-                    .nombre(c.getNombre())
-                    .descripcion(c.getDescripcion())
-                    .build()).collect(Collectors.toList());
-        }
-
-        List<OfertaacademicaOutput> ofertaList = null;
-        if (dto.getOfertaacademicaList() != null) {
-            ofertaList = dto.getOfertaacademicaList().stream().map(o -> OfertaacademicaOutput.builder()
-                    .id(o.getId())
-                    .encuentros(o.getEncuentros())
-                    .build()).collect(Collectors.toList());
-        }
-
         return ProgramaOutput.builder()
                 .id(dto.getId())
                 .codigo(dto.getCodigo())
@@ -192,12 +172,15 @@ public class ProgramaMap extends
                 .sede(sede)
                 .administrativo(administrativo)
                 .facultad(facultad)
-                .cargoList(cargoList)
-                .ofertaacademicaList(ofertaList)
                 .build();
     }
 
     public List<ProgramaOutput> toOutputList(List<ProgramaDTO> dtoList) {
         return dtoList.stream().map(this::toOutput).toList();
     }
+
+    public List<ProgramaDTO> toDtoList(List<PROGRAMA_FIND> inputList) {
+        return inputList.stream().map(this::toDtoFind).toList();
+    }
+
 }

@@ -37,6 +37,7 @@ import ufps.edu.co.persistence.entities.AdministrativoEntity;
 @Repository
 public interface AdministrativoRepository extends JpaRepository<AdministrativoEntity, Integer> {
 
+
 	// Insert specific finders here 
 
 	//List<AdministrativoEntity> findByXxx(String xxx);

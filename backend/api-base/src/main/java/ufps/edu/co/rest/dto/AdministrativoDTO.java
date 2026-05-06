@@ -11,7 +11,6 @@ import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import java.time.LocalDate;
-import java.util.List;
 
 /**
  * DTO class for "Administrativo"
@@ -40,11 +39,6 @@ public class AdministrativoDTO implements Serializable {
     private PersonaDTO persona ; 
     private EstadoDTO estado ; 
     private CargoDTO cargo ; 
-    private List<DocumentoDTO> documentoList ; 
-    private List<EntrevistadorDTO> entrevistadorList ; 
-    private List<EntrevistadoresDTO> entrevistadoresList ; 
-    private List<FacultadDTO> facultadList ; 
-    private List<ProgramaDTO> programaList ; 
 
     @Override
 	public String toString() { 

@@ -10,7 +10,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-import java.util.List;
 
 /**
  * DTO class for "Tipodocumento"
@@ -34,8 +33,6 @@ public class TipodocumentoDTO implements Serializable {
     private String descripcion ;
     private String extension ;
     private int tamanomaximo ;
-    //--- LINKS ( RELATIONSHIPS )
-    private List<DocumentoDTO> documentoList ; 
 
     @Override
 	public String toString() { 

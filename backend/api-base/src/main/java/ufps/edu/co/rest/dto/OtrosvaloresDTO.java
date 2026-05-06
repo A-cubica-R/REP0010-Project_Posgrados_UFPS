@@ -10,7 +10,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-import java.util.List;
 
 /**
  * DTO class for "Otrosvalores"
@@ -33,8 +32,6 @@ public class OtrosvaloresDTO implements Serializable {
     private boolean carnet ;
     private boolean estampilla ;
     private boolean seguro ;
-    //--- LINKS ( RELATIONSHIPS )
-    private List<ProgramaDTO> programaList ; 
 
     @Override
 	public String toString() { 

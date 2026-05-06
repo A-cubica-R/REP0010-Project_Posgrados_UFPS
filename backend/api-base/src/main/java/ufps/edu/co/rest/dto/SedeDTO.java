@@ -10,7 +10,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-import java.util.List;
 
 /**
  * DTO class for "Sede"
@@ -32,8 +31,6 @@ public class SedeDTO implements Serializable {
     //--- OTHER DATA FIELDS 
     private String nombre ;
     private int idUbicacion ;
-    //--- LINKS ( RELATIONSHIPS )
-    private List<ProgramaDTO> programaList ; 
     private UbicacionDTO ubicacion ; 
 
     @Override

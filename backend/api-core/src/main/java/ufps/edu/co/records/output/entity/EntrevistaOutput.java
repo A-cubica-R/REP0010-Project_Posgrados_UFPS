@@ -16,5 +16,6 @@ public record EntrevistaOutput(
         AspiranteOutput aspirante,
         EstadoOutput estado,
         String nombreAspirante,
-        List<String> nombresEntrevistadores
+        UbicacionOutput ubicacion,
+        List<AdministrativoOutput> entrevistadores
 ) implements OutputResponse {}
