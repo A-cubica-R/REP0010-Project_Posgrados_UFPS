@@ -46,9 +46,6 @@ public class EntrevistaEntity implements Serializable {
     @Column(name="calificacion", nullable=false)
     private float      calificacion ;
 
-    @Column(name="tiempo")
-    private LocalTime  tiempo ;
-
     @Column(name="id_tipoentrevista", nullable=false)
     private Integer        idTipoentrevista ;
 
