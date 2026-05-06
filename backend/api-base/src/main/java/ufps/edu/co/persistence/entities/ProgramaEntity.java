@@ -80,7 +80,7 @@ public class ProgramaEntity implements Serializable {
     @Column(name="id_facultad", nullable=false)
     private int        idFacultad ;
 
-    @Column(name="id_otros", nullable=false)
+    @Column(name="id_otros")
     private int        idOtros ;
 
     //--- LINKS ( RELATIONSHIPS )
