@@ -50,12 +50,13 @@ public class EntrevistaMap extends
     protected EntrevistaDTO toDtoCreate(ENTREVISTA_CREATE input) {
         EntrevistaDTO dto = new EntrevistaDTO();
         dto.setFecha(input.fecha());
-        dto.setCalificacion(input.calificacion());
+        dto.setCalificacion(0.0f); // Valor predeterminado para calificación
         dto.setIdTipoentrevista(input.idTipoentrevista());
         dto.setIdEntrevistador(input.idEntrevistador());
         dto.setIdAspirante(input.idAspirante());
         dto.setIdEstado(input.idEstado());
         dto.setIdUbicacion(input.idUbicacion());
+        dto.setTiempo(input.tiempo());
         return dto;
     }
 
@@ -64,12 +65,13 @@ public class EntrevistaMap extends
         EntrevistaDTO dto = new EntrevistaDTO();
         dto.setId(input.id());
         dto.setFecha(input.fecha());
+        dto.setTiempo(input.tiempo());
         dto.setCalificacion(input.calificacion());
         dto.setIdTipoentrevista(input.idTipoentrevista());
         dto.setIdEntrevistador(input.idEntrevistador());
-        dto.setIdAspirante(input.idAspirante());
         dto.setIdEstado(input.idEstado());
         dto.setIdUbicacion(input.idUbicacion());
+        dto.setIdAspirante(input.idAspirante());
         return dto;
     }
 
@@ -93,8 +95,8 @@ public class EntrevistaMap extends
             builder.idTipoentrevista(input.idTipoentrevista());
         if (input.idEntrevistador() != null)
             builder.idEntrevistador(input.idEntrevistador());
-        if (input.idAspirante() != null)
-            builder.idAspirante(input.idAspirante());
+        if (input.tiempo() != null)
+            builder.tiempo(input.tiempo());
         if (input.idEstado() != null)
             builder.idEstado(input.idEstado());
         if (input.idUbicacion() != null)
