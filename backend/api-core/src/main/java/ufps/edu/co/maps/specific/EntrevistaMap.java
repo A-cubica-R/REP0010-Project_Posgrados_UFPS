@@ -18,7 +18,6 @@ import ufps.edu.co.records.output.entity.EntrevistaOutput;
 import ufps.edu.co.records.output.entity.EntrevistadorOutput;
 import ufps.edu.co.records.output.entity.UbicacionOutput;
 import ufps.edu.co.rest.dto.EntrevistaDTO;
-import ufps.edu.co.rest.dto.EntrevistadorDTO;
 
 @Component
 public class EntrevistaMap extends
@@ -51,7 +50,7 @@ public class EntrevistaMap extends
     protected EntrevistaDTO toDtoCreate(ENTREVISTA_CREATE input) {
         EntrevistaDTO dto = new EntrevistaDTO();
         dto.setFecha(input.fecha());
-        dto.setCalificacion(input.calificacion());
+        dto.setCalificacion(0.0f); // Valor predeterminado para calificación
         dto.setIdTipoentrevista(input.idTipoentrevista());
         dto.setIdEntrevistador(input.idEntrevistador());
         dto.setIdAspirante(input.idAspirante());
@@ -65,10 +64,10 @@ public class EntrevistaMap extends
         EntrevistaDTO dto = new EntrevistaDTO();
         dto.setId(input.id());
         dto.setFecha(input.fecha());
+        dto.setHora(input.hora());
         dto.setCalificacion(input.calificacion());
         dto.setIdTipoentrevista(input.idTipoentrevista());
         dto.setIdEntrevistador(input.idEntrevistador());
-        dto.setIdAspirante(input.idAspirante());
         dto.setIdEstado(input.idEstado());
         dto.setIdUbicacion(input.idUbicacion());
         return dto;
@@ -94,8 +93,8 @@ public class EntrevistaMap extends
             builder.idTipoentrevista(input.idTipoentrevista());
         if (input.idEntrevistador() != null)
             builder.idEntrevistador(input.idEntrevistador());
-        if (input.idAspirante() != null)
-            builder.idAspirante(input.idAspirante());
+        if (input.hora() != null)
+            builder.hora(input.hora());
         if (input.idEstado() != null)
             builder.idEstado(input.idEstado());
         if (input.idUbicacion() != null)

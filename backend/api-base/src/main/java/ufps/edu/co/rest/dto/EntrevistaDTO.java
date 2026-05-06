@@ -11,6 +11,7 @@ import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 /**
@@ -38,6 +39,7 @@ public class EntrevistaDTO implements Serializable {
     private int idAspirante ;
     private int idEstado ;
     private int idUbicacion;
+    private LocalTime hora;
     //--- LINKS ( RELATIONSHIPS )
     private TipoentrevistaDTO tipoentrevista ; 
     private EntrevistadorDTO entrevistador ; 

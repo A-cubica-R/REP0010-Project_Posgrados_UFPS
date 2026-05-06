@@ -40,7 +40,8 @@ public class EntrevistaService extends GenericService<EntrevistaEntity, Entrevis
     }
 
     public EntrevistaDTO create(EntrevistaDTO dto) {
-        return entityToDto(repository.save(dtoToEntity(dto)));
+        EntrevistaEntity saved = repository.save(dtoToEntity(dto));
+        return entityToDto(repository.findById(saved.getId()).orElseThrow());
     }
 
     public EntrevistaDTO update(Integer id, EntrevistaDTO dto) {

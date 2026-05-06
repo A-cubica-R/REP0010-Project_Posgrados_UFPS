@@ -78,4 +78,25 @@ public class EntrevistaProcessor implements
             throw new RuntimeException("Error deleting Entrevista by ID: " + e.getMessage(), e);
         }
     }
+
+    public EntrevistaOutput rateInterview(ENTREVISTA_RATE input) {
+        try {
+            EntrevistaDTO updated = service.findById(input.id());
+            ENTREVISTA_UPDATE rate = new ENTREVISTA_UPDATE(
+                    updated.getId(),
+                    updated.getFecha(),
+                    updated.getHora(),
+                    input.calificacion(),
+                    updated.getIdTipoentrevista(),
+                    updated.getIdEntrevistador(),
+                    updated.getIdEstado(),
+                    updated.getIdUbicacion()
+            );
+            updated.setCalificacion(input.calificacion());
+            this.update(rate);
+            return map.toOutput(updated);
+        } catch (Exception e) {
+            throw new RuntimeException("Error rating Entrevista: " + e.getMessage(), e);
+        }
+    }
 }
