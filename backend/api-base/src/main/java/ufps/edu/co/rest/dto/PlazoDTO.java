@@ -32,7 +32,7 @@ public class PlazoDTO implements Serializable {
     //--- OTHER DATA FIELDS 
     private LocalDate fechainicio ;
     private LocalDate fechafin ;
-    private int idTipoplazo ;
+    private Integer idTipoplazo ;
     //--- LINKS ( RELATIONSHIPS )
     private TipoplazoDTO tipoplazo ; 
 

@@ -29,9 +29,9 @@ public class ProgramaDTO implements Serializable {
     //--- PRIMARY KEY 
     private Integer id ;
     //--- OTHER DATA FIELDS 
-    private int codigo ;
+    private Integer codigo ;
     private String nombre ;
-    private int duracion ;
+    private Integer duracion ;
     private String correo ;
     private String registrosnies ;
     private String nivelformacion ;
@@ -40,10 +40,10 @@ public class ProgramaDTO implements Serializable {
     private Integer creditos ;
     private String periodicidad ;
     private Float valormatricula ;
-    private int idSede ;
+    private Integer idSede ;
     private Integer idAdministrativo ;
-    private int idFacultad ;
-    private int idOtros ;
+    private Integer idFacultad ;
+    private Integer idOtros ;
     //--- LINKS ( RELATIONSHIPS )
     private SedeDTO sede ; 
     private AdministrativoDTO administrativo ; 

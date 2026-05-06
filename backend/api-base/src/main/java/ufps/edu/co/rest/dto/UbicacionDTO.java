@@ -30,7 +30,7 @@ public class UbicacionDTO implements Serializable {
     private Integer id ;
     //--- OTHER DATA FIELDS 
     private String direccion ;
-    private int idMunicipio ;
+    private Integer idMunicipio ;
     //--- LINKS ( RELATIONSHIPS )
     private MunicipioDTO municipio ; 
 

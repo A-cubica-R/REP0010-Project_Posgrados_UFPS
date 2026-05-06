@@ -42,19 +42,19 @@ public class DocumentoEntity implements Serializable {
     private LocalDate  fechacargue ;
 
     @Column(name="id_estadodocumento", nullable=false)
-    private int        idEstadodocumento ;
+    private Integer        idEstadodocumento ;
 
     @Column(name="id_tipodocumento", nullable=false)
-    private int        idTipodocumento ;
+    private Integer        idTipodocumento ;
 
     @Column(name="id_administrativo")
     private Integer    idAdministrativo ;
 
     @Column(name="id_plazo", nullable=true)
-    private int        idPlazo ;
+    private Integer        idPlazo ;
 
     @Column(name="id_aspirante", nullable=true)
-    private int        idAspirante ;
+    private Integer        idAspirante ;
 
     @Column(name="enlaceurl", nullable=false, length=65535)
     private String     enlaceurl ;

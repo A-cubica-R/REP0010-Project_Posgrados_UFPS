@@ -38,10 +38,10 @@ public class EntrevistadoresEntity implements Serializable {
 
     //--- OTHER DATA FIELDS 
     @Column(name="id_entrevista", nullable=false)
-    private int        idEntrevista ;
+    private Integer        idEntrevista ;
 
     @Column(name="id_administrativo", nullable=false)
-    private int        idAdministrativo ;
+    private Integer        idAdministrativo ;
 
     //--- LINKS ( RELATIONSHIPS )
     @ManyToOne

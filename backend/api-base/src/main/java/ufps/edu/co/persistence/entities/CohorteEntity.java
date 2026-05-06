@@ -43,7 +43,7 @@ public class CohorteEntity implements Serializable {
     private String     nombre ;
 
     @Column(name="id_estado", nullable=false)
-    private int        idEstado ;
+    private Integer        idEstado ;
 
     @Column(name="fecha_inicio", nullable=false)
     private LocalDate  fechaInicio ;

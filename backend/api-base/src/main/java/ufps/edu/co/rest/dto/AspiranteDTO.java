@@ -29,7 +29,7 @@ public class AspiranteDTO implements Serializable {
     //--- PRIMARY KEY 
     private Integer id ;
     //--- OTHER DATA FIELDS 
-    private int idPersona ;
+    private Integer idPersona ;
     //--- LINKS ( RELATIONSHIPS )
     private PersonaDTO persona ; 
 

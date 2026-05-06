@@ -31,11 +31,11 @@ public class DocumentoDTO implements Serializable {
     private Integer id ;
     //--- OTHER DATA FIELDS 
     private LocalDate fechacargue ;
-    private int idEstadodocumento ;
-    private int idTipodocumento ;
+    private Integer idEstadodocumento ;
+    private Integer idTipodocumento ;
     private Integer idAdministrativo ;
-    private int idPlazo ;
-    private int idAspirante ;
+    private Integer idPlazo ;
+    private Integer idAspirante ;
     private String enlaceurl ;
     private String keyfile ;
     private String observaciones ;

@@ -24,22 +24,23 @@ public class ProgramaMap extends
 
     @Override
     protected ProgramaDTO toDtoCreate(PROGRAMA_CREATE input) {
-        ProgramaDTO dto = new ProgramaDTO();
-        dto.setCodigo(input.codigo());
-        dto.setNombre(input.nombre());
-        dto.setDuracion(input.semestres());
-        dto.setCorreo(input.correo());
-        dto.setRegistrosnies(input.registrosnies());
-        dto.setNivelformacion(input.nivelformacion());
-        dto.setTitulo(input.titulo());
-        dto.setRcmineducacion(input.rcmineducacion());
-        dto.setCreditos(input.creditos());
-        dto.setPeriodicidad(input.periodicidad());
-        dto.setValormatricula(input.valormatricula());
-        dto.setIdSede(input.idSede());
-        dto.setIdAdministrativo(input.idAdministrativo());
-        dto.setIdFacultad(input.idFacultad());
-        dto.setIdOtros(input.idOtros());
+        ProgramaDTO dto = ProgramaDTO.builder()
+                .codigo(input.codigo())
+                .nombre(input.nombre())
+                .duracion(input.semestres())
+                .correo(input.correo())
+                .registrosnies(input.registrosnies())
+                .nivelformacion(input.nivelformacion())
+                .titulo(input.titulo())
+                .rcmineducacion(input.rcmineducacion())
+                .creditos(input.creditos())
+                .periodicidad(input.periodicidad())
+                .valormatricula(input.valormatricula())
+                .idSede(input.idSede())
+                .idFacultad(input.idFacultad())
+                .idAdministrativo(input.idAdministrativo())
+                .idOtros(input.idOtros())
+                .build();
         return dto;
     }
 
@@ -125,17 +126,17 @@ public class ProgramaMap extends
         SedeOutput sede = null;
         if (dto.getSede() != null) {
             if (dto.getSede().getUbicacion() != null) {
-            ubicacion = UbicacionOutput.builder()
-                .id(dto.getSede().getUbicacion().getId())
-                .direccion(dto.getSede().getUbicacion().getDireccion())
-                .build();
+                ubicacion = UbicacionOutput.builder()
+                        .id(dto.getSede().getUbicacion().getId())
+                        .direccion(dto.getSede().getUbicacion().getDireccion())
+                        .build();
             }
 
             sede = SedeOutput.builder()
-                .id(dto.getSede().getId())
-                .nombre(dto.getSede().getNombre())
-                .ubicacion(ubicacion)
-                .build();
+                    .id(dto.getSede().getId())
+                    .nombre(dto.getSede().getNombre())
+                    .ubicacion(ubicacion)
+                    .build();
         }
 
         AdministrativoOutput administrativo = null;
