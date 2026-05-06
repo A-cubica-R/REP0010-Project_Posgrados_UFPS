@@ -30,7 +30,7 @@ public class SedeDTO implements Serializable {
     private Integer id ;
     //--- OTHER DATA FIELDS 
     private String nombre ;
-    private int idUbicacion ;
+    private Integer idUbicacion ;
     private UbicacionDTO ubicacion ; 
 
     @Override

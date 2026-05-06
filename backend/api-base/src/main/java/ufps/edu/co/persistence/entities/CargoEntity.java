@@ -45,7 +45,7 @@ public class CargoEntity implements Serializable {
     private String     descripcion ;
 
     @Column(name="id_programa", nullable=false)
-    private int        idPrograma ;
+    private Integer        idPrograma ;
 
     //--- LINKS ( RELATIONSHIPS )
     @OneToMany(mappedBy="cargo")

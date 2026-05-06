@@ -42,7 +42,7 @@ public class UbicacionEntity implements Serializable {
     private String     direccion ;
 
     @Column(name="id_municipio", nullable=false)
-    private int        idMunicipio ;
+    private Integer        idMunicipio ;
 
     //--- LINKS ( RELATIONSHIPS )
     @OneToMany(mappedBy="ubicacion")

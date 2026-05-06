@@ -39,7 +39,7 @@ public class EntrevistadorEntity implements Serializable {
 
     //--- OTHER DATA FIELDS 
     @Column(name="id_administrativo", nullable=false)
-    private int        idAdministrativo ;
+    private Integer        idAdministrativo ;
 
     @Column(name="observaciones", length=65535)
     private String     observaciones ;

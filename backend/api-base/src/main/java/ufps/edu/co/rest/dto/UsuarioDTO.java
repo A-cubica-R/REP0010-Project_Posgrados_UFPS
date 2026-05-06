@@ -30,9 +30,9 @@ public class UsuarioDTO implements Serializable {
     private Integer id ;
     //--- OTHER DATA FIELDS 
     private String nombreusuario ;
-    private int idPersona ;
-    private int idRol ;
-    private int idClave ;
+    private Integer idPersona ;
+    private Integer idRol ;
+    private Integer idClave ;
     //--- LINKS ( RELATIONSHIPS )
     private PersonaDTO persona ; 
     private RolDTO rol ; 

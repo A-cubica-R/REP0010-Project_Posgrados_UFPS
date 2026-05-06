@@ -42,7 +42,7 @@ public class DepartamentoEntity implements Serializable {
     private String     nombre ;
 
     @Column(name="id_pais", nullable=false)
-    private int        idPais ;
+    private Integer        idPais ;
 
     //--- LINKS ( RELATIONSHIPS )
     @ManyToOne

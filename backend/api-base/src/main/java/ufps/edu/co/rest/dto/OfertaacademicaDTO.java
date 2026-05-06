@@ -30,12 +30,12 @@ public class OfertaacademicaDTO implements Serializable {
     private Integer id ;
     //--- OTHER DATA FIELDS 
     private String encuentros ;
-    private int cupos ;
-    private int idPrograma ;
-    private int idModalidad ;
-    private int idJornada ;
-    private int idCohorte ;
-    private int idPlazo ;
+    private Integer cupos ;
+    private Integer idPrograma ;
+    private Integer idModalidad ;
+    private Integer idJornada ;
+    private Integer idCohorte ;
+    private Integer idPlazo ;
     //--- LINKS ( RELATIONSHIPS )
     private ProgramaDTO programa ; 
     private ModalidadDTO modalidad ; 

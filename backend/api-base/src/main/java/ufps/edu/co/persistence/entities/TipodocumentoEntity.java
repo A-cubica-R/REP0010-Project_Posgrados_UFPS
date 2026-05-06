@@ -48,7 +48,7 @@ public class TipodocumentoEntity implements Serializable {
     private String     extension ;
 
     @Column(name="tamanomaximo", nullable=false)
-    private int        tamanomaximo ;
+    private Integer        tamanomaximo ;
 
     //--- LINKS ( RELATIONSHIPS )
     @OneToMany(mappedBy="tipodocumento")

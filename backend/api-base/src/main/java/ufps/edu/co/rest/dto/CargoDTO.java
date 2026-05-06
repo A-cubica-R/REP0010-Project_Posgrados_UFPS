@@ -31,7 +31,7 @@ public class CargoDTO implements Serializable {
     //--- OTHER DATA FIELDS 
     private String nombre ;
     private String descripcion ;
-    private int idPrograma ;
+    private Integer idPrograma ;
     //--- LINKS ( RELATIONSHIPS )
     private ProgramaDTO programa ; 
 

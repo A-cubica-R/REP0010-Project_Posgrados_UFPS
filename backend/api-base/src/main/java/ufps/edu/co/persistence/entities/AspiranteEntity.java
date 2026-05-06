@@ -39,7 +39,7 @@ public class AspiranteEntity implements Serializable {
 
     //--- OTHER DATA FIELDS 
     @Column(name="id_persona", nullable=false)
-    private int        idPersona ;
+    private Integer        idPersona ;
 
     //--- LINKS ( RELATIONSHIPS )
     @ManyToOne

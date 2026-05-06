@@ -31,7 +31,7 @@ public class FacultadDTO implements Serializable {
     //--- OTHER DATA FIELDS 
     private String nombre ;
     private String correo ;
-    private int idAdministrativo ;
+    private Integer idAdministrativo ;
     //--- LINKS ( RELATIONSHIPS )
     private AdministrativoDTO administrativo ; 
 

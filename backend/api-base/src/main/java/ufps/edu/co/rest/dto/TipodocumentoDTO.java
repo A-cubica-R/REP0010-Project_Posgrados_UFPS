@@ -32,7 +32,7 @@ public class TipodocumentoDTO implements Serializable {
     private String nombre ;
     private String descripcion ;
     private String extension ;
-    private int tamanomaximo ;
+    private Integer tamanomaximo ;
 
     @Override
 	public String toString() { 

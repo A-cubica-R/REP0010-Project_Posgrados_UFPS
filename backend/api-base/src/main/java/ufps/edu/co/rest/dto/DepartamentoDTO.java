@@ -30,7 +30,7 @@ public class DepartamentoDTO implements Serializable {
     private Integer id ;
     //--- OTHER DATA FIELDS 
     private String nombre ;
-    private int idPais ;
+    private Integer idPais ;
     //--- LINKS ( RELATIONSHIPS )
     private PaisDTO pais ; 
 

@@ -29,7 +29,7 @@ public class EntrevistadorDTO implements Serializable {
     //--- PRIMARY KEY 
     private Integer id ;
     //--- OTHER DATA FIELDS 
-    private int idAdministrativo ;
+    private Integer idAdministrativo ;
     private String observaciones ;
     //--- LINKS ( RELATIONSHIPS )
     private AdministrativoDTO administrativo ; 

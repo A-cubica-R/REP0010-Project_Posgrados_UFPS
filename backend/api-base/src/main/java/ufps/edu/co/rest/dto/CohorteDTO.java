@@ -31,7 +31,7 @@ public class CohorteDTO implements Serializable {
     private Integer id ;
     //--- OTHER DATA FIELDS 
     private String nombre ;
-    private int idEstado ;
+    private Integer idEstado ;
     private LocalDate fechaInicio ;
     private LocalDate fechaFin ;
     //--- LINKS ( RELATIONSHIPS )

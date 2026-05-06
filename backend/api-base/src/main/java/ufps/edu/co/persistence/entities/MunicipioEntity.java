@@ -42,7 +42,7 @@ public class MunicipioEntity implements Serializable {
     private String     nombre ;
 
     @Column(name="id_departamento", nullable=false)
-    private int        idDepartamento ;
+    private Integer        idDepartamento ;
 
     //--- LINKS ( RELATIONSHIPS )
     @ManyToOne

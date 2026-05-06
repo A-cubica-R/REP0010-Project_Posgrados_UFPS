@@ -36,8 +36,8 @@ public class PersonaDTO implements Serializable {
     private LocalDate fechanacimiento ;
     private String celular ;
     private String telefono ;
-    private int idUbicacion ;
-    private int idGenero ;
+    private Integer idUbicacion ;
+    private Integer idGenero ;
     //--- LINKS ( RELATIONSHIPS )
     private UbicacionDTO ubicacion ; 
     private GeneroDTO genero ; 
