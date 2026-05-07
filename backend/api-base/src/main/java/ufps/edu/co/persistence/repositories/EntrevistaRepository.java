@@ -4,7 +4,12 @@
  */
 package ufps.edu.co.persistence.repositories;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import ufps.edu.co.persistence.entities.EntrevistaEntity;
@@ -48,4 +53,25 @@ public interface EntrevistaRepository extends JpaRepository<EntrevistaEntity, In
 	//List<EntrevistaEntity> findByYyy(BigDecimal yyy);
 
 	//List<EntrevistaEntity> findByXxxContainingAndYyy(String xxx, BigDecimal yyy);
+
+	@Query("""
+        SELECT DISTINCT e FROM EntrevistaEntity e
+        LEFT JOIN FETCH e.tipoentrevista
+        LEFT JOIN FETCH e.entrevistador
+        LEFT JOIN FETCH e.aspirante
+        LEFT JOIN FETCH e.estado
+        LEFT JOIN FETCH e.ubicacion
+        """)
+    List<EntrevistaEntity> findAllWithRelations();
+
+    @Query("""
+        SELECT e FROM EntrevistaEntity e
+        LEFT JOIN FETCH e.tipoentrevista
+        LEFT JOIN FETCH e.entrevistador
+        LEFT JOIN FETCH e.aspirante
+        LEFT JOIN FETCH e.estado
+        LEFT JOIN FETCH e.ubicacion
+        WHERE e.id = :id
+        """)
+    Optional<EntrevistaEntity> findByIdWithRelations(@Param("id") Integer id);
 }
