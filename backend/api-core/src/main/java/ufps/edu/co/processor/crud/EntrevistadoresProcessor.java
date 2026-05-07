@@ -3,6 +3,8 @@ package ufps.edu.co.processor.crud;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import ufps.edu.co.maps.specific.EntrevistadoresMap;
 import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_FIND;
 import ufps.edu.co.records.input.entity.EntrevistadoresInput.*;
@@ -91,14 +93,10 @@ public class EntrevistadoresProcessor implements
         }
     }
 
+    @Transactional
     public void deleteAllByEntrevistaId(ENTREVISTA_FIND input) {
         try {
-            List<EntrevistadoresDTO> list = service.findAll().stream()
-            .filter(dto -> Integer.valueOf(dto.getIdEntrevista()).equals(Integer.valueOf(input.id())))
-            .toList();
-            for (EntrevistadoresDTO dto : list) {
-                service.deleteById(dto.getId());
-            }
+            service.deleteByEntrevistaId(input.id());
         } catch (Exception e) {
             throw new RuntimeException("Error deleting Entrevistadores by Entrevista ID: " + e.getMessage(), e);
         }
