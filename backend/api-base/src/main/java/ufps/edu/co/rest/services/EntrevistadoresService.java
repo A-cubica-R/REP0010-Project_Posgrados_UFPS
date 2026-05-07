@@ -55,4 +55,9 @@ public class EntrevistadoresService extends GenericService<EntrevistadoresEntity
                 .orElseThrow(() -> new RuntimeException("Entrevistadores no encontrado con id: " + id));
         repository.deleteById(id);
     }
+
+    @Transactional
+    public void deleteByEntrevistaId(Integer idEntrevista) {
+        repository.deleteByEntrevistaId(idEntrevista);
+    }
 }

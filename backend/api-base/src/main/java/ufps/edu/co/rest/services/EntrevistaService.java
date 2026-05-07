@@ -36,19 +36,18 @@ public class EntrevistaService extends GenericService<EntrevistaEntity, Entrevis
 
     @Transactional(readOnly = true)
     public List<EntrevistaDTO> findAll() {
-        return entityListToDtoList(repository.findAll());
+        return entityListToDtoList(repository.findAllWithRelations());
     }
 
     @Transactional(readOnly = true)
     public EntrevistaDTO findById(Integer id) {
-        return entityToDto(repository.findById(id));
+        return entityToDto(repository.findByIdWithRelations(id));
     }
 
     public EntrevistaDTO create(EntrevistaDTO dto) {
         EntrevistaEntity saved = repository.save(dtoToEntity(dto));
-        entityManager.flush();
-        entityManager.refresh(saved);
-        return entityToDto(saved);
+        return entityToDto(repository.findByIdWithRelations(saved.getId())
+                .orElseThrow(() -> new RuntimeException("Entrevista no encontrada tras crear")));
     }
 
     public EntrevistaDTO update(Integer id, EntrevistaDTO dto) {
