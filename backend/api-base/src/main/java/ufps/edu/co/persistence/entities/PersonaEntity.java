@@ -12,7 +12,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.time.LocalDate;
-import java.util.List;
 
 
 /**
@@ -32,13 +31,13 @@ public class PersonaEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    //--- PRIMARY KEY 
+    //--- PRIMARY KEY
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name="id", nullable=false)
     private Integer id ;
 
-    //--- OTHER DATA FIELDS 
+    //--- OTHER DATA FIELDS
     @Column(name="nombres", nullable=false, length=100)
     private String     nombres ;
 
@@ -64,21 +63,12 @@ public class PersonaEntity implements Serializable {
     private Integer        idGenero ;
 
     //--- LINKS ( RELATIONSHIPS )
-    @OneToMany(mappedBy="persona")
-    private List<AdministrativoEntity> administrativoList ; 
-
-    @OneToMany(mappedBy="persona")
-    private List<AspiranteEntity> aspiranteList ; 
-
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="id_ubicacion", referencedColumnName="id", insertable=false, updatable=false)
-    private UbicacionEntity  ubicacion ; 
+    private UbicacionEntity  ubicacion ;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="id_genero", referencedColumnName="id", insertable=false, updatable=false)
-    private GeneroEntity     genero ; 
-
-    @OneToMany(mappedBy="persona")
-    private List<UsuarioEntity> usuarioList ; 
+    private GeneroEntity     genero ;
 
 }

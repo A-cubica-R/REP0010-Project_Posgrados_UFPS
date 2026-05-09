@@ -31,12 +31,12 @@ public class FacultadService extends GenericService<FacultadEntity, FacultadDTO>
 
     @Transactional(readOnly = true)
     public List<FacultadDTO> findAll() {
-        return entityListToDtoList(repository.findAll());
+        return entityListToDtoList(repository.findAllWithRelations());
     }
 
     @Transactional(readOnly = true)
     public FacultadDTO findById(Integer id) {
-        return entityToDto(repository.findById(id));
+        return entityToDto(repository.findByIdWithRelations(id));
     }
 
     public FacultadDTO create(FacultadDTO dto) {

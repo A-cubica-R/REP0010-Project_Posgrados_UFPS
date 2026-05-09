@@ -11,7 +11,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import java.util.List;
 
 
 /**
@@ -31,13 +30,13 @@ public class UbicacionEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    //--- PRIMARY KEY 
+    //--- PRIMARY KEY
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name="id", nullable=false)
     private Integer id ;
 
-    //--- OTHER DATA FIELDS 
+    //--- OTHER DATA FIELDS
     @Column(name="direccion", nullable=false, length=65535)
     private String     direccion ;
 
@@ -45,14 +44,8 @@ public class UbicacionEntity implements Serializable {
     private Integer        idMunicipio ;
 
     //--- LINKS ( RELATIONSHIPS )
-    @OneToMany(mappedBy="ubicacion")
-    private List<PersonaEntity> personaList ; 
-
-    @OneToMany(mappedBy="ubicacion")
-    private List<SedeEntity> sedeList ; 
-
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="id_municipio", referencedColumnName="id", insertable=false, updatable=false)
-    private MunicipioEntity  municipio ; 
+    private MunicipioEntity  municipio ;
 
 }

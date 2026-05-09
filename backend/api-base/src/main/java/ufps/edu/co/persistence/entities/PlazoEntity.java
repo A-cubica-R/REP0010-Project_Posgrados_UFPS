@@ -12,7 +12,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.time.LocalDate;
-import java.util.List;
 
 
 /**
@@ -32,13 +31,13 @@ public class PlazoEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    //--- PRIMARY KEY 
+    //--- PRIMARY KEY
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name="id", nullable=false)
     private Integer id ;
 
-    //--- OTHER DATA FIELDS 
+    //--- OTHER DATA FIELDS
     @Column(name="fechainicio", nullable=false)
     private LocalDate  fechainicio ;
 
@@ -49,14 +48,8 @@ public class PlazoEntity implements Serializable {
     private Integer        idTipoplazo ;
 
     //--- LINKS ( RELATIONSHIPS )
-    @OneToMany(mappedBy="plazo")
-    private List<DocumentoEntity> documentoList ; 
-
-    @OneToMany(mappedBy="plazo")
-    private List<OfertaacademicaEntity> ofertaacademicaList ; 
-
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="id_tipoplazo", referencedColumnName="id", insertable=false, updatable=false)
-    private TipoplazoEntity  tipoplazo ; 
+    private TipoplazoEntity  tipoplazo ;
 
 }

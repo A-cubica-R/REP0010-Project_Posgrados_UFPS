@@ -31,12 +31,12 @@ public class PlazoService extends GenericService<PlazoEntity, PlazoDTO> {
 
     @Transactional(readOnly = true)
     public List<PlazoDTO> findAll() {
-        return entityListToDtoList(repository.findAll());
+        return entityListToDtoList(repository.findAllWithRelations());
     }
 
     @Transactional(readOnly = true)
     public PlazoDTO findById(Integer id) {
-        return entityToDto(repository.findById(id));
+        return entityToDto(repository.findByIdWithRelations(id));
     }
 
     public PlazoDTO create(PlazoDTO dto) {

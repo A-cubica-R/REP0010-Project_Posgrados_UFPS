@@ -11,7 +11,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import java.util.List;
 
 
 /**
@@ -31,13 +30,13 @@ public class ProgramaEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    //--- PRIMARY KEY 
+    //--- PRIMARY KEY
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name="id", nullable=false)
     private Integer id ;
 
-    //--- OTHER DATA FIELDS 
+    //--- OTHER DATA FIELDS
     @Column(name="codigo", nullable=false)
     private Integer        codigo ;
 
@@ -84,26 +83,20 @@ public class ProgramaEntity implements Serializable {
     private Integer    idOtros ;
 
     //--- LINKS ( RELATIONSHIPS )
-    @OneToMany(mappedBy="programa")
-    private List<CargoEntity> cargoList ; 
-
-    @OneToMany(mappedBy="programa")
-    private List<OfertaacademicaEntity> ofertaacademicaList ; 
-
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="id_sede", referencedColumnName="id", insertable=false, updatable=false)
-    private SedeEntity       sede ; 
+    private SedeEntity       sede ;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="id_administrativo", referencedColumnName="id", insertable=false, updatable=false)
-    private AdministrativoEntity administrativo ; 
+    private AdministrativoEntity administrativo ;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="id_facultad", referencedColumnName="id", insertable=false, updatable=false)
-    private FacultadEntity   facultad ; 
+    private FacultadEntity   facultad ;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="id_otros", referencedColumnName="id", insertable=false, updatable=false)
-    private OtrosvaloresEntity otrosvalores ; 
+    private OtrosvaloresEntity otrosvalores ;
 
 }
