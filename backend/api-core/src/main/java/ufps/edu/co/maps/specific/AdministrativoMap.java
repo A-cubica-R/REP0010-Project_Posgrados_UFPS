@@ -2,10 +2,13 @@ package ufps.edu.co.maps.specific;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
 import ufps.edu.co.maps.GlobalMapper;
-import ufps.edu.co.processor.crud.PersonaProcessor;
-import ufps.edu.co.records.input.entity.AdministrativoInput.*;
-import ufps.edu.co.records.input.entity.PersonaInput.PERSONA_FIND;
+import ufps.edu.co.records.input.entity.AdministrativoInput.ADMINISTRATIVO_CREATE;
+import ufps.edu.co.records.input.entity.AdministrativoInput.ADMINISTRATIVO_DELETE;
+import ufps.edu.co.records.input.entity.AdministrativoInput.ADMINISTRATIVO_FIND;
+import ufps.edu.co.records.input.entity.AdministrativoInput.ADMINISTRATIVO_PATCH;
+import ufps.edu.co.records.input.entity.AdministrativoInput.ADMINISTRATIVO_UPDATE;
 import ufps.edu.co.records.output.entity.AdministrativoOutput;
 import ufps.edu.co.records.output.entity.CargoOutput;
 import ufps.edu.co.records.output.entity.EstadoOutput;
@@ -17,7 +20,7 @@ public class AdministrativoMap extends
         GlobalMapper<ADMINISTRATIVO_CREATE, ADMINISTRATIVO_UPDATE, ADMINISTRATIVO_DELETE, ADMINISTRATIVO_PATCH, ADMINISTRATIVO_FIND, AdministrativoOutput, AdministrativoDTO> {
 
     @Autowired
-    private PersonaProcessor personaProcessor;
+    private PersonaMap personaMap;
 
     public AdministrativoMap() {
         super(ADMINISTRATIVO_CREATE.class, ADMINISTRATIVO_UPDATE.class, ADMINISTRATIVO_DELETE.class,
@@ -83,18 +86,16 @@ public class AdministrativoMap extends
         if (dto == null)
             return null;
         PersonaOutput persona = null;
-        if (dto.getIdPersona() != 0) {
-            persona = personaProcessor.findById(new PERSONA_FIND(dto.getIdPersona()));
+        if (dto.getPersona() != null) {
+            persona = personaMap.toOutput(dto.getPersona());
         }
-        EstadoOutput estado = null;
-        if (dto.getEstado() != null) {
-            estado = new EstadoOutput(dto.getEstado().getId(), dto.getEstado().getTipo());
-        }
-        CargoOutput cargo = null;
-        if (dto.getCargo() != null) {
-            cargo = new CargoOutput(dto.getCargo().getId(), dto.getCargo().getNombre(),
-                    dto.getCargo().getDescripcion());
-        }
+        EstadoOutput estado = dto.getEstado() != null
+                ? new EstadoOutput(dto.getEstado().getId(), dto.getEstado().getTipo())
+                : null;
+        CargoOutput cargo = dto.getCargo() != null
+                ? new CargoOutput(dto.getCargo().getId(), dto.getCargo().getNombre(), dto.getCargo().getDescripcion())
+                : null;
+
         return AdministrativoOutput.builder()
                 .id(dto.getId())
                 .fechainicio(dto.getFechainicio())

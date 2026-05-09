@@ -31,12 +31,12 @@ public class ProgramaService extends GenericService<ProgramaEntity, ProgramaDTO>
 
     @Transactional(readOnly = true)
     public List<ProgramaDTO> findAll() {
-        return entityListToDtoList(repository.findAll());
+        return entityListToDtoList(repository.findAllWithRelations());
     }
 
     @Transactional(readOnly = true)
     public ProgramaDTO findById(Integer id) {
-        return entityToDto(repository.findById(id));
+        return entityToDto(repository.findByIdWithRelations(id));
     }
 
     public ProgramaDTO create(ProgramaDTO dto) {

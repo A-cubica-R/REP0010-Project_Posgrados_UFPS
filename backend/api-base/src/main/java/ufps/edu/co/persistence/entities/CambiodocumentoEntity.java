@@ -30,13 +30,13 @@ public class CambiodocumentoEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    //--- PRIMARY KEY 
+    //--- PRIMARY KEY
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name="id", nullable=false)
     private Integer id ;
 
-    //--- OTHER DATA FIELDS 
+    //--- OTHER DATA FIELDS
     @Column(name="id_documentoanterior", nullable=false)
     private Integer        idDocumentoanterior ;
 
@@ -44,12 +44,12 @@ public class CambiodocumentoEntity implements Serializable {
     private Integer        idDocumentoactual ;
 
     //--- LINKS ( RELATIONSHIPS )
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="id_documentoanterior", referencedColumnName="id", insertable=false, updatable=false)
-    private DocumentoEntity  documento ; 
+    private DocumentoEntity  documento ;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="id_documentoactual", referencedColumnName="id", insertable=false, updatable=false)
-    private DocumentoEntity  documento2 ; 
+    private DocumentoEntity  documento2 ;
 
 }

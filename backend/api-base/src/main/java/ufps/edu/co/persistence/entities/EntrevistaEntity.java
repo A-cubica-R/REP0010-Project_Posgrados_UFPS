@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.List;
 
 
 /**
@@ -33,13 +32,13 @@ public class EntrevistaEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    //--- PRIMARY KEY 
+    //--- PRIMARY KEY
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name="id", nullable=false)
     private Integer id ;
 
-    //--- OTHER DATA FIELDS 
+    //--- OTHER DATA FIELDS
     @Column(name="fecha", nullable=false)
     private LocalDate  fecha ;
 
@@ -61,32 +60,28 @@ public class EntrevistaEntity implements Serializable {
     @Column(name="id_ubicacion", nullable=false)
     private Integer        idUbicacion ;
 
-    //--- LINKS ( RELATIONSHIPS )
     @Column(name = "tiempo", nullable = false)
     private LocalTime tiempo;
 
-    // --- LINKS ( RELATIONSHIPS )
-    @ManyToOne
+    //--- LINKS ( RELATIONSHIPS )
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="id_tipoentrevista", referencedColumnName="id", insertable=false, updatable=false)
-    private TipoentrevistaEntity tipoentrevista ; 
+    private TipoentrevistaEntity tipoentrevista ;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="id_entrevistador", referencedColumnName="id", insertable=false, updatable=false)
-    private EntrevistadorEntity entrevistador ; 
+    private EntrevistadorEntity entrevistador ;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="id_aspirante", referencedColumnName="id", insertable=false, updatable=false)
-    private AspiranteEntity  aspirante ; 
+    private AspiranteEntity  aspirante ;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="id_estado", referencedColumnName="id", insertable=false, updatable=false)
-    private EstadoEntity     estado ; 
+    private EstadoEntity     estado ;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="id_ubicacion", referencedColumnName="id", insertable=false, updatable=false)
-    private UbicacionEntity  ubicacion ; 
-
-    @OneToMany(mappedBy="entrevista")
-    private List<EntrevistadoresEntity> entrevistadoresList ; 
+    private UbicacionEntity  ubicacion ;
 
 }

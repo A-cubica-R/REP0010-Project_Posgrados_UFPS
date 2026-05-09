@@ -11,7 +11,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import java.util.List;
 
 
 /**
@@ -31,13 +30,13 @@ public class TipodocumentoEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    //--- PRIMARY KEY 
+    //--- PRIMARY KEY
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name="id", nullable=false)
     private Integer id ;
 
-    //--- OTHER DATA FIELDS 
+    //--- OTHER DATA FIELDS
     @Column(name="nombre", nullable=false, length=100)
     private String     nombre ;
 
@@ -49,9 +48,5 @@ public class TipodocumentoEntity implements Serializable {
 
     @Column(name="tamanomaximo", nullable=false)
     private Integer        tamanomaximo ;
-
-    //--- LINKS ( RELATIONSHIPS )
-    @OneToMany(mappedBy="tipodocumento")
-    private List<DocumentoEntity> documentoList ; 
 
 }

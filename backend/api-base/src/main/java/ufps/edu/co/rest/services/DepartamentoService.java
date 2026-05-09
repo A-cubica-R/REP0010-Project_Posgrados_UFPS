@@ -31,12 +31,12 @@ public class DepartamentoService extends GenericService<DepartamentoEntity, Depa
 
     @Transactional(readOnly = true)
     public List<DepartamentoDTO> findAll() {
-        return entityListToDtoList(repository.findAll());
+        return entityListToDtoList(repository.findAllWithRelations());
     }
 
     @Transactional(readOnly = true)
     public DepartamentoDTO findById(Integer id) {
-        return entityToDto(repository.findById(id));
+        return entityToDto(repository.findByIdWithRelations(id));
     }
 
     public DepartamentoDTO create(DepartamentoDTO dto) {

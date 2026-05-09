@@ -4,48 +4,22 @@
  */
 package ufps.edu.co.persistence.repositories;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import ufps.edu.co.persistence.entities.FacultadEntity;
 
-/**
- * Spring Data JPA repository for the FacultadEntity entity.
- *
- * This interface extends {@link JpaRepository}, so it automatically inherits
- * standard persistence operations, including:
- * <ul>
- *   <li> Create/update entities: {@link JpaRepository#save(Object)} and {@link JpaRepository#saveAll(Iterable)}</li>
- *   <li> Basic queries: {@link JpaRepository#findById(Object)}, {@link JpaRepository#findAll()}, and {@link JpaRepository#getReferenceById(Object)}</li>
- *   <li> Validation and counting: {@link JpaRepository#existsById(Object)} and {@link JpaRepository#count()}</li>
- *   <li> Deletion: {@link JpaRepository#deleteById(Object)}, {@link JpaRepository#delete(Object)}, and {@link JpaRepository#deleteAll()}</li>
- *   <li> Paging and sorting: {@link org.springframework.data.repository.PagingAndSortingRepository#findAll(org.springframework.data.domain.Pageable)}
- *     and {@link org.springframework.data.repository.PagingAndSortingRepository#findAll(org.springframework.data.domain.Sort)}</li>
- * </ul>
- *
- * It can also be extended with derived query methods (findBy...),
- * following Spring Data JPA conventions.
- *
- * @category Repository
- * @version 1.0.0
- * @see JpaRepository
- * @see org.springframework.data.repository.CrudRepository
- * @see org.springframework.data.repository.PagingAndSortingRepository
- * @author a-cubica-r
- *
- */
 @Repository
 public interface FacultadRepository extends JpaRepository<FacultadEntity, Integer> {
 
-	// Insert specific finders here 
+	@Query("SELECT f FROM FacultadEntity f LEFT JOIN FETCH f.administrativo")
+	List<FacultadEntity> findAllWithRelations();
 
-	//List<FacultadEntity> findByXxx(String xxx);
-
-	//List<FacultadEntity> findByXxxStartingWith(String xxx);
-
-	//List<FacultadEntity> findByXxxContaining(String xxx);
-
-	//List<FacultadEntity> findByYyy(BigDecimal yyy);
-
-	//List<FacultadEntity> findByXxxContainingAndYyy(String xxx, BigDecimal yyy);
+	@Query("SELECT f FROM FacultadEntity f LEFT JOIN FETCH f.administrativo WHERE f.id = :id")
+	Optional<FacultadEntity> findByIdWithRelations(@Param("id") Integer id);
 }

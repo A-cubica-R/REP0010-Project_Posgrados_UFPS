@@ -31,12 +31,12 @@ public class CargoService extends GenericService<CargoEntity, CargoDTO> {
 
     @Transactional(readOnly = true)
     public List<CargoDTO> findAll() {
-        return entityListToDtoList(repository.findAll());
+        return entityListToDtoList(repository.findAllWithRelations());
     }
 
     @Transactional(readOnly = true)
     public CargoDTO findById(Integer id) {
-        return entityToDto(repository.findById(id));
+        return entityToDto(repository.findByIdWithRelations(id));
     }
 
     public CargoDTO create(CargoDTO dto) {

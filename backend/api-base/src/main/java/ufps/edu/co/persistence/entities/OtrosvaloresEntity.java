@@ -11,7 +11,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import java.util.List;
 
 
 /**
@@ -31,13 +30,13 @@ public class OtrosvaloresEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    //--- PRIMARY KEY 
+    //--- PRIMARY KEY
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name="id", nullable=false)
     private Integer id ;
 
-    //--- OTHER DATA FIELDS 
+    //--- OTHER DATA FIELDS
     @Column(name="carnet", nullable=false)
     private boolean    carnet ;
 
@@ -46,9 +45,5 @@ public class OtrosvaloresEntity implements Serializable {
 
     @Column(name="seguro", nullable=false)
     private boolean    seguro ;
-
-    //--- LINKS ( RELATIONSHIPS )
-    @OneToMany(mappedBy="otrosvalores")
-    private List<ProgramaEntity> programaList ; 
 
 }

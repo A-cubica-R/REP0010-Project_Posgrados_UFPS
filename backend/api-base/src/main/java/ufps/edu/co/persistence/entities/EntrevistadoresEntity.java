@@ -30,13 +30,13 @@ public class EntrevistadoresEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    //--- PRIMARY KEY 
+    //--- PRIMARY KEY
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name="id", nullable=false)
     private Integer id ;
 
-    //--- OTHER DATA FIELDS 
+    //--- OTHER DATA FIELDS
     @Column(name="id_entrevista", nullable=false)
     private Integer        idEntrevista ;
 
@@ -44,12 +44,12 @@ public class EntrevistadoresEntity implements Serializable {
     private Integer        idAdministrativo ;
 
     //--- LINKS ( RELATIONSHIPS )
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="id_entrevista", referencedColumnName="id", insertable=false, updatable=false)
-    private EntrevistaEntity entrevista ; 
+    private EntrevistaEntity entrevista ;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="id_administrativo", referencedColumnName="id", insertable=false, updatable=false)
-    private AdministrativoEntity administrativo ; 
+    private AdministrativoEntity administrativo ;
 
 }
