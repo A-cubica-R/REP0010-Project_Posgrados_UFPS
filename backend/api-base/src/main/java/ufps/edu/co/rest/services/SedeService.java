@@ -31,12 +31,12 @@ public class SedeService extends GenericService<SedeEntity, SedeDTO> {
 
     @Transactional(readOnly = true)
     public List<SedeDTO> findAll() {
-        return entityListToDtoList(repository.findAll());
+        return entityListToDtoList(repository.findAllWithRelations());
     }
 
     @Transactional(readOnly = true)
     public SedeDTO findById(Integer id) {
-        return entityToDto(repository.findById(id));
+        return entityToDto(repository.findByIdWithRelations(id));
     }
 
     public SedeDTO create(SedeDTO dto) {

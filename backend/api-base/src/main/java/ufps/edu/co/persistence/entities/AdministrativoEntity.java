@@ -12,7 +12,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.time.LocalDate;
-import java.util.List;
 
 
 /**
@@ -55,31 +54,16 @@ public class AdministrativoEntity implements Serializable {
     private Integer        idCargo ;
 
     //--- LINKS ( RELATIONSHIPS )
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="id_persona", referencedColumnName="id", insertable=false, updatable=false)
     private PersonaEntity    persona ; 
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="id_estado", referencedColumnName="id", insertable=false, updatable=false)
     private EstadoEntity     estado ; 
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="id_cargo", referencedColumnName="id", insertable=false, updatable=false)
-    private CargoEntity      cargo ; 
-
-    @OneToMany(mappedBy="administrativo")
-    private List<DocumentoEntity> documentoList ; 
-
-    @OneToMany(mappedBy="administrativo")
-    private List<EntrevistadorEntity> entrevistadorList ; 
-
-    @OneToMany(mappedBy="administrativo")
-    private List<EntrevistadoresEntity> entrevistadoresList ; 
-
-    @OneToMany(mappedBy="administrativo")
-    private List<FacultadEntity> facultadList ; 
-
-    @OneToMany(mappedBy="administrativo")
-    private List<ProgramaEntity> programaList ; 
+    private CargoEntity      cargo ;
 
 }

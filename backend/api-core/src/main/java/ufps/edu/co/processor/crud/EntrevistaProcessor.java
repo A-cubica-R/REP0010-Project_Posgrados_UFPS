@@ -81,20 +81,7 @@ public class EntrevistaProcessor implements
 
     public EntrevistaOutput rateInterview(ENTREVISTA_RATE input) {
         try {
-            EntrevistaDTO updated = service.findById(input.id());
-            ENTREVISTA_UPDATE rate = new ENTREVISTA_UPDATE(
-                    updated.getId(),
-                    updated.getFecha(),
-                    updated.getTiempo(),
-                    input.calificacion(),
-                    updated.getIdTipoentrevista(),
-                    updated.getIdEntrevistador(),
-                    updated.getIdAspirante(),
-                    updated.getIdEstado(),
-                    updated.getIdUbicacion()
-            );
-            updated.setCalificacion(input.calificacion());
-            this.update(rate);
+            EntrevistaDTO updated = service.rateInterview(input.id(), input.calificacion());
             return map.toOutput(updated);
         } catch (Exception e) {
             throw new RuntimeException("Error rating Entrevista: " + e.getMessage(), e);

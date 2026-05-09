@@ -30,13 +30,13 @@ public class UsuarioEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    //--- PRIMARY KEY 
+    //--- PRIMARY KEY
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name="id", nullable=false)
     private Integer id ;
 
-    //--- OTHER DATA FIELDS 
+    //--- OTHER DATA FIELDS
     @Column(name="nombreusuario", nullable=false, length=50)
     private String     nombreusuario ;
 
@@ -50,16 +50,16 @@ public class UsuarioEntity implements Serializable {
     private Integer        idClave ;
 
     //--- LINKS ( RELATIONSHIPS )
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="id_persona", referencedColumnName="id", insertable=false, updatable=false)
-    private PersonaEntity    persona ; 
+    private PersonaEntity    persona ;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="id_rol", referencedColumnName="id", insertable=false, updatable=false)
-    private RolEntity        rol ; 
+    private RolEntity        rol ;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="id_clave", referencedColumnName="id", insertable=false, updatable=false)
-    private ClaveEntity      clave ; 
+    private ClaveEntity      clave ;
 
 }

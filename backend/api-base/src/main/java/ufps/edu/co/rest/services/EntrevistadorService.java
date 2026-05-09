@@ -31,12 +31,12 @@ public class EntrevistadorService extends GenericService<EntrevistadorEntity, En
 
     @Transactional(readOnly = true)
     public List<EntrevistadorDTO> findAll() {
-        return entityListToDtoList(repository.findAll());
+        return entityListToDtoList(repository.findAllWithRelations());
     }
 
     @Transactional(readOnly = true)
     public EntrevistadorDTO findById(Integer id) {
-        return entityToDto(repository.findById(id));
+        return entityToDto(repository.findByIdWithRelations(id));
     }
 
     public EntrevistadorDTO create(EntrevistadorDTO dto) {

@@ -31,12 +31,12 @@ public class PersonaService extends GenericService<PersonaEntity, PersonaDTO> {
 
     @Transactional(readOnly = true)
     public List<PersonaDTO> findAll() {
-        return entityListToDtoList(repository.findAll());
+        return entityListToDtoList(repository.findAllWithRelations());
     }
 
     @Transactional(readOnly = true)
     public PersonaDTO findById(Integer id) {
-        return entityToDto(repository.findById(id));
+        return entityToDto(repository.findByIdWithRelations(id));
     }
 
     public PersonaDTO create(PersonaDTO dto) {

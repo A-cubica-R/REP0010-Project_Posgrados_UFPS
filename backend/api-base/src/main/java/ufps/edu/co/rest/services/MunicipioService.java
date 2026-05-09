@@ -31,12 +31,12 @@ public class MunicipioService extends GenericService<MunicipioEntity, MunicipioD
 
     @Transactional(readOnly = true)
     public List<MunicipioDTO> findAll() {
-        return entityListToDtoList(repository.findAll());
+        return entityListToDtoList(repository.findAllWithRelations());
     }
 
     @Transactional(readOnly = true)
     public MunicipioDTO findById(Integer id) {
-        return entityToDto(repository.findById(id));
+        return entityToDto(repository.findByIdWithRelations(id));
     }
 
     public MunicipioDTO create(MunicipioDTO dto) {

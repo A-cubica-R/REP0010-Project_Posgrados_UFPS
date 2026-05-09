@@ -4,10 +4,13 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
 import ufps.edu.co.maps.GlobalMapper;
-import ufps.edu.co.processor.crud.AdministrativoProcessor;
-import ufps.edu.co.records.input.entity.AdministrativoInput.ADMINISTRATIVO_FIND;
-import ufps.edu.co.records.input.entity.EntrevistadorInput.*;
+import ufps.edu.co.records.input.entity.EntrevistadorInput.ENTREVISTADOR_CREATE;
+import ufps.edu.co.records.input.entity.EntrevistadorInput.ENTREVISTADOR_DELETE;
+import ufps.edu.co.records.input.entity.EntrevistadorInput.ENTREVISTADOR_FIND;
+import ufps.edu.co.records.input.entity.EntrevistadorInput.ENTREVISTADOR_PATCH;
+import ufps.edu.co.records.input.entity.EntrevistadorInput.ENTREVISTADOR_UPDATE;
 import ufps.edu.co.records.output.entity.AdministrativoOutput;
 import ufps.edu.co.records.output.entity.EntrevistadorOutput;
 import ufps.edu.co.rest.dto.EntrevistadorDTO;
@@ -17,7 +20,7 @@ public class EntrevistadorMap extends
         GlobalMapper<ENTREVISTADOR_CREATE, ENTREVISTADOR_UPDATE, ENTREVISTADOR_DELETE, ENTREVISTADOR_PATCH, ENTREVISTADOR_FIND, EntrevistadorOutput, EntrevistadorDTO> {
 
     @Autowired
-    private AdministrativoProcessor administrativoProcessor;
+    private AdministrativoMap administrativoMap;
 
     public EntrevistadorMap() {
         super(ENTREVISTADOR_CREATE.class, ENTREVISTADOR_UPDATE.class, ENTREVISTADOR_DELETE.class,
@@ -73,20 +76,15 @@ public class EntrevistadorMap extends
 
     @Override
     public EntrevistadorOutput toOutput(EntrevistadorDTO dto) {
-        if (dto == null) {
+        if (dto == null)
             return null;
-        }
-
-        AdministrativoOutput administrativo = null;
-        if (dto.getIdAdministrativo() != 0) { // ← usar idAdministrativo directo
-            administrativo = administrativoProcessor.findById(
-                    new ADMINISTRATIVO_FIND(dto.getIdAdministrativo()));
-        }
-
+        AdministrativoOutput administrativo = dto.getAdministrativo() != null
+                ? administrativoMap.toOutput(dto.getAdministrativo())
+                : null;
         return EntrevistadorOutput.builder()
                 .id(dto.getId())
                 .observaciones(dto.getObservaciones())
-                .administrativo(administrativo) // ✅ poblado
+                .administrativo(administrativo)
                 .build();
     }
 

@@ -31,12 +31,12 @@ public class OfertaacademicaService extends GenericService<OfertaacademicaEntity
 
     @Transactional(readOnly = true)
     public List<OfertaacademicaDTO> findAll() {
-        return entityListToDtoList(repository.findAll());
+        return entityListToDtoList(repository.findAllWithRelations());
     }
 
     @Transactional(readOnly = true)
     public OfertaacademicaDTO findById(Integer id) {
-        return entityToDto(repository.findById(id));
+        return entityToDto(repository.findByIdWithRelations(id));
     }
 
     public OfertaacademicaDTO create(OfertaacademicaDTO dto) {
