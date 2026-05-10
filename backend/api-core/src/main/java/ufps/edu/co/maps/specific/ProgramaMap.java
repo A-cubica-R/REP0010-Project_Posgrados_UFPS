@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 
 import ufps.edu.co.maps.GlobalMapper;
 import ufps.edu.co.records.input.entity.ProgramaInput.*;
-import ufps.edu.co.records.output.entity.AdministrativoOutput;
 import ufps.edu.co.records.output.entity.FacultadOutput;
 import ufps.edu.co.records.output.entity.ProgramaOutput;
 import ufps.edu.co.records.output.entity.SedeOutput;

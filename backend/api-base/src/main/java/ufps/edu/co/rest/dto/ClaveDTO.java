@@ -36,7 +36,6 @@ public class ClaveDTO implements Serializable {
 
     @Override
 	public String toString() { 
-		String separator = "|";
 		StringBuilder sb = new StringBuilder();
 		sb.append("Clave[");
 		sb.append("id=").append(id);
