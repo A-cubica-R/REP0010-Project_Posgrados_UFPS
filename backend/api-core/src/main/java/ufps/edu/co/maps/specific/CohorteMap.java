@@ -10,82 +10,115 @@ import ufps.edu.co.records.input.entity.CohorteInput.*;
 import ufps.edu.co.records.output.entity.CohorteOutput;
 
 @Component
-public class CohorteMap extends GlobalMapper<COHORTE_CREATE, COHORTE_UPDATE, COHORTE_DELETE, COHORTE_PATCH, COHORTE_FIND, CohorteOutput, CohorteDTO> {
+public class CohorteMap extends
+        GlobalMapper<COHORTE_CREATE, COHORTE_UPDATE, COHORTE_DELETE, COHORTE_PATCH, COHORTE_FIND, CohorteOutput, CohorteDTO> {
 
     public CohorteMap() {
-        super(COHORTE_CREATE.class, COHORTE_UPDATE.class, COHORTE_DELETE.class, COHORTE_PATCH.class, COHORTE_FIND.class);
+        super(COHORTE_CREATE.class, COHORTE_UPDATE.class, COHORTE_DELETE.class, COHORTE_PATCH.class,
+                COHORTE_FIND.class);
     }
 
     @Override
     protected CohorteDTO toDtoCreate(COHORTE_CREATE input) {
-        CohorteDTO dto = new CohorteDTO();
-        dto.setNombre(input.nombre());
-        dto.setIdEstado(input.idEstado());
-        dto.setFechaInicio(input.fechaInicio());
-        dto.setFechaFin(input.fechaFin());
-        return dto;
+        return CohorteDTO.builder()
+                .nombre(input.nombre())
+                .cupos(input.cupos())
+                .requiereentrevista(input.requiereentrevista())
+                .requiereprueba(input.requiereprueba())
+                .idEstado(input.idEstado())
+                .idSemestre(input.idSemestre())
+                .idModalidad(input.idModalidad())
+                .idPlazodocumentacion(input.idPlazodocumentacion())
+                .idPlazoinscripcion(input.idPlazoinscripcion())
+                .idPlazopago(input.idPlazopago())
+                .idPrograma(input.idPrograma())
+                .build();
     }
 
     @Override
     protected CohorteDTO toDtoUpdate(COHORTE_UPDATE input) {
-        CohorteDTO dto = new CohorteDTO();
-        dto.setId(input.id());
-        dto.setNombre(input.nombre());
-        dto.setIdEstado(input.idEstado());
-        dto.setFechaInicio(input.fechaInicio());
-        dto.setFechaFin(input.fechaFin());
-        return dto;
+        return CohorteDTO.builder()
+                .id(input.id())
+                .nombre(input.nombre())
+                .cupos(input.cupos())
+                .requiereentrevista(input.requiereentrevista())
+                .requiereprueba(input.requiereprueba())
+                .idEstado(input.idEstado())
+                .idSemestre(input.idSemestre())
+                .idModalidad(input.idModalidad())
+                .idPlazodocumentacion(input.idPlazodocumentacion())
+                .idPlazoinscripcion(input.idPlazoinscripcion())
+                .idPlazopago(input.idPlazopago())
+                .idPrograma(input.idPrograma())
+                .build();
     }
 
     @Override
     protected CohorteDTO toDtoDelete(COHORTE_DELETE input) {
-        CohorteDTO dto = new CohorteDTO();
-        dto.setId(input.id());
-        return dto; 
+        return CohorteDTO.builder()
+                .id(input.id())
+                .build();
     }
 
     @Override
     protected CohorteDTO toDtoPatch(COHORTE_PATCH input) {
-        CohorteDTO patched = new CohorteDTO();
-        patched.setId(input.id());
-        patched.setNombre(input.nombre());
-        patched.setIdEstado(input.idEstado());
-        patched.setFechaInicio(input.fechaInicio());
-        patched.setFechaFin(input.fechaFin());
-
-        if (input.nombre() != null) {
-            patched.setNombre(input.nombre());
-        }
-        if (input.idEstado() != null) {
-            patched.setIdEstado(input.idEstado());
-        }
-        if (input.fechaInicio() != null) {
-            patched.setFechaInicio(input.fechaInicio());
-        }
-        if (input.fechaFin() != null) {
-            patched.setFechaFin(input.fechaFin());
-        }
-
-        return patched;
+        return CohorteDTO.builder()
+                .id(input.id())
+                .nombre(input.nombre())
+                .cupos(input.cupos())
+                .requiereentrevista(input.requiereentrevista())
+                .requiereprueba(input.requiereprueba())
+                .idEstado(input.idEstado())
+                .idSemestre(input.idSemestre())
+                .idModalidad(input.idModalidad())
+                .idPlazodocumentacion(input.idPlazodocumentacion())
+                .idPlazoinscripcion(input.idPlazoinscripcion())
+                .idPlazopago(input.idPlazopago())
+                .idPrograma(input.idPrograma())
+                .build();
     }
 
     @Override
     protected CohorteDTO toDtoFind(COHORTE_FIND input) {
-        CohorteDTO dto = new CohorteDTO();
-        dto.setId(input.id());
-        return dto;
+        return CohorteDTO.builder()
+                .id(input.id())
+                .build();
     }
 
     @Override
     public CohorteOutput toOutput(CohorteDTO dto) {
-        if (dto == null) {
-            return null;
+        if (dto != null) {
+            EstadoMap estadoMap = new EstadoMap();
+            // TODO
+            // FIXME
+            // SemestreMap semestreMap = new SemestreMap();
+            ModalidadMap modalidadMap = new ModalidadMap();
+            PlazoMap plazoMap = new PlazoMap();
+            ProgramaMap programaMap = new ProgramaMap();
+
+            return CohorteOutput.builder()
+                    .id(dto.getId())
+                    .cupos(dto.getCupos())
+                    .requiereentrevista(dto.getRequiereentrevista())
+                    .requiereprueba(dto.getRequiereprueba())
+                    .id_estado(dto.getIdEstado())
+                    .id_semestre(dto.getIdSemestre())
+                    .id_modalidad(dto.getIdModalidad())
+                    .id_plazodocumentacion(dto.getIdPlazodocumentacion())
+                    .id_plazoinscripcion(dto.getIdPlazoinscripcion())
+                    .id_plazopago(dto.getIdPlazopago())
+                    .id_programa(dto.getIdPrograma())
+                    .estado(dto.getEstado() != null ? estadoMap.toOutput(dto.getEstado()) : null)
+                    // .semestre(dto.getSemestre() != null ? semestreMap.toOutput(dto.getSemestre())
+                    // : null)
+                    .modalidad(dto.getModalidad() != null ? modalidadMap.toOutput(dto.getModalidad()) : null)
+                    .plazodocumentacion(dto.getPlazo() != null ? plazoMap.toOutput(dto.getPlazo()) : null)
+                    .plazoinscripcion(dto.getPlazo2() != null ? plazoMap.toOutput(dto.getPlazo2()) : null)
+                    .plazopago(dto.getPlazo3() != null ? plazoMap.toOutput(dto.getPlazo3()) : null)
+                    .programa(dto.getPrograma() != null ? programaMap.toOutput(dto.getPrograma()) : null)
+                    .build();
         }
-
-        String fechaInicio = dto.getFechaInicio() != null ? dto.getFechaInicio().toString() : null;
-        String fechaFin = dto.getFechaFin() != null ? dto.getFechaFin().toString() : null;
-
-        return new CohorteOutput(dto.getId(), dto.getNombre(), fechaInicio, fechaFin);
+        return null;
     }
 
     public List<CohorteOutput> toOutputList(List<CohorteDTO> dtoList) {
