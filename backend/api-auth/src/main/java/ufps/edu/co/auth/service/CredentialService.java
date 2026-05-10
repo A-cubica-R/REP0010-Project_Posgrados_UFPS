@@ -28,8 +28,7 @@ public class CredentialService {
     }
 
     public AuthPrincipal authenticate(String username, String rawPassword) {
-        UsuarioEntity usuario = usuarioRepository.findByNombreusuario(username)
-                .orElseThrow(InvalidCredentialsException::new);
+        UsuarioEntity usuario = usuarioRepository.findByNombreusuario(username).orElseThrow(InvalidCredentialsException::new);
 
         String storedPassword = Optional.ofNullable(usuario.getClave())
                 .map(clave -> clave.getValor())

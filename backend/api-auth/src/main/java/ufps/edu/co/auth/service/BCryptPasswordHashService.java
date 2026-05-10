@@ -39,7 +39,7 @@ public class BCryptPasswordHashService implements PasswordHashService {
         return !isBcrypt(storedPassword);
     }
 
-    private boolean isBcrypt(String value) {
+    private Boolean isBcrypt(String value) {
         return value != null && (value.startsWith("$2a$") || value.startsWith("$2b$") || value.startsWith("$2y$"));
     }
 }

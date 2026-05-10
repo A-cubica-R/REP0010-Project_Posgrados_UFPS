@@ -81,7 +81,7 @@ public class SuperAdminEndpointCatalogCase {
                     endpoints);
         }
 
-        private boolean isVisibleToSuperAdmin(HandlerMethod handlerMethod) {
+        private Boolean isVisibleToSuperAdmin(HandlerMethod handlerMethod) {
             String className = handlerMethod.getBeanType().getName();
             if (CATALOG_CONTROLLER.equals(className) || className.startsWith(AUTH_PACKAGE)) {
                 return false;
@@ -180,7 +180,7 @@ public class SuperAdminEndpointCatalogCase {
             return parameter.getName();
         }
 
-        private boolean required(Annotation annotation) {
+        private Boolean required(Annotation annotation) {
             if (annotation instanceof RequestParam requestParam) {
                 return requestParam.required();
             }
@@ -254,7 +254,7 @@ public class SuperAdminEndpointCatalogCase {
             return fields;
         }
 
-        private boolean isRequired(Annotation[] annotations) {
+        private Boolean isRequired(Annotation[] annotations) {
             for (Annotation annotation : annotations) {
                 if (annotation instanceof NotNull || annotation instanceof NotBlank || annotation instanceof NotEmpty) {
                     return true;
@@ -263,7 +263,7 @@ public class SuperAdminEndpointCatalogCase {
             return false;
         }
 
-        private boolean isSimple(Class<?> type) {
+        private Boolean isSimple(Class<?> type) {
             return type.isPrimitive()
                     || type.isEnum()
                     || String.class.equals(type)

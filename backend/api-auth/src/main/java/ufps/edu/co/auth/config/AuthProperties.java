@@ -66,7 +66,7 @@ public class AuthProperties {
     }
 
     public static class Password {
-        private boolean allowPlainTextLegacy = true;
+        private Boolean allowPlainTextLegacy = true;
 
         public boolean isAllowPlainTextLegacy() {
             return allowPlainTextLegacy;
