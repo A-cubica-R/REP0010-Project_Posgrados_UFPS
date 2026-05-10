@@ -31,12 +31,12 @@ public class UsuarioService extends GenericService<UsuarioEntity, UsuarioDTO> {
 
     @Transactional(readOnly = true)
     public List<UsuarioDTO> findAll() {
-        return entityListToDtoList(repository.findAll());
+        return entityListToDtoList(repository.findAllWithRelations());
     }
 
     @Transactional(readOnly = true)
     public UsuarioDTO findById(Integer id) {
-        return entityToDto(repository.findById(id));
+        return entityToDto(repository.findByIdWithRelations(id));
     }
 
     public UsuarioDTO create(UsuarioDTO dto) {

@@ -31,12 +31,12 @@ public class EntrevistadoresService extends GenericService<EntrevistadoresEntity
 
     @Transactional(readOnly = true)
     public List<EntrevistadoresDTO> findAll() {
-        return entityListToDtoList(repository.findAll());
+        return entityListToDtoList(repository.findAllWithRelations());
     }
 
     @Transactional(readOnly = true)
     public EntrevistadoresDTO findById(Integer id) {
-        return entityToDto(repository.findById(id));
+        return entityToDto(repository.findByIdWithRelations(id));
     }
 
     public EntrevistadoresDTO create(EntrevistadoresDTO dto) {
@@ -54,5 +54,10 @@ public class EntrevistadoresService extends GenericService<EntrevistadoresEntity
         repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Entrevistadores no encontrado con id: " + id));
         repository.deleteById(id);
+    }
+
+    @Transactional
+    public void deleteByEntrevistaId(Integer idEntrevista) {
+        repository.deleteByEntrevistaId(idEntrevista);
     }
 }

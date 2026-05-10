@@ -30,13 +30,13 @@ public class OfertaacademicaEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    //--- PRIMARY KEY 
+    //--- PRIMARY KEY
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name="id", nullable=false)
     private Integer id ;
 
-    //--- OTHER DATA FIELDS 
+    //--- OTHER DATA FIELDS
     @Column(name="encuentros", length=65535)
     private String     encuentros ;
 
@@ -59,24 +59,24 @@ public class OfertaacademicaEntity implements Serializable {
     private Integer        idPlazo ;
 
     //--- LINKS ( RELATIONSHIPS )
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="id_programa", referencedColumnName="id", insertable=false, updatable=false)
-    private ProgramaEntity   programa ; 
+    private ProgramaEntity   programa ;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="id_modalidad", referencedColumnName="id", insertable=false, updatable=false)
-    private ModalidadEntity  modalidad ; 
+    private ModalidadEntity  modalidad ;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="id_jornada", referencedColumnName="id", insertable=false, updatable=false)
-    private JornadaEntity    jornada ; 
+    private JornadaEntity    jornada ;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="id_cohorte", referencedColumnName="id", insertable=false, updatable=false)
-    private CohorteEntity    cohorte ; 
+    private CohorteEntity    cohorte ;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="id_plazo", referencedColumnName="id", insertable=false, updatable=false)
-    private PlazoEntity      plazo ; 
+    private PlazoEntity      plazo ;
 
 }

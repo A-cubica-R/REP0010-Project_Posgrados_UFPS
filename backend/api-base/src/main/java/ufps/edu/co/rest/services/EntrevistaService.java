@@ -12,8 +12,6 @@ import ufps.edu.co.persistence.entities.EntrevistaEntity;
 import ufps.edu.co.persistence.repositories.EntrevistaRepository;
 import ufps.edu.co.rest.dto.EntrevistaDTO;
 import ufps.edu.co.rest.services.commons.GenericService;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 
 /**
  * REST service for entity "Entrevista" <br>
@@ -27,43 +25,43 @@ public class EntrevistaService extends GenericService<EntrevistaEntity, Entrevis
     @Autowired
     private EntrevistaRepository repository;
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
     public EntrevistaService() {
         super(EntrevistaEntity.class, EntrevistaDTO.class);
     }
 
     @Transactional(readOnly = true)
     public List<EntrevistaDTO> findAll() {
-        return entityListToDtoList(repository.findAll());
+        return entityListToDtoList(repository.findAllWithRelations());
     }
 
     @Transactional(readOnly = true)
     public EntrevistaDTO findById(Integer id) {
-        return entityToDto(repository.findById(id));
+        return entityToDto(repository.findByIdWithRelations(id));
     }
 
     public EntrevistaDTO create(EntrevistaDTO dto) {
         EntrevistaEntity saved = repository.save(dtoToEntity(dto));
-        entityManager.flush();
-        entityManager.refresh(saved);
-        return entityToDto(saved);
+        return entityToDto(repository.findByIdWithRelations(saved.getId())
+                .orElseThrow(() -> new RuntimeException("Entrevista no encontrada tras crear")));
     }
 
     public EntrevistaDTO update(Integer id, EntrevistaDTO dto) {
-        repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Entrevista no encontrado con id: " + id));
+        repository.findByIdWithRelations(id)
+                .orElseThrow(() -> new RuntimeException("Entrevista no encontrada con id: " + id));
         dto.setId(id);
-        EntrevistaEntity saved = repository.save(dtoToEntity(dto));
-        entityManager.flush();
-        entityManager.refresh(saved);
-        return entityToDto(saved);
+        repository.save(dtoToEntity(dto));
+        return findById(id);
     }
 
     public void deleteById(Integer id) {
         repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Entrevista no encontrado con id: " + id));
         repository.deleteById(id);
+    }
+
+    @Transactional
+    public EntrevistaDTO rateInterview(Integer id, float calificacion) {
+        repository.updateCalificacion(id, calificacion);
+        return findById(id);
     }
 }

@@ -4,7 +4,13 @@
  */
 package ufps.edu.co.persistence.repositories;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import ufps.edu.co.persistence.entities.EntrevistadoresEntity;
@@ -48,4 +54,14 @@ public interface EntrevistadoresRepository extends JpaRepository<Entrevistadores
 	//List<EntrevistadoresEntity> findByYyy(BigDecimal yyy);
 
 	//List<EntrevistadoresEntity> findByXxxContainingAndYyy(String xxx, BigDecimal yyy);
+
+	@Query("SELECT e FROM EntrevistadoresEntity e LEFT JOIN FETCH e.entrevista LEFT JOIN FETCH e.administrativo")
+	List<EntrevistadoresEntity> findAllWithRelations();
+
+	@Query("SELECT e FROM EntrevistadoresEntity e LEFT JOIN FETCH e.entrevista LEFT JOIN FETCH e.administrativo WHERE e.id = :id")
+	Optional<EntrevistadoresEntity> findByIdWithRelations(@Param("id") Integer id);
+
+	@Modifying
+    @Query("DELETE FROM EntrevistadoresEntity e WHERE e.idEntrevista = :idEntrevista")
+    void deleteByEntrevistaId(@Param("idEntrevista") Integer idEntrevista);
 }

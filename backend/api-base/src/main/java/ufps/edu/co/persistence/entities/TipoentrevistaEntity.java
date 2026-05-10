@@ -11,7 +11,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import java.util.List;
 
 
 /**
@@ -31,21 +30,17 @@ public class TipoentrevistaEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    //--- PRIMARY KEY 
+    //--- PRIMARY KEY
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name="id", nullable=false)
     private Integer id ;
 
-    //--- OTHER DATA FIELDS 
+    //--- OTHER DATA FIELDS
     @Column(name="nombre", nullable=false, length=100)
     private String     nombre ;
 
     @Column(name="descripcion", length=65535)
     private String     descripcion ;
-
-    //--- LINKS ( RELATIONSHIPS )
-    @OneToMany(mappedBy="tipoentrevista")
-    private List<EntrevistaEntity> entrevistaList ; 
 
 }

@@ -31,13 +31,13 @@ public class DocumentoEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    //--- PRIMARY KEY 
+    //--- PRIMARY KEY
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name="id", nullable=false)
     private Integer id ;
 
-    //--- OTHER DATA FIELDS 
+    //--- OTHER DATA FIELDS
     @Column(name="fechacargue", nullable=false)
     private LocalDate  fechacargue ;
 
@@ -66,30 +66,24 @@ public class DocumentoEntity implements Serializable {
     private String     observaciones ;
 
     //--- LINKS ( RELATIONSHIPS )
-    // @OneToMany
-    // private List<CambiodocumentoEntity> cambiodocumentoList ; 
-
-    // @OneToMany
-    // private List<CambiodocumentoEntity> cambiodocumentoList2 ; 
-
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="id_plazo", referencedColumnName="id", insertable=false, updatable=false)
-    private PlazoEntity      plazo ; 
+    private PlazoEntity      plazo ;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="id_tipodocumento", referencedColumnName="id", insertable=false, updatable=false)
-    private TipodocumentoEntity tipodocumento ; 
+    private TipodocumentoEntity tipodocumento ;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="id_estadodocumento", referencedColumnName="id", insertable=false, updatable=false)
-    private EstadodocumentoEntity estadodocumento ; 
+    private EstadodocumentoEntity estadodocumento ;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="id_administrativo", referencedColumnName="id", insertable=false, updatable=false)
-    private AdministrativoEntity administrativo ; 
+    private AdministrativoEntity administrativo ;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="id_aspirante", referencedColumnName="id", insertable=false, updatable=false)
-    private AspiranteEntity  aspirante ; 
+    private AspiranteEntity  aspirante ;
 
 }

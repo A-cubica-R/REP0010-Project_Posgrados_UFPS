@@ -31,12 +31,12 @@ public class DocumentoService extends GenericService<DocumentoEntity, DocumentoD
 
     @Transactional(readOnly = true)
     public List<DocumentoDTO> findAll() {
-        return entityListToDtoList(repository.findAll());
+        return entityListToDtoList(repository.findAllWithRelations());
     }
 
     @Transactional(readOnly = true)
     public DocumentoDTO findById(Integer id) {
-        return entityToDto(repository.findById(id));
+        return entityToDto(repository.findByIdWithRelations(id));
     }
 
     public DocumentoDTO create(DocumentoDTO dto) {

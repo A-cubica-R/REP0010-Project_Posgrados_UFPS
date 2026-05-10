@@ -31,12 +31,12 @@ public class AdministrativoService extends GenericService<AdministrativoEntity, 
 
     @Transactional(readOnly = true)
     public List<AdministrativoDTO> findAll() {
-        return entityListToDtoList(repository.findAll());
+        return entityListToDtoList(repository.findAllWithRelations());
     }
 
     @Transactional(readOnly = true)
     public AdministrativoDTO findById(Integer id) {
-        return entityToDto(repository.findById(id));
+        return entityToDto(repository.findByIdWithRelations(id));
     }
 
     public AdministrativoDTO create(AdministrativoDTO dto) {
@@ -51,9 +51,10 @@ public class AdministrativoService extends GenericService<AdministrativoEntity, 
     }
 
     public void deleteById(Integer id) {
-        repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Administrativo no encontrado con id: " + id));
-        repository.deleteById(id);
+        if (!repository.existsById(id)) {
+            throw new RuntimeException("...no encontrado con id: " + id);
+        }
+        repository.deleteById(id); // SELECT + DELETE (inevitable en Spring Data sin @Query)
     }
 
 }

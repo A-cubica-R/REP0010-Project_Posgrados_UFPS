@@ -31,12 +31,12 @@ public class CohorteService extends GenericService<CohorteEntity, CohorteDTO> {
 
     @Transactional(readOnly = true)
     public List<CohorteDTO> findAll() {
-        return entityListToDtoList(repository.findAll());
+        return entityListToDtoList(repository.findAllWithRelations());
     }
 
     @Transactional(readOnly = true)
     public CohorteDTO findById(Integer id) {
-        return entityToDto(repository.findById(id));
+        return entityToDto(repository.findByIdWithRelations(id));
     }
 
     public CohorteDTO create(CohorteDTO dto) {

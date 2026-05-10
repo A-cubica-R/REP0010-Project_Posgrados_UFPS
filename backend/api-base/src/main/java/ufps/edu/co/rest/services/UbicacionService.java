@@ -31,12 +31,12 @@ public class UbicacionService extends GenericService<UbicacionEntity, UbicacionD
 
     @Transactional(readOnly = true)
     public List<UbicacionDTO> findAll() {
-        return entityListToDtoList(repository.findAll());
+        return entityListToDtoList(repository.findAllWithRelations());
     }
 
     @Transactional(readOnly = true)
     public UbicacionDTO findById(Integer id) {
-        return entityToDto(repository.findById(id));
+        return entityToDto(repository.findByIdWithRelations(id));
     }
 
     public UbicacionDTO create(UbicacionDTO dto) {
