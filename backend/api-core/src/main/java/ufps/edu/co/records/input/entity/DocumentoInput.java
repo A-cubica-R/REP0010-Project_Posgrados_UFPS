@@ -11,13 +11,13 @@ public enum DocumentoInput {
     ;
 
     public record DOCUMENTO_CREATE(
-        @NotNull LocalDate fechacargue,
-        @NotNull Integer idEstadodocumento,
-        @NotNull Integer idTipodocumento,
-        @NotNull Integer idAdministrativo,
-        @NotNull Integer idPlazo,
-        @NotNull Integer idAspirante,
         @NotBlank String enlaceurl,
+        @NotNull LocalDate fechacargue,
+        @NotNull Integer idAdministrativo,
+        @NotNull Integer idAspirante,
+        @NotNull Integer idEstadodocumento,
+        @NotNull Integer idPlazo,
+        @NotNull Integer idTipodocumento,
         @NotBlank String keyfile,
         String observaciones
     ) implements CreateType {}

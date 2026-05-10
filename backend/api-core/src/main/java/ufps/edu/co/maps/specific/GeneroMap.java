@@ -45,7 +45,10 @@ public class GeneroMap extends GlobalMapper<GENERO_CREATE, GENERO_UPDATE, GENERO
     }
 
     public GeneroOutput toOutput(GeneroDTO dto) {
-        return new GeneroOutput(dto.getId(), dto.getNombre());
+        return GeneroOutput.builder()
+                .id(dto.getId())
+                .nombre(dto.getNombre())
+                .build();
     }
 
     public List<GeneroOutput> toOutputList(List<GeneroDTO> dtoList) {

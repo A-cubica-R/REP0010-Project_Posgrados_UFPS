@@ -101,7 +101,10 @@ public class AspiranteMap extends
                     .genero(genero)
                     .build();
         }
-        return new AspiranteOutput(dto.getId(), persona);
+        return AspiranteOutput.builder()
+                .id(dto.getId())
+                .persona(persona)
+                .build();
     }
 
     public List<AspiranteOutput> toOutputList(List<AspiranteDTO> dtoList) {

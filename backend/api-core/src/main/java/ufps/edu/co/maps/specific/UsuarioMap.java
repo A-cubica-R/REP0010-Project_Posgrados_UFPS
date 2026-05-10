@@ -1,6 +1,8 @@
 package ufps.edu.co.maps.specific;
 
 import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ufps.edu.co.maps.GlobalMapper;
 import ufps.edu.co.records.input.entity.UsuarioInput.*;
@@ -18,6 +20,9 @@ public class UsuarioMap extends
         super(USUARIO_CREATE.class, USUARIO_UPDATE.class, USUARIO_DELETE.class, USUARIO_PATCH.class,
                 USUARIO_FIND.class);
     }
+
+    @Autowired
+    PersonaMap personaMap = new PersonaMap();
 
     @Override
     protected UsuarioDTO toDtoCreate(USUARIO_CREATE input) {
@@ -82,8 +87,6 @@ public class UsuarioMap extends
             return null;
         }
 
-        PersonaMap personaMap = new PersonaMap();
-
         PersonaOutput persona = dto.getPersona() != null
                 ? personaMap.toOutput(dto.getPersona())
                 : null;
@@ -103,7 +106,16 @@ public class UsuarioMap extends
                     .build();
         }
 
-        return new UsuarioOutput(dto.getId(), dto.getNombreusuario(), persona, rol, clave);
+        return UsuarioOutput.builder()
+                .id(dto.getId())
+                .nombreusuario(dto.getNombreusuario())
+                .idPersona(dto.getIdPersona())
+                .idRol(dto.getIdRol())
+                .idClave(dto.getIdClave())
+                .persona(persona)
+                .rol(rol)
+                .clave(clave)
+                .build();
     }
 
     public List<UsuarioOutput> toOutputList(List<UsuarioDTO> dtoList) {

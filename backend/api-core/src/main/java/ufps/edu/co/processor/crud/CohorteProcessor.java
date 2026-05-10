@@ -9,11 +9,7 @@ import org.springframework.stereotype.Service;
 import ufps.edu.co.domain.exceptions.DomainException;
 import ufps.edu.co.domain.exceptions.errorcodes.CohorteErrorCode;
 import ufps.edu.co.maps.specific.CohorteMap;
-import ufps.edu.co.records.input.entity.CohorteInput.COHORTE_CREATE;
-import ufps.edu.co.records.input.entity.CohorteInput.COHORTE_DELETE;
-import ufps.edu.co.records.input.entity.CohorteInput.COHORTE_FIND;
-import ufps.edu.co.records.input.entity.CohorteInput.COHORTE_PATCH;
-import ufps.edu.co.records.input.entity.CohorteInput.COHORTE_UPDATE;
+import ufps.edu.co.records.input.entity.CohorteInput.*;
 import ufps.edu.co.records.output.entity.CohorteOutput;
 import ufps.edu.co.rest.dto.CohorteDTO;
 import ufps.edu.co.rest.services.CohorteService;
@@ -80,6 +76,10 @@ public class CohorteProcessor implements GlobalUseCase<COHORTE_CREATE, COHORTE_U
     @Override
     public CohorteOutput patch(COHORTE_PATCH input) {
         return null;
+    }
+
+    public CohorteOutput createWithPlazo(COHORTE_WITHPLAZO_CREATE input) {
+        throw new UnsupportedOperationException("No se puede crear una cohorte con plazo desde este endpoint");
     }
 
 }

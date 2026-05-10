@@ -1,0 +1,838 @@
+# BOTS - Mapa operativo del proyecto Posgrados API
+
+> Archivo para que cualquier IA o agente entienda la arquitectura, los modulos, las clases principales, las rutas y el comportamiento esperado de este backend.
+> Este documento describe el estado funcional/intencional del proyecto e ignora deliberadamente errores de compilacion actuales.
+
+## 1. Identidad
+
+```yaml
+project:
+  name: Posgrados API
+  groupId: ufps.edu.co
+  artifactId: posgrados
+  version: 0.0.1-SNAPSHOT
+  packaging: pom
+  language: Java
+  java: 21
+  framework: Spring Boot
+  build_tool: Maven Wrapper
+  database: MySQL via Spring Data JPA
+  domain: Backend para gestion de posgrados UFPS
+  main_class: ufps.edu.co.Application
+  root_package: ufps.edu.co
+```
+
+La aplicacion arranca desde `platform/application/src/main/java/ufps/edu/co/Application.java` con `@SpringBootApplication(scanBasePackages = "ufps.edu.co")`. Por eso, cuando se ejecuta el modulo `platform/application`, Spring detecta beans de todos los modulos bajo el paquete comun `ufps.edu.co`.
+
+## 2. Estructura del repositorio
+
+```yaml
+repo_root:
+  pom.xml: POM padre multi-modulo
+  mvnw / mvnw.cmd: Maven wrapper
+  .env.properties: configuracion local sensible cargada por Spring; ignorada por git
+  .gitignore: ignora target, IDEs, .env.properties y .sql
+  HELP.md: referencia generada de Spring/Maven
+  Tasks.txt: notas humanas de tareas pendientes
+  .sql/: scripts DDL/DML y material auxiliar local, ignorado por git
+  .info/: documentacion/instrucciones/reviews locales
+  .vscode/: launch/tasks/settings locales, ignorado por git
+  backend/: modulos funcionales de dominio, persistencia, REST, auth, mail y S3
+  platform/: modulo ejecutable y modulo de seguridad transversal
+```
+
+## 3. Modulos Maven
+
+```yaml
+modules:
+  backend/api-base:
+    role: Persistencia, DTOs y servicios CRUD basicos.
+    dependencies: [spring-boot-starter-data-jpa, mysql-connector-j, modelmapper]
+
+  backend/api-core:
+    role: Casos de uso/procesadores, records input/output, mappers y excepciones de dominio.
+    dependencies: [api-base, spring-context, validation, spring-tx, modelmapper]
+
+  backend/api-auth:
+    role: Autenticacion, JWT, hashing de claves y contratos de auth.
+    dependencies: [api-base, spring-context, spring-tx, validation, spring-security-crypto, jjwt]
+
+  backend/api-rest:
+    role: Controladores HTTP REST, casos aplicacionales y comandos.
+    dependencies: [api-core, api-auth, mail-module, s3-storage, spring-boot-starter-webmvc, modelmapper]
+
+  backend/mail-module:
+    role: Integracion con Resend para envio de correos.
+    dependencies: [api-base, api-core, resend-java, spring-boot-starter]
+
+  backend/s3-storage:
+    role: Integracion con AWS S3 para documentos.
+    dependencies: [api-base, api-core, aws-sdk-s3, aws-sdk-auth, spring-boot-starter]
+
+  platform/security:
+    role: Spring Security, CORS, filtro JWT y adaptador de principal.
+    dependencies: [api-auth, spring-boot-starter-security, spring-boot-starter-webmvc, jjwt]
+
+  platform/application:
+    role: Aplicacion arrancable que ensambla todos los modulos.
+    dependencies: [security, api-auth, api-base, api-core, api-rest, s3-storage, springdoc-openapi]
+```
+
+## 4. Flujo de capas
+
+```text
+HTTP request
+  -> platform/security/JwtAuthenticationFilter
+  -> backend/api-rest/controllers/*
+  -> backend/api-core/processor/crud/*Processor
+  -> backend/api-core/maps/specific/*Map
+  -> backend/api-base/rest/services/*Service
+  -> backend/api-base/persistence/repositories/*Repository
+  -> backend/api-base/persistence/entities/*Entity
+  -> MySQL
+
+Respuesta:
+Entity -> DTO -> Output record -> ResponseEntity JSON
+```
+
+Patron por entidad:
+
+```yaml
+entity_stack:
+  Entity: backend/api-base/.../persistence/entities/XEntity.java
+  Repository: backend/api-base/.../persistence/repositories/XRepository.java
+  DTO: backend/api-base/.../rest/dto/XDTO.java
+  Service: backend/api-base/.../rest/services/XService.java
+  Input records: backend/api-core/.../records/input/entity/XInput.java
+  Output record: backend/api-core/.../records/output/entity/XOutput.java
+  Mapper: backend/api-core/.../maps/specific/XMap.java
+  Processor: backend/api-core/.../processor/crud/XProcessor.java
+  Controller: backend/api-rest/.../controllers/rest/XRestController.java
+```
+
+## 5. Configuracion
+
+`platform/application/src/main/resources/application.properties` importa:
+
+```properties
+spring.config.import=optional:file:.env.properties,optional:file:../../.env.properties
+```
+
+Variables esperadas, sin copiar valores reales:
+
+```yaml
+env:
+  database: [DB_URL, DB_USER, DB_PASSWORD, DB_SCHEMA, DB_DRIVER, DB_DIALECT]
+  app: [APP_NAME, APP_PREFIX]
+  spring_security_user: [SPRING_SECURITY_USER_NAME, SPRING_SECURITY_USER_PASSWORD]
+  jwt: [JWT_SECRET]
+  swagger: [ENABLE_API_DOCS, ENABLE_SWAGGER_UI, SWAGGER_API_DOCS_PATH, SWAGGER_UI_PATH]
+  module_markers:
+    - APP_MODULE_NAME_API_BASE
+    - APP_MODULE_NAME_API_CORE
+    - APP_MODULE_NAME_API_REST
+    - APP_MODULE_NAME_API_AUTH
+    - APP_MODULE_NAME_SECURITY
+    - APP_MODULE_NAME_S3_STORAGE
+    - APP_MODULE_NAME_MAIL_MODULE
+  aws_s3: [AWS_ACCESS_KEY, AWS_SECRET_KEY, AWS_REGION, AWS_BUCKET_NAME]
+  resend_mail: [RESEND_API_KEY, MAIL_FROM]
+```
+
+Propiedades funcionales:
+
+```yaml
+server:
+  servlet.context-path: ${APP_PREFIX}
+  forward-headers-strategy: framework
+  tomcat.remoteip: X-Forwarded-For / X-Forwarded-Proto
+
+api_prefixes:
+  rest: /api/dev/endpoint
+  cases: /api/application/case
+  command: /api/application/command
+
+jpa:
+  ddl-auto: none
+  show-sql: true
+  open-in-view: false
+  default_schema: ${DB_SCHEMA}
+  default_batch_fetch_size: 16
+
+auth:
+  jwt.issuer: ufps-posgrados
+  jwt.access_expiration_minutes: 120
+  jwt.refresh_expiration_minutes: 10080
+  password.allow_plain_text_legacy: true
+```
+
+## 6. Rutas y prefijos HTTP
+
+`ApiRestConfiguration` agrega prefijos por paquete:
+
+```yaml
+ufps.edu.co.controllers.rest: /api/dev/endpoint
+ufps.edu.co.controllers.cases: /api/application/case
+ufps.edu.co.controllers.cases.command: /api/application/command
+```
+
+Todo queda bajo `server.servlet.context-path`, normalmente `/posgrados-project`.
+
+Ejemplos esperados:
+
+```text
+/posgrados-project/auth/login
+/posgrados-project/api/dev/endpoint/programa/listall
+/posgrados-project/api/application/case/documents/approve
+/posgrados-project/api/application/command/ofertaacademica/createWithPlazo
+/posgrados-project/swagger-ui.html
+/posgrados-project/api-docs
+```
+
+`AuthController` esta en `ufps.edu.co.controllers.auth`, por eso no recibe los prefijos REST/cases/command.
+
+## 7. Seguridad y autenticacion
+
+`SecurityConfig`:
+
+```yaml
+session_policy: STATELESS
+csrf: disabled
+cors: enabled
+jwt_filter: antes de UsernamePasswordAuthenticationFilter
+public_paths:
+  - /auth/login
+  - /auth/refresh
+  - /api/application/case/login/recoveryPassword
+  - /swagger-ui/**
+  - /swagger-ui.html
+  - /api-docs/**
+  - /v3/api-docs/**
+  - /error
+roles:
+  SUPER_ADMINISTRADOR: /**
+  DIRECTOR_FACULTAD:
+    - /facultades/**
+    - /programas/**
+    - /profesores/**
+    - /estudiantes/**
+    - /proyectos/**
+default: denyAll
+```
+
+`JwtAuthenticationFilter`:
+
+1. Ignora `/auth/*`, Swagger/OpenAPI y OPTIONS.
+2. Lee `Authorization`.
+3. Extrae Bearer token con `BearerTokenConstants`.
+4. Valida access token con `AccessTokenValidator`.
+5. Parsea a `AuthPrincipal`.
+6. Convierte roles a `ROLE_<ROL>` con `SpringSecurityPrincipalAdapter`.
+7. Limpia `SecurityContextHolder` al finalizar.
+
+`AuthController`:
+
+```yaml
+POST /auth/login:
+  input: LoginInput(username, password)
+  output: LoginOutput(accessToken, refreshToken, userId, username, roles)
+  errors: {missing_credentials: 400, invalid_credentials: 401}
+
+POST /auth/refresh:
+  input: RefreshTokenInput(refreshToken)
+  output: LoginOutput con tokens nuevos
+  errors: {missing_token: 400, invalid_token: 401}
+```
+
+`CredentialService` autentica contra `UsuarioRepository`, obtiene `ClaveEntity.valor`, compara con `PasswordHashService` y arma un `AuthPrincipal`. `BCryptPasswordHashService` soporta BCrypt y claves legadas en texto plano si `app.auth.password.allow-plain-text-legacy=true`.
+
+`RoleNameNormalizer` transforma roles humanos a authorities limpias:
+
+```text
+"Super Administrador" -> "SUPER_ADMINISTRADOR"
+"Director-Facultad" -> "DIRECTOR_FACULTAD"
+```
+
+`JwtTokenService` emite access y refresh tokens con issuer `ufps-posgrados`, subject `username`, claim `uid`, claim `roles` y claim `type` (`ACCESS` o `REFRESH`).
+
+## 8. CORS y OpenAPI
+
+`CorsConfiguration` permite origen `*`, metodos `GET, POST, PUT, DELETE, OPTIONS, HEAD, PATCH`, headers `*`, sin credenciales y `maxAge=3600`.
+
+`OpenApiConfig` define `Posgrados API v1` y seguridad `bearerAuth` tipo HTTP bearer JWT.
+
+## 9. api-base
+
+`api-base` contiene:
+
+```yaml
+api-base:
+  entities: JPA @Entity, @Table, relaciones @ManyToOne/@OneToMany
+  repositories: Spring Data JpaRepository<Entity, Integer>
+  dto: objetos serializables con Lombok, campos planos y relaciones DTO
+  services: CRUD transaccional por entidad
+  config: ModelMapperConfig
+```
+
+`GenericService<ENTITY, DTO>` centraliza:
+
+```yaml
+dtoToEntity(dto): DTO -> JPA entity
+entityToDto(entity): entity -> DTO
+entityToDto(optional): optional entity -> DTO o null
+entityListToDtoList(iterable): entidades -> List<DTO>
+```
+
+Los services CRUD suelen hacer:
+
+```yaml
+findAll: repository.findAll() -> List<DTO>
+findById: repository.findById(id) -> DTO o null
+create: repository.save(dtoToEntity(dto)) -> DTO
+update:
+  - valida existencia por id
+  - fuerza dto.id = id
+  - guarda entidad
+  - retorna DTO
+deleteById:
+  - valida existencia por id
+  - repository.deleteById(id)
+```
+
+## 10. api-core
+
+`api-core` contiene:
+
+```yaml
+records/input/entity: records CREATE/UPDATE/PATCH/DELETE/FIND
+records/output/entity: records de respuesta, usualmente con @Builder
+records/contracts: CreateType, UpdateType, DeleteType, PatchType, FindType, LoginType
+maps: InputRequest -> DTO y DTO -> Output
+processor/crud: casos de uso por entidad
+domain/exceptions: DomainException y error codes
+domain/validators: validadores especificos
+```
+
+Contratos base:
+
+```yaml
+InputRequest: marker interface para inputs
+OutputResponse: marker interface para outputs
+GlobalUseCase<C,U,D,P,F,O>:
+  - create(C)
+  - update(U)
+  - patch(P)
+  - findById(F)
+  - findAll()
+  - deleteById(D)
+```
+
+`GlobalMapper` recibe clases concretas de input y hace dispatch:
+
+```text
+toDto(InputRequest input)
+  CREATE -> toDtoCreate
+  UPDATE -> toDtoUpdate
+  DELETE -> toDtoDelete
+  PATCH -> toDtoPatch
+  FIND -> toDtoFind
+  otro -> IllegalArgumentException
+```
+
+Los processors son `@Service` y normalmente hacen:
+
+```yaml
+create: input -> map.toDto -> service.create -> map.toOutput
+update: input -> map.toDto -> service.update(input.id,dto) -> map.toOutput
+findById: input.id -> service.findById -> map.toOutput
+findAll: service.findAll -> outputs
+deleteById: service.deleteById
+patch: implementacion variable
+errors: excepciones tecnicas -> DomainException con ErrorCode cuando existe
+```
+
+Metodos especiales:
+
+```yaml
+SedeProcessor.createWithUbicacion: crea ubicacion y luego sede asociada
+OfertaacademicaProcessor.createWithPlazo: crea oferta academica con plazo asociado
+DocumentoProcessor.approveDocument: cambia estado de documento a aprobado
+DocumentoProcessor.rejectDocument: cambia estado de documento a rechazado y registra observacion
+DocumentoProcessor.findByAspiranteId: lista documentos de un aspirante
+DocumentoProcessor.findPersonByDocument: obtiene persona asociada a un documento
+EntrevistaProcessor.rateInterview: registra/califica entrevista
+ProgramaProcessor.findByIdFacultad: lista programas por facultad
+EntrevistadoresProcessor.deleteAllByEntrevistaId: elimina entrevistadores por entrevista
+```
+
+## 11. api-rest
+
+Familias de controladores:
+
+```yaml
+controllers.auth:
+  prefix: sin ApiRestConfiguration
+  purpose: login y refresh
+
+controllers.rest:
+  prefix: /api/dev/endpoint
+  purpose: CRUD generico por entidad
+
+controllers.cases:
+  prefix: /api/application/case
+  purpose: operaciones aplicacionales no estrictamente CRUD
+
+controllers.cases.command:
+  prefix: /api/application/command
+  purpose: comandos compuestos
+```
+
+Patron CRUD:
+
+```yaml
+GET /<recurso>/listall: lista todo
+POST /<recurso>/list: busca por id usando body FIND
+POST /<recurso>/create: crea usando body CREATE
+PUT /<recurso>/update: actualiza usando body UPDATE
+DELETE /<recurso>/delete: elimina usando body DELETE
+PATCH /<recurso>/patch: solo algunos recursos
+```
+
+Endpoints especiales:
+
+```text
+POST /auth/login
+POST /auth/refresh
+POST /api/application/case/sede/createWithUbicacion
+GET  /api/application/case/super-admin/endpoints
+PUT  /api/application/case/interview/rate
+POST /api/application/case/documents/list
+POST /api/application/case/documents/approve
+POST /api/application/case/documents/reject
+POST /api/application/case/documents/aspirantList
+POST /api/application/case/login/recoveryPassword
+POST /api/application/command/ofertaacademica/createWithPlazo
+```
+
+Recursos CRUD REST:
+
+```text
+/api/dev/endpoint/administrativo/{listall,list,create,update,delete,listPosibleDirector}
+/api/dev/endpoint/aspirante/{listall,list,create,update,delete}
+/api/dev/endpoint/cambiodocumento/{listall,list,create,update,delete}
+/api/dev/endpoint/cargo/{listall,list,create,update,delete}
+/api/dev/endpoint/clave/{listall,list,create,update,delete}
+/api/dev/endpoint/cohorte/{listall,list,create,update,delete}
+/api/dev/endpoint/departamento/{listall,list,create,update,delete}
+/api/dev/endpoint/documento/{listall,list,create,update,delete}
+/api/dev/endpoint/entrevistador/{listall,list,create,update,delete}
+/api/dev/endpoint/entrevistadores/{listall,list,create,update,delete,patch}
+/api/dev/endpoint/entrevista/{listall,list,create,update,delete}
+/api/dev/endpoint/estadodocumento/{listall,list,create,update,delete}
+/api/dev/endpoint/estado/{listall,list,create,update,delete}
+/api/dev/endpoint/facultad/{listall,list,create,update,delete}
+/api/dev/endpoint/genero/{listall,list,create,update,delete}
+/api/dev/endpoint/jornada/{listall,list,create,update,delete}
+/api/dev/endpoint/modalidad/{listall,list,create,update,delete}
+/api/dev/endpoint/municipio/{listall,list,create,update,delete}
+/api/dev/endpoint/ofertaacademica/{listall,list,create,update,delete}
+/api/dev/endpoint/otrosvalores/{listall,list,create,update,delete}
+/api/dev/endpoint/pais/{listall,list,create,update,delete}
+/api/dev/endpoint/persona/{listall,list,create,update,delete}
+/api/dev/endpoint/plazo/{listall,list,create,update,delete}
+/api/dev/endpoint/programa/{listall,list,create,update,delete,listbyfacultad}
+/api/dev/endpoint/rol/{listall,list,create,update,delete}
+/api/dev/endpoint/sedes/{listall,list,create,update,delete}
+/api/dev/endpoint/tipodocumento/{listall,list,create,update,delete}
+/api/dev/endpoint/tipoentrevista/{listall,list,create,update,delete}
+/api/dev/endpoint/tipoplazo/{listall,list,create,update,delete}
+/api/dev/endpoint/ubicacion/{listall,list,create,update,delete}
+/api/dev/endpoint/usuario/{listall,list,create,update,delete}
+```
+
+## 12. Casos aplicacionales
+
+`RecoveryPasswordRestCase`:
+
+```yaml
+route: POST /api/application/case/login/recoveryPassword
+input: body string con correo
+flow:
+  - normaliza correo: trim, quita comillas externas, lower-case
+  - busca PersonaDTO por correo usando personaService.findAll()
+  - busca UsuarioDTO cuyo idPersona coincida
+  - obtiene ClaveDTO por usuario.idClave
+  - envia email con la clave en texto plano
+responses:
+  blank_email: 400
+  not_found: 404
+  success: 200 'Correo enviado'
+```
+
+`SecretariaCase`:
+
+```yaml
+base_route: /api/application/case/documents
+operations:
+  POST /list:
+    input: DOCUMENTO_FIND
+    behavior: descarga bytes desde S3 usando keyfile del documento
+    response: application/octet-stream + Content-Disposition attachment
+  POST /approve:
+    input: DOCUMENTO_FIND
+    behavior: aprueba documento, busca persona/tipo de documento y notifica por correo
+  POST /reject:
+    input: DOCUMENTO_REJECT
+    behavior: rechaza documento, busca persona/tipo de documento y notifica por correo
+  POST /aspirantList:
+    input: ASPIRANTE_FIND
+    behavior: lista documentos por aspirante
+```
+
+`ComiteCurricularRestCase`:
+
+```yaml
+route: PUT /api/application/case/interview/rate
+input: ENTREVISTA_RATE
+behavior: delega a EntrevistaProcessor.rateInterview
+```
+
+`SuperAdminEndpointCatalogCase`:
+
+```yaml
+route: GET /api/application/case/super-admin/endpoints
+role: SUPER_ADMINISTRADOR
+behavior:
+  - inspecciona RequestMappingHandlerMapping
+  - filtra controllers visibles de packages rest y cases
+  - excluye auth y el mismo catalogo
+  - genera plantilla de endpoint con metodo, path, consumes, produces, controller, handler, body y parametros
+```
+
+`OfertaacademicaCommand`:
+
+```yaml
+route: POST /api/application/command/ofertaacademica/createWithPlazo
+input: OFERTAACADEMICA_CREATE_WITH_PLAZO
+behavior: delega a OfertaacademicaProcessor.createWithPlazo
+response: 201 Created + OfertaacademicaOutput
+```
+
+## 13. Mail y S3
+
+`mail-module`:
+
+```yaml
+ResendConfig:
+  creates: Resend bean from resend.api.key
+EmailService.sendEmail(to, subject, htmlBody):
+  - usa mail.from como remitente
+  - llama resend.emails().send(params)
+  - convierte ResendException en RuntimeException
+```
+
+Nota: el metodo recibe `to`, pero el codigo visible fija temporalmente un destinatario concreto dentro de `CreateEmailOptions`. La intencion funcional es que `to` sea el destinatario real.
+
+`s3-storage`:
+
+```yaml
+S3Config:
+  creates: S3Client
+  uses: AWS_ACCESS_KEY, AWS_SECRET_KEY, AWS_REGION
+
+S3Service:
+  downloadDocument(DOCUMENTO_FIND):
+    - busca DocumentoOutput
+    - obtiene keyfile
+    - descarga bytes desde AWS_BUCKET_NAME/keyfile
+  approveDocument(DOCUMENTO_FIND): delega a DocumentoProcessor.approveDocument
+  rejectDocument(DOCUMENTO_REJECT): delega a DocumentoProcessor.rejectDocument
+  findDocumentByAspirantId(ASPIRANTE_FIND): delega a DocumentoProcessor.findByAspiranteId
+```
+
+## 14. Modelo de dominio persistente
+
+Entidades/tables y campos principales:
+
+```yaml
+Administrativo[administrativo]: id, fechainicio, fechasalida, idCargo, idEstado, idPersona
+Aspirante[aspirante]: id, puntuacion, idCohorte, idEstado, idPersona
+Cambiodocumento[cambiodocumento]: id, idDocumentoactual, idDocumentoanterior
+Cargo[cargo]: id, descripcion, idFacultad, idPrograma, nombre
+Clave[clave]: id, valor
+Cohorte[cohorte]: id, nombre, cupos, requiereentrevista, requiereprueba, idEstado, idSemestre, idModalidad, idPlazodocumentacion, idPlazoinscripcion, idPlazopago, idPrograma
+Criterioaceptacion[criterioaceptacion]: id, nombre, descripcion, peso, idCohorte
+Departamento[departamento]: id, idPais, nombre
+Documento[documento]: id, enlaceurl, fechacargue, idAdministrativo, idAspirante, idEstadodocumento, idPlazo, idTipodocumento, keyfile, observaciones
+Entrevistador[entrevistador]: id, idAdministrativo, idEntrevista, observaciones
+Entrevista[entrevista]: id, calificacion, fecha, idAspirante, idEstado, idTipoentrevista, idUbicacion, tiempo
+Estadodocumento[estadodocumento]: id, estado
+Estado[estado]: id, entidad, tipo
+Facultad[facultad]: id, correo, nombre
+Genero[genero]: id, nombre
+Modalidad[modalidad]: id, nombre
+Municipio[municipio]: id, idDepartamento, nombre
+Otrosvalores[otrosvalores]: id, carnet, estampilla, seguro
+Pagoconcepto[pagoconcepto]: id, tipo
+Pago[pago]: id, idAspirante, idEstado, idPagoconcepto
+Pagos[pagos]: id, idAspirante, idEstado, idTipopago
+Pais[pais]: id, nombre
+Persona[persona]: id, apellidos, celular, correo, fechanacimiento, idGenero, idUbicacion, nombres, telefono
+Plazo[plazo]: id, fechafin, fechainicio, idTipoplazo
+Programa[programa]: id, codigo, correo, creditos, duracion, idFacultad, idOtros, idSede, idTiporegistro, nivelformacion, nombre, periodicidad, rcmineducacion, registrosnies, titulo, valormatricula
+Prueba[prueba]: id, nombre, descripcion, idCohorte, idUbicacion
+Resultadoprueba[resultadoprueba]: id, calificacion, idAspirante, idPrueba
+Rol[rol]: id, nombre
+Sede[sede]: id, idUbicacion, nombre
+Semestre[semestre]: id, fechaFin, fechaInicio, idEstado, nombre
+Tipodocumento[tipodocumento]: id, descripcion, extension, tipo, tamanomaximo
+Tipoentrevista[tipoentrevista]: id, descripcion, tipo
+Tipopago[tipopago]: id, tipo
+Tipoplazo[tipoplazo]: id, descripcion, tipo
+Tiporegistro[tiporegistro]: id, tipo
+Ubicacion[ubicacion]: id, direccion, idMunicipio
+Usuario[usuario]: id, idClave, idPersona, idRol, nombreusuario
+```
+
+Relaciones principales:
+
+```yaml
+Administrativo: belongs_to [Cargo, Estado, Persona]; has_many [Documento, Entrevistador]
+Aspirante: belongs_to [Persona, Estado, Cohorte]; has_many [Documento, Entrevista, Pago, Pagos, Resultadoprueba]
+Cambiodocumento: belongs_to [Documento actual, Documento anterior]
+Cargo: belongs_to [Programa, Facultad]; has_many [Administrativo]
+Clave: has_many [Usuario]
+Cohorte: belongs_to [Estado, Semestre, Modalidad, Programa, Plazos documentacion/inscripcion/pago]; has_many [Aspirante, Criterioaceptacion, Prueba]
+Criterioaceptacion: belongs_to [Cohorte]
+Departamento: belongs_to [Pais]; has_many [Municipio]
+Documento: belongs_to [Administrativo, Aspirante, Estadodocumento, Plazo, Tipodocumento]; has_many [Cambiodocumento]
+Entrevistador: belongs_to [Administrativo, Entrevista]
+Entrevista: belongs_to [Aspirante, Estado, Tipoentrevista, Ubicacion]; has_many [Entrevistador]
+Estado: has_many [Administrativo, Aspirante, Cohorte, Entrevista, Pago, Pagos, Semestre]
+Facultad: has_many [Cargo, Programa]
+Genero: has_many [Persona]
+Modalidad: has_many [Cohorte]
+Municipio: belongs_to [Departamento]; has_many [Ubicacion]
+Otrosvalores: has_many [Programa]
+Pagoconcepto: has_many [Pago]
+Pago: belongs_to [Aspirante, Estado, Pagoconcepto]
+Pagos: belongs_to [Aspirante, Estado, Tipopago]
+Pais: has_many [Departamento]
+Persona: belongs_to [Genero, Ubicacion]; has_many [Administrativo, Aspirante, Usuario]
+Plazo: belongs_to [Tipoplazo]; has_many [Cohorte, Documento]
+Programa: belongs_to [Facultad, Otrosvalores, Sede, Tiporegistro]; has_many [Cargo, Cohorte]
+Prueba: belongs_to [Ubicacion, Cohorte]; has_many [Resultadoprueba]
+Resultadoprueba: belongs_to [Aspirante, Prueba]
+Rol: has_many [Usuario]
+Sede: belongs_to [Ubicacion]; has_many [Programa]
+Semestre: belongs_to [Estado]; has_many [Cohorte]
+Tipodocumento: has_many [Documento]
+Tipoentrevista: has_many [Entrevista]
+Tipopago: has_many [Pagos]
+Tipoplazo: has_many [Plazo]
+Tiporegistro: has_many [Programa]
+Ubicacion: belongs_to [Municipio]; has_many [Entrevista, Persona, Prueba, Sede]
+Usuario: belongs_to [Clave, Persona, Rol]
+```
+
+Agrupacion conceptual:
+
+```yaml
+catalogos_base:
+  - Estado
+  - Estadodocumento
+  - Genero
+  - Modalidad
+  - Pais
+  - Departamento
+  - Municipio
+  - Ubicacion
+  - Rol
+  - Tipodocumento
+  - Tipoentrevista
+  - Tipoplazo
+  - Tipopago
+  - Tiporegistro
+  - Pagoconcepto
+
+estructura_academica:
+  - Facultad
+  - Sede
+  - Programa
+  - Cohorte
+  - Semestre
+  - Otrosvalores
+  - Plazo
+
+personas_y_acceso:
+  - Persona
+  - Usuario
+  - Clave
+  - Administrativo
+  - Cargo
+  - Aspirante
+
+documentos:
+  - Documento
+  - Cambiodocumento
+  - Estadodocumento
+  - Tipodocumento
+
+entrevistas_y_evaluacion:
+  - Entrevista
+  - Entrevistador
+  - Entrevistadores
+  - Tipoentrevista
+  - Prueba
+  - Resultadoprueba
+  - Criterioaceptacion
+
+pagos:
+  - Pago
+  - Pagos
+  - Pagoconcepto
+  - Tipopago
+```
+
+## 15. Generacion y convenciones
+
+Varios archivos de `api-base` fueron generados con Telosys 4.3.0.
+
+```yaml
+naming:
+  entities: XEntity
+  dto: XDTO
+  repositories: XRepository
+  services: XService
+  processors: XProcessor
+  maps: XMap
+  controllers: XRestController o XController
+  input_records: XInput con records internos X_CREATE, X_UPDATE, X_PATCH, X_DELETE, X_FIND
+  output_records: XOutput
+
+id_type: Integer
+repository_base: JpaRepository<XEntity, Integer>
+transactional_services: true
+lombok:
+  entities: Getter, Setter, NoArgsConstructor, AllArgsConstructor, Builder
+  dto: Getter, Setter, Builder, NoArgsConstructor, AllArgsConstructor
+  outputs: record + Builder
+validation: jakarta.validation annotations en records input
+```
+
+## 16. Excepciones, startup checks y notas locales
+
+`api-core/domain/exceptions` contiene `DomainException`, `BaseErrorCode` y codigos como `SedeErrorCode`, `PaisErrorCode`, `DepartamentoErrorCode`, `GeneroErrorCode`, `CohorteErrorCode`, `OtrosvaloresErrorCode`.
+
+Cada modulo principal tiene un `StartupCheck` con `@PostConstruct` que valida marcadores:
+
+```yaml
+api-base: app.module.name.api-base
+api-core: app.module.name.api-core
+api-rest: app.module.name.api-rest
+api-auth: app.module.name.api-auth + app.jwt.secret
+security: app.module.name.security
+mail-module: app.module.name.mail-module
+s3-storage: app.module.name.s3-storage
+```
+
+`Tasks.txt` contiene recordatorios humanos:
+
+```yaml
+pending_notes:
+  - CredentialService depende de UsuarioRepository.findByNombreusuario(String nombreusuario)
+  - revisar maps de ofertaacademica -> Semestre
+  - revisar maps de cohorte/cohorte actual
+```
+
+Estos puntos son contexto, no necesariamente comportamiento estable.
+
+## 17. Git y archivos sensibles
+
+```yaml
+git:
+  branch_observada: Adolfo
+  remote_tracking: origin/Adolfo
+  ignored:
+    - target/
+    - IDE folders
+    - .env.properties
+    - .sql/
+
+rules_for_agents:
+  - revisar git status antes de editar
+  - no revertir cambios locales del usuario
+  - no copiar secretos reales de .env.properties en commits, logs o documentacion publica
+```
+
+En el estado observado habia cambios locales en `backend/api-core` relacionados con maps/records de Documento y Entrevista, y una eliminacion de `EntrevistadoresMap.java`. Tratar esos cambios como trabajo del usuario.
+
+## 18. Como agregar una entidad CRUD nueva
+
+```yaml
+steps:
+  1: Crear/actualizar XEntity en api-base.persistence.entities con @Entity y relaciones JPA.
+  2: Crear XRepository extends JpaRepository<XEntity, Integer>.
+  3: Crear XDTO con campos planos y DTOs relacionados.
+  4: Crear XService extends GenericService<XEntity, XDTO>.
+  5: Crear XInput como enum vacio con records X_CREATE, X_UPDATE, X_PATCH, X_DELETE, X_FIND.
+  6: Crear XOutput como record implements OutputResponse, usualmente con @Builder.
+  7: Crear XMap extends GlobalMapper.
+  8: Crear XProcessor implements GlobalUseCase.
+  9: Crear XRestController con rutas listall/list/create/update/delete.
+  10: Si aplica, agregar error codes y validadores de dominio.
+```
+
+## 19. Comandos utiles
+
+Desde la raiz del repo:
+
+```powershell
+.\mvnw.cmd clean install
+.\mvnw.cmd -pl platform/application spring-boot:run
+.\mvnw.cmd -pl platform/application -am spring-boot:run
+.\mvnw.cmd test
+```
+
+Inspeccion:
+
+```powershell
+rg --files
+rg "@RestController" backend/api-rest/src/main/java
+rg "class .*Processor" backend/api-core/src/main/java/ufps/edu/co/processor/crud
+rg "interface .*Repository" backend/api-base/src/main/java/ufps/edu/co/persistence/repositories
+```
+
+## 20. Reglas para IAs futuras
+
+```yaml
+agent_guidelines:
+  - No asumir que compila; este BOTS documenta intencion y comportamiento esperado.
+  - No exponer secretos de .env.properties.
+  - No revertir cambios locales del usuario.
+  - Preferir patrones existentes sobre abstracciones nuevas.
+  - Mantener nombres y paquetes ufps.edu.co.
+  - Para CRUD, seguir Controller -> Processor -> Map -> Service -> Repository -> Entity.
+  - Para seguridad, respetar JWT stateless y roles normalizados.
+  - Para rutas, considerar siempre context-path + prefijo por paquete.
+  - Para nuevos endpoints publicos, actualizar SecurityConfig si deben evitar autenticacion.
+  - Para documentos, considerar S3Service + DocumentoProcessor + EmailService.
+  - Para correos, usar EmailService y no instanciar Resend directamente fuera de mail-module.
+  - Para passwords, usar PasswordHashService.
+  - Para respuestas API, preferir records Output existentes y ResponseEntity.
+```
+
+## 21. Resumen mental rapido
+
+```text
+Posgrados API es un backend Spring Boot multi-modulo.
+El modulo application arranca todo.
+api-base conoce la base de datos.
+api-core conoce la logica, los inputs/outputs y los mapeos.
+api-rest conoce HTTP.
+api-auth conoce credenciales y JWT.
+security protege rutas y adapta JWT a Spring Security.
+mail-module manda correos con Resend.
+s3-storage descarga/gestiona documentos en S3.
+El dominio gira alrededor de programas, cohortes, aspirantes, documentos, entrevistas, pagos, usuarios y catalogos academicos.
+```

@@ -77,7 +77,7 @@ public class ProgramaProcessor implements GlobalUseCase<PROGRAMA_CREATE, PROGRAM
 
     public List<ProgramaOutput> findByIdFacultad(int idFacultad) {
         try {
-            return service.findByIdFacultad(idFacultad).stream().map(map::toOutput).toList();
+            return map.toOutputList(service.findByIdFacultad(idFacultad));
         } catch (Exception e) {
             throw new RuntimeException("Error finding Programas by Facultad ID: " + e.getMessage(), e);
         }

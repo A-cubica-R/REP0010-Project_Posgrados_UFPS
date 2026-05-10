@@ -18,10 +18,10 @@ public class FacultadMap extends GlobalMapper<FACULTAD_CREATE, FACULTAD_UPDATE, 
 
     @Override
     protected FacultadDTO toDtoCreate(FACULTAD_CREATE input) {
-        FacultadDTO dto = new FacultadDTO();
-        dto.setNombre(input.nombre());
-        dto.setCorreo(input.correo());
-        dto.setIdAdministrativo(input.idAdministrativo());
+        FacultadDTO dto = FacultadDTO.builder()
+                .nombre(input.nombre())
+                .correo(input.correo())
+                .build();
         return dto;
     }
 
@@ -31,7 +31,6 @@ public class FacultadMap extends GlobalMapper<FACULTAD_CREATE, FACULTAD_UPDATE, 
         dto.setId(input.id());
         dto.setNombre(input.nombre());
         dto.setCorreo(input.correo());
-        dto.setIdAdministrativo(input.idAdministrativo());
         return dto;
     }
 
@@ -44,11 +43,11 @@ public class FacultadMap extends GlobalMapper<FACULTAD_CREATE, FACULTAD_UPDATE, 
 
     @Override
     protected FacultadDTO toDtoPatch(FACULTAD_PATCH input) {
-        FacultadDTO dto = new FacultadDTO();
-        dto.setId(input.id());
-        if (input.nombre() != null) dto.setNombre(input.nombre());
-        if (input.correo() != null) dto.setCorreo(input.correo());
-        if (input.idAdministrativo() != null) dto.setIdAdministrativo(input.idAdministrativo());
+        FacultadDTO dto = FacultadDTO.builder()
+                .id(input.id())
+                .nombre(input.nombre())
+                .correo(input.correo())
+                .build();
         return dto;
     }
 
@@ -63,10 +62,17 @@ public class FacultadMap extends GlobalMapper<FACULTAD_CREATE, FACULTAD_UPDATE, 
     public FacultadOutput toOutput(FacultadDTO dto) {
         if (dto == null) return null;
         return FacultadOutput.builder()
-                .id(dto.getId())
-                .nombre(dto.getNombre())
-                .correo(dto.getCorreo())
-                .build();
+            .id(dto.getId())
+            .nombre(dto.getNombre())
+            .correo(dto.getCorreo())
+            .cargoList(
+                dto.getCargoList() != null ? (
+                    !dto.getCargoList().isEmpty() ? (
+                        new CargoMap().toOutputList(dto.getCargoList())
+                    ) : null
+                ) : null
+            )
+            .build();
     }
 
     public List<FacultadOutput> toOutputList(List<FacultadDTO> dtoList) {

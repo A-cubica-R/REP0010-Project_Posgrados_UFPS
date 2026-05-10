@@ -51,9 +51,18 @@ public class ModalidadMap extends
     }
 
     public ModalidadOutput toOutput(ModalidadDTO dto) {
-        if (dto == null)
-            return null;
-        return new ModalidadOutput(dto.getId(), dto.getNombre());
+        if (dto != null) {
+            return ModalidadOutput.builder()
+                    .id(dto.getId())
+                    .nombre(dto.getNombre())
+                    .cohorteList(
+                        dto.getCohorteList() != null ? (
+                            new CohorteMap().toOutputList(dto.getCohorteList())
+                        ) : null
+                    )
+                    .build();
+        }
+        return null;
     }
 
     public List<ModalidadOutput> toOutputList(List<ModalidadDTO> dtoList) {

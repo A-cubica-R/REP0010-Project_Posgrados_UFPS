@@ -64,7 +64,7 @@ public class SecretariaCase {
             PersonaOutput persona = documentoProcessor.findPersonByDocument(request);
             TipodocumentoOutput documento = tipoDocumentoProcessor.findById(TIPODOCUMENTO_FIND.builder().id(output.tipodocumento().id()).build());
             // notifyAspirant(persona.correo(), persona.nombres(), "Su documento " + documento.nombre() + " ha sido aprobado. ¡Felicidades!");
-            notifyAspirant(this.correo, persona.nombres(), "Su documento " + documento.nombre() + " ha sido aprobado. ¡Felicidades!");
+            notifyAspirant(this.correo, persona.nombres(), "Su documento '" + documento.tipo() + "' ha sido aprobado. ¡Felicidades!");
             return ResponseEntity.ok(output);
         } catch (Exception e) {
             e.printStackTrace();
@@ -79,7 +79,7 @@ public class SecretariaCase {
             PersonaOutput persona = documentoProcessor.findPersonByDocument(DOCUMENTO_FIND.builder().id(request.id()).build());
             TipodocumentoOutput documento = tipoDocumentoProcessor.findById(TIPODOCUMENTO_FIND.builder().id(output.tipodocumento().id()).build());
             // notifyAspirant(persona.correo(), persona.nombres(), "Su documento " + documento.nombre() + " ha sido rechazado. Realice el cargue nuevamente teniendo en cuenta las observaciones");
-            notifyAspirant(this.correo, persona.nombres(), "Su documento " + documento.nombre() + " ha sido rechazado. Realice el cargue nuevamente teniendo en cuenta las observaciones");
+            notifyAspirant(this.correo, persona.nombres(), "Su documento '" + documento.tipo() + "' ha sido rechazado. Realice el cargue nuevamente teniendo en cuenta las observaciones");
             return ResponseEntity.ok(output);
         } catch (Exception e) {
             e.printStackTrace();

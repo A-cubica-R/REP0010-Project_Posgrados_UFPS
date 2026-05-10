@@ -13,27 +13,26 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import ufps.edu.co.processor.crud.JornadaProcessor;
-import ufps.edu.co.records.input.entity.JornadaInput.*;
-import ufps.edu.co.records.output.entity.JornadaOutput;
+import ufps.edu.co.processor.crud.SemestreProcessor;
+import ufps.edu.co.records.input.entity.SemestreInput.*;
+import ufps.edu.co.records.output.entity.SemestreOutput;
 
 @RestController
-@RequestMapping(value = "/jornada", produces = MediaType.APPLICATION_JSON_VALUE)
-public class JornadaRestController {
+@RequestMapping(value = "/semestre", produces = MediaType.APPLICATION_JSON_VALUE)
+public class SemestreRestController {
 
     @Autowired
-    private JornadaProcessor processor;
+    private SemestreProcessor processor;
 
     @GetMapping("/listall")
-    public ResponseEntity<List<JornadaOutput>> findAll() {
-        List<JornadaOutput> list = processor.findAll();
+    public ResponseEntity<List<SemestreOutput>> findAll() {
+        List<SemestreOutput> list = processor.findAll();
         return ResponseEntity.ok(list);
     }
 
     @PostMapping(value = "/list", consumes   = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<JornadaOutput> findById(@RequestBody JORNADA_FIND request) {
-        JornadaOutput output = processor.findById(request);
+    public ResponseEntity<SemestreOutput> findById(@RequestBody SEMESTRE_FIND request) {
+        SemestreOutput output = processor.findById(request);
         if (output != null) {
             return ResponseEntity.ok(output);
         } else {
@@ -42,15 +41,15 @@ public class JornadaRestController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<JornadaOutput> create(@RequestBody JORNADA_CREATE request) {
-        JornadaOutput output = processor.create(request);
+    public ResponseEntity<SemestreOutput> create(@RequestBody SEMESTRE_CREATE request) {
+        SemestreOutput output = processor.create(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(output);
     }
 
     @PutMapping("/update")
-    public ResponseEntity<JornadaOutput> update(@RequestBody int id, @RequestBody JORNADA_UPDATE request) {
+    public ResponseEntity<SemestreOutput> update(@RequestBody SEMESTRE_UPDATE request) {
         try {
-            JornadaOutput updated = processor.update(request);
+            SemestreOutput updated = processor.update(request);
             return ResponseEntity.ok(updated);
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
@@ -58,7 +57,7 @@ public class JornadaRestController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<Void> deleteById(@RequestBody JORNADA_DELETE request) {
+    public ResponseEntity<Void> deleteById(@RequestBody SEMESTRE_DELETE request) {
         try {
             processor.deleteById(request);
             return ResponseEntity.noContent().build();

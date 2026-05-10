@@ -56,4 +56,19 @@ public enum CohorteInput {
 
     public record COHORTE_FIND(@NotNull Integer id) implements FindType {
     }
+
+    public record COHORTE_WITHPLAZO_CREATE(
+            String nombre,
+            @NotBlank Integer cupos,
+            @NotNull Boolean requiereentrevista,
+            @NotNull Boolean requiereprueba,
+            @NotNull Integer idEstado,
+            @NotNull Integer idSemestre,
+            @NotNull Integer idModalidad,
+            @NotNull Integer idPlazodocumentacion,
+            @NotNull Integer idPlazoinscripcion,
+            @NotNull Integer idPlazopago,
+            @NotNull Integer idPrograma,
+            @NotNull PlazoInput.PLAZO_CREATE plazocreate) implements CreateType {
+    }
 }

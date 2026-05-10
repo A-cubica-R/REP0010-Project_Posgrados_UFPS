@@ -9,10 +9,12 @@ import ufps.edu.co.rest.dto.DepartamentoDTO;
 import java.util.List;
 
 @Component
-public class DepartamentoMap extends GlobalMapper<DEPARTAMENTO_CREATE, DEPARTAMENTO_UPDATE, DEPARTAMENTO_DELETE, DEPARTAMENTO_PATCH, DEPARTAMENTO_FIND, DepartamentoOutput, DepartamentoDTO> {
+public class DepartamentoMap extends
+        GlobalMapper<DEPARTAMENTO_CREATE, DEPARTAMENTO_UPDATE, DEPARTAMENTO_DELETE, DEPARTAMENTO_PATCH, DEPARTAMENTO_FIND, DepartamentoOutput, DepartamentoDTO> {
 
     public DepartamentoMap() {
-        super(DEPARTAMENTO_CREATE.class, DEPARTAMENTO_UPDATE.class, DEPARTAMENTO_DELETE.class, DEPARTAMENTO_PATCH.class, DEPARTAMENTO_FIND.class);
+        super(DEPARTAMENTO_CREATE.class, DEPARTAMENTO_UPDATE.class, DEPARTAMENTO_DELETE.class, DEPARTAMENTO_PATCH.class,
+                DEPARTAMENTO_FIND.class);
     }
 
     @Override
@@ -62,7 +64,21 @@ public class DepartamentoMap extends GlobalMapper<DEPARTAMENTO_CREATE, DEPARTAME
 
     @Override
     public DepartamentoOutput toOutput(DepartamentoDTO dto) {
-        return new DepartamentoOutput(dto.getId(), dto.getNombre());
+        return DepartamentoOutput.builder()
+                .id(dto.getId())
+                .nombre(dto.getNombre())
+                .pais(new PaisMap().toOutput(dto.getPais()))
+                .municipioList(
+                    dto.getMunicipioList() != null ? 
+                        (!dto.getMunicipioList().isEmpty() ? 
+                            dto.getMunicipioList()
+                            .stream()
+                            .map(
+                                municipio -> new MunicipioMap().toOutput(municipio))
+                            .toList()
+                        : null)
+                    : null)
+                .build();
     }
 
     public List<DepartamentoOutput> toOutputList(List<DepartamentoDTO> dtoList) {

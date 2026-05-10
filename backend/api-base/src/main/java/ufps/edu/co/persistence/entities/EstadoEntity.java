@@ -58,10 +58,7 @@ public class EstadoEntity implements Serializable {
     private List<EntrevistaEntity> entrevistaList ; 
 
     @OneToMany(mappedBy="estado")
-    private List<PagoEntity> pagoList ; 
-
-    @OneToMany(mappedBy="estado")
-    private List<PagosEntity> pagosList ; 
+    private List<PagoEntity> pagoList ;
 
     @OneToMany(mappedBy="estado")
     private List<SemestreEntity> semestreList ; 

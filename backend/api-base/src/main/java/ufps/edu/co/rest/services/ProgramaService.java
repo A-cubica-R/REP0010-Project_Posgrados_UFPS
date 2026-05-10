@@ -55,4 +55,8 @@ public class ProgramaService extends GenericService<ProgramaEntity, ProgramaDTO>
                 .orElseThrow(() -> new RuntimeException("Programa no encontrado con id: " + id));
         repository.deleteById(id);
     }
+
+    public List<ProgramaDTO> findByIdFacultad(Integer idFacultad) {
+        return entityListToDtoList(repository.findByIdFacultad(idFacultad));
+    }
 }

@@ -89,12 +89,23 @@ public class AdministrativoMap extends
         if (dto.getPersona() != null) {
             persona = personaMap.toOutput(dto.getPersona());
         }
-        EstadoOutput estado = dto.getEstado() != null
-                ? new EstadoOutput(dto.getEstado().getId(), dto.getEstado().getTipo())
-                : null;
-        CargoOutput cargo = dto.getCargo() != null
-                ? new CargoOutput(dto.getCargo().getId(), dto.getCargo().getNombre(), dto.getCargo().getDescripcion())
-                : null;
+        EstadoOutput estado = EstadoOutput.builder()
+                .id(
+                        dto.getEstado() != null ? (dto.getEstado().getId()) : null)
+                .entidad(
+                        dto.getEstado() != null ? (dto.getEstado().getEntidad()) : null)
+                .tipo(
+                        dto.getEstado() != null ? (dto.getEstado().getTipo()) : null)
+                .build();
+                
+        CargoOutput cargo = CargoOutput.builder()
+                .id(
+                        dto.getCargo() != null ? (dto.getCargo().getId()) : null)
+                .nombre(
+                        dto.getCargo() != null ? (dto.getCargo().getNombre()) : null)
+                .descripcion(
+                        dto.getCargo() != null ? (dto.getCargo().getDescripcion()) : null)
+                .build();
 
         return AdministrativoOutput.builder()
                 .id(dto.getId())

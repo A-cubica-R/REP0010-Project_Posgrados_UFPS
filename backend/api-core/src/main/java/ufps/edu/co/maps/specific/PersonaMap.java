@@ -102,36 +102,34 @@ public class PersonaMap extends
 
     @Override
     public PersonaOutput toOutput(PersonaDTO dto) {
-        if (dto == null) {
-            return null;
+        if (dto != null) {
+            return PersonaOutput.builder()
+                .id(dto.getId())
+                .nombres(dto.getNombres())
+                .apellidos(dto.getApellidos())
+                .correo(dto.getCorreo())
+                .fechanacimiento(dto.getFechanacimiento())
+                .celular(dto.getCelular())
+                .telefono(dto.getTelefono())
+                .ubicacion(
+                    dto.getUbicacion() != null ? (
+                        UbicacionOutput.builder()
+                            .id(dto.getUbicacion().getId())
+                            .direccion(dto.getUbicacion().getDireccion())
+                            .build()
+                    ) : null
+                )
+                .genero(
+                    dto.getGenero() != null ? (
+                        GeneroOutput.builder()
+                            .id(dto.getGenero().getId())
+                            .nombre(dto.getGenero().getNombre())
+                            .build()
+                    ) : null
+                )
+                .build();
         }
-
-        UbicacionOutput ubicacion = null;
-        if (dto.getUbicacion() != null) {
-            ubicacion = UbicacionOutput.builder()
-                    .id(dto.getUbicacion().getId())
-                    .direccion(dto.getUbicacion().getDireccion())
-                    .build();
-        }
-
-        GeneroOutput genero = null;
-        if (dto.getGenero() != null) {
-            genero = GeneroOutput.builder()
-                    .id(dto.getGenero().getId())
-                    .nombre(dto.getGenero().getNombre())
-                    .build();
-        }
-
-        return new PersonaOutput(
-                dto.getId(),
-                dto.getNombres(),
-                dto.getApellidos(),
-                dto.getCorreo(),
-                dto.getFechanacimiento(),
-                dto.getCelular(),
-                dto.getTelefono(),
-                ubicacion,
-                genero);
+        return null;
     }
 
     public List<PersonaOutput> toOutputList(List<PersonaDTO> dtoList) {

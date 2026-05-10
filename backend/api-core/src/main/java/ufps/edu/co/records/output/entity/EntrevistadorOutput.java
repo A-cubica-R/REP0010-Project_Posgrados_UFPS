@@ -6,6 +6,9 @@ import ufps.edu.co.records.OutputResponse;
 @Builder
 public record EntrevistadorOutput(
         Integer id,
+        Integer idAdministrativo,
+        Integer idEntrevista,
         String observaciones,
-        AdministrativoOutput administrativo
+        AdministrativoOutput administrativo,
+        EntrevistaOutput entrevista
 ) implements OutputResponse {}

@@ -38,7 +38,6 @@ public class ProgramaMap extends
                 .valormatricula(input.valormatricula())
                 .idSede(input.idSede())
                 .idFacultad(input.idFacultad())
-                .idAdministrativo(input.idAdministrativo())
                 .idOtros(input.idOtros())
                 .build();
         return dto;
@@ -60,7 +59,6 @@ public class ProgramaMap extends
         dto.setPeriodicidad(input.periodicidad());
         dto.setValormatricula(input.valormatricula());
         dto.setIdSede(input.idSede());
-        dto.setIdAdministrativo(input.idAdministrativo());
         dto.setIdFacultad(input.idFacultad());
         dto.setIdOtros(input.idOtros());
         return dto;
@@ -101,8 +99,6 @@ public class ProgramaMap extends
             dto.setValormatricula(input.valormatricula());
         if (input.idSede() != null)
             dto.setIdSede(input.idSede());
-        if (input.idAdministrativo() != null)
-            dto.setIdAdministrativo(input.idAdministrativo());
         if (input.idFacultad() != null)
             dto.setIdFacultad(input.idFacultad());
         if (input.idOtros() != null)
@@ -139,15 +135,6 @@ public class ProgramaMap extends
                     .build();
         }
 
-        AdministrativoOutput administrativo = null;
-        if (dto.getAdministrativo() != null) {
-            administrativo = AdministrativoOutput.builder()
-                    .id(dto.getAdministrativo().getId())
-                    .fechainicio(dto.getAdministrativo().getFechainicio())
-                    .fechasalida(dto.getAdministrativo().getFechasalida())
-                    .build();
-        }
-
         FacultadOutput facultad = null;
         if (dto.getFacultad() != null) {
             facultad = FacultadOutput.builder()
@@ -171,7 +158,6 @@ public class ProgramaMap extends
                 .periodicidad(dto.getPeriodicidad())
                 .valormatricula(dto.getValormatricula())
                 .sede(sede)
-                .administrativo(administrativo)
                 .facultad(facultad)
                 .build();
     }

@@ -41,8 +41,7 @@ public class AspiranteDTO implements Serializable {
     private CohorteDTO cohorte ; 
     private List<DocumentoDTO> documentoList ; 
     private List<EntrevistaDTO> entrevistaList ; 
-    private List<PagoDTO> pagoList ; 
-    private List<PagosDTO> pagosList ; 
+    private List<PagoDTO> pagoList ;
     private List<ResultadopruebaDTO> resultadopruebaList ; 
 
     @Override

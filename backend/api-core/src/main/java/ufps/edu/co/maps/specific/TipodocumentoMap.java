@@ -19,7 +19,7 @@ public class TipodocumentoMap extends
     @Override
     protected TipodocumentoDTO toDtoCreate(TIPODOCUMENTO_CREATE input) {
         TipodocumentoDTO dto = new TipodocumentoDTO();
-        dto.setNombre(input.nombre());
+        dto.setTipo(input.nombre());
         dto.setDescripcion(input.descripcion());
         dto.setExtension(input.extension());
         dto.setTamanomaximo(input.tamanomaximo());
@@ -30,7 +30,7 @@ public class TipodocumentoMap extends
     protected TipodocumentoDTO toDtoUpdate(TIPODOCUMENTO_UPDATE input) {
         TipodocumentoDTO dto = new TipodocumentoDTO();
         dto.setId(input.id());
-        dto.setNombre(input.nombre());
+        dto.setTipo(input.nombre());
         dto.setDescripcion(input.descripcion());
         dto.setExtension(input.extension());
         dto.setTamanomaximo(input.tamanomaximo());
@@ -50,7 +50,7 @@ public class TipodocumentoMap extends
                 .id(input.id());
 
         if (input.nombre() != null) {
-            builder.nombre(input.nombre());
+            builder.tipo(input.nombre());
         }
         if (input.descripcion() != null) {
             builder.descripcion(input.descripcion());
@@ -77,7 +77,13 @@ public class TipodocumentoMap extends
         if (dto == null) {
             return null;
         }
-        return new TipodocumentoOutput(dto.getId(), dto.getNombre(), dto.getDescripcion(), dto.getExtension(), dto.getTamanomaximo());
+        return TipodocumentoOutput.builder()
+                .id(dto.getId())
+                .tipo(dto.getTipo())
+                .descripcion(dto.getDescripcion())
+                .extension(dto.getExtension())
+                .tamanomaximo(dto.getTamanomaximo())
+                .build();
     }
 
     public List<TipodocumentoOutput> toOutputList(List<TipodocumentoDTO> dtoList) {

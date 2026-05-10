@@ -1,13 +1,16 @@
 package ufps.edu.co.records.output.entity;
 
+import java.util.List;
+
 import lombok.Builder;
 import ufps.edu.co.records.OutputResponse;
 
 @Builder
 public record TipodocumentoOutput(
         Integer id,
-        String nombre,
         String descripcion,
         String extension,
-        Integer tamanomaximo
+        String tipo,
+        Integer tamanomaximo,
+        List<DocumentoOutput> documentoList
 ) implements OutputResponse {}
