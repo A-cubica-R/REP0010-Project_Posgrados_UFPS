@@ -66,7 +66,9 @@ public class FacultadMap extends GlobalMapper<FACULTAD_CREATE, FACULTAD_UPDATE, 
                 .id(dto.getId())
                 .nombre(dto.getNombre())
                 .correo(dto.getCorreo())
-                .cargoList(mapListOrNull(dto.getCargoList(), cargoMap::toOutput))
+                .cargoList(dto.getCargoList() != null && !dto.getCargoList().isEmpty()
+                        ? dto.getCargoList().stream().map(cargoMap::toOutput).toList()
+                        : null)
                 .build();
     }
 

@@ -72,9 +72,9 @@ public class PagoMap extends
                 .idAspirante(dto.getIdAspirante())
                 .idEstado(dto.getIdEstado())
                 .idPagoconcepto(dto.getIdPagoconcepto())
-                .aspirante(mapOrNull(dto.getAspirante(), aspiranteMap::toOutput))
-                .estado(mapOrNull(dto.getEstado(), estadoMap::toOutput))
-                .pagoconcepto(mapOrNull(dto.getPagoconcepto(), pagoconceptoMap::toOutput))
+                .aspirante(dto.getAspirante() != null ? aspiranteMap.toOutput(dto.getAspirante()) : null)
+                .estado(dto.getEstado() != null ? estadoMap.toOutput(dto.getEstado()) : null)
+                .pagoconcepto(dto.getPagoconcepto() != null ? pagoconceptoMap.toOutput(dto.getPagoconcepto()) : null)
                 .build();
     }
 

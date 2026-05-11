@@ -86,9 +86,9 @@ public class AdministrativoMap extends
                 .id(dto.getId())
                 .fechainicio(dto.getFechainicio())
                 .fechasalida(dto.getFechasalida())
-                .persona(mapOrNull(dto.getPersona(), personaMap::toOutput))
-                .estado(mapOrNull(dto.getEstado(), estadoMap::toOutput))
-                .cargo(mapOrNull(dto.getCargo(), cargoMap::toOutput))
+                .persona(dto.getPersona() != null ? personaMap.toOutput(dto.getPersona()) : null)
+                .estado(dto.getEstado() != null ? estadoMap.toOutput(dto.getEstado()) : null)
+                .cargo(dto.getCargo() != null ? cargoMap.toOutput(dto.getCargo()) : null)
                 .build();
     }
 

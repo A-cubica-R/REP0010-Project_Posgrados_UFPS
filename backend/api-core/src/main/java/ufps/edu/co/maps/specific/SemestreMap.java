@@ -76,7 +76,7 @@ public class SemestreMap extends
                 .fechainicio(dto.getFechaInicio())
                 .fechafin(dto.getFechaFin())
                 .idEstado(dto.getIdEstado())
-                .estado(mapOrNull(dto.getEstado(), estadoMap::toOutput))
+                .estado(dto.getEstado() != null ? estadoMap.toOutput(dto.getEstado()) : null)
                 .build();
     }
 

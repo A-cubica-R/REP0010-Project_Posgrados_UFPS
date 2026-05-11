@@ -105,6 +105,8 @@ public class PersonaMap extends
         if (dto != null) {
             return PersonaOutput.builder()
                 .id(dto.getId())
+                .idGenero(dto.getIdGenero())
+                .idUbicacion(dto.getIdUbicacion())
                 .nombres(dto.getNombres())
                 .apellidos(dto.getApellidos())
                 .correo(dto.getCorreo())

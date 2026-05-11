@@ -92,11 +92,13 @@ public class EntrevistaMap extends
                 .idEstado(dto.getIdEstado())
                 .idTipoentrevista(dto.getIdTipoentrevista())
                 .idUbicacion(dto.getIdUbicacion())
-                .aspirante(mapOrNull(dto.getAspirante(), aspiranteMap::toOutput))
-                .estado(mapOrNull(dto.getEstado(), estadoMap::toOutput))
-                .tipoentrevista(mapOrNull(dto.getTipoentrevista(), tipoentrevistaMap::toOutput))
-                .ubicacion(mapOrNull(dto.getUbicacion(), ubicacionMap::toOutput))
-                .entrevistadores(mapListOrNull(dto.getEntrevistadorList(), entrevistadorMap::toOutput))
+                .aspirante(dto.getAspirante() != null ? aspiranteMap.toOutput(dto.getAspirante()) : null)
+                .estado(dto.getEstado() != null ? estadoMap.toOutput(dto.getEstado()) : null)
+                .tipoentrevista(dto.getTipoentrevista() != null ? tipoentrevistaMap.toOutput(dto.getTipoentrevista()) : null)
+                .ubicacion(dto.getUbicacion() != null ? ubicacionMap.toOutput(dto.getUbicacion()) : null)
+                .entrevistadores(dto.getEntrevistadorList() != null && !dto.getEntrevistadorList().isEmpty()
+                        ? dto.getEntrevistadorList().stream().map(entrevistadorMap::toOutput).toList()
+                        : null)
                 .build();
     }
 

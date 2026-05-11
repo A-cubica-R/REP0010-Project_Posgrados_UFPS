@@ -75,8 +75,10 @@ public class DepartamentoMap extends
         return DepartamentoOutput.builder()
                 .id(dto.getId())
                 .nombre(dto.getNombre())
-                .pais(mapOrNull(dto.getPais(), paisMap::toOutput))
-                .municipioList(mapListOrNull(dto.getMunicipioList(), municipioMap::toOutput))
+                .pais(dto.getPais() != null ? paisMap.toOutput(dto.getPais()) : null)
+                .municipioList(dto.getMunicipioList() != null && !dto.getMunicipioList().isEmpty()
+                        ? dto.getMunicipioList().stream().map(municipioMap::toOutput).toList()
+                        : null)
                 .build();
     }
 

@@ -106,12 +106,12 @@ public class CohorteMap extends
                 .id_plazoinscripcion(dto.getIdPlazoinscripcion())
                 .id_plazopago(dto.getIdPlazopago())
                 .id_programa(dto.getIdPrograma())
-                .estado(mapOrNull(dto.getEstado(), estadoMap::toOutput))
-                .modalidad(mapOrNull(dto.getModalidad(), modalidadMap::toOutput))
-                .plazodocumentacion(mapOrNull(dto.getPlazo(), plazoMap::toOutput))
-                .plazoinscripcion(mapOrNull(dto.getPlazo2(), plazoMap::toOutput))
-                .plazopago(mapOrNull(dto.getPlazo3(), plazoMap::toOutput))
-                .programa(mapOrNull(dto.getPrograma(), programaMap::toOutput))
+                .estado(dto.getEstado() != null ? estadoMap.toOutput(dto.getEstado()) : null)
+                .modalidad(dto.getModalidad() != null ? modalidadMap.toOutput(dto.getModalidad()) : null)
+                .plazodocumentacion(dto.getPlazo() != null ? plazoMap.toOutput(dto.getPlazo()) : null)
+                .plazoinscripcion(dto.getPlazo2() != null ? plazoMap.toOutput(dto.getPlazo2()) : null)
+                .plazopago(dto.getPlazo3() != null ? plazoMap.toOutput(dto.getPlazo3()) : null)
+                .programa(dto.getPrograma() != null ? programaMap.toOutput(dto.getPrograma()) : null)
                 .build();
     }
 

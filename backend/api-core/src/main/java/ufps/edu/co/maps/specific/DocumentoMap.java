@@ -89,11 +89,11 @@ public class DocumentoMap extends
                 .idTipodocumento(dto.getIdTipodocumento())
                 .keyfile(dto.getKeyfile())
                 .observaciones(dto.getObservaciones())
-                .administrativo(mapOrNull(dto.getAdministrativo(), administrativoMap::toOutput))
-                .aspirante(mapOrNull(dto.getAspirante(), aspiranteMap::toOutput))
-                .estadodocumento(mapOrNull(dto.getEstadodocumento(), estadodocumentoMap::toOutput))
-                .plazo(mapOrNull(dto.getPlazo(), plazoMap::toOutput))
-                .tipodocumento(mapOrNull(dto.getTipodocumento(), tipodocumentoMap::toOutput))
+                .administrativo(dto.getAdministrativo() != null ? administrativoMap.toOutput(dto.getAdministrativo()) : null)
+                .aspirante(dto.getAspirante() != null ? aspiranteMap.toOutput(dto.getAspirante()) : null)
+                .estadodocumento(dto.getEstadodocumento() != null ? estadodocumentoMap.toOutput(dto.getEstadodocumento()) : null)
+                .plazo(dto.getPlazo() != null ? plazoMap.toOutput(dto.getPlazo()) : null)
+                .tipodocumento(dto.getTipodocumento() != null ? tipodocumentoMap.toOutput(dto.getTipodocumento()) : null)
                 .build();
     }
 

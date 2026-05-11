@@ -61,7 +61,7 @@ public class SedeMap extends GlobalMapper<SEDE_CREATE, SEDE_UPDATE, SEDE_DELETE,
         return SedeOutput.builder()
                 .id(dto.getId())
                 .nombre(dto.getNombre())
-                .ubicacion(mapOrNull(dto.getUbicacion(), ubicacionMap::toOutput))
+                .ubicacion(dto.getUbicacion() != null ? ubicacionMap.toOutput(dto.getUbicacion()) : null)
                 .build();
     }
 }
