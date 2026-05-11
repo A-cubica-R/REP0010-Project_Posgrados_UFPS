@@ -22,7 +22,7 @@ public class UsuarioMap extends
     }
 
     @Autowired
-    PersonaMap personaMap = new PersonaMap();
+    private PersonaMap personaMap;
 
     @Override
     protected UsuarioDTO toDtoCreate(USUARIO_CREATE input) {

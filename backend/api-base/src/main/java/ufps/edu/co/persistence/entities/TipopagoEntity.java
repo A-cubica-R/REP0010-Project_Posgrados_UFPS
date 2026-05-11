@@ -40,8 +40,4 @@ public class TipopagoEntity implements Serializable {
     @Column(name="tipo", nullable=false, length=50)
     private String     tipo ;
 
-    //--- LINKS ( RELATIONSHIPS )
-    @OneToMany(mappedBy="tipopago")
-    private List<PagoEntity> pagosList ; 
-
 }

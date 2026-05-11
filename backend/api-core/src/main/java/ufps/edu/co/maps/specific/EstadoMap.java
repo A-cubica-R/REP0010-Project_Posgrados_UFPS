@@ -1,7 +1,6 @@
 package ufps.edu.co.maps.specific;
 
 import java.util.List;
-
 import org.springframework.stereotype.Component;
 
 import ufps.edu.co.maps.GlobalMapper;
@@ -55,78 +54,20 @@ public class EstadoMap extends
         return dto;
     }
 
-    /**
-     * private Integer id ;
-     * //--- OTHER DATA FIELDS
-     * private String entidad ;
-     * private String tipo ;
-     * //--- LINKS ( RELATIONSHIPS )
-     * private List<AdministrativoDTO> administrativoList ;
-     * private List<AspiranteDTO> aspiranteList ;
-     * private List<CohorteDTO> cohorteList ;
-     * private List<EntrevistaDTO> entrevistaList ;
-     * private List<PagoDTO> pagoList ;
-     * private List<SemestreDTO> semestreList ;
+    /*
+     * EstadoMap es un leaf map: solo mapea sus campos propios (id, entidad, tipo).
+     * Las listas inversas (cohorteList, entrevistaList, etc.) NO se mapean aquí
+     * porque crean dependencias circulares con CohorteMap, EntrevistaMap, PagoMap.
+     * Si se necesitan esas listas, se deben obtener via endpoints dedicados.
      */
+    @Override
     public EstadoOutput toOutput(EstadoDTO dto) {
-        if (dto != null) {
-            return EstadoOutput.builder()
+        if (dto == null) return null;
+        return EstadoOutput.builder()
                 .id(dto.getId())
                 .entidad(dto.getEntidad())
                 .tipo(dto.getTipo())
-                .administrativoList(
-                    dto.getAdministrativoList() != null ? (
-                        !dto.getAdministrativoList().isEmpty() ? (
-                            dto.getAdministrativoList()
-                                .stream().map(administrativoDTO -> {
-                                    return new AdministrativoMap().toOutput(administrativoDTO);
-                                }
-                            ).toList()
-                        ) : null
-                    ) : null)
-                .aspiranteList(
-                    dto.getAspiranteList() != null ? (
-                        !dto.getAspiranteList().isEmpty() ? (
-                            dto.getAspiranteList()
-                                .stream().map(aspiranteDTO -> {
-                                    return new AspiranteMap().toOutput(aspiranteDTO);
-                                }
-                            ).toList()
-                        ) : null
-                    ) : null)
-                .cohorteList(
-                    dto.getCohorteList() != null ? (
-                        !dto.getCohorteList().isEmpty() ? (
-                            dto.getCohorteList()
-                                .stream().map(cohorteDTO -> {
-                                    return new CohorteMap().toOutput(cohorteDTO);
-                                }
-                            ).toList()
-                        ) : null
-                    ) : null)
-                .entrevistaList(
-                    dto.getEntrevistaList() != null ? (
-                        !dto.getEntrevistaList().isEmpty() ? (
-                            dto.getEntrevistaList()
-                                .stream().map(entrevistaDTO -> {
-                                    return new EntrevistaMap().toOutput(entrevistaDTO);
-                                }
-                            ).toList()
-                        ) : null
-                    ) : null)
-                .pagoList(
-                    dto.getPagoList() != null ? (
-                        !dto.getPagoList().isEmpty() ? (
-                            dto.getPagoList()
-                                .stream().map(pagoDTO -> {
-                                    return new PagoMap().toOutput(pagoDTO);
-                                }
-                            ).toList()
-                        ) : null
-                    ) : null)
                 .build();
-        }
-        return null;
     }
 
     public List<EstadoOutput> toOutputList(List<EstadoDTO> dtoList) {

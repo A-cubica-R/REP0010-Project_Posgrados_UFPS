@@ -11,7 +11,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import java.util.List;
 
 
 /**
@@ -42,7 +41,7 @@ public class PaisEntity implements Serializable {
     private String     nombre ;
 
     //--- LINKS ( RELATIONSHIPS )
-    @OneToMany(mappedBy="pais")
-    private List<DepartamentoEntity> departamentoList ; 
+    // @OneToMany(mappedBy="pais")
+    // private List<DepartamentoEntity> departamentoList ; 
 
 }

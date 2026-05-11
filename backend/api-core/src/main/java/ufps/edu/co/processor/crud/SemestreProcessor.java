@@ -3,6 +3,7 @@ package ufps.edu.co.processor.crud;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import ufps.edu.co.maps.specific.SemestreMap;
 import ufps.edu.co.records.input.entity.SemestreInput.*;
@@ -11,6 +12,7 @@ import ufps.edu.co.rest.dto.SemestreDTO;
 import ufps.edu.co.rest.services.SemestreService;
 import ufps.edu.co.usecase.GlobalUseCase;
 
+@Service
 public class SemestreProcessor implements
         GlobalUseCase<SEMESTRE_CREATE, SEMESTRE_UPDATE, SEMESTRE_DELETE, SEMESTRE_PATCH, SEMESTRE_FIND, SemestreOutput> {
 

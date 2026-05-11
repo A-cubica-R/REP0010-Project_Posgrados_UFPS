@@ -1,5 +1,7 @@
 package ufps.edu.co.maps;
 
+import java.util.List;
+import java.util.function.Function;
 import lombok.AllArgsConstructor;
 import ufps.edu.co.records.InputRequest;
 import ufps.edu.co.records.OutputResponse;
@@ -63,4 +65,13 @@ public abstract class GlobalMapper<
     protected abstract DTO toDtoFind(F input);
 
     public abstract O toOutput(DTO dto);
+
+    protected <T, R> R mapOrNull(T value, Function<T, R> mapper) {
+        return value != null ? mapper.apply(value) : null;
+    }
+
+    protected <T, R> List<R> mapListOrNull(List<T> list, Function<T, R> mapper) {
+        if (list == null || list.isEmpty()) return null;
+        return list.stream().map(mapper).toList();
+    }
 }

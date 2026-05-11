@@ -1,6 +1,7 @@
 package ufps.edu.co.maps.specific;
 
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ufps.edu.co.maps.GlobalMapper;
 import ufps.edu.co.records.input.entity.DocumentoInput.*;
@@ -10,6 +11,12 @@ import ufps.edu.co.rest.dto.DocumentoDTO;
 @Component
 public class DocumentoMap extends
         GlobalMapper<DOCUMENTO_CREATE, DOCUMENTO_UPDATE, DOCUMENTO_DELETE, DOCUMENTO_PATCH, DOCUMENTO_FIND, DocumentoOutput, DocumentoDTO> {
+
+    @Autowired private AdministrativoMap administrativoMap;
+    @Autowired private AspiranteMap aspiranteMap;
+    @Autowired private EstadodocumentoMap estadodocumentoMap;
+    @Autowired private PlazoMap plazoMap;
+    @Autowired private TipodocumentoMap tipodocumentoMap;
 
     public DocumentoMap() {
         super(DOCUMENTO_CREATE.class, DOCUMENTO_UPDATE.class, DOCUMENTO_DELETE.class, DOCUMENTO_PATCH.class,
@@ -31,27 +38,6 @@ public class DocumentoMap extends
                 .build();
     }
 
-    /**
-     * 
-     * private Integer id ;
-     * private String enlaceurl ;
-     * private LocalDate fechacargue ;
-     * private Integer idAdministrativo ;
-     * private Integer idAspirante ;
-     * private Integer idEstadodocumento ;
-     * private Integer idPlazo ;
-     * private Integer idTipodocumento ;
-     * private String keyfile ;
-     * private String observaciones ;
-     * //--- LINKS ( RELATIONSHIPS )
-     * private List<CambiodocumentoDTO> cambiodocumentoList ;
-     * private List<CambiodocumentoDTO> cambiodocumentoList2 ;
-     * private AdministrativoDTO administrativo ;
-     * private AspiranteDTO aspirante ;
-     * private EstadodocumentoDTO estadodocumento ;
-     * private PlazoDTO plazo ;
-     * private TipodocumentoDTO tipodocumento ;
-     */
 
     @Override
     protected DocumentoDTO toDtoUpdate(DOCUMENTO_UPDATE input) {
@@ -91,42 +77,24 @@ public class DocumentoMap extends
 
     @Override
     public DocumentoOutput toOutput(DocumentoDTO dto) {
-        if (dto != null) {
-            AdministrativoMap administrativoMap = new AdministrativoMap();
-            AspiranteMap aspiranteMap = new AspiranteMap();
-            EstadodocumentoMap estadodocumentoMap = new EstadodocumentoMap();
-            PlazoMap plazoMap = new PlazoMap();
-            TipodocumentoMap tipodocumentoMap = new TipodocumentoMap();
-
-            return DocumentoOutput.builder()
-                    .id(dto.getId())
-                    .enlaceurl(dto.getEnlaceurl())
-                    .fechacargue(dto.getFechacargue())
-                    .idAdministrativo(dto.getIdAdministrativo())
-                    .idAspirante(dto.getIdAspirante())
-                    .idEstadodocumento(dto.getIdEstadodocumento())
-                    .idPlazo(dto.getIdPlazo())
-                    .idTipodocumento(dto.getIdTipodocumento())
-                    .keyfile(dto.getKeyfile())
-                    .observaciones(dto.getObservaciones())
-                    .administrativo(
-                        dto.getAdministrativo() != null ? 
-                        administrativoMap.toOutput(dto.getAdministrativo()) : null)
-                    .aspirante(
-                        dto.getAspirante() != null ? 
-                        aspiranteMap.toOutput(dto.getAspirante()) : null)
-                    .estadodocumento(
-                        dto.getEstadodocumento() != null ?
-                        estadodocumentoMap.toOutput(dto.getEstadodocumento()) : null)
-                    .plazo(
-                        dto.getPlazo() != null ? 
-                        plazoMap.toOutput(dto.getPlazo()) : null)
-                    .tipodocumento(
-                        dto.getTipodocumento() != null ?
-                        tipodocumentoMap.toOutput(dto.getTipodocumento()) : null)
-                    .build();
-        }
-        return null;
+        if (dto == null) return null;
+        return DocumentoOutput.builder()
+                .id(dto.getId())
+                .enlaceurl(dto.getEnlaceurl())
+                .fechacargue(dto.getFechacargue())
+                .idAdministrativo(dto.getIdAdministrativo())
+                .idAspirante(dto.getIdAspirante())
+                .idEstadodocumento(dto.getIdEstadodocumento())
+                .idPlazo(dto.getIdPlazo())
+                .idTipodocumento(dto.getIdTipodocumento())
+                .keyfile(dto.getKeyfile())
+                .observaciones(dto.getObservaciones())
+                .administrativo(mapOrNull(dto.getAdministrativo(), administrativoMap::toOutput))
+                .aspirante(mapOrNull(dto.getAspirante(), aspiranteMap::toOutput))
+                .estadodocumento(mapOrNull(dto.getEstadodocumento(), estadodocumentoMap::toOutput))
+                .plazo(mapOrNull(dto.getPlazo(), plazoMap::toOutput))
+                .tipodocumento(mapOrNull(dto.getTipodocumento(), tipodocumentoMap::toOutput))
+                .build();
     }
 
     public List<DocumentoOutput> toOutputList(List<DocumentoDTO> dtoList) {

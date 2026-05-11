@@ -32,7 +32,7 @@ public class PaisDTO implements Serializable {
     //--- OTHER DATA FIELDS 
     private String nombre ;
     //--- LINKS ( RELATIONSHIPS )
-    private List<DepartamentoDTO> departamentoList ; 
+    // private List<DepartamentoDTO> departamentoList ; 
 
     @Override
 	public String toString() { 
