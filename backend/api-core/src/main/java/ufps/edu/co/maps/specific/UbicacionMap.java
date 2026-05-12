@@ -1,5 +1,6 @@
 package ufps.edu.co.maps.specific;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import ufps.edu.co.maps.GlobalMapper;
@@ -10,6 +11,8 @@ import ufps.edu.co.rest.dto.UbicacionDTO;
 @Component
 public class UbicacionMap extends
         GlobalMapper<UBICACION_CREATE, UBICACION_UPDATE, UBICACION_DELETE, UBICACION_PATCH, UBICACION_FIND, UbicacionOutput, UbicacionDTO> {
+
+    @Autowired private MunicipioMap municipioMap;
 
     public UbicacionMap() {
         super(UBICACION_CREATE.class, UBICACION_UPDATE.class, UBICACION_DELETE.class, UBICACION_PATCH.class,
@@ -61,6 +64,7 @@ public class UbicacionMap extends
                 .id(dto.getId())
                 .direccion(dto.getDireccion())
                 .idMunicipio(dto.getIdMunicipio())
+                .municipio(dto.getMunicipio() != null ? municipioMap.toOutput(dto.getMunicipio()) : null)
                 .build();
     }
 

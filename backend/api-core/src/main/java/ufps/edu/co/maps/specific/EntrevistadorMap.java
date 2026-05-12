@@ -11,7 +11,6 @@ import ufps.edu.co.records.input.entity.EntrevistadorInput.ENTREVISTADOR_DELETE;
 import ufps.edu.co.records.input.entity.EntrevistadorInput.ENTREVISTADOR_FIND;
 import ufps.edu.co.records.input.entity.EntrevistadorInput.ENTREVISTADOR_PATCH;
 import ufps.edu.co.records.input.entity.EntrevistadorInput.ENTREVISTADOR_UPDATE;
-import ufps.edu.co.records.output.entity.AdministrativoOutput;
 import ufps.edu.co.records.output.entity.EntrevistadorOutput;
 import ufps.edu.co.rest.dto.EntrevistadorDTO;
 
@@ -76,15 +75,13 @@ public class EntrevistadorMap extends
 
     @Override
     public EntrevistadorOutput toOutput(EntrevistadorDTO dto) {
-        if (dto == null)
-            return null;
-        AdministrativoOutput administrativo = dto.getAdministrativo() != null
-                ? administrativoMap.toOutput(dto.getAdministrativo())
-                : null;
+        if (dto == null) return null;
         return EntrevistadorOutput.builder()
                 .id(dto.getId())
+                .idAdministrativo(dto.getIdAdministrativo())
+                .idEntrevista(dto.getIdEntrevista())
                 .observaciones(dto.getObservaciones())
-                .administrativo(administrativo)
+                .administrativo(dto.getAdministrativo() != null ? administrativoMap.toOutput(dto.getAdministrativo()) : null)
                 .build();
     }
 

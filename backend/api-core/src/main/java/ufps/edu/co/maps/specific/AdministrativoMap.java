@@ -16,9 +16,12 @@ import ufps.edu.co.rest.dto.AdministrativoDTO;
 public class AdministrativoMap extends
         GlobalMapper<ADMINISTRATIVO_CREATE, ADMINISTRATIVO_UPDATE, ADMINISTRATIVO_DELETE, ADMINISTRATIVO_PATCH, ADMINISTRATIVO_FIND, AdministrativoOutput, AdministrativoDTO> {
 
-    @Autowired private PersonaMap personaMap;
-    @Autowired private EstadoMap estadoMap;
-    @Autowired private CargoMap cargoMap;
+    @Autowired 
+    private PersonaMap personaMap;
+    @Autowired 
+    private EstadoMap estadoMap;
+    @Autowired 
+    private CargoMap cargoMap;
 
     public AdministrativoMap() {
         super(ADMINISTRATIVO_CREATE.class, ADMINISTRATIVO_UPDATE.class, ADMINISTRATIVO_DELETE.class,
@@ -86,6 +89,9 @@ public class AdministrativoMap extends
                 .id(dto.getId())
                 .fechainicio(dto.getFechainicio())
                 .fechasalida(dto.getFechasalida())
+                .idCargo(dto.getIdCargo())
+                .idEstado(dto.getIdEstado())
+                .idPersona(dto.getIdPersona())
                 .persona(dto.getPersona() != null ? personaMap.toOutput(dto.getPersona()) : null)
                 .estado(dto.getEstado() != null ? estadoMap.toOutput(dto.getEstado()) : null)
                 .cargo(dto.getCargo() != null ? cargoMap.toOutput(dto.getCargo()) : null)

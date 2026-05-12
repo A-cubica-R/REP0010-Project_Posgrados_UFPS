@@ -2,6 +2,7 @@ package ufps.edu.co.maps.specific;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import ufps.edu.co.maps.GlobalMapper;
@@ -11,6 +12,10 @@ import ufps.edu.co.rest.dto.CargoDTO;
 
 @Component
 public class CargoMap extends GlobalMapper<CARGO_CREATE, CARGO_UPDATE, CARGO_DELETE, CARGO_PATCH, CARGO_FIND, CargoOutput, CargoDTO> {
+
+    @Autowired 
+    private FacultadMap facultadMap;
+    @Autowired private ProgramaMap programaMap;
 
     public CargoMap() {
         super(CARGO_CREATE.class, CARGO_UPDATE.class, CARGO_DELETE.class, CARGO_PATCH.class, CARGO_FIND.class);
@@ -66,6 +71,8 @@ public class CargoMap extends GlobalMapper<CARGO_CREATE, CARGO_UPDATE, CARGO_DEL
                 .id(dto.getId())
                 .nombre(dto.getNombre())
                 .descripcion(dto.getDescripcion())
+                .facultad(dto.getFacultad() != null ? facultadMap.toOutput(dto.getFacultad()) : null)
+                .programa(dto.getPrograma() != null ? programaMap.toOutput(dto.getPrograma()) : null)
                 .build();
     }
 

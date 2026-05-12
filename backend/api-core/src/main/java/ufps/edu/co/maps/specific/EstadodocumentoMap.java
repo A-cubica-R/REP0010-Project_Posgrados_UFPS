@@ -59,10 +59,11 @@ public class EstadodocumentoMap extends
 
     @Override
     public EstadodocumentoOutput toOutput(EstadodocumentoDTO dto) {
-        if (dto == null) {
-            return null;
-        }
-        return new EstadodocumentoOutput(dto.getId(), dto.getEstado());
+        if (dto == null) return null;
+        return EstadodocumentoOutput.builder()
+                .id(dto.getId())
+                .estado(dto.getEstado())
+                .build();
     }
 
     public List<EstadodocumentoOutput> toOutputList(List<EstadodocumentoDTO> dtoList) {

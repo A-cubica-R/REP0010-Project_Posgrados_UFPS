@@ -2,7 +2,6 @@ package ufps.edu.co.maps.specific;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import ufps.edu.co.maps.GlobalMapper;
@@ -12,8 +11,6 @@ import ufps.edu.co.rest.dto.FacultadDTO;
 
 @Component
 public class FacultadMap extends GlobalMapper<FACULTAD_CREATE, FACULTAD_UPDATE, FACULTAD_DELETE, FACULTAD_PATCH, FACULTAD_FIND, FacultadOutput, FacultadDTO> {
-
-    @Autowired private CargoMap cargoMap;
 
     public FacultadMap() {
         super(FACULTAD_CREATE.class, FACULTAD_UPDATE.class, FACULTAD_DELETE.class, FACULTAD_PATCH.class, FACULTAD_FIND.class);
@@ -66,9 +63,6 @@ public class FacultadMap extends GlobalMapper<FACULTAD_CREATE, FACULTAD_UPDATE, 
                 .id(dto.getId())
                 .nombre(dto.getNombre())
                 .correo(dto.getCorreo())
-                .cargoList(dto.getCargoList() != null && !dto.getCargoList().isEmpty()
-                        ? dto.getCargoList().stream().map(cargoMap::toOutput).toList()
-                        : null)
                 .build();
     }
 

@@ -19,6 +19,8 @@ public class AspiranteMap extends
         GlobalMapper<ASPIRANTE_CREATE, ASPIRANTE_UPDATE, ASPIRANTE_DELETE, ASPIRANTE_PATCH, ASPIRANTE_FIND, AspiranteOutput, AspiranteDTO> {
 
     @Autowired private PersonaMap personaMap;
+    @Autowired private EstadoMap estadoMap;
+    @Autowired private CohorteMap cohorteMap;
 
     public AspiranteMap() {
         super(ASPIRANTE_CREATE.class, ASPIRANTE_UPDATE.class, ASPIRANTE_DELETE.class, ASPIRANTE_PATCH.class,
@@ -76,6 +78,8 @@ public class AspiranteMap extends
                 .idEstado(dto.getIdEstado())
                 .idPersona(dto.getIdPersona())
                 .persona(dto.getPersona() != null ? personaMap.toOutput(dto.getPersona()) : null)
+                .estado(dto.getEstado() != null ? estadoMap.toOutput(dto.getEstado()) : null)
+                .cohorte(dto.getCohorte() != null ? cohorteMap.toOutput(dto.getCohorte()) : null)
                 .build();
     }
 

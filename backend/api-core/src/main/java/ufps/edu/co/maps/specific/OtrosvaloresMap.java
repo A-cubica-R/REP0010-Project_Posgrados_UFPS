@@ -56,6 +56,7 @@ public class OtrosvaloresMap extends
 
     @Override
     public OtrosvaloresOutput toOutput(OtrosvaloresDTO dto) {
+        if (dto == null) return null;
         return OtrosvaloresOutput.builder()
                 .id(dto.getId())
                 .carnet(dto.getCarnet())

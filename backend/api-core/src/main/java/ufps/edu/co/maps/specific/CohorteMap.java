@@ -18,6 +18,7 @@ public class CohorteMap extends
     @Autowired private ModalidadMap modalidadMap;
     @Autowired private PlazoMap plazoMap;
     @Autowired private ProgramaMap programaMap;
+    @Autowired private SemestreMap semestreMap;
 
     public CohorteMap() {
         super(COHORTE_CREATE.class, COHORTE_UPDATE.class, COHORTE_DELETE.class, COHORTE_PATCH.class,
@@ -96,17 +97,19 @@ public class CohorteMap extends
         if (dto == null) return null;
         return CohorteOutput.builder()
                 .id(dto.getId())
+                .nombre(dto.getNombre())
                 .cupos(dto.getCupos())
                 .requiereentrevista(dto.getRequiereentrevista())
                 .requiereprueba(dto.getRequiereprueba())
-                .id_estado(dto.getIdEstado())
-                .id_semestre(dto.getIdSemestre())
-                .id_modalidad(dto.getIdModalidad())
-                .id_plazodocumentacion(dto.getIdPlazodocumentacion())
-                .id_plazoinscripcion(dto.getIdPlazoinscripcion())
-                .id_plazopago(dto.getIdPlazopago())
-                .id_programa(dto.getIdPrograma())
+                .idEstado(dto.getIdEstado())
+                .idSemestre(dto.getIdSemestre())
+                .idModalidad(dto.getIdModalidad())
+                .idPlazodocumentacion(dto.getIdPlazodocumentacion())
+                .idPlazoinscripcion(dto.getIdPlazoinscripcion())
+                .idPlazopago(dto.getIdPlazopago())
+                .idPrograma(dto.getIdPrograma())
                 .estado(dto.getEstado() != null ? estadoMap.toOutput(dto.getEstado()) : null)
+                .semestre(dto.getSemestre() != null ? semestreMap.toOutput(dto.getSemestre()) : null)
                 .modalidad(dto.getModalidad() != null ? modalidadMap.toOutput(dto.getModalidad()) : null)
                 .plazodocumentacion(dto.getPlazo() != null ? plazoMap.toOutput(dto.getPlazo()) : null)
                 .plazoinscripcion(dto.getPlazo2() != null ? plazoMap.toOutput(dto.getPlazo2()) : null)

@@ -59,10 +59,11 @@ public class RolMap extends
 
     @Override
     public RolOutput toOutput(RolDTO dto) {
-        if (dto == null) {
-            return null;
-        }
-        return new RolOutput(dto.getId(), dto.getNombre());
+        if (dto == null) return null;
+        return RolOutput.builder()
+                .id(dto.getId())
+                .nombre(dto.getNombre())
+                .build();
     }
 
     public List<RolOutput> toOutputList(List<RolDTO> dtoList) {
