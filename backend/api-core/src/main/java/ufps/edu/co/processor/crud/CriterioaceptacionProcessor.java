@@ -1,10 +1,14 @@
 package ufps.edu.co.processor.crud;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import ufps.edu.co.domain.exceptions.DomainException;
+import ufps.edu.co.domain.exceptions.errorcodes.CriterioaceptacionErrorCode;
 import ufps.edu.co.maps.specific.CriterioaceptacionMap;
 import ufps.edu.co.records.input.entity.CriterioaceptacionInput.*;
 import ufps.edu.co.records.output.entity.CriterioaceptacionOutput;
@@ -24,23 +28,23 @@ public class CriterioaceptacionProcessor implements
 
     @Override
     public CriterioaceptacionOutput create(CRITERIOACEPTACION_CREATE input) {
+        validatePesoSum(input.idCohorte(), input.peso(), null);
         try {
             CriterioaceptacionDTO dto = map.toDto(input);
-            CriterioaceptacionDTO created = service.create(dto);
-            return map.toOutput(created);
+            return map.toOutput(service.create(dto));
         } catch (Exception e) {
-            throw new RuntimeException("Error creating Criterioaceptacion: " + e.getMessage(), e);
+            throw new DomainException(CriterioaceptacionErrorCode.CRITERIOACEPTACION_NOT_FOUND, input.id());
         }
     }
 
     @Override
     public CriterioaceptacionOutput update(CRITERIOACEPTACION_UPDATE input) {
+        validatePesoSum(input.idCohorte(), input.peso(), input.id());
         try {
             CriterioaceptacionDTO dto = map.toDto(input);
-            CriterioaceptacionDTO updated = service.update(input.id(), dto);
-            return map.toOutput(updated);
+            return map.toOutput(service.update(input.id(), dto));
         } catch (Exception e) {
-            throw new RuntimeException("Error updating Criterioaceptacion: " + e.getMessage(), e);
+            throw new DomainException(CriterioaceptacionErrorCode.CRITERIOACEPTACION_NOT_FOUND, input.id());
         }
     }
 
@@ -52,20 +56,15 @@ public class CriterioaceptacionProcessor implements
     @Override
     public CriterioaceptacionOutput findById(CRITERIOACEPTACION_FIND input) {
         try {
-            CriterioaceptacionDTO dto = service.findById(input.id());
-            return map.toOutput(dto);
+            return map.toOutput(service.findById(input.id()));
         } catch (Exception e) {
-            throw new RuntimeException("Error finding Criterioaceptacion by ID: " + e.getMessage(), e);
+            throw new DomainException(CriterioaceptacionErrorCode.CRITERIOACEPTACION_NOT_FOUND, input.id());
         }
     }
 
     @Override
     public List<CriterioaceptacionOutput> findAll() {
-        try {
-            return service.findAll().stream().map(map::toOutput).toList();
-        } catch (Exception e) {
-            throw new RuntimeException("Error finding all Criterioaceptaciones: " + e.getMessage(), e);
-        }
+        return service.findAll().stream().map(map::toOutput).toList();
     }
 
     @Override
@@ -73,7 +72,19 @@ public class CriterioaceptacionProcessor implements
         try {
             service.deleteById(input.id());
         } catch (Exception e) {
-            throw new RuntimeException("Error deleting Criterioaceptacion by ID: " + e.getMessage(), e);
+            throw new DomainException(CriterioaceptacionErrorCode.CRITERIOACEPTACION_NOT_FOUND, input.id());
+        }
+    }
+
+    private void validatePesoSum(Integer idCohorte, BigDecimal newPeso, Integer excludeId) {
+        List<CriterioaceptacionDTO> existing = service.findByIdCohorte(idCohorte);
+        BigDecimal sum = existing.stream()
+                .filter(dto -> !Objects.equals(dto.getId(), excludeId))
+                .map(CriterioaceptacionDTO::getPeso)
+                .filter(Objects::nonNull)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        if (sum.add(newPeso).compareTo(BigDecimal.valueOf(100)) > 0) {
+            throw new DomainException(CriterioaceptacionErrorCode.PESO_EXCEDE_LIMITE, idCohorte);
         }
     }
 }

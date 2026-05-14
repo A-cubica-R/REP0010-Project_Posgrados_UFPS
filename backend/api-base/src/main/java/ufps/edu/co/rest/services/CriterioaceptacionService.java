@@ -35,6 +35,11 @@ public class CriterioaceptacionService extends GenericService<Criterioaceptacion
     }
 
     @Transactional(readOnly = true)
+    public List<CriterioaceptacionDTO> findByIdCohorte(Integer idCohorte) {
+        return entityListToDtoList(repository.findByIdCohorte(idCohorte));
+    }
+
+    @Transactional(readOnly = true)
     public CriterioaceptacionDTO findById(Integer id) {
         return entityToDto(repository.findById(id));
     }
