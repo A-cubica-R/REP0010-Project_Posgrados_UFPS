@@ -24,7 +24,6 @@ public class CriterioaceptacionMap extends
     @Override
     protected CriterioaceptacionDTO toDtoCreate(CRITERIOACEPTACION_CREATE input) {
         return CriterioaceptacionDTO.builder()
-                .id(input.id())
                 .nombre(input.nombre())
                 .descripcion(input.descripcion())
                 .peso(input.peso())

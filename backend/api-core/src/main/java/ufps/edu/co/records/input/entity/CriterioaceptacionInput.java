@@ -10,7 +10,6 @@ public enum CriterioaceptacionInput {
         ;
 
         public record CRITERIOACEPTACION_CREATE(
-                        @NotNull Integer id,
                         @NotBlank String nombre,
                         String descripcion,
                         @NotNull BigDecimal peso,

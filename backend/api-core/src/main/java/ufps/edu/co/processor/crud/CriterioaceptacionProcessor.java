@@ -29,12 +29,8 @@ public class CriterioaceptacionProcessor implements
     @Override
     public CriterioaceptacionOutput create(CRITERIOACEPTACION_CREATE input) {
         validatePesoSum(input.idCohorte(), input.peso(), null);
-        try {
             CriterioaceptacionDTO dto = map.toDto(input);
             return map.toOutput(service.create(dto));
-        } catch (Exception e) {
-            throw new DomainException(CriterioaceptacionErrorCode.CRITERIOACEPTACION_NOT_FOUND, input.id());
-        }
     }
 
     @Override
