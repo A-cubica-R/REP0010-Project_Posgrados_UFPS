@@ -42,6 +42,6 @@ public class TipopagoEntity implements Serializable {
 
     //--- LINKS ( RELATIONSHIPS )
     @OneToMany(mappedBy="tipopago")
-    private List<PagosEntity> pagosList ; 
+    private List<PagoEntity> pagosList ; 
 
 }

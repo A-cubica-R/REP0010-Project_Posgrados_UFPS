@@ -87,7 +87,7 @@ public class AspiranteEntity implements Serializable {
     private List<PagoEntity> pagoList ; 
 
     @OneToMany(mappedBy="aspirante")
-    private List<PagosEntity> pagosList ; 
+    private List<PagoEntity> pagosList ; 
 
     @OneToMany(mappedBy="aspirante")
     private List<ResultadopruebaEntity> resultadopruebaList ; 
