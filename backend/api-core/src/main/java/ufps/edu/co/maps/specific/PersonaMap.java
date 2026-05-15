@@ -33,7 +33,7 @@ public class PersonaMap extends
         dto.setFechanacimiento(input.fechanacimiento());
         dto.setCelular(input.celular());
         dto.setTelefono(input.telefono());
-        dto.setIdUbicacion(input.idUbicacion());
+        dto.setIdUbicacionvivienda(input.idUbicacion());
         dto.setIdGenero(input.idGenero());
         return dto;
     }
@@ -48,7 +48,7 @@ public class PersonaMap extends
         dto.setFechanacimiento(input.fechanacimiento());
         dto.setCelular(input.celular());
         dto.setTelefono(input.telefono());
-        dto.setIdUbicacion(input.idUbicacion());
+        dto.setIdUbicacionvivienda(input.idUbicacion());
         dto.setIdGenero(input.idGenero());
         return dto;
     }
@@ -84,7 +84,7 @@ public class PersonaMap extends
             builder.telefono(input.telefono());
         }
         if (input.idUbicacion() != null) {
-            builder.idUbicacion(input.idUbicacion());
+            builder.idUbicacionvivienda(input.idUbicacion());
         }
         if (input.idGenero() != null) {
             builder.idGenero(input.idGenero());
