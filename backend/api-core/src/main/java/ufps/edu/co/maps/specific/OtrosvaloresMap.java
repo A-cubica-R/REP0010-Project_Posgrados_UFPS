@@ -58,9 +58,9 @@ public class OtrosvaloresMap extends
     public OtrosvaloresOutput toOutput(OtrosvaloresDTO dto) {
         return OtrosvaloresOutput.builder()
                 .id(dto.getId())
-                .carnet(dto.getCarnet())
-                .estampilla(dto.getEstampilla())
-                .seguro(dto.getSeguro())
+                .carnet(dto.isCarnet())
+                .estampilla(dto.isEstampilla())
+                .seguro(dto.isSeguro())
                 .build();
     }
 
