@@ -32,7 +32,7 @@ public class TipopagoDTO implements Serializable {
     //--- OTHER DATA FIELDS 
     private String tipo ;
     //--- LINKS ( RELATIONSHIPS )
-    private List<PagosDTO> pagosList ; 
+    private List<PagoDTO> pagosList ; 
 
     @Override
 	public String toString() { 

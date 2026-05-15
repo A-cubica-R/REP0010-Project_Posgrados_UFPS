@@ -38,7 +38,7 @@ public class EstadoDTO implements Serializable {
     private List<CohorteDTO> cohorteList ; 
     private List<EntrevistaDTO> entrevistaList ; 
     private List<PagoDTO> pagoList ; 
-    private List<PagosDTO> pagosList ; 
+    private List<PagoDTO> pagosList ; 
     private List<SemestreDTO> semestreList ; 
 
     @Override

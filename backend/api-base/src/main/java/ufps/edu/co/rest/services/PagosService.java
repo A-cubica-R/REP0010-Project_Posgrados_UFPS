@@ -8,9 +8,12 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import ufps.edu.co.persistence.entities.PagoEntity;
 import ufps.edu.co.persistence.entities.PagosEntity;
+import ufps.edu.co.persistence.repositories.PagoRepository;
 import ufps.edu.co.persistence.repositories.PagosRepository;
-import ufps.edu.co.rest.dto.PagosDTO;
+import ufps.edu.co.rest.dto.PagoDTO;
 import ufps.edu.co.rest.services.commons.GenericService;
 
 /**
@@ -20,33 +23,33 @@ import ufps.edu.co.rest.services.commons.GenericService;
  */
 @Service
 @Transactional
-public class PagosService extends GenericService<PagosEntity, PagosDTO> {
+public class PagosService extends GenericService<PagoEntity, PagoDTO> {
 
     @Autowired
-    private PagosRepository repository;
+    private PagoRepository repository;
 
     public PagosService() {
-        super(PagosEntity.class, PagosDTO.class);
+        super(PagoEntity.class, PagoDTO.class);
     }
 
     @Transactional(readOnly = true)
-    public List<PagosDTO> findAll() {
+    public List<PagoDTO> findAll() {
         return entityListToDtoList(repository.findAll());
     }
 
     @Transactional(readOnly = true)
-    public PagosDTO findById(Integer id) {
+    public PagoDTO findById(Integer id) {
         return entityToDto(repository.findById(id));
     }
 
-    public PagosDTO create(PagosDTO dto) {
+    public PagoDTO create(PagoDTO dto) {
         if (repository.existsById(dto.getId())) {
             throw new RuntimeException("Pagos ya existe con id: " + dto.getId());
         }
         return entityToDto(repository.save(dtoToEntity(dto)));
     }
 
-    public PagosDTO update(Integer id, PagosDTO dto) {
+    public PagoDTO update(Integer id, PagoDTO dto) {
         repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Pagos no encontrado con id: " + id));
         dto.setId(id);
