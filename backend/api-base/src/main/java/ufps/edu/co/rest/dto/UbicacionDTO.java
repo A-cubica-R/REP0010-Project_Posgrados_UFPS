@@ -33,9 +33,8 @@ public class UbicacionDTO implements Serializable {
     private String direccion ;
     private Integer idMunicipio ;
     //--- LINKS ( RELATIONSHIPS )
-    private List<EntrevistaDTO> entrevistaList ; 
-    private List<PersonaDTO> personaList ; 
-    private List<PruebaDTO> pruebaList ; 
+    private List<EntrevistaDTO> entrevistaList ;
+    private List<PruebaDTO> pruebaList ;
     private List<SedeDTO> sedeList ; 
     private MunicipioDTO municipio ; 
 

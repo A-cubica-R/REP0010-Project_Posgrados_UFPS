@@ -44,7 +44,7 @@ public interface EntrevistaRepository extends JpaRepository<EntrevistaEntity, In
 		   "LEFT JOIN FETCH e.aspirante a " +
 		   "LEFT JOIN FETCH a.persona p " +
 		   "LEFT JOIN FETCH p.genero " +
-		   "LEFT JOIN FETCH p.ubicacion pu " +
+		   "LEFT JOIN FETCH p.ubicacionVivienda pu " +
 		   "LEFT JOIN FETCH pu.municipio " +
 		   "LEFT JOIN FETCH e.estado " +
 		   "LEFT JOIN FETCH e.tipoentrevista " +

@@ -45,9 +45,6 @@ public class CriterioaceptacionService extends GenericService<Criterioaceptacion
     }
 
     public CriterioaceptacionDTO create(CriterioaceptacionDTO dto) {
-        if (repository.existsById(dto.getId())) {
-            throw new RuntimeException("Criterioaceptacion ya existe con id: " + dto.getId());
-        }
         return entityToDto(repository.save(dtoToEntity(dto)));
     }
 

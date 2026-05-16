@@ -11,6 +11,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -38,7 +39,7 @@ public class PersonaEntity implements Serializable {
     @Column(name="id", nullable=false)
     private Integer id ;
 
-    //--- OTHER DATA FIELDS 
+    //--- OTHER DATA FIELDS
     @Column(name="apellidos", nullable=false, length=100)
     private String     apellidos ;
 
@@ -48,37 +49,84 @@ public class PersonaEntity implements Serializable {
     @Column(name="correo", nullable=false, length=100)
     private String     correo ;
 
+    @Column(name="egresadoufps", nullable=false)
+    private Boolean    egresadoufps ;
+
+    @Column(name="empresa", length=100)
+    private String     empresa ;
+
+    @Column(name="experiencialaboral", columnDefinition="TEXT")
+    private String     experiencialaboral ;
+
     @Column(name="fechanacimiento", nullable=false)
     private LocalDate  fechanacimiento ;
 
-    @Column(name="id_genero", nullable=false)
-    private Integer        idGenero ;
+    @Column(name="id_capacidadexepcional", nullable=false)
+    private Integer    idCapacidadexepcional ;
 
-    @Column(name="id_ubicacion", nullable=false)
-    private Integer        idUbicacion ;
+    @Column(name="id_discapacidad", nullable=false)
+    private Integer    idDiscapacidad ;
+
+    @Column(name="id_estadocivil", nullable=false)
+    private Integer    idEstadocivil ;
+
+    @Column(name="id_genero", nullable=false)
+    private Integer    idGenero ;
+
+    @Column(name="id_grupoetnico", nullable=false)
+    private Integer    idGrupoetnico ;
+
+    @Column(name="id_poblacionindigena", nullable=false)
+    private Integer    idPoblacionindigena ;
+
+    @Column(name="id_ubicacionnacimiento")
+    private Integer    idUbicacionnacimiento ;
+
+    @Column(name="id_ubicaciontrabajo")
+    private Integer    idUbicaciontrabajo ;
+
+    @Column(name="id_ubicacionvivienda", nullable=false)
+    private Integer    idUbicacionvivienda ;
 
     @Column(name="nombres", nullable=false, length=100)
     private String     nombres ;
 
+    @Column(name="promediopregrado", precision=5, scale=2)
+    private BigDecimal promediopregrado ;
+
     @Column(name="telefono", length=12)
     private String     telefono ;
 
+    @Column(name="titulopregrado", nullable=false, length=100)
+    private String     titulopregrado ;
+
+    @Column(name="titulosposgrados", columnDefinition="TEXT")
+    private String     titulosposgrados ;
+
     //--- LINKS ( RELATIONSHIPS )
     @OneToMany(mappedBy="persona")
-    private List<AdministrativoEntity> administrativoList ; 
+    private List<AdministrativoEntity> administrativoList ;
 
     @OneToMany(mappedBy="persona")
-    private List<AspiranteEntity> aspiranteList ; 
+    private List<AspiranteEntity> aspiranteList ;
 
     @ManyToOne
     @JoinColumn(name="id_genero", referencedColumnName="id", insertable=false, updatable=false)
-    private GeneroEntity     genero ; 
+    private GeneroEntity     genero ;
 
     @ManyToOne
-    @JoinColumn(name="id_ubicacion", referencedColumnName="id", insertable=false, updatable=false)
-    private UbicacionEntity  ubicacion ; 
+    @JoinColumn(name="id_ubicacionnacimiento", referencedColumnName="id", insertable=false, updatable=false)
+    private UbicacionEntity  ubicacionNacimiento ;
+
+    @ManyToOne
+    @JoinColumn(name="id_ubicaciontrabajo", referencedColumnName="id", insertable=false, updatable=false)
+    private UbicacionEntity  ubicacionTrabajo ;
+
+    @ManyToOne
+    @JoinColumn(name="id_ubicacionvivienda", referencedColumnName="id", insertable=false, updatable=false)
+    private UbicacionEntity  ubicacionVivienda ;
 
     @OneToMany(mappedBy="persona")
-    private List<UsuarioEntity> usuarioList ; 
+    private List<UsuarioEntity> usuarioList ;
 
 }
