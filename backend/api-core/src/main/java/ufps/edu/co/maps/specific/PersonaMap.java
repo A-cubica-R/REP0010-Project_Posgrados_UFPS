@@ -20,6 +20,11 @@ public class PersonaMap extends
 
     @Autowired private UbicacionMap ubicacionMap;
     @Autowired private GeneroMap generoMap;
+    @Autowired private EstadocivilMap estadocivilMap;
+    @Autowired private GrupoetnicoMap grupoetnicoMap;
+    @Autowired private PoblacionindigenaMap poblacionindigenaMap;
+    @Autowired private DiscapacidadMap discapacidadMap;
+    @Autowired private CapacidadexepcionalMap capacidadexepcionalMap;
 
     public PersonaMap() {
         super(PERSONA_CREATE.class, PERSONA_UPDATE.class, PERSONA_DELETE.class, PERSONA_PATCH.class,
@@ -35,7 +40,7 @@ public class PersonaMap extends
         dto.setFechanacimiento(input.fechanacimiento());
         dto.setCelular(input.celular());
         dto.setTelefono(input.telefono());
-        dto.setIdUbicacion(input.idUbicacion());
+        dto.setIdUbicacionvivienda(input.idUbicacion());
         dto.setIdGenero(input.idGenero());
         return dto;
     }
@@ -50,7 +55,7 @@ public class PersonaMap extends
         dto.setFechanacimiento(input.fechanacimiento());
         dto.setCelular(input.celular());
         dto.setTelefono(input.telefono());
-        dto.setIdUbicacion(input.idUbicacion());
+        dto.setIdUbicacionvivienda(input.idUbicacion());
         dto.setIdGenero(input.idGenero());
         return dto;
     }
@@ -73,7 +78,9 @@ public class PersonaMap extends
         if (input.fechanacimiento() != null) builder.fechanacimiento(input.fechanacimiento());
         if (input.celular() != null) builder.celular(input.celular());
         if (input.telefono() != null) builder.telefono(input.telefono());
-        if (input.idUbicacion() != null) builder.idUbicacion(input.idUbicacion());
+        // Corregir
+        if (input.idUbicacion() != null) builder.idUbicacionnacimiento(input.idUbicacion());
+        if (input.idUbicacion() != null) builder.idUbicaciontrabajo(input.idUbicacion());
         if (input.idGenero() != null) builder.idGenero(input.idGenero());
 
         return builder.build();
@@ -97,10 +104,30 @@ public class PersonaMap extends
                 .fechanacimiento(dto.getFechanacimiento())
                 .celular(dto.getCelular())
                 .telefono(dto.getTelefono())
-                .idUbicacion(dto.getIdUbicacion())
+                .egresadoufps(dto.isEgresadoufps())
+                .empresa(dto.getEmpresa())
+                .experiencialaboral(dto.getExperiencialaboral())
+                .promediopregrado(dto.getPromediopregrado())
+                .titulopregrado(dto.getTitulopregrado())
+                .titulosposgrados(dto.getTitulosposgrados())
                 .idGenero(dto.getIdGenero())
-                .ubicacion(dto.getUbicacion() != null ? ubicacionMap.toOutput(dto.getUbicacion()) : null)
+                .idEstadocivil(dto.getIdEstadocivil())
+                .idGrupoetnico(dto.getIdGrupoetnico())
+                .idPoblacionindigena(dto.getIdPoblacionindigena())
+                .idDiscapacidad(dto.getIdDiscapacidad())
+                .idCapacidadexepcional(dto.getIdCapacidadexepcional())
+                .idUbicacionvivienda(dto.getIdUbicacionvivienda())
+                .idUbicacionnacimiento(dto.getIdUbicacionnacimiento())
+                .idUbicaciontrabajo(dto.getIdUbicaciontrabajo())
                 .genero(dto.getGenero() != null ? generoMap.toOutput(dto.getGenero()) : null)
+                .estadocivil(dto.getEstadocivil() != null ? estadocivilMap.toOutput(dto.getEstadocivil()) : null)
+                .grupoetnico(dto.getGrupoetnico() != null ? grupoetnicoMap.toOutput(dto.getGrupoetnico()) : null)
+                .poblacionindigena(dto.getPoblacionindigena() != null ? poblacionindigenaMap.toOutput(dto.getPoblacionindigena()) : null)
+                .discapacidad(dto.getDiscapacidad() != null ? discapacidadMap.toOutput(dto.getDiscapacidad()) : null)
+                .capacidadexepcional(dto.getCapacidadexepcional() != null ? capacidadexepcionalMap.toOutput(dto.getCapacidadexepcional()) : null)
+                .ubicacionVivienda(dto.getUbicacion() != null ? ubicacionMap.toOutput(dto.getUbicacion()) : null)
+                .ubicacionNacimiento(dto.getUbicacion2() != null ? ubicacionMap.toOutput(dto.getUbicacion2()) : null)
+                .ubicacionTrabajo(dto.getUbicacion3() != null ? ubicacionMap.toOutput(dto.getUbicacion3()) : null)
                 .build();
     }
 
