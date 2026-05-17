@@ -48,8 +48,7 @@ public interface EntrevistaRepository extends JpaRepository<EntrevistaEntity, In
 		   "LEFT JOIN FETCH pu.municipio " +
 		   "LEFT JOIN FETCH e.estado " +
 		   "LEFT JOIN FETCH e.tipoentrevista " +
-		   "LEFT JOIN FETCH e.ubicacion " +
-		   "LEFT JOIN FETCH e.entrevistadorList")
+		   "LEFT JOIN FETCH e.ubicacion ")
 	List<EntrevistaEntity> findAllWithRelations();
 
 	//List<EntrevistaEntity> findByXxx(String xxx);

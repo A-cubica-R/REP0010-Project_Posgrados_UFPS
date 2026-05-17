@@ -17,6 +17,5 @@ public record AdministrativoOutput(
         PersonaOutput persona,
         EstadoOutput estado,
         CargoOutput cargo,
-        List<DocumentoOutput> documentoList,
-        List<EntrevistadorOutput> entrevistadorList) implements OutputResponse {
+        List<DocumentoOutput> documentoList) implements OutputResponse {
 }

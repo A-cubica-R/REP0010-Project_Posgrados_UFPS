@@ -6,7 +6,6 @@ import ufps.edu.co.records.OutputResponse;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.List;
 
 @Builder
 public record EntrevistaOutput(
@@ -21,6 +20,5 @@ public record EntrevistaOutput(
                 AspiranteOutput aspirante,
                 EstadoOutput estado,
                 TipoentrevistaOutput tipoentrevista,
-                UbicacionOutput ubicacion,
-                List<EntrevistadorOutput> entrevistadores) implements OutputResponse {
+                UbicacionOutput ubicacion) implements OutputResponse {
 }
