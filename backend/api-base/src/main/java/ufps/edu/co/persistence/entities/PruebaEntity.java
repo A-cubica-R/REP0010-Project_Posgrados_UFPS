@@ -45,10 +45,10 @@ public class PruebaEntity implements Serializable {
     private String     descripcion ;
 
     @Column(name="id_cohorte", nullable=false)
-    private int        idCohorte ;
+    private Integer        idCohorte ;
 
     @Column(name="id_ubicacion", nullable=false)
-    private int        idUbicacion ;
+    private Integer        idUbicacion ;
 
     //--- LINKS ( RELATIONSHIPS )
     @ManyToOne

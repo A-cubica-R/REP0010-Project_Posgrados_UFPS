@@ -33,7 +33,7 @@ public class TipodocumentoDTO implements Serializable {
     private String descripcion ;
     private String extension ;
     private String tipo ;
-    private int tamanomaximo ;
+    private Integer tamanomaximo ;
     //--- LINKS ( RELATIONSHIPS )
     private List<DocumentoDTO> documentoList ; 
     private List<DocumentopersonaDTO> documentopersonaList ; 

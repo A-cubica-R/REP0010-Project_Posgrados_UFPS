@@ -31,16 +31,16 @@ public class CohorteDTO implements Serializable {
     private Integer id ;
     //--- OTHER DATA FIELDS 
     private String nombre ;
-    private int cupos ;
+    private Integer cupos ;
     private boolean requiereentrevista ;
     private boolean requiereprueba ;
-    private int idEstado ;
-    private int idSemestre ;
-    private int idModalidad ;
-    private int idPlazodocumentacion ;
-    private int idPlazoinscripcion ;
-    private int idPlazopago ;
-    private int idPrograma ;
+    private Integer idEstado ;
+    private Integer idSemestre ;
+    private Integer idModalidad ;
+    private Integer idPlazodocumentacion ;
+    private Integer idPlazoinscripcion ;
+    private Integer idPlazopago ;
+    private Integer idPrograma ;
     //--- LINKS ( RELATIONSHIPS )
     private List<AspiranteDTO> aspiranteList ; 
     private EstadoDTO estado ; 

@@ -32,8 +32,8 @@ public class PruebaDTO implements Serializable {
     //--- OTHER DATA FIELDS 
     private String nombre ;
     private String descripcion ;
-    private int idCohorte ;
-    private int idUbicacion ;
+    private Integer idCohorte ;
+    private Integer idUbicacion ;
     //--- LINKS ( RELATIONSHIPS )
     private UbicacionDTO ubicacion ; 
     private CohorteDTO cohorte ; 

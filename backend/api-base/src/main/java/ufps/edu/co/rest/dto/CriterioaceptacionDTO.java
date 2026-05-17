@@ -34,7 +34,7 @@ public class CriterioaceptacionDTO implements Serializable {
     private String nombre ;
     private String descripcion ;
     private BigDecimal peso ;
-    private int idCohorte ;
+    private Integer idCohorte ;
     //--- LINKS ( RELATIONSHIPS )
     private List<CalificacioncriterioDTO> calificacioncriterioList ; 
     private CohorteDTO cohorte ; 

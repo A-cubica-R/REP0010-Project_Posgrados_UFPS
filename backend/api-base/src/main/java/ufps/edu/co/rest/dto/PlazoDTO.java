@@ -33,7 +33,7 @@ public class PlazoDTO implements Serializable {
     //--- OTHER DATA FIELDS 
     private LocalDate fechafin ;
     private LocalDate fechainicio ;
-    private int idTipoplazo ;
+    private Integer idTipoplazo ;
     //--- LINKS ( RELATIONSHIPS )
     private List<CohorteDTO> cohorteList ; 
     private List<CohorteDTO> cohorteList2 ; 

@@ -34,10 +34,10 @@ public class DocumentoDTO implements Serializable {
     private String enlaceurl ;
     private LocalDate fechacargue ;
     private Integer idAdministrativo ;
-    private int idAspirante ;
-    private int idEstadodocumento ;
-    private int idPlazo ;
-    private int idTipodocumento ;
+    private Integer idAspirante ;
+    private Integer idEstadodocumento ;
+    private Integer idPlazo ;
+    private Integer idTipodocumento ;
     private String keyfile ;
     private String observaciones ;
     //--- LINKS ( RELATIONSHIPS )

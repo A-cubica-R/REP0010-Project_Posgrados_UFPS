@@ -42,10 +42,10 @@ public class ResultadopruebaEntity implements Serializable {
     private BigDecimal calificacion ;
 
     @Column(name="id_aspirante", nullable=false)
-    private int        idAspirante ;
+    private Integer        idAspirante ;
 
     @Column(name="id_prueba", nullable=false)
-    private int        idPrueba ;
+    private Integer        idPrueba ;
 
     //--- LINKS ( RELATIONSHIPS )
     @ManyToOne

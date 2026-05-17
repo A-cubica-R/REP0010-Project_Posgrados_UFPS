@@ -49,7 +49,7 @@ public class CriterioaceptacionEntity implements Serializable {
     private BigDecimal peso ;
 
     @Column(name="id_cohorte", nullable=false)
-    private int        idCohorte ;
+    private Integer        idCohorte ;
 
     //--- LINKS ( RELATIONSHIPS )
     @OneToMany(mappedBy="criterioaceptacion")

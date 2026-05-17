@@ -29,9 +29,9 @@ public class UsuarioDTO implements Serializable {
     //--- PRIMARY KEY 
     private Integer id ;
     //--- OTHER DATA FIELDS 
-    private int idClave ;
-    private int idPersona ;
-    private int idRol ;
+    private Integer idClave ;
+    private Integer idPersona ;
+    private Integer idRol ;
     private String nombreusuario ;
     //--- LINKS ( RELATIONSHIPS )
     private ClaveDTO clave ; 

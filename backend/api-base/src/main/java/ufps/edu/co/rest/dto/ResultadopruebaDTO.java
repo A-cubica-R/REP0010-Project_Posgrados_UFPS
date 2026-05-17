@@ -31,8 +31,8 @@ public class ResultadopruebaDTO implements Serializable {
     private Integer id ;
     //--- OTHER DATA FIELDS 
     private BigDecimal calificacion ;
-    private int idAspirante ;
-    private int idPrueba ;
+    private Integer idAspirante ;
+    private Integer idPrueba ;
     //--- LINKS ( RELATIONSHIPS )
     private AspiranteDTO aspirante ; 
     private PruebaDTO prueba ; 

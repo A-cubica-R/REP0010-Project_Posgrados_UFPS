@@ -30,7 +30,7 @@ public class MunicipioDTO implements Serializable {
     //--- PRIMARY KEY 
     private Integer id ;
     //--- OTHER DATA FIELDS 
-    private int idDepartamento ;
+    private Integer idDepartamento ;
     private String nombre ;
     //--- LINKS ( RELATIONSHIPS )
     private DepartamentoDTO departamento ; 

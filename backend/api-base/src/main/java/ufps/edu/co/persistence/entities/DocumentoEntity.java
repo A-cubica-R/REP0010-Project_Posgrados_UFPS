@@ -49,16 +49,16 @@ public class DocumentoEntity implements Serializable {
     private Integer    idAdministrativo ;
 
     @Column(name="id_aspirante", nullable=false)
-    private int        idAspirante ;
+    private Integer        idAspirante ;
 
     @Column(name="id_estadodocumento", nullable=false)
-    private int        idEstadodocumento ;
+    private Integer        idEstadodocumento ;
 
     @Column(name="id_plazo", nullable=false)
-    private int        idPlazo ;
+    private Integer        idPlazo ;
 
     @Column(name="id_tipodocumento", nullable=false)
-    private int        idTipodocumento ;
+    private Integer        idTipodocumento ;
 
     @Column(name="keyfile", nullable=false, length=255)
     private String     keyfile ;

@@ -30,7 +30,7 @@ public class SedeDTO implements Serializable {
     //--- PRIMARY KEY 
     private Integer id ;
     //--- OTHER DATA FIELDS 
-    private int idUbicacion ;
+    private Integer idUbicacion ;
     private String nombre ;
     //--- LINKS ( RELATIONSHIPS )
     private List<ProgramaDTO> programaList ; 

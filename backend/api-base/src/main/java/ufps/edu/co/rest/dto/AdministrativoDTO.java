@@ -33,9 +33,9 @@ public class AdministrativoDTO implements Serializable {
     //--- OTHER DATA FIELDS 
     private LocalDate fechainicio ;
     private LocalDate fechasalida ;
-    private int idCargo ;
-    private int idEstado ;
-    private int idPersona ;
+    private Integer idCargo ;
+    private Integer idEstado ;
+    private Integer idPersona ;
     //--- LINKS ( RELATIONSHIPS )
     private CargoDTO cargo ; 
     private EstadoDTO estado ; 

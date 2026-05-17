@@ -44,15 +44,15 @@ public class PersonaDTO implements Serializable {
     private String telefono ;
     private String titulopregrado ;
     private String titulosposgrados ;
-    private int idCapacidadexepcional ;
-    private int idDiscapacidad ;
-    private int idEstadocivil ;
-    private int idGenero ;
-    private int idGrupoetnico ;
-    private int idPoblacionindigena ;
+    private Integer idCapacidadexepcional ;
+    private Integer idDiscapacidad ;
+    private Integer idEstadocivil ;
+    private Integer idGenero ;
+    private Integer idGrupoetnico ;
+    private Integer idPoblacionindigena ;
     private Integer idUbicacionnacimiento ;
     private Integer idUbicaciontrabajo ;
-    private int idUbicacionvivienda ;
+    private Integer idUbicacionvivienda ;
     //--- LINKS ( RELATIONSHIPS )
     private List<AdministrativoDTO> administrativoList ; 
     private List<AspiranteDTO> aspiranteList ; 

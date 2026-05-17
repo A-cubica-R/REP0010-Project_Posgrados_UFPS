@@ -29,9 +29,9 @@ public class PagoDTO implements Serializable {
     //--- PRIMARY KEY 
     private Integer id ;
     //--- OTHER DATA FIELDS 
-    private int idAspirante ;
-    private int idEstado ;
-    private int idPagoconcepto ;
+    private Integer idAspirante ;
+    private Integer idEstado ;
+    private Integer idPagoconcepto ;
     //--- LINKS ( RELATIONSHIPS )
     private AspiranteDTO aspirante ; 
     private EstadoDTO estado ; 

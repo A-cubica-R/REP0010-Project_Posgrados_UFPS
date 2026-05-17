@@ -29,8 +29,8 @@ public class CambiodocumentoDTO implements Serializable {
     //--- PRIMARY KEY 
     private Integer id ;
     //--- OTHER DATA FIELDS 
-    private int idDocumentoactual ;
-    private int idDocumentoanterior ;
+    private Integer idDocumentoactual ;
+    private Integer idDocumentoanterior ;
     //--- LINKS ( RELATIONSHIPS )
     private DocumentoDTO documento ; 
     private DocumentoDTO documento2 ; 

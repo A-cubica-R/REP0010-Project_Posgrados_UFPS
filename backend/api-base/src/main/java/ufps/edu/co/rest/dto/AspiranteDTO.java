@@ -32,10 +32,10 @@ public class AspiranteDTO implements Serializable {
     private Integer id ;
     //--- OTHER DATA FIELDS 
     private BigDecimal puntuacion ;
-    private int idCohorte ;
-    private int idEstado ;
-    private int idPersona ;
-    private int idTipovinculacion ;
+    private Integer idCohorte ;
+    private Integer idEstado ;
+    private Integer idPersona ;
+    private Integer idTipovinculacion ;
     //--- LINKS ( RELATIONSHIPS )
     private PersonaDTO persona ; 
     private EstadoDTO estado ; 

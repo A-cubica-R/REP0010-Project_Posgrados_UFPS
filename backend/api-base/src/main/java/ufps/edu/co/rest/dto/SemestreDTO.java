@@ -33,7 +33,7 @@ public class SemestreDTO implements Serializable {
     //--- OTHER DATA FIELDS 
     private LocalDate fechaFin ;
     private LocalDate fechaInicio ;
-    private int idEstado ;
+    private Integer idEstado ;
     private String nombre ;
     //--- LINKS ( RELATIONSHIPS )
     private List<CohorteDTO> cohorteList ; 

@@ -34,10 +34,10 @@ public class EntrevistaDTO implements Serializable {
     //--- OTHER DATA FIELDS 
     private BigDecimal calificacion ;
     private LocalDate fecha ;
-    private int idAspirante ;
-    private int idEstado ;
-    private int idTipoentrevista ;
-    private int idUbicacion ;
+    private Integer idAspirante ;
+    private Integer idEstado ;
+    private Integer idTipoentrevista ;
+    private Integer idUbicacion ;
     private LocalTime tiempo ;
     //--- LINKS ( RELATIONSHIPS )
     private AspiranteDTO aspirante ; 
