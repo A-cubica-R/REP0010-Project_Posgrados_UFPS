@@ -31,7 +31,7 @@ public class EntrevistaService extends GenericService<EntrevistaEntity, Entrevis
 
     @Transactional(readOnly = true)
     public List<EntrevistaDTO> findAll() {
-        return entityListToDtoList(repository.findAll());
+        return entityListToDtoList(repository.findAllWithRelations());
     }
 
     @Transactional(readOnly = true)

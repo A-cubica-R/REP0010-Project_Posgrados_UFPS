@@ -1,12 +1,10 @@
 package ufps.edu.co.records.input.entity;
 
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.List;
 
 import ufps.edu.co.records.contracts.*;
 
@@ -19,8 +17,7 @@ public enum EntrevistaInput {
             @NotNull Integer idTipoentrevista,
             @NotNull Integer idAspirante,
             @NotNull Integer idEstado,
-            @NotNull Integer idUbicacion,
-            @NotEmpty List<Integer> idEntrevistadores) implements CreateType {
+            @NotNull Integer idUbicacion) implements CreateType {
     }
 
     public record ENTREVISTA_UPDATE(
@@ -31,8 +28,7 @@ public enum EntrevistaInput {
             @NotNull Integer idAspirante,
             @NotNull Integer idEstado,
             @NotNull Integer idTipoentrevista,
-            @NotNull Integer idUbicacion,
-            @NotEmpty List<Integer> idEntrevistadores) implements UpdateType {
+            @NotNull Integer idUbicacion) implements UpdateType {
     }
 
     public record ENTREVISTA_PATCH(
@@ -43,8 +39,7 @@ public enum EntrevistaInput {
             Integer idAspirante,
             Integer idEstado,
             Integer idTipoentrevista,
-            Integer idUbicacion,
-            @NotEmpty List<Integer> idEntrevistadores) implements PatchType {
+            Integer idUbicacion) implements PatchType {
     }
 
     public record ENTREVISTA_DELETE(

@@ -4,6 +4,7 @@
  */
 package ufps.edu.co.persistence.repositories;
 
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -37,15 +38,5 @@ import ufps.edu.co.persistence.entities.CriterioaceptacionEntity;
 @Repository
 public interface CriterioaceptacionRepository extends JpaRepository<CriterioaceptacionEntity, Integer> {
 
-	// Insert specific finders here 
-
-	//List<CriterioaceptacionEntity> findByXxx(String xxx);
-
-	//List<CriterioaceptacionEntity> findByXxxStartingWith(String xxx);
-
-	//List<CriterioaceptacionEntity> findByXxxContaining(String xxx);
-
-	//List<CriterioaceptacionEntity> findByYyy(BigDecimal yyy);
-
-	//List<CriterioaceptacionEntity> findByXxxContainingAndYyy(String xxx, BigDecimal yyy);
+	List<CriterioaceptacionEntity> findByIdCohorte(Integer idCohorte);
 }

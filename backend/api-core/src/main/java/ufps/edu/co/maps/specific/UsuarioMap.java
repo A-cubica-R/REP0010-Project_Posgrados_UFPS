@@ -6,9 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ufps.edu.co.maps.GlobalMapper;
 import ufps.edu.co.records.input.entity.UsuarioInput.*;
-import ufps.edu.co.records.output.entity.ClaveOutput;
-import ufps.edu.co.records.output.entity.PersonaOutput;
-import ufps.edu.co.records.output.entity.RolOutput;
 import ufps.edu.co.records.output.entity.UsuarioOutput;
 import ufps.edu.co.rest.dto.UsuarioDTO;
 
@@ -16,13 +13,14 @@ import ufps.edu.co.rest.dto.UsuarioDTO;
 public class UsuarioMap extends
         GlobalMapper<USUARIO_CREATE, USUARIO_UPDATE, USUARIO_DELETE, USUARIO_PATCH, USUARIO_FIND, UsuarioOutput, UsuarioDTO> {
 
+    @Autowired private PersonaMap personaMap;
+    @Autowired private RolMap rolMap;
+    @Autowired private ClaveMap claveMap;
+
     public UsuarioMap() {
         super(USUARIO_CREATE.class, USUARIO_UPDATE.class, USUARIO_DELETE.class, USUARIO_PATCH.class,
                 USUARIO_FIND.class);
     }
-
-    @Autowired
-    PersonaMap personaMap = new PersonaMap();
 
     @Override
     protected UsuarioDTO toDtoCreate(USUARIO_CREATE input) {
@@ -54,22 +52,11 @@ public class UsuarioMap extends
 
     @Override
     protected UsuarioDTO toDtoPatch(USUARIO_PATCH input) {
-        UsuarioDTO.UsuarioDTOBuilder builder = UsuarioDTO.builder()
-                .id(input.id());
-
-        if (input.nombreusuario() != null) {
-            builder.nombreusuario(input.nombreusuario());
-        }
-        if (input.idPersona() != null) {
-            builder.idPersona(input.idPersona());
-        }
-        if (input.idRol() != null) {
-            builder.idRol(input.idRol());
-        }
-        if (input.idClave() != null) {
-            builder.idClave(input.idClave());
-        }
-
+        UsuarioDTO.UsuarioDTOBuilder builder = UsuarioDTO.builder().id(input.id());
+        if (input.nombreusuario() != null) builder.nombreusuario(input.nombreusuario());
+        if (input.idPersona() != null) builder.idPersona(input.idPersona());
+        if (input.idRol() != null) builder.idRol(input.idRol());
+        if (input.idClave() != null) builder.idClave(input.idClave());
         return builder.build();
     }
 
@@ -82,39 +69,16 @@ public class UsuarioMap extends
 
     @Override
     public UsuarioOutput toOutput(UsuarioDTO dto) {
-
-        if (dto == null) {
-            return null;
-        }
-
-        PersonaOutput persona = dto.getPersona() != null
-                ? personaMap.toOutput(dto.getPersona())
-                : null;
-
-        RolOutput rol = null;
-        if (dto.getRol() != null) {
-            rol = RolOutput.builder()
-                    .id(dto.getRol().getId())
-                    .nombre(dto.getRol().getNombre())
-                    .build();
-        }
-
-        ClaveOutput clave = null;
-        if (dto.getClave() != null) {
-            clave = ClaveOutput.builder()
-                    .id(dto.getClave().getId())
-                    .build();
-        }
-
+        if (dto == null) return null;
         return UsuarioOutput.builder()
                 .id(dto.getId())
                 .nombreusuario(dto.getNombreusuario())
                 .idPersona(dto.getIdPersona())
                 .idRol(dto.getIdRol())
                 .idClave(dto.getIdClave())
-                .persona(persona)
-                .rol(rol)
-                .clave(clave)
+                .persona(dto.getPersona() != null ? personaMap.toOutput(dto.getPersona()) : null)
+                .rol(dto.getRol() != null ? rolMap.toOutput(dto.getRol()) : null)
+                .clave(dto.getClave() != null ? claveMap.toOutput(dto.getClave()) : null)
                 .build();
     }
 

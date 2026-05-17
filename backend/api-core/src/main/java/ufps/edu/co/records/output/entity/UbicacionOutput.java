@@ -12,7 +12,6 @@ public record UbicacionOutput(
         Integer idMunicipio,
         MunicipioOutput municipio,
         List<EntrevistaOutput> entrevistaList,
-        List<PersonaOutput> personaList,
         List<PruebaOutput> pruebaList,
         List<SedeOutput> sedeList
 ) implements OutputResponse {

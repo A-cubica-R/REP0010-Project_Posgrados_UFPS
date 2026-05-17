@@ -4,7 +4,10 @@
  */
 package ufps.edu.co.persistence.repositories;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import ufps.edu.co.persistence.entities.EntrevistaEntity;
@@ -37,7 +40,16 @@ import ufps.edu.co.persistence.entities.EntrevistaEntity;
 @Repository
 public interface EntrevistaRepository extends JpaRepository<EntrevistaEntity, Integer> {
 
-	// Insert specific finders here 
+	@Query("SELECT DISTINCT e FROM EntrevistaEntity e " +
+		   "LEFT JOIN FETCH e.aspirante a " +
+		   "LEFT JOIN FETCH a.persona p " +
+		   "LEFT JOIN FETCH p.genero " +
+		   "LEFT JOIN FETCH p.ubicacionVivienda pu " +
+		   "LEFT JOIN FETCH pu.municipio " +
+		   "LEFT JOIN FETCH e.estado " +
+		   "LEFT JOIN FETCH e.tipoentrevista " +
+		   "LEFT JOIN FETCH e.ubicacion ")
+	List<EntrevistaEntity> findAllWithRelations();
 
 	//List<EntrevistaEntity> findByXxx(String xxx);
 

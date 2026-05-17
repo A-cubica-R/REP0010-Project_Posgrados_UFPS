@@ -39,7 +39,7 @@ public class PersonaEntity implements Serializable {
     @Column(name="id", nullable=false)
     private Integer id ;
 
-    //--- OTHER DATA FIELDS 
+    //--- OTHER DATA FIELDS
     @Column(name="apellidos", nullable=false, length=100)
     private String     apellidos ;
 
@@ -50,49 +50,34 @@ public class PersonaEntity implements Serializable {
     private String     correo ;
 
     @Column(name="egresadoufps", nullable=false)
-    private boolean    egresadoufps ;
+    private Boolean    egresadoufps ;
 
     @Column(name="empresa", length=100)
     private String     empresa ;
 
-    @Column(name="experiencialaboral", length=65535)
+    @Column(name="experiencialaboral", columnDefinition="TEXT")
     private String     experiencialaboral ;
 
     @Column(name="fechanacimiento", nullable=false)
     private LocalDate  fechanacimiento ;
 
-    @Column(name="nombres", nullable=false, length=100)
-    private String     nombres ;
-
-    @Column(name="promediopregrado")
-    private BigDecimal promediopregrado ;
-
-    @Column(name="telefono", length=12)
-    private String     telefono ;
-
-    @Column(name="titulopregrado", nullable=false, length=100)
-    private String     titulopregrado ;
-
-    @Column(name="titulosposgrados", length=65535)
-    private String     titulosposgrados ;
-
     @Column(name="id_capacidadexepcional", nullable=false)
-    private int        idCapacidadexepcional ;
+    private Integer    idCapacidadexepcional ;
 
     @Column(name="id_discapacidad", nullable=false)
-    private int        idDiscapacidad ;
+    private Integer    idDiscapacidad ;
 
     @Column(name="id_estadocivil", nullable=false)
-    private int        idEstadocivil ;
+    private Integer    idEstadocivil ;
 
     @Column(name="id_genero", nullable=false)
-    private int        idGenero ;
+    private Integer    idGenero ;
 
     @Column(name="id_grupoetnico", nullable=false)
-    private int        idGrupoetnico ;
+    private Integer    idGrupoetnico ;
 
     @Column(name="id_poblacionindigena", nullable=false)
-    private int        idPoblacionindigena ;
+    private Integer    idPoblacionindigena ;
 
     @Column(name="id_ubicacionnacimiento")
     private Integer    idUbicacionnacimiento ;
@@ -101,22 +86,45 @@ public class PersonaEntity implements Serializable {
     private Integer    idUbicaciontrabajo ;
 
     @Column(name="id_ubicacionvivienda", nullable=false)
-    private int        idUbicacionvivienda ;
+    private Integer    idUbicacionvivienda ;
+
+    @Column(name="nombres", nullable=false, length=100)
+    private String     nombres ;
+
+    @Column(name="promediopregrado", precision=5, scale=2)
+    private BigDecimal promediopregrado ;
+
+    @Column(name="telefono", length=12)
+    private String     telefono ;
+
+    @Column(name="titulopregrado", nullable=false, length=100)
+    private String     titulopregrado ;
+
+    @Column(name="titulosposgrados", columnDefinition="TEXT")
+    private String     titulosposgrados ;
 
     //--- LINKS ( RELATIONSHIPS )
     @OneToMany(mappedBy="persona")
-    private List<AdministrativoEntity> administrativoList ; 
+    private List<AdministrativoEntity> administrativoList ;
 
     @OneToMany(mappedBy="persona")
-    private List<AspiranteEntity> aspiranteList ; 
+    private List<AspiranteEntity> aspiranteList ;
 
     @ManyToOne
     @JoinColumn(name="id_genero", referencedColumnName="id", insertable=false, updatable=false)
-    private GeneroEntity     genero ; 
+    private GeneroEntity     genero ;
 
     @ManyToOne
     @JoinColumn(name="id_ubicacionnacimiento", referencedColumnName="id", insertable=false, updatable=false)
-    private UbicacionEntity  ubicacion ; 
+    private UbicacionEntity  ubicacionNacimiento ;
+
+    @ManyToOne
+    @JoinColumn(name="id_ubicaciontrabajo", referencedColumnName="id", insertable=false, updatable=false)
+    private UbicacionEntity  ubicacionTrabajo ;
+
+    @ManyToOne
+    @JoinColumn(name="id_ubicacionvivienda", referencedColumnName="id", insertable=false, updatable=false)
+    private UbicacionEntity  ubicacionVivienda ;
 
     @ManyToOne
     @JoinColumn(name="id_ubicacionvivienda", referencedColumnName="id", insertable=false, updatable=false)
@@ -147,6 +155,6 @@ public class PersonaEntity implements Serializable {
     private EstadocivilEntity estadocivil ; 
 
     @OneToMany(mappedBy="persona")
-    private List<UsuarioEntity> usuarioList ; 
+    private List<UsuarioEntity> usuarioList ;
 
 }

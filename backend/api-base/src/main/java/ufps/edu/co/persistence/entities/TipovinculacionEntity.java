@@ -11,7 +11,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import java.util.List;
 
 
 /**
@@ -40,9 +39,5 @@ public class TipovinculacionEntity implements Serializable {
     //--- OTHER DATA FIELDS 
     @Column(name="tipo", nullable=false, length=50)
     private String     tipo ;
-
-    //--- LINKS ( RELATIONSHIPS )
-    @OneToMany(mappedBy="tipovinculacion")
-    private List<AspiranteEntity> aspiranteList ; 
 
 }

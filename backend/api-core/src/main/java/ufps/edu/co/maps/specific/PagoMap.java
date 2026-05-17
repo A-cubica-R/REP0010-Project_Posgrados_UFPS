@@ -1,6 +1,7 @@
 package ufps.edu.co.maps.specific;
 
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ufps.edu.co.maps.GlobalMapper;
 import ufps.edu.co.records.input.entity.PagoInput.*;
@@ -10,6 +11,10 @@ import ufps.edu.co.rest.dto.PagoDTO;
 @Component
 public class PagoMap extends
         GlobalMapper<PAGO_CREATE, PAGO_UPDATE, PAGO_DELETE, PAGO_PATCH, PAGO_FIND, PagoOutput, PagoDTO> {
+
+    @Autowired private AspiranteMap aspiranteMap;
+    @Autowired private EstadoMap estadoMap;
+    @Autowired private PagoconceptoMap pagoconceptoMap;
 
     public PagoMap() {
         super(PAGO_CREATE.class, PAGO_UPDATE.class, PAGO_DELETE.class, PAGO_PATCH.class,
@@ -61,30 +66,16 @@ public class PagoMap extends
 
     @Override
     public PagoOutput toOutput(PagoDTO dto) {
-        if (dto != null) {
-            return PagoOutput.builder()
+        if (dto == null) return null;
+        return PagoOutput.builder()
                 .id(dto.getId())
                 .idAspirante(dto.getIdAspirante())
                 .idEstado(dto.getIdEstado())
                 .idPagoconcepto(dto.getIdPagoconcepto())
-                .aspirante(
-                    dto.getAspirante() != null ? (
-                        new AspiranteMap().toOutput(dto.getAspirante())
-                    ) : null
-                )
-                .estado(
-                    dto.getEstado() != null ? (
-                        new EstadoMap().toOutput(dto.getEstado())
-                    ) : null
-                )
-                .pagoconcepto(
-                    dto.getPagoconcepto() != null ? (
-                        new PagoconceptoMap().toOutput(dto.getPagoconcepto())
-                    ) : null
-                )
+                .aspirante(dto.getAspirante() != null ? aspiranteMap.toOutput(dto.getAspirante()) : null)
+                .estado(dto.getEstado() != null ? estadoMap.toOutput(dto.getEstado()) : null)
+                .pagoconcepto(dto.getPagoconcepto() != null ? pagoconceptoMap.toOutput(dto.getPagoconcepto()) : null)
                 .build();
-        }
-        return null;
     }
 
     public List<PagoOutput> toOutputList(List<PagoDTO> dtoList) {

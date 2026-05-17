@@ -50,19 +50,18 @@ public class ModalidadMap extends
         return dto;
     }
 
+    /*
+     * ModalidadMap es un leaf map: solo mapea id y nombre.
+     * cohorteList NO se mapea porque CohorteMap @Autowired ModalidadMap,
+     * lo que crearía un ciclo: ModalidadMap ↔ CohorteMap.
+     */
+    @Override
     public ModalidadOutput toOutput(ModalidadDTO dto) {
-        if (dto != null) {
-            return ModalidadOutput.builder()
-                    .id(dto.getId())
-                    .nombre(dto.getNombre())
-                    .cohorteList(
-                        dto.getCohorteList() != null ? (
-                            new CohorteMap().toOutputList(dto.getCohorteList())
-                        ) : null
-                    )
-                    .build();
-        }
-        return null;
+        if (dto == null) return null;
+        return ModalidadOutput.builder()
+                .id(dto.getId())
+                .nombre(dto.getNombre())
+                .build();
     }
 
     public List<ModalidadOutput> toOutputList(List<ModalidadDTO> dtoList) {

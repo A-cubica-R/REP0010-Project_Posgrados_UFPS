@@ -12,7 +12,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.time.LocalDate;
-import java.util.List;
 
 
 /**
@@ -49,17 +48,17 @@ public class PlazoEntity implements Serializable {
     private int        idTipoplazo ;
 
     //--- LINKS ( RELATIONSHIPS )
-    @OneToMany
-    private List<CohorteEntity> cohorteList ; 
+    // @OneToMany
+    // private List<CohorteEntity> cohorteList ; 
 
-    @OneToMany
-    private List<CohorteEntity> cohorteList2 ; 
+    // @OneToMany
+    // private List<CohorteEntity> cohorteList2 ; 
 
-    @OneToMany
-    private List<CohorteEntity> cohorteList3 ; 
+    // @OneToMany
+    // private List<CohorteEntity> cohorteList3 ; 
 
-    @OneToMany(mappedBy="plazo")
-    private List<DocumentoEntity> documentoList ; 
+    // @OneToMany(mappedBy="plazo")
+    // private List<DocumentoEntity> documentoList ; 
 
     @ManyToOne
     @JoinColumn(name="id_tipoplazo", referencedColumnName="id", insertable=false, updatable=false)
