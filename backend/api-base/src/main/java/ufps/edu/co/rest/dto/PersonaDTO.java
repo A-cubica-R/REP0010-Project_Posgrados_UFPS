@@ -57,9 +57,9 @@ public class PersonaDTO implements Serializable {
     private List<AdministrativoDTO> administrativoList ; 
     private List<AspiranteDTO> aspiranteList ; 
     private GeneroDTO genero ; 
-    private UbicacionDTO ubicacion ; 
-    private UbicacionDTO ubicacion2 ; 
-    private UbicacionDTO ubicacion3 ; 
+    private UbicacionDTO ubicacionVivienda ;
+    private UbicacionDTO ubicacionNacimiento ;
+    private UbicacionDTO ubicacionTrabajo ;
     private GrupoetnicoDTO grupoetnico ; 
     private PoblacionindigenaDTO poblacionindigena ; 
     private DiscapacidadDTO discapacidad ; 

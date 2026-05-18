@@ -4,6 +4,8 @@
  */
 package ufps.edu.co.persistence.repositories;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -37,7 +39,7 @@ import ufps.edu.co.persistence.entities.AspiranteEntity;
 @Repository
 public interface AspiranteRepository extends JpaRepository<AspiranteEntity, Integer> {
 
-	// Insert specific finders here 
+	// Insert specific finders here
 
 	//List<AspiranteEntity> findByXxx(String xxx);
 
@@ -48,4 +50,8 @@ public interface AspiranteRepository extends JpaRepository<AspiranteEntity, Inte
 	//List<AspiranteEntity> findByYyy(BigDecimal yyy);
 
 	//List<AspiranteEntity> findByXxxContainingAndYyy(String xxx, BigDecimal yyy);
+
+	List<AspiranteEntity> findByDocumentoListIsNotEmpty();
+
+	List<AspiranteEntity> findByIdCohorte(int idCohorte);
 }

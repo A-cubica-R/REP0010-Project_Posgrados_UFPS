@@ -35,12 +35,13 @@ public class CriterioevaluacionService extends GenericService<Criterioevaluacion
     }
 
     @Transactional(readOnly = true)
-    public CriterioevaluacionDTO findById(Integer id) {
-        return entityToDto(repository.findById(id));
-    }
-
     public List<CriterioevaluacionDTO> findByIdCohorte(Integer idCohorte) {
         return entityListToDtoList(repository.findByIdCohorte(idCohorte));
+    }
+
+    @Transactional(readOnly = true)
+    public CriterioevaluacionDTO findById(Integer id) {
+        return entityToDto(repository.findById(id));
     }
 
     public CriterioevaluacionDTO create(CriterioevaluacionDTO dto) {

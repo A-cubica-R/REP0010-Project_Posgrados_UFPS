@@ -5,6 +5,7 @@
 package ufps.edu.co.rest.services;
 
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,6 +55,11 @@ public class CalificacioncriterioService extends GenericService<Calificacioncrit
 
     public Boolean existsByAspiranteAndCriterio(Integer idAspirante, Integer idCriterio) {
         return repository.existsByIdAspiranteAndIdCriterio(idAspirante, idCriterio);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<CalificacioncriterioDTO> findByIdAspiranteAndIdCriterio(Integer idAspirante, Integer idCriterio) {
+        return repository.findByIdAspiranteAndIdCriterio(idAspirante, idCriterio).map(entity -> entityToDto(entity));
     }
 
     public CalificacioncriterioDTO create(CalificacioncriterioDTO dto) {

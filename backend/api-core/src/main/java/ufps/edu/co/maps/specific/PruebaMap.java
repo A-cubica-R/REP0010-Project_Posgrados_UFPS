@@ -14,6 +14,7 @@ import ufps.edu.co.rest.dto.PruebaDTO;
 public class PruebaMap extends
         GlobalMapper<PRUEBA_CREATE, PRUEBA_UPDATE, PRUEBA_DELETE, PRUEBA_PATCH, PRUEBA_FIND, PruebaOutput, PruebaDTO> {
 
+    @Autowired private AspiranteMap aspiranteMap;
     @Autowired private CohorteMap cohorteMap;
     @Autowired private UbicacionMap ubicacionMap;
 
@@ -27,6 +28,7 @@ public class PruebaMap extends
         return PruebaDTO.builder()
                 .nombre(input.nombre())
                 .descripcion(input.descripcion())
+                .idAspirante(input.idAspirante())
                 .idCohorte(input.idCohorte())
                 .idUbicacion(input.idUbicacion())
                 .build();
@@ -38,6 +40,7 @@ public class PruebaMap extends
                 .id(input.id())
                 .nombre(input.nombre())
                 .descripcion(input.descripcion())
+                .idAspirante(input.idAspirante())
                 .idCohorte(input.idCohorte())
                 .idUbicacion(input.idUbicacion())
                 .build();
@@ -56,6 +59,7 @@ public class PruebaMap extends
                 .id(input.id())
                 .nombre(input.nombre())
                 .descripcion(input.descripcion())
+                .idAspirante(input.idAspirante())
                 .idCohorte(input.idCohorte())
                 .idUbicacion(input.idUbicacion())
                 .build();
@@ -75,8 +79,10 @@ public class PruebaMap extends
                 .id(dto.getId())
                 .nombre(dto.getNombre())
                 .descripcion(dto.getDescripcion())
+                .idAspirante(dto.getIdAspirante())
                 .idCohorte(dto.getIdCohorte())
                 .idUbicacion(dto.getIdUbicacion())
+                .aspirante(dto.getAspirante() != null ? aspiranteMap.toOutput(dto.getAspirante()) : null)
                 .cohorte(dto.getCohorte() != null ? cohorteMap.toOutput(dto.getCohorte()) : null)
                 .ubicacion(dto.getUbicacion() != null ? ubicacionMap.toOutput(dto.getUbicacion()) : null)
                 .build();

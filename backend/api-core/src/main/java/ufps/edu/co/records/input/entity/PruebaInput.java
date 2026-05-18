@@ -10,6 +10,7 @@ public enum PruebaInput {
     public record PRUEBA_CREATE(
             @NotBlank String nombre,
             String descripcion,
+            @NotNull Integer idAspirante,
             @NotNull Integer idCohorte,
             @NotNull Integer idUbicacion) implements CreateType {
     }
@@ -18,6 +19,7 @@ public enum PruebaInput {
             @NotNull Integer id,
             @NotBlank String nombre,
             String descripcion,
+            @NotNull Integer idAspirante,
             @NotNull Integer idCohorte,
             @NotNull Integer idUbicacion) implements UpdateType {
     }
@@ -26,6 +28,7 @@ public enum PruebaInput {
             @NotNull Integer id,
             String nombre,
             String descripcion,
+            Integer idAspirante,
             Integer idCohorte,
             Integer idUbicacion) implements PatchType {
     }

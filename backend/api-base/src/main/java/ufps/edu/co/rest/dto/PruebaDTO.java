@@ -29,16 +29,16 @@ public class PruebaDTO implements Serializable {
 
     //--- PRIMARY KEY 
     private Integer id ;
-    //--- OTHER DATA FIELDS 
+    //--- OTHER DATA FIELDS
     private String nombre ;
     private String descripcion ;
-    private Integer idAspirante ;
-    private Integer idCohorte ;
-    private Integer idUbicacion ;
+    private int idAspirante ;
+    private int idCohorte ;
+    private int idUbicacion ;
     //--- LINKS ( RELATIONSHIPS )
-    private AspiranteDTO aspirante ; 
-    private UbicacionDTO ubicacion ; 
-    private CohorteDTO cohorte ; 
+    private AspiranteDTO aspirante ;
+    private UbicacionDTO ubicacion ;
+    private CohorteDTO cohorte ;
     private List<ResultadopruebaDTO> resultadopruebaList ; 
 
     @Override

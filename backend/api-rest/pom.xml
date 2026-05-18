@@ -26,8 +26,8 @@
             <version>${project.version}</version>
         </dependency>
       
-      <dependency>
-        <groupId>ufps.edu.co</groupId>
+        <dependency>
+            <groupId>ufps.edu.co</groupId>
             <artifactId>mail-module</artifactId>
             <version>${project.version}</version>
         </dependency>

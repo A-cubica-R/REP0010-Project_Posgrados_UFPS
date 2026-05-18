@@ -55,4 +55,14 @@ public class AspiranteService extends GenericService<AspiranteEntity, AspiranteD
                 .orElseThrow(() -> new RuntimeException("Aspirante no encontrado con id: " + id));
         repository.deleteById(id);
     }
+
+    @Transactional(readOnly = true)
+    public List<AspiranteDTO> findWithDocuments() {
+        return entityListToDtoList(repository.findByDocumentoListIsNotEmpty());
+    }
+
+    @Transactional(readOnly = true)
+    public List<AspiranteDTO> findByCohorte(int idCohorte) {
+        return entityListToDtoList(repository.findByIdCohorte(idCohorte));
+    }
 }

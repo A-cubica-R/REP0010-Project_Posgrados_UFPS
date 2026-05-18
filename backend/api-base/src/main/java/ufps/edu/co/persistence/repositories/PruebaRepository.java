@@ -4,7 +4,10 @@
  */
 package ufps.edu.co.persistence.repositories;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import ufps.edu.co.persistence.entities.PruebaEntity;
@@ -37,15 +40,10 @@ import ufps.edu.co.persistence.entities.PruebaEntity;
 @Repository
 public interface PruebaRepository extends JpaRepository<PruebaEntity, Integer> {
 
-	// Insert specific finders here 
-
-	//List<PruebaEntity> findByXxx(String xxx);
-
-	//List<PruebaEntity> findByXxxStartingWith(String xxx);
-
-	//List<PruebaEntity> findByXxxContaining(String xxx);
-
-	//List<PruebaEntity> findByYyy(BigDecimal yyy);
-
-	//List<PruebaEntity> findByXxxContainingAndYyy(String xxx, BigDecimal yyy);
+	@Query("SELECT DISTINCT p FROM PruebaEntity p " +
+		   "LEFT JOIN FETCH p.aspirante a " +
+		   "LEFT JOIN FETCH a.persona " +
+		   "LEFT JOIN FETCH p.cohorte " +
+		   "LEFT JOIN FETCH p.ubicacion")
+	List<PruebaEntity> findAllWithRelations();
 }

@@ -119,14 +119,6 @@ public class PersonaEntity implements Serializable {
     private UbicacionEntity  ubicacion ; 
 
     @ManyToOne
-    @JoinColumn(name="id_ubicacionvivienda", referencedColumnName="id", insertable=false, updatable=false)
-    private UbicacionEntity  ubicacion2 ; 
-
-    @ManyToOne
-    @JoinColumn(name="id_ubicaciontrabajo", referencedColumnName="id", insertable=false, updatable=false)
-    private UbicacionEntity  ubicacion3 ; 
-
-    @ManyToOne
     @JoinColumn(name="id_grupoetnico", referencedColumnName="id", insertable=false, updatable=false)
     private GrupoetnicoEntity grupoetnico ; 
 

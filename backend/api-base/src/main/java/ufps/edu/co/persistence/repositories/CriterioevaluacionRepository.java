@@ -17,12 +17,20 @@ import ufps.edu.co.persistence.entities.CriterioevaluacionEntity;
  * This interface extends {@link JpaRepository}, so it automatically inherits
  * standard persistence operations, including:
  * <ul>
- *   <li> Create/update entities: {@link JpaRepository#save(Object)} and {@link JpaRepository#saveAll(Iterable)}</li>
- *   <li> Basic queries: {@link JpaRepository#findById(Object)}, {@link JpaRepository#findAll()}, and {@link JpaRepository#getReferenceById(Object)}</li>
- *   <li> Validation and counting: {@link JpaRepository#existsById(Object)} and {@link JpaRepository#count()}</li>
- *   <li> Deletion: {@link JpaRepository#deleteById(Object)}, {@link JpaRepository#delete(Object)}, and {@link JpaRepository#deleteAll()}</li>
- *   <li> Paging and sorting: {@link org.springframework.data.repository.PagingAndSortingRepository#findAll(org.springframework.data.domain.Pageable)}
- *     and {@link org.springframework.data.repository.PagingAndSortingRepository#findAll(org.springframework.data.domain.Sort)}</li>
+ * <li>Create/update entities: {@link JpaRepository#save(Object)} and
+ * {@link JpaRepository#saveAll(Iterable)}</li>
+ * <li>Basic queries: {@link JpaRepository#findById(Object)},
+ * {@link JpaRepository#findAll()}, and
+ * {@link JpaRepository#getReferenceById(Object)}</li>
+ * <li>Validation and counting: {@link JpaRepository#existsById(Object)} and
+ * {@link JpaRepository#count()}</li>
+ * <li>Deletion: {@link JpaRepository#deleteById(Object)},
+ * {@link JpaRepository#delete(Object)}, and
+ * {@link JpaRepository#deleteAll()}</li>
+ * <li>Paging and sorting:
+ * {@link org.springframework.data.repository.PagingAndSortingRepository#findAll(org.springframework.data.domain.Pageable)}
+ * and
+ * {@link org.springframework.data.repository.PagingAndSortingRepository#findAll(org.springframework.data.domain.Sort)}</li>
  * </ul>
  *
  * It can also be extended with derived query methods (findBy...),
@@ -39,17 +47,5 @@ import ufps.edu.co.persistence.entities.CriterioevaluacionEntity;
 @Repository
 public interface CriterioevaluacionRepository extends JpaRepository<CriterioevaluacionEntity, Integer> {
 
-	 List<CriterioevaluacionEntity> findByIdCohorte(Integer idCohorte);
-
-	// Insert specific finders here 
-
-	//List<CriterioevaluacionEntity> findByXxx(String xxx);
-
-	//List<CriterioevaluacionEntity> findByXxxStartingWith(String xxx);
-
-	//List<CriterioevaluacionEntity> findByXxxContaining(String xxx);
-
-	//List<CriterioevaluacionEntity> findByYyy(BigDecimal yyy);
-
-	//List<CriterioevaluacionEntity> findByXxxContainingAndYyy(String xxx, BigDecimal yyy);
+	List<CriterioevaluacionEntity> findByIdCohorte(Integer idCohorte);
 }

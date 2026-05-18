@@ -31,7 +31,7 @@ public class PruebaService extends GenericService<PruebaEntity, PruebaDTO> {
 
     @Transactional(readOnly = true)
     public List<PruebaDTO> findAll() {
-        return entityListToDtoList(repository.findAll());
+        return entityListToDtoList(repository.findAllWithRelations());
     }
 
     @Transactional(readOnly = true)

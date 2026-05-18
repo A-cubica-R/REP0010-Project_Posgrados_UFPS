@@ -11,7 +11,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import java.util.List;
 
 
 /**
@@ -49,25 +48,6 @@ public class UbicacionEntity implements Serializable {
 
     //--- LINKS ( RELATIONSHIPS )
     @OneToMany(mappedBy="ubicacion")
-    private List<DocumentopersonaEntity> documentopersonaList ; 
-
-    @OneToMany(mappedBy="ubicacion")
-    private List<EntrevistaEntity> entrevistaList ; 
-
-    @OneToMany
-    private List<PersonaEntity> personaList ; 
-
-    @OneToMany
-    private List<PersonaEntity> personaList2 ; 
-
-    @OneToMany
-    private List<PersonaEntity> personaList3 ; 
-
-    @OneToMany(mappedBy="ubicacion")
-    private List<PruebaEntity> pruebaList ; 
-
-    @OneToMany(mappedBy="ubicacion")
-    private List<SedeEntity> sedeList ; 
 
     @ManyToOne
     @JoinColumn(name="id_municipio", referencedColumnName="id", insertable=false, updatable=false)

@@ -39,6 +39,12 @@ public class EstadodocumentoService extends GenericService<EstadodocumentoEntity
         return entityToDto(repository.findById(id));
     }
 
+    @Transactional(readOnly = true)
+    public EstadodocumentoDTO findByEstado(String estado) {
+        return entityToDto(repository.findByEstado(estado)
+                .orElseThrow(() -> new RuntimeException("Estado de documento no encontrado: " + estado)));
+    }
+
     public EstadodocumentoDTO create(EstadodocumentoDTO dto) {
         return entityToDto(repository.save(dtoToEntity(dto)));
     }
