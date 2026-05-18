@@ -39,7 +39,7 @@ import ufps.edu.co.persistence.entities.AdministrativoEntity;
 @Repository
 public interface AdministrativoRepository extends JpaRepository<AdministrativoEntity, Integer> {
 
-	List<AdministrativoEntity> findByCargoNombreNot(List<String> nombre);
+	List<AdministrativoEntity> findByCargoNombreNotIn(List<String> nombres);
 
 	// Insert specific finders here 
 

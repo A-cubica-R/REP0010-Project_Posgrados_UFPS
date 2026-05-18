@@ -12,7 +12,8 @@ public class TipodocumentoMap extends
         GlobalMapper<TIPODOCUMENTO_CREATE, TIPODOCUMENTO_UPDATE, TIPODOCUMENTO_DELETE, TIPODOCUMENTO_PATCH, TIPODOCUMENTO_FIND, TipodocumentoOutput, TipodocumentoDTO> {
 
     public TipodocumentoMap() {
-        super(TIPODOCUMENTO_CREATE.class, TIPODOCUMENTO_UPDATE.class, TIPODOCUMENTO_DELETE.class, TIPODOCUMENTO_PATCH.class,
+        super(TIPODOCUMENTO_CREATE.class, TIPODOCUMENTO_UPDATE.class, TIPODOCUMENTO_DELETE.class,
+                TIPODOCUMENTO_PATCH.class,
                 TIPODOCUMENTO_FIND.class);
     }
 

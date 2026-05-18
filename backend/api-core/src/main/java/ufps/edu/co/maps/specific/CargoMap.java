@@ -2,7 +2,6 @@ package ufps.edu.co.maps.specific;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import ufps.edu.co.maps.GlobalMapper;
@@ -11,11 +10,8 @@ import ufps.edu.co.records.output.entity.CargoOutput;
 import ufps.edu.co.rest.dto.CargoDTO;
 
 @Component
-public class CargoMap extends GlobalMapper<CARGO_CREATE, CARGO_UPDATE, CARGO_DELETE, CARGO_PATCH, CARGO_FIND, CargoOutput, CargoDTO> {
-
-    @Autowired 
-    private FacultadMap facultadMap;
-    @Autowired private ProgramaMap programaMap;
+public class CargoMap
+        extends GlobalMapper<CARGO_CREATE, CARGO_UPDATE, CARGO_DELETE, CARGO_PATCH, CARGO_FIND, CargoOutput, CargoDTO> {
 
     public CargoMap() {
         super(CARGO_CREATE.class, CARGO_UPDATE.class, CARGO_DELETE.class, CARGO_PATCH.class, CARGO_FIND.class);
@@ -51,9 +47,12 @@ public class CargoMap extends GlobalMapper<CARGO_CREATE, CARGO_UPDATE, CARGO_DEL
     protected CargoDTO toDtoPatch(CARGO_PATCH input) {
         CargoDTO dto = new CargoDTO();
         dto.setId(input.id());
-        if (input.nombre() != null) dto.setNombre(input.nombre());
-        if (input.descripcion() != null) dto.setDescripcion(input.descripcion());
-        if (input.idPrograma() != null) dto.setIdPrograma(input.idPrograma());
+        if (input.nombre() != null)
+            dto.setNombre(input.nombre());
+        if (input.descripcion() != null)
+            dto.setDescripcion(input.descripcion());
+        if (input.idPrograma() != null)
+            dto.setIdPrograma(input.idPrograma());
         return dto;
     }
 
@@ -66,7 +65,12 @@ public class CargoMap extends GlobalMapper<CARGO_CREATE, CARGO_UPDATE, CARGO_DEL
 
     @Override
     public CargoOutput toOutput(CargoDTO dto) {
-        if (dto == null) return null;
+        if (dto == null)
+            return null;
+
+        FacultadMap facultadMap = new FacultadMap();
+        ProgramaMap programaMap = new ProgramaMap();
+
         return CargoOutput.builder()
                 .id(dto.getId())
                 .nombre(dto.getNombre())

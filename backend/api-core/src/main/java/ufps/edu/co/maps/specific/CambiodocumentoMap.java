@@ -1,7 +1,6 @@
 package ufps.edu.co.maps.specific;
 
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ufps.edu.co.maps.GlobalMapper;
 import ufps.edu.co.records.input.entity.CambiodocumentoInput.*;
@@ -12,10 +11,9 @@ import ufps.edu.co.rest.dto.CambiodocumentoDTO;
 public class CambiodocumentoMap extends
         GlobalMapper<CAMBIODOCUMENTO_CREATE, CAMBIODOCUMENTO_UPDATE, CAMBIODOCUMENTO_DELETE, CAMBIODOCUMENTO_PATCH, CAMBIODOCUMENTO_FIND, CambiodocumentoOutput, CambiodocumentoDTO> {
 
-    @Autowired private DocumentoMap documentoMap;
-
     public CambiodocumentoMap() {
-        super(CAMBIODOCUMENTO_CREATE.class, CAMBIODOCUMENTO_UPDATE.class, CAMBIODOCUMENTO_DELETE.class, CAMBIODOCUMENTO_PATCH.class,
+        super(CAMBIODOCUMENTO_CREATE.class, CAMBIODOCUMENTO_UPDATE.class, CAMBIODOCUMENTO_DELETE.class,
+                CAMBIODOCUMENTO_PATCH.class,
                 CAMBIODOCUMENTO_FIND.class);
     }
 
@@ -70,6 +68,8 @@ public class CambiodocumentoMap extends
         if (dto == null) {
             return null;
         }
+        DocumentoMap documentoMap = new DocumentoMap();
+        
         return CambiodocumentoOutput.builder()
                 .id(dto.getId())
                 .documentoAnterior(dto.getDocumento2() != null ? documentoMap.toOutput(dto.getDocumento2()) : null)

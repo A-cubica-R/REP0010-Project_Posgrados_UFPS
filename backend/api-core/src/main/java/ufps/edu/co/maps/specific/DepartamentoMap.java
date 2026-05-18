@@ -1,6 +1,5 @@
 package ufps.edu.co.maps.specific;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ufps.edu.co.maps.GlobalMapper;
 import ufps.edu.co.records.input.entity.DepartamentoInput.*;
@@ -12,11 +11,6 @@ import java.util.List;
 @Component
 public class DepartamentoMap extends
         GlobalMapper<DEPARTAMENTO_CREATE, DEPARTAMENTO_UPDATE, DEPARTAMENTO_DELETE, DEPARTAMENTO_PATCH, DEPARTAMENTO_FIND, DepartamentoOutput, DepartamentoDTO> {
-
-    @Autowired
-    private PaisMap paisMap;
-    @Autowired
-    private MunicipioMap municipioMap;
 
     public DepartamentoMap() {
         super(DEPARTAMENTO_CREATE.class, DEPARTAMENTO_UPDATE.class, DEPARTAMENTO_DELETE.class, DEPARTAMENTO_PATCH.class,
@@ -72,6 +66,10 @@ public class DepartamentoMap extends
     public DepartamentoOutput toOutput(DepartamentoDTO dto) {
         if (dto == null)
             return null;
+
+        PaisMap paisMap = new PaisMap();
+        MunicipioMap municipioMap = new MunicipioMap();
+
         return DepartamentoOutput.builder()
                 .id(dto.getId())
                 .nombre(dto.getNombre())

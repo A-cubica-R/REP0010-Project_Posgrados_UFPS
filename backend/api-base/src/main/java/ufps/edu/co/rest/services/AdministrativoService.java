@@ -58,9 +58,9 @@ public class AdministrativoService extends GenericService<AdministrativoEntity, 
 
     public List<AdministrativoDTO> findPosiblesDirectores() {
 
-        List<String> nombres = List.of("Director de Facultad", "Director de Programa", "Administrador", "Super administrador");
+        List<String> nombres = List.of("DIRECTOR DE FACULTAD", "DIRECTOR DE PROGRAMA", "ADMINISTADOR", "SUPER ADMINISTRADOR");
 
-        List<AdministrativoEntity> entities = repository.findByCargoNombreNot(nombres);
+        List<AdministrativoEntity> entities = repository.findByCargoNombreNotIn(nombres);
 
         return entityListToDtoList(entities);
     }

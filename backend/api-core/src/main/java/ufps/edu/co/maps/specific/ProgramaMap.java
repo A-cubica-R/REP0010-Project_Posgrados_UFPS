@@ -2,7 +2,6 @@ package ufps.edu.co.maps.specific;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import ufps.edu.co.maps.GlobalMapper;
@@ -14,10 +13,6 @@ import ufps.edu.co.rest.dto.ProgramaDTO;
 @Component
 public class ProgramaMap extends
         GlobalMapper<PROGRAMA_CREATE, PROGRAMA_UPDATE, PROGRAMA_DELETE, PROGRAMA_PATCH, PROGRAMA_FIND, ProgramaOutput, ProgramaDTO> {
-
-    @Autowired private SedeMap sedeMap;
-    @Autowired private FacultadMap facultadMap;
-    @Autowired private OtrosvaloresMap otrosvaloresMap;
 
     public ProgramaMap() {
         super(PROGRAMA_CREATE.class, PROGRAMA_UPDATE.class, PROGRAMA_DELETE.class, PROGRAMA_PATCH.class,
@@ -77,20 +72,34 @@ public class ProgramaMap extends
     protected ProgramaDTO toDtoPatch(PROGRAMA_PATCH input) {
         ProgramaDTO dto = new ProgramaDTO();
         dto.setId(input.id());
-        if (input.codigo() != null) dto.setCodigo(input.codigo());
-        if (input.nombre() != null) dto.setNombre(input.nombre());
-        if (input.semestres() != null) dto.setDuracion(input.semestres());
-        if (input.correo() != null) dto.setCorreo(input.correo());
-        if (input.registrosnies() != null) dto.setRegistrosnies(input.registrosnies());
-        if (input.nivelformacion() != null) dto.setNivelformacion(input.nivelformacion());
-        if (input.titulo() != null) dto.setTitulo(input.titulo());
-        if (input.rcmineducacion() != null) dto.setRcmineducacion(input.rcmineducacion());
-        if (input.creditos() != null) dto.setCreditos(input.creditos());
-        if (input.periodicidad() != null) dto.setPeriodicidad(input.periodicidad());
-        if (input.valormatricula() != null) dto.setValormatricula(input.valormatricula());
-        if (input.idSede() != null) dto.setIdSede(input.idSede());
-        if (input.idFacultad() != null) dto.setIdFacultad(input.idFacultad());
-        if (input.idOtros() != null) dto.setIdOtros(input.idOtros());
+        if (input.codigo() != null)
+            dto.setCodigo(input.codigo());
+        if (input.nombre() != null)
+            dto.setNombre(input.nombre());
+        if (input.semestres() != null)
+            dto.setDuracion(input.semestres());
+        if (input.correo() != null)
+            dto.setCorreo(input.correo());
+        if (input.registrosnies() != null)
+            dto.setRegistrosnies(input.registrosnies());
+        if (input.nivelformacion() != null)
+            dto.setNivelformacion(input.nivelformacion());
+        if (input.titulo() != null)
+            dto.setTitulo(input.titulo());
+        if (input.rcmineducacion() != null)
+            dto.setRcmineducacion(input.rcmineducacion());
+        if (input.creditos() != null)
+            dto.setCreditos(input.creditos());
+        if (input.periodicidad() != null)
+            dto.setPeriodicidad(input.periodicidad());
+        if (input.valormatricula() != null)
+            dto.setValormatricula(input.valormatricula());
+        if (input.idSede() != null)
+            dto.setIdSede(input.idSede());
+        if (input.idFacultad() != null)
+            dto.setIdFacultad(input.idFacultad());
+        if (input.idOtros() != null)
+            dto.setIdOtros(input.idOtros());
         return dto;
     }
 
@@ -103,7 +112,13 @@ public class ProgramaMap extends
 
     @Override
     public ProgramaOutput toOutput(ProgramaDTO dto) {
-        if (dto == null) return null;
+        if (dto == null)
+            return null;
+
+        SedeMap sedeMap = new SedeMap();
+        FacultadMap facultadMap = new FacultadMap();
+        OtrosvaloresMap otrosvaloresMap = new OtrosvaloresMap();
+
         return ProgramaOutput.builder()
                 .id(dto.getId())
                 .codigo(dto.getCodigo())
