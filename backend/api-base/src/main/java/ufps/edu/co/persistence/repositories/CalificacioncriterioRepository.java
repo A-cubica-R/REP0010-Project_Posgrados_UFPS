@@ -5,6 +5,7 @@
 package ufps.edu.co.persistence.repositories;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -39,7 +40,7 @@ import ufps.edu.co.persistence.entities.CalificacioncriterioEntity;
 @Repository
 public interface CalificacioncriterioRepository extends JpaRepository<CalificacioncriterioEntity, Integer> {
 
-	CalificacioncriterioEntity findByIdAspiranteAndIdCriterio(Integer idAspirante, Integer idCriterio);
+	Optional<CalificacioncriterioEntity> findByIdAspiranteAndIdCriterio(Integer idAspirante, Integer idCriterio);
 
 	Boolean existsByIdAspiranteAndIdCriterio(Integer idAspirante, Integer idCriterio);
 

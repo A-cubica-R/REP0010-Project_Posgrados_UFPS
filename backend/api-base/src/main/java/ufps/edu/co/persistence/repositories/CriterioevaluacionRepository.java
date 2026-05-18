@@ -5,11 +5,10 @@
 package ufps.edu.co.persistence.repositories;
 
 import java.util.List;
-import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import ufps.edu.co.persistence.entities.AdmitidoEntity;
 import ufps.edu.co.persistence.entities.CriterioevaluacionEntity;
 
 /**
@@ -49,8 +48,4 @@ import ufps.edu.co.persistence.entities.CriterioevaluacionEntity;
 public interface CriterioevaluacionRepository extends JpaRepository<CriterioevaluacionEntity, Integer> {
 
 	List<CriterioevaluacionEntity> findByIdCohorte(Integer idCohorte);
-
-	Optional<AdmitidoEntity> findByIdCohorteAndIdAspirante(Integer idCohorte, Integer idAspirante);
-
-	boolean existsByIdCohorteAndIdAspirante(Integer idCohorte, Integer idAspirante);
 }

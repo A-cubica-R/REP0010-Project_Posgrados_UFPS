@@ -65,8 +65,9 @@ public class ModelMapperConfig {
         // Prueba ↔ Resultadoprueba
         mapper.createTypeMap(PruebaEntity.class, PruebaDTO.class)
               .addMappings(m -> m.skip(PruebaDTO::setResultadopruebaList));
-        mapper.createTypeMap(ResultadopruebaEntity.class, ResultadopruebaDTO.class)
-              .addMappings(m -> m.skip(ResultadopruebaDTO::setPrueba));
+        mapper.emptyTypeMap(ResultadopruebaEntity.class, ResultadopruebaDTO.class)
+              .addMappings(m -> m.skip(ResultadopruebaDTO::setPrueba))
+              .implicitMappings();
 
         return mapper;
     }
