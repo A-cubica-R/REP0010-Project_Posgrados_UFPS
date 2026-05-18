@@ -55,4 +55,9 @@ public class CohorteService extends GenericService<CohorteEntity, CohorteDTO> {
                 .orElseThrow(() -> new RuntimeException("Cohorte no encontrado con id: " + id));
         repository.deleteById(id);
     }
+
+    @Transactional(readOnly = true)
+    public long countAspirantesEnProcesoEnCohorteAbierta(Integer cohorteId) {
+        return repository.countAspirantesEnProcesoEnCohorteAbierta(cohorteId);
+    }
 }
