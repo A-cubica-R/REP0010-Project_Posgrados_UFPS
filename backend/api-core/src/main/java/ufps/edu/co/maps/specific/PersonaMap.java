@@ -104,7 +104,7 @@ public class PersonaMap extends
                 .fechanacimiento(dto.getFechanacimiento())
                 .celular(dto.getCelular())
                 .telefono(dto.getTelefono())
-                .egresadoufps(dto.isEgresadoufps())
+                .egresadoufps(dto.getEgresadoufps())
                 .empresa(dto.getEmpresa())
                 .experiencialaboral(dto.getExperiencialaboral())
                 .promediopregrado(dto.getPromediopregrado())

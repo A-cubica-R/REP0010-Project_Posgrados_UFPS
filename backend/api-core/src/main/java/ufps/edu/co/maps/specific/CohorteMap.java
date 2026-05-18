@@ -1,8 +1,6 @@
 package ufps.edu.co.maps.specific;
 
 import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import ufps.edu.co.maps.GlobalMapper;
@@ -13,17 +11,6 @@ import ufps.edu.co.records.output.entity.CohorteOutput;
 @Component
 public class CohorteMap extends
         GlobalMapper<COHORTE_CREATE, COHORTE_UPDATE, COHORTE_DELETE, COHORTE_PATCH, COHORTE_FIND, CohorteOutput, CohorteDTO> {
-
-    @Autowired private EstadoMap estadoMap;
-    @Autowired private ModalidadMap modalidadMap;
-    @Autowired private PlazoMap plazoMap;
-    @Autowired private ProgramaMap programaMap;
-    @Autowired private SemestreMap semestreMap;
-
-    public CohorteMap() {
-        super(COHORTE_CREATE.class, COHORTE_UPDATE.class, COHORTE_DELETE.class, COHORTE_PATCH.class,
-                COHORTE_FIND.class);
-    }
 
     @Override
     protected CohorteDTO toDtoCreate(COHORTE_CREATE input) {
@@ -94,28 +81,50 @@ public class CohorteMap extends
 
     @Override
     public CohorteOutput toOutput(CohorteDTO dto) {
-        if (dto == null) return null;
-        return CohorteOutput.builder()
-                .id(dto.getId())
-                .nombre(dto.getNombre())
-                .cupos(dto.getCupos())
-                .requiereentrevista(dto.isRequiereentrevista())
-                .requiereprueba(dto.isRequiereprueba())
-                .idEstado(dto.getIdEstado())
-                .idSemestre(dto.getIdSemestre())
-                .idModalidad(dto.getIdModalidad())
-                .idPlazodocumentacion(dto.getIdPlazodocumentacion())
-                .idPlazoinscripcion(dto.getIdPlazoinscripcion())
-                .idPlazopago(dto.getIdPlazopago())
-                .idPrograma(dto.getIdPrograma())
-                .estado(dto.getEstado() != null ? estadoMap.toOutput(dto.getEstado()) : null)
-                .semestre(dto.getSemestre() != null ? semestreMap.toOutput(dto.getSemestre()) : null)
-                .modalidad(dto.getModalidad() != null ? modalidadMap.toOutput(dto.getModalidad()) : null)
-                .plazodocumentacion(dto.getPlazo() != null ? plazoMap.toOutput(dto.getPlazo()) : null)
-                .plazoinscripcion(dto.getPlazo2() != null ? plazoMap.toOutput(dto.getPlazo2()) : null)
-                .plazopago(dto.getPlazo3() != null ? plazoMap.toOutput(dto.getPlazo3()) : null)
-                .programa(dto.getPrograma() != null ? programaMap.toOutput(dto.getPrograma()) : null)
-                .build();
+        if (dto != null) {
+            ModalidadMap modalidadMap = new ModalidadMap();
+            EstadoMap estadoMap = new EstadoMap();
+            PlazoMap plazoMap = new PlazoMap();
+            ProgramaMap programaMap = new ProgramaMap();
+            SemestreMap semestreMap = new SemestreMap();
+            return CohorteOutput.builder()
+                    .id(dto.getId())
+                    .nombre(dto.getNombre())
+                    .cupos(dto.getCupos())
+                    .requiereentrevista(dto.getRequiereentrevista())
+                    .requiereprueba(dto.getRequiereprueba())
+                    .idEstado(dto.getIdEstado())
+                    .idSemestre(dto.getIdSemestre())
+                    .idModalidad(dto.getIdModalidad())
+                    .idPlazodocumentacion(dto.getIdPlazodocumentacion())
+                    .idPlazoinscripcion(dto.getIdPlazoinscripcion())
+                    .idPlazopago(dto.getIdPlazopago())
+                    .idPrograma(dto.getIdPrograma())
+                    .estado(dto.getEstado() != null ? (
+                            estadoMap.toOutput(dto.getEstado())
+                        ) : null)
+                    .semestre(dto.getSemestre() != null ? (
+                            semestreMap.toOutput(dto.getSemestre())
+                        ) : null)
+                    .modalidad(
+                        dto.getModalidad() != null ? (
+                            modalidadMap.toOutput(dto.getModalidad())
+                        ) : null)
+                    .plazodocumentacion(dto.getPlazo() != null ? (
+                            plazoMap.toOutput(dto.getPlazo())
+                        ) : null)
+                    .plazoinscripcion(dto.getPlazo2() != null ? (
+                            plazoMap.toOutput(dto.getPlazo2())
+                        ) : null)
+                    .plazopago(dto.getPlazo3() != null ? (
+                            plazoMap.toOutput(dto.getPlazo3())
+                        ) : null)
+                    .programa(dto.getPrograma() != null ? (
+                            programaMap.toOutput(dto.getPrograma())
+                        ) : null)
+                    .build();
+        }
+        return null;
     }
 
     public List<CohorteOutput> toOutputList(List<CohorteDTO> dtoList) {

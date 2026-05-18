@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -61,7 +62,8 @@ public class SuperAdminEndpointCatalogCase {
 
         private final RequestMappingHandlerMapping handlerMapping;
 
-        SuperAdminEndpointCatalogService(RequestMappingHandlerMapping handlerMapping) {
+        SuperAdminEndpointCatalogService(
+                @Qualifier("requestMappingHandlerMapping") RequestMappingHandlerMapping handlerMapping) {
             this.handlerMapping = handlerMapping;
         }
 

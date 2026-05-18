@@ -34,6 +34,6 @@ public record CohorteOutput(
     PlazoOutput plazopago,
     ProgramaOutput programa,
     List<AspiranteOutput> aspiranteList,
-    List<CriterioaceptacionOutput> criterioaceptacionList,
+    List<CriterioevaluacionOutput> criterioevaluacionList,
     List<PruebaOutput> pruebaList
 ) implements OutputResponse {}
