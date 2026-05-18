@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class RoleNameNormalizer {
 
-    public String normalize(String roleName) {
+    public static String normalize(String roleName) {
         if (roleName == null) {
             return "";
         }

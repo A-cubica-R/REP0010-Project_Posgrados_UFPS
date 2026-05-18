@@ -6,6 +6,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -15,6 +16,7 @@ import ufps.edu.co.auth.contract.RefreshTokenUseCase;
 import ufps.edu.co.auth.exception.InvalidCredentialsException;
 import ufps.edu.co.auth.exception.InvalidTokenException;
 import ufps.edu.co.auth.exception.MissingCredentialsException;
+import ufps.edu.co.auth.exception.RoleMismatchException;
 import ufps.edu.co.auth.records.input.LoginInput;
 import ufps.edu.co.auth.records.input.RefreshTokenInput;
 import ufps.edu.co.auth.records.output.LoginOutput;
@@ -30,13 +32,17 @@ public class AuthController {
     private RefreshTokenUseCase refreshTokenUseCase;
 
     @PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<LoginOutput> login(@RequestBody @Valid LoginInput input) {
+    public ResponseEntity<LoginOutput> login(
+            @RequestBody @Valid LoginInput input,
+            @RequestHeader(name = "X-Login-Role") String requestedRole) {
         try {
-            return ResponseEntity.ok(authenticationUseCase.login(input));
+            return ResponseEntity.ok(authenticationUseCase.login(input, requestedRole));
         } catch (MissingCredentialsException ex) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         } catch (InvalidCredentialsException ex) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        } catch (RoleMismatchException ex) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
     }
 

@@ -6,10 +6,12 @@ import ufps.edu.co.auth.contract.AuthenticationUseCase;
 import ufps.edu.co.auth.contract.TokenIssuer;
 import ufps.edu.co.auth.exception.InvalidCredentialsException;
 import ufps.edu.co.auth.exception.MissingCredentialsException;
+import ufps.edu.co.auth.exception.RoleMismatchException;
 import ufps.edu.co.auth.model.AuthPrincipal;
 import ufps.edu.co.auth.records.input.LoginInput;
 import ufps.edu.co.auth.records.output.LoginOutput;
 import ufps.edu.co.auth.service.CredentialService;
+import ufps.edu.co.auth.service.RoleNameNormalizer;
 
 @Service
 public class AuthenticationProcessor implements AuthenticationUseCase {
@@ -24,6 +26,11 @@ public class AuthenticationProcessor implements AuthenticationUseCase {
 
     @Override
     public LoginOutput login(LoginInput input) {
+        return login(input, null);
+    }
+
+    @Override
+    public LoginOutput login(LoginInput input, String requestedRole) {
         if (input == null) {
             throw new MissingCredentialsException();
         }
@@ -36,6 +43,21 @@ public class AuthenticationProcessor implements AuthenticationUseCase {
             throw new InvalidCredentialsException();
         }
 
+        if (requestedRole != null && !requestedRole.isBlank()) {
+            validateUserRoleMatchesRequested(principal, requestedRole);
+        }
+
         return tokenIssuer.issueTokens(principal);
+    }
+
+    private void validateUserRoleMatchesRequested(AuthPrincipal principal, String requestedRole) {
+        String normalizedRequestedRole = RoleNameNormalizer.normalize(requestedRole);
+        boolean hasRole = principal.roles().stream()
+                .anyMatch(role -> RoleNameNormalizer.normalize(role).equals(normalizedRequestedRole));
+
+        if (!hasRole) {
+            throw new RoleMismatchException(
+                    "User does not have the requested role: " + requestedRole);
+        }
     }
 }
