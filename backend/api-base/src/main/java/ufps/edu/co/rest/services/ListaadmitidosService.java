@@ -9,9 +9,10 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ufps.edu.co.persistence.entities.ListaadmitidosEntity;
-import ufps.edu.co.persistence.repositories.ListaadmitidosRepository;
-import ufps.edu.co.rest.dto.ListaadmitidosDTO;
+
+import ufps.edu.co.persistence.entities.AdmitidoEntity;
+import ufps.edu.co.persistence.repositories.AdmitidoRepository;
+import ufps.edu.co.rest.dto.AdmitidoDTO;
 import ufps.edu.co.rest.services.commons.GenericService;
 
 /**
@@ -21,49 +22,49 @@ import ufps.edu.co.rest.services.commons.GenericService;
  */
 @Service
 @Transactional
-public class ListaadmitidosService extends GenericService<ListaadmitidosEntity, ListaadmitidosDTO> {
+public class ListaadmitidosService extends GenericService<AdmitidoEntity, AdmitidoDTO> {
 
     @Autowired
-    private ListaadmitidosRepository repository;
+    private AdmitidoRepository repository;
 
     public ListaadmitidosService() {
-        super(ListaadmitidosEntity.class, ListaadmitidosDTO.class);
+        super(AdmitidoEntity.class, AdmitidoDTO.class);
     }
 
     @Transactional(readOnly = true)
-    public List<ListaadmitidosDTO> findAll() {
+    public List<AdmitidoDTO> findAll() {
         return entityListToDtoList(repository.findAll());
     }
 
     @Transactional(readOnly = true)
-    public ListaadmitidosDTO findById(Integer id) {
+    public AdmitidoDTO findById(Integer id) {
         return entityToDto(repository.findById(id));
     }
 
-    public ListaadmitidosDTO create(ListaadmitidosDTO dto) {
+    public AdmitidoDTO create(AdmitidoDTO dto) {
         return entityToDto(repository.save(dtoToEntity(dto)));
     }
 
-    public ListaadmitidosDTO update(Integer id, ListaadmitidosDTO dto) {
+    public AdmitidoDTO update(Integer id, AdmitidoDTO dto) {
         repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Listaadmitidos no encontrado con id: " + id));
+                .orElseThrow(() -> new RuntimeException("Admitido no encontrado con id: " + id));
         dto.setId(id);
         return entityToDto(repository.save(dtoToEntity(dto)));
     }
 
     public void deleteById(Integer id) {
         repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Listaadmitidos no encontrado con id: " + id));
+                .orElseThrow(() -> new RuntimeException("Admitido no encontrado con id: " + id));
         repository.deleteById(id);
     }
 
     @Transactional(readOnly = true)
-    public List<ListaadmitidosDTO> findByIdCohorte(Integer idCohorte) {
+    public List<AdmitidoDTO> findByIdCohorte(Integer idCohorte) {
         return entityListToDtoList(repository.findByIdCohorte(idCohorte));
     }
 
     @Transactional(readOnly = true)
-    public Optional<ListaadmitidosDTO> findByIdCohorteAndIdAspirante(Integer idCohorte, Integer idAspirante) {
+    public Optional<AdmitidoDTO> findByIdCohorteAndIdAspirante(Integer idCohorte, Integer idAspirante) {
         return repository.findByIdCohorteAndIdAspirante(idCohorte, idAspirante)
                 .map(entity -> entityToDto(entity));
     }
@@ -74,9 +75,9 @@ public class ListaadmitidosService extends GenericService<ListaadmitidosEntity, 
     }
 
     public void deleteByIdCohorteAndIdAspirante(Integer idCohorte, Integer idAspirante) {
-        ListaadmitidosEntity entity = repository.findByIdCohorteAndIdAspirante(idCohorte, idAspirante)
+        AdmitidoEntity entity = repository.findByIdCohorteAndIdAspirante(idCohorte, idAspirante)
                 .orElseThrow(() -> new RuntimeException(
-                        "Listaadmitidos no encontrado para cohorte: " + idCohorte + ", aspirante: " + idAspirante));
+                        "Admitido no encontrado para cohorte: " + idCohorte + ", aspirante: " + idAspirante));
         repository.deleteById(entity.getId());
     }
 }

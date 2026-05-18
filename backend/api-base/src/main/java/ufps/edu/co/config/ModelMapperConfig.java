@@ -38,8 +38,8 @@ public class ModelMapperConfig {
         mapper.createTypeMap(CohorteEntity.class, CohorteDTO.class)
               .addMappings(m -> {
                   m.skip(CohorteDTO::setAspiranteList);
-                  m.skip(CohorteDTO::setListaadmitidosList);
-                  m.skip(CohorteDTO::setCriterioaceptacionList);
+                  m.skip(CohorteDTO::setAdmitidoList);
+                  m.skip(CohorteDTO::setCriterioevaluacionList);
                   m.skip(CohorteDTO::setPruebaList);
               });
 
@@ -49,7 +49,7 @@ public class ModelMapperConfig {
                   m.skip(AspiranteDTO::setCalificacioncriterioList);
                   m.skip(AspiranteDTO::setDocumentoList);
                   m.skip(AspiranteDTO::setEntrevistaList);
-                  m.skip(AspiranteDTO::setListaadmitidosList);
+                  m.skip(AspiranteDTO::setAdmitidoList);
                   m.skip(AspiranteDTO::setPagoList);
                   m.skip(AspiranteDTO::setResultadopruebaList);
               });

@@ -1,6 +1,8 @@
 package ufps.edu.co.maps;
 
 import lombok.AllArgsConstructor;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import ufps.edu.co.records.InputRequest;
 import ufps.edu.co.records.OutputResponse;
 import ufps.edu.co.records.contracts.CreateType;
@@ -10,20 +12,51 @@ import ufps.edu.co.records.contracts.PatchType;
 import ufps.edu.co.records.contracts.UpdateType;
 
 @AllArgsConstructor
-public abstract class GlobalMapper<
-    C extends CreateType, 
-    U extends UpdateType, 
-    D extends DeleteType,
-    P extends PatchType,
-    F extends FindType,
-    O extends OutputResponse, 
-    DTO> {
+public abstract class GlobalMapper<C extends CreateType, U extends UpdateType, D extends DeleteType, P extends PatchType, F extends FindType, O extends OutputResponse, DTO> {
 
-    private final Class<C> createClass;
-    private final Class<U> updateClass;
-    private final Class<D> deleteClass;
-    private final Class<P> patchClass;
-    private final Class<F> findClass;
+    private Class<C> createClass;
+    private Class<U> updateClass;
+    private Class<D> deleteClass;
+    private Class<P> patchClass;
+    private Class<F> findClass;
+
+    /**
+     * WARNING
+     * DESHACERNOS DE ESTE BLOQUE SI LLEGA A HABER ERRORES CON LOS MAPEADORES
+     */
+    /**
+     * No-arg constructor: intenta inferir las clases genéricas de la subclase
+     * para evitar tener que pasar manualmente los Class en cada subclase.
+     */
+    protected GlobalMapper() {
+        Type superType = getClass().getGenericSuperclass();
+        if (superType instanceof ParameterizedType) {
+            Type[] args = ((ParameterizedType) superType).getActualTypeArguments();
+            this.createClass = asClass(args, 0);
+            this.updateClass = asClass(args, 1);
+            this.deleteClass = asClass(args, 2);
+            this.patchClass = asClass(args, 3);
+            this.findClass = asClass(args, 4);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T> Class<T> asClass(Type[] args, int index) {
+        if (args == null || args.length <= index)
+            return null;
+        Type t = args[index];
+        if (t instanceof Class)
+            return (Class<T>) t;
+        if (t instanceof ParameterizedType)
+            return (Class<T>) ((ParameterizedType) t).getRawType();
+        return null;
+    }
+
+    /**
+     * FIN DE BLOQUE DE INFERENCIA AUTOMÁTICA DE CLASES GENÉRICAS, NO ELIMINAR LO
+     * QUE HAY MÁS ABAJO SI HAY ERRORES EN LOS MAPEADORES, SOLO ESTE BLOQUE DE
+     * ARRIBA SI ES NECESARIO
+     */
 
     /**
      * Método final que realiza el dispatch centralizado.

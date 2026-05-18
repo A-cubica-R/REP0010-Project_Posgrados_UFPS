@@ -6,7 +6,7 @@ import lombok.Builder;
 import ufps.edu.co.records.OutputResponse;
 
 @Builder
-public record CriterioaceptacionOutput(
+public record CriterioevaluacionOutput(
         Integer id,
         String nombre,
         String descripcion,

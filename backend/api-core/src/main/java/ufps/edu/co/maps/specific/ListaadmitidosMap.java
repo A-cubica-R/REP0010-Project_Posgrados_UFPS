@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import ufps.edu.co.records.output.entity.ListaadmitidosOutput;
-import ufps.edu.co.rest.dto.ListaadmitidosDTO;
+import ufps.edu.co.rest.dto.AdmitidoDTO;;
 
 @Component
 public class ListaadmitidosMap {
@@ -12,7 +12,7 @@ public class ListaadmitidosMap {
     @Autowired private AspiranteMap aspiranteMap;
     @Autowired private CohorteMap cohorteMap;
 
-    public ListaadmitidosOutput toOutput(ListaadmitidosDTO dto) {
+    public ListaadmitidosOutput toOutput(AdmitidoDTO dto) {
         if (dto == null) return null;
         return ListaadmitidosOutput.builder()
                 .id(dto.getId())

@@ -1,4 +1,4 @@
-package ufps.edu.co.controllers.cases;
+package ufps.edu.co.controllers.cases.sede;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

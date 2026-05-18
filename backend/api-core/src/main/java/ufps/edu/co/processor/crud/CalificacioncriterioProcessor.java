@@ -14,10 +14,10 @@ import ufps.edu.co.records.input.entity.CalificacioncriterioInput.*;
 import ufps.edu.co.records.output.entity.CalificacioncriterioOutput;
 import ufps.edu.co.rest.dto.AspiranteDTO;
 import ufps.edu.co.rest.dto.CalificacioncriterioDTO;
-import ufps.edu.co.rest.dto.CriterioaceptacionDTO;
+import ufps.edu.co.rest.dto.CriterioevaluacionDTO;
 import ufps.edu.co.rest.services.AspiranteService;
 import ufps.edu.co.rest.services.CalificacioncriterioService;
-import ufps.edu.co.rest.services.CriterioaceptacionService;
+import ufps.edu.co.rest.services.CriterioevaluacionService;
 import ufps.edu.co.usecase.GlobalUseCase;
 
 @Service
@@ -31,7 +31,7 @@ public class CalificacioncriterioProcessor implements
     private CalificacioncriterioMap map;
 
     @Autowired
-    private CriterioaceptacionService criterioaceptacionService;
+    private CriterioevaluacionService criterioaceptacionService;
 
     @Autowired
     private AspiranteService aspiranteService;
@@ -44,7 +44,7 @@ public class CalificacioncriterioProcessor implements
         }
         try {
             CalificacioncriterioDTO dto = map.toDto(input);
-            CriterioaceptacionDTO criterio = criterioaceptacionService.findById(input.idCriterio());
+            CriterioevaluacionDTO criterio = criterioaceptacionService.findById(input.idCriterio());
             dto.setPesoSnapshot(criterio.getPeso());
             CalificacioncriterioOutput output = map.toOutput(service.create(dto));
             recalcularPuntuacionAspirante(input.idAspirante());
@@ -60,7 +60,7 @@ public class CalificacioncriterioProcessor implements
     public CalificacioncriterioOutput update(CALIFICACIONCRITERIO_UPDATE input) {
         try {
             CalificacioncriterioDTO dto = map.toDto(input);
-            CriterioaceptacionDTO criterio = criterioaceptacionService.findById(input.idCriterio());
+            CriterioevaluacionDTO criterio = criterioaceptacionService.findById(input.idCriterio());
             dto.setPesoSnapshot(criterio.getPeso());
             CalificacioncriterioOutput output = map.toOutput(service.update(input.id(), dto));
             recalcularPuntuacionAspirante(input.idAspirante());

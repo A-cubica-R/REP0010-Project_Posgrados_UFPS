@@ -17,7 +17,7 @@ import ufps.edu.co.records.output.entity.ListaadmitidosOutput;
 import ufps.edu.co.rest.dto.AdministrativoDTO;
 import ufps.edu.co.rest.dto.AspiranteDTO;
 import ufps.edu.co.rest.dto.CohorteDTO;
-import ufps.edu.co.rest.dto.ListaadmitidosDTO;
+import ufps.edu.co.rest.dto.AdmitidoDTO;
 import ufps.edu.co.rest.services.AdministrativoService;
 import ufps.edu.co.rest.services.AspiranteService;
 import ufps.edu.co.rest.services.CohorteService;
@@ -55,7 +55,7 @@ public class ListaadmitidosProcessor {
         LocalDate today = LocalDate.now();
         return admitidos.stream()
                 .map(a -> {
-                    ListaadmitidosDTO dto = new ListaadmitidosDTO();
+                    AdmitidoDTO dto = new AdmitidoDTO();
                     dto.setIdCohorte(input.idCohorte());
                     dto.setIdAspirante(a.getId());
                     dto.setFechageneracion(today);
@@ -72,7 +72,7 @@ public class ListaadmitidosProcessor {
         LocalDate today = LocalDate.now();
         return admitidos.stream()
                 .map(a -> {
-                    ListaadmitidosDTO dto = new ListaadmitidosDTO();
+                    AdmitidoDTO dto = new AdmitidoDTO();
                     dto.setIdCohorte(input.idCohorte());
                     dto.setIdAspirante(a.getId());
                     dto.setFechageneracion(today);
@@ -80,7 +80,7 @@ public class ListaadmitidosProcessor {
                         throw new DuplicateAdmisionException(a.getId(), input.idCohorte());
                     }
                     this.notifyAspirant(this.correo, a.getPersona().getNombres(), "¡Felicidades! Has sido admitido en el proceso de admisión de posgrados de la UFPS. Por favor, revisa tu correo para más detalles sobre los siguientes pasos.");
-                    ListaadmitidosDTO saved = listaadmitidosService.create(dto);
+                    AdmitidoDTO saved = listaadmitidosService.create(dto);
                     saved.setAspirante(a);
                     return map.toOutput(saved);
                 })
@@ -101,7 +101,7 @@ public class ListaadmitidosProcessor {
         LocalDate today = LocalDate.now();
         for (AspiranteDTO a : nuevosAdmitidos) {
             if (!listaadmitidosService.existsByIdCohorteAndIdAspirante(input.idCohorte(), a.getId())) {
-                ListaadmitidosDTO dto = new ListaadmitidosDTO();
+                AdmitidoDTO dto = new AdmitidoDTO();
                 dto.setIdCohorte(input.idCohorte());
                 dto.setIdAspirante(a.getId());
                 dto.setFechageneracion(today);
