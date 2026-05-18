@@ -72,10 +72,10 @@ public class CohorteEntity implements Serializable {
     private Integer        idPrograma ;
 
     //--- LINKS ( RELATIONSHIPS )
-    @OneToMany(mappedBy="cohorte")
+    @OneToMany(mappedBy="cohorte", fetch = FetchType.LAZY)
     private List<AdmitidoEntity> admitidoList ; 
 
-    @OneToMany(mappedBy="cohorte")
+    @OneToMany(mappedBy="cohorte", fetch = FetchType.LAZY)
     private List<AspiranteEntity> aspiranteList ; 
 
     @ManyToOne
@@ -106,10 +106,10 @@ public class CohorteEntity implements Serializable {
     @JoinColumn(name="id_programa", referencedColumnName="id", insertable=false, updatable=false)
     private ProgramaEntity   programa ; 
 
-    @OneToMany(mappedBy="cohorte")
+    @OneToMany(mappedBy="cohorte", fetch = FetchType.LAZY)
     private List<CriterioevaluacionEntity> criterioevaluacionList ; 
 
-    @OneToMany(mappedBy="cohorte")
+    @OneToMany(mappedBy="cohorte", fetch = FetchType.LAZY)
     private List<PruebaEntity> pruebaList ; 
 
 }

@@ -49,15 +49,6 @@ public class PlazoEntity implements Serializable {
     private Integer        idTipoplazo ;
 
     //--- LINKS ( RELATIONSHIPS )
-    @OneToMany
-    private List<CohorteEntity> cohorteList ; 
-
-    @OneToMany
-    private List<CohorteEntity> cohorteList2 ; 
-
-    @OneToMany
-    private List<CohorteEntity> cohorteList3 ; 
-
     @OneToMany(mappedBy="plazo")
     private List<DocumentoEntity> documentoList ; 
 

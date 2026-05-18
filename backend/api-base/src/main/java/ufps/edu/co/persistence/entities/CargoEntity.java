@@ -51,7 +51,7 @@ public class CargoEntity implements Serializable {
     private String     nombre ;
 
     //--- LINKS ( RELATIONSHIPS )
-    @OneToMany(mappedBy="cargo")
+    @OneToMany(mappedBy="cargo", fetch = FetchType.LAZY)
     private List<AdministrativoEntity> administrativoList ; 
 
     @ManyToOne

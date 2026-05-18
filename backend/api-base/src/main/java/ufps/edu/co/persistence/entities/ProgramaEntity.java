@@ -85,10 +85,10 @@ public class ProgramaEntity implements Serializable {
     private BigDecimal valormatricula ;
 
     //--- LINKS ( RELATIONSHIPS )
-    @OneToMany(mappedBy="programa")
+    @OneToMany(mappedBy="programa", fetch = FetchType.LAZY)
     private List<CargoEntity> cargoList ; 
 
-    @OneToMany(mappedBy="programa")
+    @OneToMany(mappedBy="programa", fetch = FetchType.LAZY)
     private List<CohorteEntity> cohorteList ; 
 
     @ManyToOne

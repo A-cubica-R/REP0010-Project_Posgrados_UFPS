@@ -56,12 +56,13 @@ public class SecurityConfig {
                                                 .requestMatchers(PUBLIC_PATHS)
                                                 .permitAll()
 
-                                                // Rutas protegidas para el rol SUPER_ADMINISTRADOR
+                                                // Rutas específicas por rol (antes del catch-all)
+                                                .requestMatchers(DIRECTOR_FACULTAD_PATHS)
+                                                .hasRole("DIRECTOR_DE_FACULTAD")
+
+                                                // Rutas protegidas para el rol SUPER_ADMINISTRADOR (catch-all)
                                                 .requestMatchers(SUPER_ADMIN_PATHS)
                                                 .hasRole("SUPER_ADMINISTRADOR")
-
-                                                .requestMatchers(DIRECTOR_FACULTAD_PATHS)
-                                                .hasRole("DIRECTOR_FACULTAD")
 
                                                 // Denegar cualquier otra solicitud no especificada
                                                 .anyRequest().denyAll())

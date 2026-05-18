@@ -45,10 +45,10 @@ public class FacultadEntity implements Serializable {
     private String     nombre ;
 
     //--- LINKS ( RELATIONSHIPS )
-    @OneToMany(mappedBy="facultad")
+    @OneToMany(mappedBy="facultad", fetch = FetchType.LAZY)
     private List<CargoEntity> cargoList ; 
 
-    @OneToMany(mappedBy="facultad")
+    @OneToMany(mappedBy="facultad", fetch = FetchType.LAZY)
     private List<ProgramaEntity> programaList ; 
 
 }
