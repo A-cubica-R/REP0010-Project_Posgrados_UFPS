@@ -1,5 +1,7 @@
 package ufps.edu.co.records.output.entity;
 
+import java.util.List;
+
 import lombok.Builder;
 import ufps.edu.co.records.OutputResponse;
 
@@ -7,6 +9,8 @@ import ufps.edu.co.records.OutputResponse;
 public record FacultadOutput(
         Integer id,
         String nombre,
-        String correo)
+        String correo,
+        List<CargoOutput> cargoList,
+        List<ProgramaOutput> programaList)
         implements OutputResponse {
 }

@@ -12,14 +12,15 @@ public class TipoentrevistaMap extends
         GlobalMapper<TIPOENTREVISTA_CREATE, TIPOENTREVISTA_UPDATE, TIPOENTREVISTA_DELETE, TIPOENTREVISTA_PATCH, TIPOENTREVISTA_FIND, TipoentrevistaOutput, TipoentrevistaDTO> {
 
     public TipoentrevistaMap() {
-        super(TIPOENTREVISTA_CREATE.class, TIPOENTREVISTA_UPDATE.class, TIPOENTREVISTA_DELETE.class, TIPOENTREVISTA_PATCH.class,
+        super(TIPOENTREVISTA_CREATE.class, TIPOENTREVISTA_UPDATE.class, TIPOENTREVISTA_DELETE.class,
+                TIPOENTREVISTA_PATCH.class,
                 TIPOENTREVISTA_FIND.class);
     }
 
     @Override
     protected TipoentrevistaDTO toDtoCreate(TIPOENTREVISTA_CREATE input) {
         TipoentrevistaDTO dto = new TipoentrevistaDTO();
-        dto.setNombre(input.nombre());
+        dto.setTipo(input.nombre());
         dto.setDescripcion(input.descripcion());
         return dto;
     }
@@ -28,7 +29,7 @@ public class TipoentrevistaMap extends
     protected TipoentrevistaDTO toDtoUpdate(TIPOENTREVISTA_UPDATE input) {
         TipoentrevistaDTO dto = new TipoentrevistaDTO();
         dto.setId(input.id());
-        dto.setNombre(input.nombre());
+        dto.setTipo(input.nombre());
         dto.setDescripcion(input.descripcion());
         return dto;
     }
@@ -46,7 +47,7 @@ public class TipoentrevistaMap extends
                 .id(input.id());
 
         if (input.nombre() != null) {
-            builder.nombre(input.nombre());
+            builder.tipo(input.nombre());
         }
         if (input.descripcion() != null) {
             builder.descripcion(input.descripcion());
@@ -67,7 +68,11 @@ public class TipoentrevistaMap extends
         if (dto == null) {
             return null;
         }
-        return new TipoentrevistaOutput(dto.getId(), dto.getNombre(), dto.getDescripcion());
+        return TipoentrevistaOutput.builder()
+                .id(dto.getId())
+                .tipo(dto.getTipo())
+                .descripcion(dto.getDescripcion())
+                .build();
     }
 
     public List<TipoentrevistaOutput> toOutputList(List<TipoentrevistaDTO> dtoList) {

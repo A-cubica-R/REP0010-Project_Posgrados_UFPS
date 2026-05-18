@@ -1,6 +1,7 @@
 package ufps.edu.co.records.output.entity;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import lombok.Builder;
 import ufps.edu.co.records.OutputResponse;
@@ -10,7 +11,11 @@ public record AdministrativoOutput(
         Integer id,
         LocalDate fechainicio,
         LocalDate fechasalida,
+        Integer idCargo,
+        Integer idEstado,
+        Integer idPersona,
         PersonaOutput persona,
         EstadoOutput estado,
-        CargoOutput cargo) implements OutputResponse {
+        CargoOutput cargo,
+        List<DocumentoOutput> documentoList) implements OutputResponse {
 }

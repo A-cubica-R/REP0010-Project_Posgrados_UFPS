@@ -1,7 +1,6 @@
 package ufps.edu.co.maps.specific;
 
 import java.util.List;
-
 import org.springframework.stereotype.Component;
 
 import ufps.edu.co.maps.GlobalMapper;
@@ -55,11 +54,20 @@ public class EstadoMap extends
         return dto;
     }
 
+    /*
+     * EstadoMap es un leaf map: solo mapea sus campos propios (id, entidad, tipo).
+     * Las listas inversas (cohorteList, entrevistaList, etc.) NO se mapean aquí
+     * porque crean dependencias circulares con CohorteMap, EntrevistaMap, PagoMap.
+     * Si se necesitan esas listas, se deben obtener via endpoints dedicados.
+     */
+    @Override
     public EstadoOutput toOutput(EstadoDTO dto) {
-        if (dto == null) {
-            return null;
-        }
-        return new EstadoOutput(dto.getId(), dto.getTipo());
+        if (dto == null) return null;
+        return EstadoOutput.builder()
+                .id(dto.getId())
+                .entidad(dto.getEntidad())
+                .tipo(dto.getTipo())
+                .build();
     }
 
     public List<EstadoOutput> toOutputList(List<EstadoDTO> dtoList) {

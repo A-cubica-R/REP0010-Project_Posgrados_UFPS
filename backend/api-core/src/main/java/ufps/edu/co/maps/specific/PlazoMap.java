@@ -71,20 +71,23 @@ public class PlazoMap extends
 
     @Override
     public PlazoOutput toOutput(PlazoDTO dto) {
-        if (dto == null) {
-            return null;
-        }
-
-        TipoplazoOutput tipoplazo = null;
-        if (dto.getTipoplazo() != null) {
-            tipoplazo = TipoplazoOutput.builder()
-                    .id(dto.getTipoplazo().getId())
-                    .nombre(dto.getTipoplazo().getNombre())
-                    .descripcion(dto.getTipoplazo().getDescripcion())
+        if (dto != null) {
+            return PlazoOutput.builder()
+                    .id(dto.getId())
+                    .fechainicio(dto.getFechainicio())
+                    .fechafin(dto.getFechafin())
+                    .idTipoplazo(dto.getIdTipoplazo())
+                    .tipoplazo(
+                        dto.getTipoplazo() != null ? (
+                            TipoplazoOutput.builder()
+                                .id(dto.getTipoplazo().getId())
+                                .tipo(dto.getTipoplazo().getTipo())
+                                .build()
+                        ) : null
+                    )
                     .build();
         }
-
-        return new PlazoOutput(dto.getId(), dto.getFechainicio(), dto.getFechafin(), tipoplazo);
+        return null;
     }
 
     public List<PlazoOutput> toOutputList(List<PlazoDTO> dtoList) {

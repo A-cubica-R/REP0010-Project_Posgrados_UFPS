@@ -1,20 +1,22 @@
 package ufps.edu.co.services;
 
-
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import software.amazon.awssdk.core.ResponseBytes;
+import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import ufps.edu.co.processor.crud.DocumentoProcessor;
 import ufps.edu.co.records.input.entity.AspiranteInput.ASPIRANTE_FIND;
 import ufps.edu.co.records.input.entity.DocumentoInput.DOCUMENTO_FIND;
-import ufps.edu.co.records.input.entity.DocumentoInput.DOCUMENTO_REJECT;
 import ufps.edu.co.records.output.entity.DocumentoOutput;
 
 @Service
@@ -26,8 +28,37 @@ public class S3Service {
     @Value("${AWS_BUCKET_NAME}")
     private String bucketName;
 
+    @Value("${AWS_REGION}")
+    private String region;
+
     @Autowired
     private DocumentoProcessor documentoProcessor;
+
+    public record UploadResult(String keyfile, String enlaceurl) {
+    }
+
+    public UploadResult uploadFile(MultipartFile file) {
+        String originalName = file.getOriginalFilename() != null ? file.getOriginalFilename() : "file";
+        int dotIndex = originalName.lastIndexOf(".");
+        String baseName = (dotIndex > 0) ? originalName.substring(0, dotIndex) : originalName;
+        String extension = (dotIndex > 0) ? originalName.substring(dotIndex) : "";
+        String sanitizedName = baseName.replaceAll("[^a-zA-Z0-9._-]", "-").toLowerCase();
+        String key = UUID.randomUUID().toString() + "-" + sanitizedName + extension;
+        try {
+            s3Client.putObject(
+                    PutObjectRequest.builder()
+                            .bucket(bucketName)
+                            .key(key)
+                            .contentType(file.getContentType())
+                            .contentLength(file.getSize())
+                            .build(),
+                    RequestBody.fromBytes(file.getBytes()));
+        } catch (Exception e) {
+            throw new RuntimeException("Error al subir archivo a S3: " + e.getMessage(), e);
+        }
+        String url = "https://" + bucketName + ".s3." + region + ".amazonaws.com/" + key;
+        return new UploadResult(key, url);
+    }
 
     public byte[] downloadDocument(DOCUMENTO_FIND input) {
         DocumentoOutput output = documentoProcessor.findById(input);
@@ -40,19 +71,30 @@ public class S3Service {
         return objectAsBytes.asByteArray();
     }
 
-    public DocumentoOutput approveDocument(DOCUMENTO_FIND input) {  
-        return documentoProcessor.approveDocument(input);
-    }
-
-    public DocumentoOutput rejectDocument(DOCUMENTO_REJECT input){
-        return documentoProcessor.rejectDocument(input);    
-    }
-
     public List<DocumentoOutput> findDocumentByAspirantId(ASPIRANTE_FIND input) {
         try {
             return documentoProcessor.findByAspiranteId(input);
         } catch (Exception e) {
             throw new RuntimeException("Error fetching documents: " + e.getMessage(), e);
         }
-    }
-}
+    }}
+
+    
+
+    
+    
+        
+                
+                        
+                        
+                        
+                        
+                        
+                
+    
+    
+    
+        
+    
+
+    

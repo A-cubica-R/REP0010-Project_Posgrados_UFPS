@@ -65,6 +65,7 @@ public class MunicipioMap extends
         if (dto != null) {
             return MunicipioOutput.builder()
                     .id(dto.getId())
+                    .idDepartamento(dto.getIdDepartamento())
                     .nombre(dto.getNombre())
                     .build();
         }

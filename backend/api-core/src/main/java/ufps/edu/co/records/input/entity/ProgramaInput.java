@@ -1,5 +1,7 @@
 package ufps.edu.co.records.input.entity;
 
+import java.math.BigDecimal;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import ufps.edu.co.records.contracts.*;
@@ -18,7 +20,7 @@ public enum ProgramaInput {
             String rcmineducacion,
             Integer creditos,
             String periodicidad,
-            Float valormatricula,
+            BigDecimal valormatricula,
             @NotNull Integer idSede,
             @NotNull Integer idAdministrativo,
             @NotNull Integer idFacultad,
@@ -36,7 +38,7 @@ public enum ProgramaInput {
             String rcmineducacion,
             Integer creditos,
             String periodicidad,
-            Float valormatricula,
+            BigDecimal valormatricula,
             @NotNull Integer idSede,
             @NotNull Integer idAdministrativo,
             @NotNull Integer idFacultad,
@@ -54,7 +56,7 @@ public enum ProgramaInput {
             String rcmineducacion,
             Integer creditos,
             String periodicidad,
-            Float valormatricula,
+            BigDecimal valormatricula,
             Integer idSede,
             Integer idAdministrativo,
             Integer idFacultad,

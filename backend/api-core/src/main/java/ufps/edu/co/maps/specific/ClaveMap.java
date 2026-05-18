@@ -59,10 +59,10 @@ public class ClaveMap extends
 
     @Override
     public ClaveOutput toOutput(ClaveDTO dto) {
-        if (dto == null) {
-            return null;
-        }
-        return new ClaveOutput(dto.getId());
+        return ClaveOutput.builder()
+                .id(dto.getId())
+                .valor(dto.getValor())
+                .build();
     }
 
     public List<ClaveOutput> toOutputList(List<ClaveDTO> dtoList) {

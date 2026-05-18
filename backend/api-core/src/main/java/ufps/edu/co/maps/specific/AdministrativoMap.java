@@ -1,6 +1,5 @@
 package ufps.edu.co.maps.specific;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import ufps.edu.co.maps.GlobalMapper;
@@ -10,17 +9,11 @@ import ufps.edu.co.records.input.entity.AdministrativoInput.ADMINISTRATIVO_FIND;
 import ufps.edu.co.records.input.entity.AdministrativoInput.ADMINISTRATIVO_PATCH;
 import ufps.edu.co.records.input.entity.AdministrativoInput.ADMINISTRATIVO_UPDATE;
 import ufps.edu.co.records.output.entity.AdministrativoOutput;
-import ufps.edu.co.records.output.entity.CargoOutput;
-import ufps.edu.co.records.output.entity.EstadoOutput;
-import ufps.edu.co.records.output.entity.PersonaOutput;
 import ufps.edu.co.rest.dto.AdministrativoDTO;
 
 @Component
 public class AdministrativoMap extends
         GlobalMapper<ADMINISTRATIVO_CREATE, ADMINISTRATIVO_UPDATE, ADMINISTRATIVO_DELETE, ADMINISTRATIVO_PATCH, ADMINISTRATIVO_FIND, AdministrativoOutput, AdministrativoDTO> {
-
-    @Autowired
-    private PersonaMap personaMap;
 
     public AdministrativoMap() {
         super(ADMINISTRATIVO_CREATE.class, ADMINISTRATIVO_UPDATE.class, ADMINISTRATIVO_DELETE.class,
@@ -83,26 +76,27 @@ public class AdministrativoMap extends
 
     @Override
     public AdministrativoOutput toOutput(AdministrativoDTO dto) {
+
         if (dto == null)
             return null;
-        PersonaOutput persona = null;
-        if (dto.getPersona() != null) {
-            persona = personaMap.toOutput(dto.getPersona());
-        }
-        EstadoOutput estado = dto.getEstado() != null
-                ? new EstadoOutput(dto.getEstado().getId(), dto.getEstado().getTipo())
-                : null;
-        CargoOutput cargo = dto.getCargo() != null
-                ? new CargoOutput(dto.getCargo().getId(), dto.getCargo().getNombre(), dto.getCargo().getDescripcion())
-                : null;
+
+        DocumentoMap documentoMap = new DocumentoMap();
+        PersonaMap personaMap = new PersonaMap();
+        EstadoMap estadoMap = new EstadoMap();
+        CargoMap cargoMap = new CargoMap();
 
         return AdministrativoOutput.builder()
                 .id(dto.getId())
                 .fechainicio(dto.getFechainicio())
                 .fechasalida(dto.getFechasalida())
-                .persona(persona)
-                .estado(estado)
-                .cargo(cargo)
+                .idCargo(dto.getIdCargo())
+                .idEstado(dto.getIdEstado())
+                .idPersona(dto.getIdPersona())
+                .persona(dto.getPersona() != null ? personaMap.toOutput(dto.getPersona()) : null)
+                .estado(dto.getEstado() != null ? estadoMap.toOutput(dto.getEstado()) : null)
+                .cargo(dto.getCargo() != null ? cargoMap.toOutput(dto.getCargo()) : null)
+                .documentoList(
+                        dto.getDocumentoList() != null ? documentoMap.toOutputList(dto.getDocumentoList()) : null)
                 .build();
     }
 

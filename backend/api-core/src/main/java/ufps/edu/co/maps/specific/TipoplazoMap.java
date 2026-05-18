@@ -19,7 +19,7 @@ public class TipoplazoMap extends
     @Override
     protected TipoplazoDTO toDtoCreate(TIPOPLAZO_CREATE input) {
         TipoplazoDTO dto = new TipoplazoDTO();
-        dto.setNombre(input.nombre());
+        dto.setTipo(input.nombre());
         dto.setDescripcion(input.descripcion());
         return dto;
     }
@@ -28,7 +28,7 @@ public class TipoplazoMap extends
     protected TipoplazoDTO toDtoUpdate(TIPOPLAZO_UPDATE input) {
         TipoplazoDTO dto = new TipoplazoDTO();
         dto.setId(input.id());
-        dto.setNombre(input.nombre());
+        dto.setTipo(input.nombre());
         dto.setDescripcion(input.descripcion());
         return dto;
     }
@@ -46,7 +46,7 @@ public class TipoplazoMap extends
                 .id(input.id());
 
         if (input.nombre() != null) {
-            builder.nombre(input.nombre());
+            builder.tipo(input.nombre());
         }
         if (input.descripcion() != null) {
             builder.descripcion(input.descripcion());
@@ -64,10 +64,13 @@ public class TipoplazoMap extends
 
     @Override
     public TipoplazoOutput toOutput(TipoplazoDTO dto) {
-        if (dto == null) {
+        if (dto == null)
             return null;
-        }
-        return new TipoplazoOutput(dto.getId(), dto.getNombre(), dto.getDescripcion());
+        return TipoplazoOutput.builder()
+                .id(dto.getId())
+                .tipo(dto.getTipo())
+                .descripcion(dto.getDescripcion())
+                .build();
     }
 
     public List<TipoplazoOutput> toOutputList(List<TipoplazoDTO> dtoList) {

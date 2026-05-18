@@ -1,45 +1,18 @@
 package ufps.edu.co.maps.specific;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import ufps.edu.co.maps.GlobalMapper;
-import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_CREATE;
-import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_DELETE;
-import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_FIND;
-import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_PATCH;
-import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_UPDATE;
-import ufps.edu.co.records.output.entity.AdministrativoOutput;
-import ufps.edu.co.records.output.entity.AspiranteOutput;
+import ufps.edu.co.records.input.entity.EntrevistaInput.*;
 import ufps.edu.co.records.output.entity.EntrevistaOutput;
-import ufps.edu.co.records.output.entity.EntrevistadorOutput;
-import ufps.edu.co.records.output.entity.UbicacionOutput;
 import ufps.edu.co.rest.dto.EntrevistaDTO;
 
 @Component
 public class EntrevistaMap extends
         GlobalMapper<ENTREVISTA_CREATE, ENTREVISTA_UPDATE, ENTREVISTA_DELETE, ENTREVISTA_PATCH, ENTREVISTA_FIND, EntrevistaOutput, EntrevistaDTO> {
 
-    @Autowired
-    private TipoentrevistaMap tipoentrevistaMap;
-
-    @Autowired
-    private EntrevistadorMap entrevistadorMap;
-
-    @Autowired
-    private AspiranteMap aspiranteMap;
-
-    @Autowired
-    private EstadoMap estadoMap;
-
-    @Autowired
-    private UbicacionMap ubicacionMap;
-
-    @Autowired
-    private AdministrativoMap administrativoMap;
 
     public EntrevistaMap() {
         super(ENTREVISTA_CREATE.class, ENTREVISTA_UPDATE.class, ENTREVISTA_DELETE.class, ENTREVISTA_PATCH.class,
@@ -48,61 +21,40 @@ public class EntrevistaMap extends
 
     @Override
     protected EntrevistaDTO toDtoCreate(ENTREVISTA_CREATE input) {
-        EntrevistaDTO dto = new EntrevistaDTO();
-        dto.setFecha(input.fecha());
-        dto.setCalificacion(0.0f); // Valor predeterminado para calificación
-        dto.setIdTipoentrevista(input.idTipoentrevista());
-        dto.setIdEntrevistador(input.idEntrevistador());
-        dto.setIdAspirante(input.idAspirante());
-        dto.setIdEstado(input.idEstado());
-        dto.setIdUbicacion(input.idUbicacion());
-        dto.setTiempo(input.tiempo());
-        return dto;
+        return EntrevistaDTO.builder()
+                .fecha(input.fecha())
+                .tiempo(input.tiempo())
+                .idAspirante(input.idAspirante())
+                .idEstado(input.idEstado())
+                .idTipoentrevista(input.idTipoentrevista())
+                .idUbicacion(input.idUbicacion())
+                .build();
     }
 
     @Override
     protected EntrevistaDTO toDtoUpdate(ENTREVISTA_UPDATE input) {
-        EntrevistaDTO dto = new EntrevistaDTO();
-        dto.setId(input.id());
-        dto.setFecha(input.fecha());
-        dto.setTiempo(input.tiempo());
-        dto.setCalificacion(input.calificacion());
-        dto.setIdTipoentrevista(input.idTipoentrevista());
-        dto.setIdEntrevistador(input.idEntrevistador());
-        dto.setIdEstado(input.idEstado());
-        dto.setIdUbicacion(input.idUbicacion());
-        dto.setIdAspirante(input.idAspirante());
-        return dto;
+        return EntrevistaDTO.builder()
+                .id(input.id())
+                .fecha(input.fecha())
+                .tiempo(input.tiempo())
+                .idAspirante(input.idAspirante())
+                .idEstado(input.idEstado())
+                .idTipoentrevista(input.idTipoentrevista())
+                .idUbicacion(input.idUbicacion())
+                .build();
     }
 
     @Override
     protected EntrevistaDTO toDtoDelete(ENTREVISTA_DELETE input) {
-        EntrevistaDTO dto = new EntrevistaDTO();
-        dto.setId(input.id());
-        return dto;
+        return EntrevistaDTO.builder()
+                .id(input.id())
+                .build();
     }
 
     @Override
     protected EntrevistaDTO toDtoPatch(ENTREVISTA_PATCH input) {
-        EntrevistaDTO.EntrevistaDTOBuilder builder = EntrevistaDTO.builder()
-                .id(input.id());
-
-        if (input.fecha() != null)
-            builder.fecha(input.fecha());
-        if (input.calificacion() != null)
-            builder.calificacion(input.calificacion());
-        if (input.idTipoentrevista() != null)
-            builder.idTipoentrevista(input.idTipoentrevista());
-        if (input.idEntrevistador() != null)
-            builder.idEntrevistador(input.idEntrevistador());
-        if (input.tiempo() != null)
-            builder.tiempo(input.tiempo());
-        if (input.idEstado() != null)
-            builder.idEstado(input.idEstado());
-        if (input.idUbicacion() != null)
-            builder.idUbicacion(input.idUbicacion());
-
-        return builder.build();
+        // TODO Aún no usaremos funciones PATCH
+        throw new UnsupportedOperationException("Función PATCH no implementada para Entrevista");
     }
 
     @Override
@@ -114,35 +66,28 @@ public class EntrevistaMap extends
 
     @Override
     public EntrevistaOutput toOutput(EntrevistaDTO dto) {
-        if (dto == null) {
+        if (dto == null)
             return null;
-        }
 
-        EntrevistadorOutput entrevistador = entrevistadorMap.toOutput(dto.getEntrevistador());
-        AspiranteOutput aspirante = aspiranteMap.toOutput(dto.getAspirante());
-        UbicacionOutput ubicacion = ubicacionMap.toOutput(dto.getUbicacion());
-
-        String nombreAspirante = aspirante != null && aspirante.persona() != null
-                ? aspirante.persona().nombres() + " " + aspirante.persona().apellidos()
-                : "Sin aspirante";
-
-        List<AdministrativoOutput> entrevistadores = dto.getEntrevistadoresList() != null
-                ? dto.getEntrevistadoresList().stream()
-                        .map(entre -> administrativoMap.toOutput(entre.getAdministrativo()))
-                        .collect(Collectors.toList())
-                : List.of();
+            AspiranteMap aspiranteMap = new AspiranteMap();
+            EstadoMap estadoMap = new EstadoMap();
+            TipoentrevistaMap tipoentrevistaMap = new TipoentrevistaMap();
+            UbicacionMap ubicacionMap = new UbicacionMap();
 
         return EntrevistaOutput.builder()
                 .id(dto.getId())
-                .fecha(dto.getFecha())
                 .calificacion(dto.getCalificacion())
-                .tipoentrevista(tipoentrevistaMap.toOutput(dto.getTipoentrevista()))
-                .entrevistador(entrevistador)
-                .aspirante(aspirante)
-                .estado(estadoMap.toOutput(dto.getEstado()))
-                .nombreAspirante(nombreAspirante)
-                .ubicacion(ubicacion)
-                .entrevistadores(entrevistadores)
+                .fecha(dto.getFecha())
+                .tiempo(dto.getTiempo())
+                .idAspirante(dto.getIdAspirante())
+                .idEstado(dto.getIdEstado())
+                .idTipoentrevista(dto.getIdTipoentrevista())
+                .idUbicacion(dto.getIdUbicacion())
+                .aspirante(dto.getAspirante() != null ? aspiranteMap.toOutput(dto.getAspirante()) : null)
+                .estado(dto.getEstado() != null ? estadoMap.toOutput(dto.getEstado()) : null)
+                .tipoentrevista(
+                        dto.getTipoentrevista() != null ? tipoentrevistaMap.toOutput(dto.getTipoentrevista()) : null)
+                .ubicacion(dto.getUbicacion() != null ? ubicacionMap.toOutput(dto.getUbicacion()) : null)
                 .build();
     }
 

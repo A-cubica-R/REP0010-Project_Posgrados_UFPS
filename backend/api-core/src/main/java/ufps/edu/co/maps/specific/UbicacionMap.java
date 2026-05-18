@@ -56,16 +56,20 @@ public class UbicacionMap extends
 
     @Override
     public UbicacionOutput toOutput(UbicacionDTO dto) {
-        if (dto != null) {
-            return UbicacionOutput.builder()
-                    .id(dto.getId())
-                    .direccion(dto.getDireccion())
-                    .build();
-        }
-        return null;
+        if (dto == null)
+            return null;
+
+        MunicipioMap municipioMap = new MunicipioMap();
+
+        return UbicacionOutput.builder()
+                .id(dto.getId())
+                .direccion(dto.getDireccion())
+                .idMunicipio(dto.getIdMunicipio())
+                .municipio(dto.getMunicipio() != null ? municipioMap.toOutput(dto.getMunicipio()) : null)
+                .build();
     }
 
-    public UbicacionDTO toDtoWithMunicipio (UbicacionOutput output) {
+    public UbicacionDTO toDtoWithMunicipio(UbicacionOutput output) {
         if (output != null) {
             UbicacionDTO dto = new UbicacionDTO();
             dto.setId(output.id());

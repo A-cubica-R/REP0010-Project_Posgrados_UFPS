@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -31,7 +32,7 @@ public class AspiranteRestController {
     }
 
     @PostMapping(value = "/list", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<AspiranteOutput> findById(@RequestBody ASPIRANTE_FIND request) {
+    public ResponseEntity<AspiranteOutput> findById(@Valid @RequestBody ASPIRANTE_FIND request) {
         AspiranteOutput output = processor.findById(request);
         if (output != null) {
             return ResponseEntity.ok(output);
@@ -41,13 +42,13 @@ public class AspiranteRestController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<AspiranteOutput> create(@RequestBody ASPIRANTE_CREATE request) {
+    public ResponseEntity<AspiranteOutput> create(@Valid @RequestBody ASPIRANTE_CREATE request) {
         AspiranteOutput output = processor.create(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(output);
     }
 
     @PutMapping("/update")
-    public ResponseEntity<AspiranteOutput> update(@RequestBody ASPIRANTE_UPDATE request) {
+    public ResponseEntity<AspiranteOutput> update(@Valid @RequestBody ASPIRANTE_UPDATE request) {
         try {
             AspiranteOutput updated = processor.update(request);
             return ResponseEntity.ok(updated);
@@ -57,7 +58,7 @@ public class AspiranteRestController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<Void> deleteById(@RequestBody ASPIRANTE_DELETE request) {
+    public ResponseEntity<Void> deleteById(@Valid @RequestBody ASPIRANTE_DELETE request) {
         try {
             processor.deleteById(request);
             return ResponseEntity.noContent().build();

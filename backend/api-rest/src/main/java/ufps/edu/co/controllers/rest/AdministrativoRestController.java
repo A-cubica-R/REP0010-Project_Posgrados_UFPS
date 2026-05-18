@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -32,7 +33,7 @@ public class AdministrativoRestController {
     }
 
     @PostMapping(value = "/list", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<AdministrativoOutput> findById(@RequestBody ADMINISTRATIVO_FIND request) {
+    public ResponseEntity<AdministrativoOutput> findById(@Valid @RequestBody ADMINISTRATIVO_FIND request) {
         AdministrativoOutput output = processor.findById(request);
         if (output != null) {
             return ResponseEntity.ok(output);
@@ -42,13 +43,13 @@ public class AdministrativoRestController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<AdministrativoOutput> create(@RequestBody ADMINISTRATIVO_CREATE request) {
+    public ResponseEntity<AdministrativoOutput> create(@Valid @RequestBody ADMINISTRATIVO_CREATE request) {
         AdministrativoOutput output = processor.create(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(output);
     }
 
     @PutMapping("/update")
-    public ResponseEntity<AdministrativoOutput> update(@RequestBody ADMINISTRATIVO_UPDATE request) {
+    public ResponseEntity<AdministrativoOutput> update(@Valid @RequestBody ADMINISTRATIVO_UPDATE request) {
         try {
             AdministrativoOutput updated = processor.update(request);
             return ResponseEntity.ok(updated);
@@ -58,7 +59,7 @@ public class AdministrativoRestController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<Void> deleteById(@RequestBody ADMINISTRATIVO_DELETE request) {
+    public ResponseEntity<Void> deleteById(@Valid @RequestBody ADMINISTRATIVO_DELETE request) {
         try {
             processor.delete(request);
             return ResponseEntity.noContent().build();
@@ -67,13 +68,4 @@ public class AdministrativoRestController {
         }
     }
 
-    @GetMapping("/listPosibleDirector")
-    public ResponseEntity<List<AdministrativoOutput>> findByIdCargo() {
-        List<AdministrativoOutput> list = processor.findAll();
-        List<AdministrativoOutput> filteredList = list.stream()
-                .filter(administrativoOutput -> !administrativoOutput.cargo().id().equals(1)) // Assuming 1 is the ID for "Director"
-                .toList();
-
-        return ResponseEntity.ok(filteredList);
-    }
 }

@@ -56,7 +56,13 @@ public class OtrosvaloresMap extends
 
     @Override
     public OtrosvaloresOutput toOutput(OtrosvaloresDTO dto) {
-        return new OtrosvaloresOutput(dto.getId(), dto.isCarnet(), dto.isEstampilla(), dto.isSeguro());
+        if (dto == null) return null;
+        return OtrosvaloresOutput.builder()
+                .id(dto.getId())
+                .carnet(dto.getCarnet())
+                .estampilla(dto.getEstampilla())
+                .seguro(dto.getSeguro())
+                .build();
     }
 
     public List<OtrosvaloresOutput> toOutputList(List<OtrosvaloresDTO> dtoList) {

@@ -59,7 +59,10 @@ public class PaisMap
 
     @Override
     public PaisOutput toOutput(PaisDTO dto) {
-        return new PaisOutput(dto.getId(), dto.getNombre());
+        return PaisOutput.builder()
+                .id(dto.getId())
+                .nombre(dto.getNombre())
+                .build();
     }
 
     public List<PaisOutput> toOutputList(List<PaisDTO> dtoList) {

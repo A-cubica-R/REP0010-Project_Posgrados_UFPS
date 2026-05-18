@@ -6,11 +6,8 @@ import org.springframework.stereotype.Component;
 
 import ufps.edu.co.maps.GlobalMapper;
 import ufps.edu.co.records.input.entity.ProgramaInput.*;
-import ufps.edu.co.records.output.entity.AdministrativoOutput;
-import ufps.edu.co.records.output.entity.FacultadOutput;
 import ufps.edu.co.records.output.entity.ProgramaOutput;
-import ufps.edu.co.records.output.entity.SedeOutput;
-import ufps.edu.co.records.output.entity.UbicacionOutput;
+import ufps.edu.co.records.output.entity.TiporegistroOutput;
 import ufps.edu.co.rest.dto.ProgramaDTO;
 
 @Component
@@ -38,7 +35,6 @@ public class ProgramaMap extends
                 .valormatricula(input.valormatricula())
                 .idSede(input.idSede())
                 .idFacultad(input.idFacultad())
-                .idAdministrativo(input.idAdministrativo())
                 .idOtros(input.idOtros())
                 .build();
         return dto;
@@ -60,7 +56,6 @@ public class ProgramaMap extends
         dto.setPeriodicidad(input.periodicidad());
         dto.setValormatricula(input.valormatricula());
         dto.setIdSede(input.idSede());
-        dto.setIdAdministrativo(input.idAdministrativo());
         dto.setIdFacultad(input.idFacultad());
         dto.setIdOtros(input.idOtros());
         return dto;
@@ -101,8 +96,6 @@ public class ProgramaMap extends
             dto.setValormatricula(input.valormatricula());
         if (input.idSede() != null)
             dto.setIdSede(input.idSede());
-        if (input.idAdministrativo() != null)
-            dto.setIdAdministrativo(input.idAdministrativo());
         if (input.idFacultad() != null)
             dto.setIdFacultad(input.idFacultad());
         if (input.idOtros() != null)
@@ -122,45 +115,15 @@ public class ProgramaMap extends
         if (dto == null)
             return null;
 
-        UbicacionOutput ubicacion = null;
-        SedeOutput sede = null;
-        if (dto.getSede() != null) {
-            if (dto.getSede().getUbicacion() != null) {
-                ubicacion = UbicacionOutput.builder()
-                        .id(dto.getSede().getUbicacion().getId())
-                        .direccion(dto.getSede().getUbicacion().getDireccion())
-                        .build();
-            }
-
-            sede = SedeOutput.builder()
-                    .id(dto.getSede().getId())
-                    .nombre(dto.getSede().getNombre())
-                    .ubicacion(ubicacion)
-                    .build();
-        }
-
-        AdministrativoOutput administrativo = null;
-        if (dto.getAdministrativo() != null) {
-            administrativo = AdministrativoOutput.builder()
-                    .id(dto.getAdministrativo().getId())
-                    .fechainicio(dto.getAdministrativo().getFechainicio())
-                    .fechasalida(dto.getAdministrativo().getFechasalida())
-                    .build();
-        }
-
-        FacultadOutput facultad = null;
-        if (dto.getFacultad() != null) {
-            facultad = FacultadOutput.builder()
-                    .id(dto.getFacultad().getId())
-                    .nombre(dto.getFacultad().getNombre())
-                    .correo(dto.getFacultad().getCorreo())
-                    .build();
-        }
+        SedeMap sedeMap = new SedeMap();
+        FacultadMap facultadMap = new FacultadMap();
+        OtrosvaloresMap otrosvaloresMap = new OtrosvaloresMap();
 
         return ProgramaOutput.builder()
                 .id(dto.getId())
                 .codigo(dto.getCodigo())
                 .nombre(dto.getNombre())
+                .duracion(dto.getDuracion())
                 .semestres(dto.getDuracion())
                 .correo(dto.getCorreo())
                 .registrosnies(dto.getRegistrosnies())
@@ -170,9 +133,17 @@ public class ProgramaMap extends
                 .creditos(dto.getCreditos())
                 .periodicidad(dto.getPeriodicidad())
                 .valormatricula(dto.getValormatricula())
-                .sede(sede)
-                .administrativo(administrativo)
-                .facultad(facultad)
+                .idFacultad(dto.getIdFacultad())
+                .idOtros(dto.getIdOtros())
+                .idSede(dto.getIdSede())
+                .idTiporegistro(dto.getIdTiporegistro())
+                .sede(dto.getSede() != null ? sedeMap.toOutput(dto.getSede()) : null)
+                .facultad(dto.getFacultad() != null ? facultadMap.toOutput(dto.getFacultad()) : null)
+                .otrosvalores(dto.getOtrosvalores() != null ? otrosvaloresMap.toOutput(dto.getOtrosvalores()) : null)
+                .tiporegistro(dto.getTiporegistro() != null ? TiporegistroOutput.builder()
+                        .id(dto.getTiporegistro().getId())
+                        .tipo(dto.getTiporegistro().getTipo())
+                        .build() : null)
                 .build();
     }
 
@@ -183,5 +154,4 @@ public class ProgramaMap extends
     public List<ProgramaDTO> toDtoList(List<PROGRAMA_FIND> inputList) {
         return inputList.stream().map(this::toDtoFind).toList();
     }
-
 }

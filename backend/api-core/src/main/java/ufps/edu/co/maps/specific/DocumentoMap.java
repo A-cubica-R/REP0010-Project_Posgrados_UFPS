@@ -4,12 +4,7 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 import ufps.edu.co.maps.GlobalMapper;
 import ufps.edu.co.records.input.entity.DocumentoInput.*;
-import ufps.edu.co.records.output.entity.AdministrativoOutput;
-import ufps.edu.co.records.output.entity.AspiranteOutput;
 import ufps.edu.co.records.output.entity.DocumentoOutput;
-import ufps.edu.co.records.output.entity.EstadodocumentoOutput;
-import ufps.edu.co.records.output.entity.PlazoOutput;
-import ufps.edu.co.records.output.entity.TipodocumentoOutput;
 import ufps.edu.co.rest.dto.DocumentoDTO;
 
 @Component
@@ -23,144 +18,86 @@ public class DocumentoMap extends
 
     @Override
     protected DocumentoDTO toDtoCreate(DOCUMENTO_CREATE input) {
-        DocumentoDTO dto = new DocumentoDTO();
-        dto.setFechacargue(input.fechacargue());
-        dto.setIdEstadodocumento(input.idEstadodocumento());
-        dto.setIdTipodocumento(input.idTipodocumento());
-        dto.setIdAdministrativo(input.idAdministrativo());
-        dto.setIdPlazo(input.idPlazo());
-        dto.setIdAspirante(input.idAspirante());
-        dto.setEnlaceurl(input.enlaceurl()); // ← faltaba
-        dto.setKeyfile(input.keyfile()); // ← faltaba
-        dto.setObservaciones(input.observaciones()); // ← faltaba
-        return dto;
+        return DocumentoDTO.builder()
+                .enlaceurl(input.enlaceurl())
+                .fechacargue(input.fechacargue())
+                .idAdministrativo(input.idAdministrativo())
+                .idAspirante(input.idAspirante())
+                .idEstadodocumento(input.idEstadodocumento())
+                .idPlazo(input.idPlazo())
+                .idTipodocumento(input.idTipodocumento())
+                .keyfile(input.keyfile())
+                .observaciones(input.observaciones())
+                .build();
     }
 
     @Override
     protected DocumentoDTO toDtoUpdate(DOCUMENTO_UPDATE input) {
-        DocumentoDTO dto = new DocumentoDTO();
-        dto.setId(input.id());
-        dto.setFechacargue(input.fechacargue());
-        dto.setIdEstadodocumento(input.idEstadodocumento());
-        dto.setIdTipodocumento(input.idTipodocumento());
-        dto.setIdAdministrativo(input.idAdministrativo());
-        dto.setIdPlazo(input.idPlazo());
-        dto.setIdAspirante(input.idAspirante());
-        dto.setEnlaceurl(input.enlaceurl()); // ← faltaba
-        dto.setKeyfile(input.keyfile()); // ← faltaba
-        dto.setObservaciones(input.observaciones()); // ← faltaba
-        return dto;
+        return DocumentoDTO.builder()
+                .id(input.id())
+                .enlaceurl(input.enlaceurl())
+                .fechacargue(input.fechacargue())
+                .idAdministrativo(input.idAdministrativo())
+                .idAspirante(input.idAspirante())
+                .idEstadodocumento(input.idEstadodocumento())
+                .idPlazo(input.idPlazo())
+                .idTipodocumento(input.idTipodocumento())
+                .keyfile(input.keyfile())
+                .observaciones(input.observaciones())
+                .build();
     }
 
     @Override
     protected DocumentoDTO toDtoDelete(DOCUMENTO_DELETE input) {
-        DocumentoDTO dto = new DocumentoDTO();
-        dto.setId(input.id());
-        return dto;
+        return DocumentoDTO.builder()
+                .id(input.id())
+                .build();
     }
 
     @Override
     protected DocumentoDTO toDtoPatch(DOCUMENTO_PATCH input) {
-        DocumentoDTO.DocumentoDTOBuilder builder = DocumentoDTO.builder()
-                .id(input.id());
-
-        if (input.fechacargue() != null) {
-            builder.fechacargue(input.fechacargue());
-        }
-        if (input.idEstadodocumento() != null) {
-            builder.idEstadodocumento(input.idEstadodocumento());
-        }
-        if (input.idTipodocumento() != null) {
-            builder.idTipodocumento(input.idTipodocumento());
-        }
-        if (input.idAdministrativo() != null) {
-            builder.idAdministrativo(input.idAdministrativo());
-        }
-        if (input.idPlazo() != null) {
-            builder.idPlazo(input.idPlazo());
-        }
-        if (input.idAspirante() != null) {
-            builder.idAspirante(input.idAspirante());
-        }
-        if (input.enlaceurl() != null) {
-            builder.enlaceurl(input.enlaceurl());
-        }
-        if (input.keyfile() != null) {
-            builder.keyfile(input.keyfile());
-        }
-        if (input.observaciones() != null) {
-            builder.observaciones(input.observaciones());
-        }
-
-        return builder.build();
+        // TODO funcion patch no implementada aún
+        throw new UnsupportedOperationException("Función PATCH no implementada para Documento");
     }
 
     @Override
     protected DocumentoDTO toDtoFind(DOCUMENTO_FIND input) {
-        DocumentoDTO dto = new DocumentoDTO();
-        dto.setId(input.id());
-        return dto;
+        return DocumentoDTO.builder()
+                .id(input.id())
+                .build();
     }
 
     @Override
     public DocumentoOutput toOutput(DocumentoDTO dto) {
-        if (dto == null) {
+        if (dto == null)
             return null;
-        }
 
-        PlazoOutput plazo = null;
-        if (dto.getPlazo() != null) {
-            plazo = PlazoOutput.builder()
-                    .id(dto.getPlazo().getId())
-                    .fechainicio(dto.getPlazo().getFechainicio())
-                    .fechafin(dto.getPlazo().getFechafin())
-                    .build();
-        }
+        AdministrativoMap administrativoMap = new AdministrativoMap();
+        AspiranteMap aspiranteMap = new AspiranteMap();
+        EstadodocumentoMap estadodocumentoMap = new EstadodocumentoMap();
+        PlazoMap plazoMap = new PlazoMap();
+        TipodocumentoMap tipodocumentoMap = new TipodocumentoMap();
 
-        TipodocumentoOutput tipodocumento = null;
-        if (dto.getTipodocumento() != null) {
-            tipodocumento = TipodocumentoOutput.builder()
-                    .id(dto.getTipodocumento().getId())
-                    .nombre(dto.getTipodocumento().getNombre())
-                    .descripcion(dto.getTipodocumento().getDescripcion())
-                    .extension(dto.getTipodocumento().getExtension())
-                    .tamanomaximo(dto.getTipodocumento().getTamanomaximo())
-                    .build();
-        }
-
-        EstadodocumentoOutput estadodocumento = null;
-        if (dto.getEstadodocumento() != null) {
-            estadodocumento = EstadodocumentoOutput.builder()
-                    .id(dto.getEstadodocumento().getId())
-                    .estado(dto.getEstadodocumento().getEstado())
-                    .build();
-        }
-
-        AdministrativoOutput administrativo = null;
-        if (dto.getAdministrativo() != null) {
-            administrativo = AdministrativoOutput.builder()
-                    .id(dto.getAdministrativo().getId())
-                    .build();
-        }
-
-        AspiranteOutput aspirante = null;
-        if (dto.getAspirante() != null) {
-            aspirante = AspiranteOutput.builder()
-                    .id(dto.getAspirante().getId())
-                    .build();
-        }
-
-        return new DocumentoOutput(
-                dto.getId(),
-                dto.getFechacargue(),
-                dto.getEnlaceurl(),
-                dto.getKeyfile(),
-                dto.getObservaciones(),
-                plazo,
-                tipodocumento,
-                estadodocumento,
-                administrativo,
-                aspirante);
+        return DocumentoOutput.builder()
+                .id(dto.getId())
+                .enlaceurl(dto.getEnlaceurl())
+                .fechacargue(dto.getFechacargue())
+                .idAdministrativo(dto.getIdAdministrativo())
+                .idAspirante(dto.getIdAspirante())
+                .idEstadodocumento(dto.getIdEstadodocumento())
+                .idPlazo(dto.getIdPlazo())
+                .idTipodocumento(dto.getIdTipodocumento())
+                .keyfile(dto.getKeyfile())
+                .observaciones(dto.getObservaciones())
+                .administrativo(
+                        dto.getAdministrativo() != null ? administrativoMap.toOutput(dto.getAdministrativo()) : null)
+                .aspirante(dto.getAspirante() != null ? aspiranteMap.toOutput(dto.getAspirante()) : null)
+                .estadodocumento(
+                        dto.getEstadodocumento() != null ? estadodocumentoMap.toOutput(dto.getEstadodocumento()) : null)
+                .plazo(dto.getPlazo() != null ? plazoMap.toOutput(dto.getPlazo()) : null)
+                .tipodocumento(
+                        dto.getTipodocumento() != null ? tipodocumentoMap.toOutput(dto.getTipodocumento()) : null)
+                .build();
     }
 
     public List<DocumentoOutput> toOutputList(List<DocumentoDTO> dtoList) {

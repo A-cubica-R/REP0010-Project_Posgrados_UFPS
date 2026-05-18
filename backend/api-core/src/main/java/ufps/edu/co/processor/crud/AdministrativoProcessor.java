@@ -78,4 +78,12 @@ public class AdministrativoProcessor implements
         }
     }
 
+    public List<AdministrativoOutput> findPosiblesDirectores() {
+        try {
+            return service.findPosiblesDirectores().stream().map(map::toOutput).toList();
+        } catch (Exception e) {
+            throw new RuntimeException("Error finding posibles directores: " + e.getMessage(), e);
+        }
+    }
+
 }

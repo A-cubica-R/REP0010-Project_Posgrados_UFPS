@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import ufps.edu.co.domain.exceptions.DomainException;
+import ufps.edu.co.domain.exceptions.errorcodes.CohorteErrorCode;
 import ufps.edu.co.maps.specific.ProgramaMap;
 import ufps.edu.co.records.input.entity.ProgramaInput.*;
 import ufps.edu.co.records.output.entity.ProgramaOutput;
@@ -20,6 +22,9 @@ public class ProgramaProcessor implements GlobalUseCase<PROGRAMA_CREATE, PROGRAM
 
     @Autowired
     private ProgramaMap map;
+
+    @Autowired
+    private CohorteProcessor cohorteProcessor;
 
     @Override
     public ProgramaOutput create(PROGRAMA_CREATE input) {
@@ -75,11 +80,19 @@ public class ProgramaProcessor implements GlobalUseCase<PROGRAMA_CREATE, PROGRAM
         }
     }
 
-    public List<ProgramaOutput> findByIdFacultad(int idFacultad) {
+    public List<ProgramaOutput> findByIdFacultad(Integer idFacultad) {
         try {
-            return service.findByIdFacultad(idFacultad).stream().map(map::toOutput).toList();
+            return map.toOutputList(service.findByIdFacultad(idFacultad));
         } catch (Exception e) {
             throw new RuntimeException("Error finding Programas by Facultad ID: " + e.getMessage(), e);
+        }
+    }
+
+    public long countAspirantesEnProcesoEnCohorteAbierta(Integer cohorteId) {
+        try {
+            return cohorteProcessor.countAspirantesEnProcesoEnCohorteAbierta(cohorteId);
+        } catch (Exception e) {
+            throw new DomainException(CohorteErrorCode.COHORTE_NOT_FOUND, cohorteId);
         }
     }
 }

@@ -1,12 +1,10 @@
 package ufps.edu.co.maps.specific;
 
 import java.util.List;
+
 import org.springframework.stereotype.Component;
 import ufps.edu.co.maps.GlobalMapper;
 import ufps.edu.co.records.input.entity.UsuarioInput.*;
-import ufps.edu.co.records.output.entity.ClaveOutput;
-import ufps.edu.co.records.output.entity.PersonaOutput;
-import ufps.edu.co.records.output.entity.RolOutput;
 import ufps.edu.co.records.output.entity.UsuarioOutput;
 import ufps.edu.co.rest.dto.UsuarioDTO;
 
@@ -49,22 +47,15 @@ public class UsuarioMap extends
 
     @Override
     protected UsuarioDTO toDtoPatch(USUARIO_PATCH input) {
-        UsuarioDTO.UsuarioDTOBuilder builder = UsuarioDTO.builder()
-                .id(input.id());
-
-        if (input.nombreusuario() != null) {
+        UsuarioDTO.UsuarioDTOBuilder builder = UsuarioDTO.builder().id(input.id());
+        if (input.nombreusuario() != null)
             builder.nombreusuario(input.nombreusuario());
-        }
-        if (input.idPersona() != null) {
+        if (input.idPersona() != null)
             builder.idPersona(input.idPersona());
-        }
-        if (input.idRol() != null) {
+        if (input.idRol() != null)
             builder.idRol(input.idRol());
-        }
-        if (input.idClave() != null) {
+        if (input.idClave() != null)
             builder.idClave(input.idClave());
-        }
-
         return builder.build();
     }
 
@@ -77,33 +68,23 @@ public class UsuarioMap extends
 
     @Override
     public UsuarioOutput toOutput(UsuarioDTO dto) {
-
-        if (dto == null) {
+        if (dto == null)
             return null;
-        }
 
         PersonaMap personaMap = new PersonaMap();
+        RolMap rolMap = new RolMap();
+        ClaveMap claveMap = new ClaveMap();
 
-        PersonaOutput persona = dto.getPersona() != null
-                ? personaMap.toOutput(dto.getPersona())
-                : null;
-
-        RolOutput rol = null;
-        if (dto.getRol() != null) {
-            rol = RolOutput.builder()
-                    .id(dto.getRol().getId())
-                    .nombre(dto.getRol().getNombre())
-                    .build();
-        }
-
-        ClaveOutput clave = null;
-        if (dto.getClave() != null) {
-            clave = ClaveOutput.builder()
-                    .id(dto.getClave().getId())
-                    .build();
-        }
-
-        return new UsuarioOutput(dto.getId(), dto.getNombreusuario(), persona, rol, clave);
+        return UsuarioOutput.builder()
+                .id(dto.getId())
+                .nombreusuario(dto.getNombreusuario())
+                .idPersona(dto.getIdPersona())
+                .idRol(dto.getIdRol())
+                .idClave(dto.getIdClave())
+                .persona(dto.getPersona() != null ? personaMap.toOutput(dto.getPersona()) : null)
+                .rol(dto.getRol() != null ? rolMap.toOutput(dto.getRol()) : null)
+                .clave(dto.getClave() != null ? claveMap.toOutput(dto.getClave()) : null)
+                .build();
     }
 
     public List<UsuarioOutput> toOutputList(List<UsuarioDTO> dtoList) {
