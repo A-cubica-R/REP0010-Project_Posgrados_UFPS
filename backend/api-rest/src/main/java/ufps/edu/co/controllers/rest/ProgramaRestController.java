@@ -12,9 +12,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import ufps.edu.co.processor.crud.ProgramaProcessor;
+import ufps.edu.co.records.input.entity.CohorteInput.COHORTE_FIND;
 import ufps.edu.co.records.input.entity.FacultadInput.FACULTAD_FIND;
 import ufps.edu.co.records.input.entity.ProgramaInput.*;
 import ufps.edu.co.records.output.entity.ProgramaOutput;
@@ -72,5 +74,13 @@ public class ProgramaRestController {
     public ResponseEntity<List<ProgramaOutput>> findByIdFacultad(@RequestBody FACULTAD_FIND request) {
         List<ProgramaOutput> list = processor.findByIdFacultad(request.id());
         return ResponseEntity.ok(list);
+    }
+
+    @PostMapping(value = "/count-en-proceso", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Long> countAspirantesEnProcesoEnCohorteAbierta(@RequestBody COHORTE_FIND request) {
+
+        Long total = processor.countAspirantesEnProcesoEnCohorteAbierta(request.id());
+
+        return ResponseEntity.ok(total);
     }
 }

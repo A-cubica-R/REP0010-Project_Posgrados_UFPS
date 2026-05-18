@@ -5,6 +5,8 @@
 package ufps.edu.co.persistence.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import ufps.edu.co.persistence.entities.CohorteEntity;
@@ -15,12 +17,20 @@ import ufps.edu.co.persistence.entities.CohorteEntity;
  * This interface extends {@link JpaRepository}, so it automatically inherits
  * standard persistence operations, including:
  * <ul>
- *   <li> Create/update entities: {@link JpaRepository#save(Object)} and {@link JpaRepository#saveAll(Iterable)}</li>
- *   <li> Basic queries: {@link JpaRepository#findById(Object)}, {@link JpaRepository#findAll()}, and {@link JpaRepository#getReferenceById(Object)}</li>
- *   <li> Validation and counting: {@link JpaRepository#existsById(Object)} and {@link JpaRepository#count()}</li>
- *   <li> Deletion: {@link JpaRepository#deleteById(Object)}, {@link JpaRepository#delete(Object)}, and {@link JpaRepository#deleteAll()}</li>
- *   <li> Paging and sorting: {@link org.springframework.data.repository.PagingAndSortingRepository#findAll(org.springframework.data.domain.Pageable)}
- *     and {@link org.springframework.data.repository.PagingAndSortingRepository#findAll(org.springframework.data.domain.Sort)}</li>
+ * <li>Create/update entities: {@link JpaRepository#save(Object)} and
+ * {@link JpaRepository#saveAll(Iterable)}</li>
+ * <li>Basic queries: {@link JpaRepository#findById(Object)},
+ * {@link JpaRepository#findAll()}, and
+ * {@link JpaRepository#getReferenceById(Object)}</li>
+ * <li>Validation and counting: {@link JpaRepository#existsById(Object)} and
+ * {@link JpaRepository#count()}</li>
+ * <li>Deletion: {@link JpaRepository#deleteById(Object)},
+ * {@link JpaRepository#delete(Object)}, and
+ * {@link JpaRepository#deleteAll()}</li>
+ * <li>Paging and sorting:
+ * {@link org.springframework.data.repository.PagingAndSortingRepository#findAll(org.springframework.data.domain.Pageable)}
+ * and
+ * {@link org.springframework.data.repository.PagingAndSortingRepository#findAll(org.springframework.data.domain.Sort)}</li>
  * </ul>
  *
  * It can also be extended with derived query methods (findBy...),
@@ -37,15 +47,29 @@ import ufps.edu.co.persistence.entities.CohorteEntity;
 @Repository
 public interface CohorteRepository extends JpaRepository<CohorteEntity, Integer> {
 
-	// Insert specific finders here 
+	@Query(value = """
+		SELECT COUNT(a.id)
+		FROM aspirante a
+		INNER JOIN estado ea ON a.id_estado = ea.id
+		INNER JOIN cohorte c ON a.id_cohorte = c.id
+		INNER JOIN estado ec ON c.id_estado = ec.id
+		WHERE a.id_cohorte = :cohorteId
+		AND ea.entidad = 'aspirante'
+		AND ea.tipo = 'EN PROCESO'
+		AND ec.entidad = 'cohorte'
+		AND ec.tipo = 'ABIERTA'
+		""", nativeQuery = true)
+	long countAspirantesEnProcesoEnCohorteAbierta(@Param("cohorteId") Integer cohorteId);
 
-	//List<CohorteEntity> findByXxx(String xxx);
+	// Insert specific finders here
 
-	//List<CohorteEntity> findByXxxStartingWith(String xxx);
+	// List<CohorteEntity> findByXxx(String xxx);
 
-	//List<CohorteEntity> findByXxxContaining(String xxx);
+	// List<CohorteEntity> findByXxxStartingWith(String xxx);
 
-	//List<CohorteEntity> findByYyy(BigDecimal yyy);
+	// List<CohorteEntity> findByXxxContaining(String xxx);
 
-	//List<CohorteEntity> findByXxxContainingAndYyy(String xxx, BigDecimal yyy);
+	// List<CohorteEntity> findByYyy(BigDecimal yyy);
+
+	// List<CohorteEntity> findByXxxContainingAndYyy(String xxx, BigDecimal yyy);
 }

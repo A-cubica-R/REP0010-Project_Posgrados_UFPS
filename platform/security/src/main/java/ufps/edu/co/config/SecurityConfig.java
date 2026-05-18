@@ -34,7 +34,7 @@ public class SecurityConfig {
          * los controllers del paquete CASE ussan la ruta : /api/application/case/
          */
         private static final String[] DIRECTOR_FACULTAD_PATHS = {
-                        "/api/dev/endpoint/facultad/**",
+                        "/api/dev/endpoint/programa/**",
                         "/api/application/case/administrativo/Directorfacultad/**"
         };
 
