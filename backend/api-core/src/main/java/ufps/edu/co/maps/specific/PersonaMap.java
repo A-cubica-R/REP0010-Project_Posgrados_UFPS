@@ -40,8 +40,21 @@ public class PersonaMap extends
         dto.setFechanacimiento(input.fechanacimiento());
         dto.setCelular(input.celular());
         dto.setTelefono(input.telefono());
-        dto.setIdUbicacionvivienda(input.idUbicacion());
+        dto.setIdUbicacionvivienda(input.idUbicacionvivienda());
+        dto.setIdUbicacionnacimiento(input.idUbicacionnacimiento());
+        dto.setIdUbicaciontrabajo(input.idUbicaciontrabajo());
         dto.setIdGenero(input.idGenero());
+        dto.setEgresadoufps(input.egresadoufps());
+        dto.setEmpresa(input.empresa());
+        dto.setExperiencialaboral(input.experiencialaboral());
+        dto.setPromediopregrado(input.promediopregrado());
+        dto.setTitulopregrado(input.titulopregrado());
+        dto.setTitulosposgrados(input.titulosposgrados());
+        dto.setIdCapacidadexepcional(input.idCapacidadexepcional());
+        dto.setIdDiscapacidad(input.idDiscapacidad());
+        dto.setIdEstadocivil(input.idEstadocivil());
+        dto.setIdGrupoetnico(input.idGrupoetnico());
+        dto.setIdPoblacionindigena(input.idPoblacionindigena());
         return dto;
     }
 
@@ -55,8 +68,21 @@ public class PersonaMap extends
         dto.setFechanacimiento(input.fechanacimiento());
         dto.setCelular(input.celular());
         dto.setTelefono(input.telefono());
-        dto.setIdUbicacionvivienda(input.idUbicacion());
+        dto.setIdUbicacionvivienda(input.idUbicacionvivienda());
+        dto.setIdUbicacionnacimiento(input.idUbicacionnacimiento());
+        dto.setIdUbicaciontrabajo(input.idUbicaciontrabajo());
         dto.setIdGenero(input.idGenero());
+        dto.setEgresadoufps(input.egresadoufps());
+        dto.setEmpresa(input.empresa());
+        dto.setExperiencialaboral(input.experiencialaboral());
+        dto.setPromediopregrado(input.promediopregrado());
+        dto.setTitulopregrado(input.titulopregrado());
+        dto.setTitulosposgrados(input.titulosposgrados());
+        dto.setIdCapacidadexepcional(input.idCapacidadexepcional());
+        dto.setIdDiscapacidad(input.idDiscapacidad());
+        dto.setIdEstadocivil(input.idEstadocivil());
+        dto.setIdGrupoetnico(input.idGrupoetnico());
+        dto.setIdPoblacionindigena(input.idPoblacionindigena());
         return dto;
     }
 
@@ -78,10 +104,22 @@ public class PersonaMap extends
         if (input.fechanacimiento() != null) builder.fechanacimiento(input.fechanacimiento());
         if (input.celular() != null) builder.celular(input.celular());
         if (input.telefono() != null) builder.telefono(input.telefono());
-        // Corregir
-        if (input.idUbicacion() != null) builder.idUbicacionnacimiento(input.idUbicacion());
-        if (input.idUbicacion() != null) builder.idUbicaciontrabajo(input.idUbicacion());
+        // Mapear ubicaciones si vienen en el patch
+        if (input.idUbicacionvivienda() != null) builder.idUbicacionvivienda(input.idUbicacionvivienda());
+        if (input.idUbicacionnacimiento() != null) builder.idUbicacionnacimiento(input.idUbicacionnacimiento());
+        if (input.idUbicaciontrabajo() != null) builder.idUbicaciontrabajo(input.idUbicaciontrabajo());
         if (input.idGenero() != null) builder.idGenero(input.idGenero());
+        if (input.egresadoufps() != null) builder.egresadoufps(input.egresadoufps());
+        if (input.empresa() != null) builder.empresa(input.empresa());
+        if (input.experiencialaboral() != null) builder.experiencialaboral(input.experiencialaboral());
+        if (input.promediopregrado() != null) builder.promediopregrado(input.promediopregrado());
+        if (input.titulopregrado() != null) builder.titulopregrado(input.titulopregrado());
+        if (input.titulosposgrados() != null) builder.titulosposgrados(input.titulosposgrados());
+        if (input.idCapacidadexepcional() != null) builder.idCapacidadexepcional(input.idCapacidadexepcional());
+        if (input.idDiscapacidad() != null) builder.idDiscapacidad(input.idDiscapacidad());
+        if (input.idEstadocivil() != null) builder.idEstadocivil(input.idEstadocivil());
+        if (input.idGrupoetnico() != null) builder.idGrupoetnico(input.idGrupoetnico());
+        if (input.idPoblacionindigena() != null) builder.idPoblacionindigena(input.idPoblacionindigena());
 
         return builder.build();
     }

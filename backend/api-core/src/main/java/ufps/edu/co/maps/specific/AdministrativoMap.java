@@ -22,6 +22,8 @@ public class AdministrativoMap extends
     private EstadoMap estadoMap;
     @Autowired 
     private CargoMap cargoMap;
+    @Autowired
+    private DocumentoMap documentoMap;
 
     public AdministrativoMap() {
         super(ADMINISTRATIVO_CREATE.class, ADMINISTRATIVO_UPDATE.class, ADMINISTRATIVO_DELETE.class,
@@ -95,6 +97,7 @@ public class AdministrativoMap extends
                 .persona(dto.getPersona() != null ? personaMap.toOutput(dto.getPersona()) : null)
                 .estado(dto.getEstado() != null ? estadoMap.toOutput(dto.getEstado()) : null)
                 .cargo(dto.getCargo() != null ? cargoMap.toOutput(dto.getCargo()) : null)
+                .documentoList(dto.getDocumentoList() != null ? documentoMap.toOutputList(dto.getDocumentoList()) : null)
                 .build();
     }
 
