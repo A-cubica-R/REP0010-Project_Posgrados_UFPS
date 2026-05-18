@@ -29,12 +29,13 @@ public class SecurityConfig {
                         "/error"
         };
 
+        /**
+         * los controllers del paquete CRUD ussan la ruta : /api/dev/endpoint/
+         * los controllers del paquete CASE ussan la ruta : /api/application/case/
+         */
         private static final String[] DIRECTOR_FACULTAD_PATHS = {
-                        "/facultades/**",
-                        "/programas/**",
-                        "/profesores/**",
-                        "/estudiantes/**",
-                        "/proyectos/**"
+                        "/api/dev/endpoint/facultad/**",
+                        "/api/application/case/administrativo/Directorfacultad/**"
         };
 
         @Bean
