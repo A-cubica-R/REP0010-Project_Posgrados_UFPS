@@ -12,7 +12,8 @@ public class TipoentrevistaMap extends
         GlobalMapper<TIPOENTREVISTA_CREATE, TIPOENTREVISTA_UPDATE, TIPOENTREVISTA_DELETE, TIPOENTREVISTA_PATCH, TIPOENTREVISTA_FIND, TipoentrevistaOutput, TipoentrevistaDTO> {
 
     public TipoentrevistaMap() {
-        super(TIPOENTREVISTA_CREATE.class, TIPOENTREVISTA_UPDATE.class, TIPOENTREVISTA_DELETE.class, TIPOENTREVISTA_PATCH.class,
+        super(TIPOENTREVISTA_CREATE.class, TIPOENTREVISTA_UPDATE.class, TIPOENTREVISTA_DELETE.class,
+                TIPOENTREVISTA_PATCH.class,
                 TIPOENTREVISTA_FIND.class);
     }
 

@@ -2,22 +2,35 @@ package ufps.edu.co.records.input.entity;
 
 import jakarta.validation.constraints.NotNull;
 import ufps.edu.co.records.contracts.*;
+import java.math.BigDecimal;
 
 public enum AspiranteInput {
     ;
 
     public record ASPIRANTE_CREATE(
-            @NotNull Integer idPersona) implements CreateType {
+            BigDecimal puntuacion,
+            @NotNull Integer idCohorte,
+            @NotNull Integer idEstado,
+            @NotNull Integer idPersona,
+            @NotNull Integer idTipovinculacion) implements CreateType {
     }
 
     public record ASPIRANTE_UPDATE(
             @NotNull Integer id,
-            @NotNull Integer idPersona) implements UpdateType {
+            BigDecimal puntuacion,
+            @NotNull Integer idCohorte,
+            @NotNull Integer idEstado,
+            @NotNull Integer idPersona,
+            @NotNull Integer idTipovinculacion) implements UpdateType {
     }
 
     public record ASPIRANTE_PATCH(
             @NotNull Integer id,
-            Integer idPersona) implements PatchType {
+            BigDecimal puntuacion,
+            Integer idCohorte,
+            Integer idEstado,
+            Integer idPersona,
+            Integer idTipovinculacion) implements PatchType {
     }
 
     public record ASPIRANTE_DELETE(

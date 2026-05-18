@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -32,7 +33,7 @@ public class PersonaRestController {
     }
 
     @PostMapping(value = "/list", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PersonaOutput> findById(@RequestBody PERSONA_FIND request) {
+    public ResponseEntity<PersonaOutput> findById(@Valid @RequestBody PERSONA_FIND request) {
         PersonaOutput output = processor.findById(request);
         if (output != null) {
             return ResponseEntity.ok(output);
@@ -42,13 +43,13 @@ public class PersonaRestController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<PersonaOutput> create(@RequestBody PERSONA_CREATE request) {
+    public ResponseEntity<PersonaOutput> create(@Valid @RequestBody PERSONA_CREATE request) {
         PersonaOutput output = processor.create(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(output);
     }
 
     @PutMapping("/update")
-    public ResponseEntity<PersonaOutput> update(@RequestBody PERSONA_UPDATE request) {
+    public ResponseEntity<PersonaOutput> update(@Valid @RequestBody PERSONA_UPDATE request) {
         try {
             PersonaOutput updated = processor.update(request);
             return ResponseEntity.ok(updated);
@@ -58,7 +59,7 @@ public class PersonaRestController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<Void> deleteById(@RequestBody PERSONA_DELETE request) {
+    public ResponseEntity<Void> deleteById(@Valid @RequestBody PERSONA_DELETE request) {
         try {
             processor.deleteById(request);
             return ResponseEntity.noContent().build();

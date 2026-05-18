@@ -2,7 +2,6 @@ package ufps.edu.co.maps.specific;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import ufps.edu.co.maps.GlobalMapper;
@@ -13,9 +12,6 @@ import ufps.edu.co.rest.dto.CalificacioncriterioDTO;
 @Component
 public class CalificacioncriterioMap extends
         GlobalMapper<CALIFICACIONCRITERIO_CREATE, CALIFICACIONCRITERIO_UPDATE, CALIFICACIONCRITERIO_DELETE, CALIFICACIONCRITERIO_PATCH, CALIFICACIONCRITERIO_FIND, CalificacioncriterioOutput, CalificacioncriterioDTO> {
-
-    @Autowired private AspiranteMap aspiranteMap;
-    @Autowired private CriterioevaluacionMap criterioevaluacionMap;
 
     public CalificacioncriterioMap() {
         super(CALIFICACIONCRITERIO_CREATE.class, CALIFICACIONCRITERIO_UPDATE.class,
@@ -56,11 +52,16 @@ public class CalificacioncriterioMap extends
         CalificacioncriterioDTO.CalificacioncriterioDTOBuilder builder = CalificacioncriterioDTO.builder()
                 .id(input.id());
 
-        if (input.idAspirante() != null) builder.idAspirante(input.idAspirante());
-        if (input.idCriterio() != null) builder.idCriterio(input.idCriterio());
-        if (input.puntuacion() != null) builder.puntuacion(input.puntuacion());
-        if (input.pesoSnapshot() != null) builder.pesoSnapshot(input.pesoSnapshot());
-        if (input.observaciones() != null) builder.observaciones(input.observaciones());
+        if (input.idAspirante() != null)
+            builder.idAspirante(input.idAspirante());
+        if (input.idCriterio() != null)
+            builder.idCriterio(input.idCriterio());
+        if (input.puntuacion() != null)
+            builder.puntuacion(input.puntuacion());
+        if (input.pesoSnapshot() != null)
+            builder.pesoSnapshot(input.pesoSnapshot());
+        if (input.observaciones() != null)
+            builder.observaciones(input.observaciones());
 
         return builder.build();
     }
@@ -74,7 +75,12 @@ public class CalificacioncriterioMap extends
 
     @Override
     public CalificacioncriterioOutput toOutput(CalificacioncriterioDTO dto) {
-        if (dto == null) return null;
+        if (dto == null)
+            return null;
+
+        AspiranteMap aspiranteMap = new AspiranteMap();
+        CriterioevaluacionMap criterioevaluacionMap = new CriterioevaluacionMap();
+
         return CalificacioncriterioOutput.builder()
                 .id(dto.getId())
                 .idAspirante(dto.getIdAspirante())
@@ -83,7 +89,9 @@ public class CalificacioncriterioMap extends
                 .pesoSnapshot(dto.getPesoSnapshot())
                 .observaciones(dto.getObservaciones())
                 .aspirante(dto.getAspirante() != null ? aspiranteMap.toOutput(dto.getAspirante()) : null)
-                .criterioevaluacion(dto.getCriterioevaluacion() != null ? criterioevaluacionMap.toOutput(dto.getCriterioevaluacion()) : null)
+                .criterioevaluacion(dto.getCriterioevaluacion() != null
+                        ? criterioevaluacionMap.toOutput(dto.getCriterioevaluacion())
+                        : null)
                 .build();
     }
 

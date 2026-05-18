@@ -2,7 +2,6 @@ package ufps.edu.co.maps.specific;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import ufps.edu.co.maps.GlobalMapper;
@@ -14,14 +13,6 @@ import ufps.edu.co.rest.dto.EntrevistaDTO;
 public class EntrevistaMap extends
         GlobalMapper<ENTREVISTA_CREATE, ENTREVISTA_UPDATE, ENTREVISTA_DELETE, ENTREVISTA_PATCH, ENTREVISTA_FIND, EntrevistaOutput, EntrevistaDTO> {
 
-    @Autowired
-    private AspiranteMap aspiranteMap;
-    @Autowired
-    private EstadoMap estadoMap;
-    @Autowired
-    private TipoentrevistaMap tipoentrevistaMap;
-    @Autowired
-    private UbicacionMap ubicacionMap;
 
     public EntrevistaMap() {
         super(ENTREVISTA_CREATE.class, ENTREVISTA_UPDATE.class, ENTREVISTA_DELETE.class, ENTREVISTA_PATCH.class,
@@ -77,6 +68,12 @@ public class EntrevistaMap extends
     public EntrevistaOutput toOutput(EntrevistaDTO dto) {
         if (dto == null)
             return null;
+
+            AspiranteMap aspiranteMap = new AspiranteMap();
+            EstadoMap estadoMap = new EstadoMap();
+            TipoentrevistaMap tipoentrevistaMap = new TipoentrevistaMap();
+            UbicacionMap ubicacionMap = new UbicacionMap();
+
         return EntrevistaOutput.builder()
                 .id(dto.getId())
                 .calificacion(dto.getCalificacion())

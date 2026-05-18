@@ -64,7 +64,8 @@ public class TipoplazoMap extends
 
     @Override
     public TipoplazoOutput toOutput(TipoplazoDTO dto) {
-        if (dto == null) return null;
+        if (dto == null)
+            return null;
         return TipoplazoOutput.builder()
                 .id(dto.getId())
                 .tipo(dto.getTipo())

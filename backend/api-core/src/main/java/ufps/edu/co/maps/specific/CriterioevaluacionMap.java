@@ -1,8 +1,6 @@
 package ufps.edu.co.maps.specific;
 
 import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import ufps.edu.co.maps.GlobalMapper;
@@ -13,8 +11,6 @@ import ufps.edu.co.rest.dto.CriterioevaluacionDTO;
 @Component
 public class CriterioevaluacionMap extends
         GlobalMapper<CRITERIOEVALUACION_CREATE, CRITERIOEVALUACION_UPDATE, CRITERIOEVALUACION_DELETE, CRITERIOEVALUACION_PATCH, CRITERIOEVALUACION_FIND, CriterioevaluacionOutput, CriterioevaluacionDTO> {
-
-    @Autowired private CohorteMap cohorteMap;
 
     public CriterioevaluacionMap() {
         super(CRITERIOEVALUACION_CREATE.class, CRITERIOEVALUACION_UPDATE.class, CRITERIOEVALUACION_DELETE.class,
@@ -69,7 +65,11 @@ public class CriterioevaluacionMap extends
 
     @Override
     public CriterioevaluacionOutput toOutput(CriterioevaluacionDTO dto) {
-        if (dto == null) return null;
+        if (dto == null)
+            return null;
+
+        CohorteMap cohorteMap = new CohorteMap();
+        
         return CriterioevaluacionOutput.builder()
                 .id(dto.getId())
                 .nombre(dto.getNombre())

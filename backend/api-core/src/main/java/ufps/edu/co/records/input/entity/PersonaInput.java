@@ -1,6 +1,7 @@
 package ufps.edu.co.records.input.entity;
 
 import java.time.LocalDate;
+import java.math.BigDecimal;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -20,8 +21,21 @@ public enum PersonaInput {
             @NotNull LocalDate fechanacimiento,
             @NotBlank String celular,
             String telefono,
-            @NotNull Integer idUbicacion,
-            @NotNull Integer idGenero) implements CreateType {
+            @NotNull Integer idUbicacionvivienda,
+            Integer idUbicacionnacimiento,
+            Integer idUbicaciontrabajo,
+            @NotNull Integer idGenero,
+            @NotNull Integer idEstadocivil,
+            @NotNull Integer idGrupoetnico,
+            @NotNull Integer idPoblacionindigena,
+            @NotNull Integer idDiscapacidad,
+            @NotNull Integer idCapacidadexepcional,
+            BigDecimal promediopregrado,
+            @NotBlank String titulopregrado,
+            String titulosposgrados,
+            String empresa,
+            String experiencialaboral,
+            @NotNull Boolean egresadoufps) implements CreateType {
     }
 
     public record PERSONA_UPDATE(
@@ -32,8 +46,21 @@ public enum PersonaInput {
             @NotNull LocalDate fechanacimiento,
             @NotBlank String celular,
             String telefono,
-            @NotNull Integer idUbicacion,
-            @NotNull Integer idGenero) implements UpdateType {
+            @NotNull Integer idUbicacionvivienda,
+            Integer idUbicacionnacimiento,
+            Integer idUbicaciontrabajo,
+            @NotNull Integer idGenero,
+            @NotNull Integer idEstadocivil,
+            @NotNull Integer idGrupoetnico,
+            @NotNull Integer idPoblacionindigena,
+            @NotNull Integer idDiscapacidad,
+            @NotNull Integer idCapacidadexepcional,
+            BigDecimal promediopregrado,
+            @NotBlank String titulopregrado,
+            String titulosposgrados,
+            String empresa,
+            String experiencialaboral,
+            @NotNull Boolean egresadoufps) implements UpdateType {
     }
 
     public record PERSONA_PATCH(
@@ -44,8 +71,21 @@ public enum PersonaInput {
             LocalDate fechanacimiento,
             String celular,
             String telefono,
-            Integer idUbicacion,
-            Integer idGenero) implements PatchType {
+            Integer idUbicacionvivienda,
+            Integer idUbicacionnacimiento,
+            Integer idUbicaciontrabajo,
+            Integer idGenero,
+            Integer idEstadocivil,
+            Integer idGrupoetnico,
+            Integer idPoblacionindigena,
+            Integer idDiscapacidad,
+            Integer idCapacidadexepcional,
+            BigDecimal promediopregrado,
+            String titulopregrado,
+            String titulosposgrados,
+            String empresa,
+            String experiencialaboral,
+            Boolean egresadoufps) implements PatchType {
     }
 
     public record PERSONA_DELETE(

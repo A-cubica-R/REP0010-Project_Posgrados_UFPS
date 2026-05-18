@@ -2,7 +2,6 @@ package ufps.edu.co.maps.specific;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ufps.edu.co.maps.GlobalMapper;
 import ufps.edu.co.records.input.entity.UsuarioInput.*;
@@ -12,10 +11,6 @@ import ufps.edu.co.rest.dto.UsuarioDTO;
 @Component
 public class UsuarioMap extends
         GlobalMapper<USUARIO_CREATE, USUARIO_UPDATE, USUARIO_DELETE, USUARIO_PATCH, USUARIO_FIND, UsuarioOutput, UsuarioDTO> {
-
-    @Autowired private PersonaMap personaMap;
-    @Autowired private RolMap rolMap;
-    @Autowired private ClaveMap claveMap;
 
     public UsuarioMap() {
         super(USUARIO_CREATE.class, USUARIO_UPDATE.class, USUARIO_DELETE.class, USUARIO_PATCH.class,
@@ -53,10 +48,14 @@ public class UsuarioMap extends
     @Override
     protected UsuarioDTO toDtoPatch(USUARIO_PATCH input) {
         UsuarioDTO.UsuarioDTOBuilder builder = UsuarioDTO.builder().id(input.id());
-        if (input.nombreusuario() != null) builder.nombreusuario(input.nombreusuario());
-        if (input.idPersona() != null) builder.idPersona(input.idPersona());
-        if (input.idRol() != null) builder.idRol(input.idRol());
-        if (input.idClave() != null) builder.idClave(input.idClave());
+        if (input.nombreusuario() != null)
+            builder.nombreusuario(input.nombreusuario());
+        if (input.idPersona() != null)
+            builder.idPersona(input.idPersona());
+        if (input.idRol() != null)
+            builder.idRol(input.idRol());
+        if (input.idClave() != null)
+            builder.idClave(input.idClave());
         return builder.build();
     }
 
@@ -69,7 +68,13 @@ public class UsuarioMap extends
 
     @Override
     public UsuarioOutput toOutput(UsuarioDTO dto) {
-        if (dto == null) return null;
+        if (dto == null)
+            return null;
+
+        PersonaMap personaMap = new PersonaMap();
+        RolMap rolMap = new RolMap();
+        ClaveMap claveMap = new ClaveMap();
+
         return UsuarioOutput.builder()
                 .id(dto.getId())
                 .nombreusuario(dto.getNombreusuario())

@@ -55,4 +55,13 @@ public class AdministrativoService extends GenericService<AdministrativoEntity, 
                 .orElseThrow(() -> new RuntimeException("Administrativo no encontrado con id: " + id));
         repository.deleteById(id);
     }
+
+    public List<AdministrativoDTO> findPosiblesDirectores() {
+
+        List<String> nombres = List.of("DIRECTOR DE FACULTAD", "DIRECTOR DE PROGRAMA", "ADMINISTADOR", "SUPER ADMINISTRADOR");
+
+        List<AdministrativoEntity> entities = repository.findByCargoNombreNotIn(nombres);
+
+        return entityListToDtoList(entities);
+    }
 }

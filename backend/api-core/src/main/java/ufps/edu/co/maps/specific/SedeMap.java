@@ -1,6 +1,5 @@
 package ufps.edu.co.maps.specific;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import ufps.edu.co.maps.GlobalMapper;
@@ -9,9 +8,8 @@ import ufps.edu.co.records.output.entity.SedeOutput;
 import ufps.edu.co.rest.dto.SedeDTO;
 
 @Component
-public class SedeMap extends GlobalMapper<SEDE_CREATE, SEDE_UPDATE, SEDE_DELETE, SEDE_PATCH, SEDE_FIND, SedeOutput, SedeDTO> {
-
-    @Autowired private UbicacionMap ubicacionMap;
+public class SedeMap
+        extends GlobalMapper<SEDE_CREATE, SEDE_UPDATE, SEDE_DELETE, SEDE_PATCH, SEDE_FIND, SedeOutput, SedeDTO> {
 
     public SedeMap() {
         super(SEDE_CREATE.class, SEDE_UPDATE.class, SEDE_DELETE.class, SEDE_PATCH.class, SEDE_FIND.class);
@@ -57,7 +55,11 @@ public class SedeMap extends GlobalMapper<SEDE_CREATE, SEDE_UPDATE, SEDE_DELETE,
 
     @Override
     public SedeOutput toOutput(SedeDTO dto) {
-        if (dto == null) return null;
+        if (dto == null)
+            return null;
+
+        UbicacionMap ubicacionMap = new UbicacionMap();
+
         return SedeOutput.builder()
                 .id(dto.getId())
                 .nombre(dto.getNombre())

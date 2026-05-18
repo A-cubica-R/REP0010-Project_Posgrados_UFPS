@@ -2,7 +2,6 @@ package ufps.edu.co.maps.specific;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import ufps.edu.co.maps.GlobalMapper;
@@ -13,10 +12,6 @@ import ufps.edu.co.rest.dto.PruebaDTO;
 @Component
 public class PruebaMap extends
         GlobalMapper<PRUEBA_CREATE, PRUEBA_UPDATE, PRUEBA_DELETE, PRUEBA_PATCH, PRUEBA_FIND, PruebaOutput, PruebaDTO> {
-
-    @Autowired private AspiranteMap aspiranteMap;
-    @Autowired private CohorteMap cohorteMap;
-    @Autowired private UbicacionMap ubicacionMap;
 
     public PruebaMap() {
         super(PRUEBA_CREATE.class, PRUEBA_UPDATE.class, PRUEBA_DELETE.class,
@@ -74,7 +69,13 @@ public class PruebaMap extends
 
     @Override
     public PruebaOutput toOutput(PruebaDTO dto) {
-        if (dto == null) return null;
+        if (dto == null)
+            return null;
+
+        AspiranteMap aspiranteMap = new AspiranteMap();
+        CohorteMap cohorteMap = new CohorteMap();
+        UbicacionMap ubicacionMap = new UbicacionMap();
+
         return PruebaOutput.builder()
                 .id(dto.getId())
                 .nombre(dto.getNombre())
