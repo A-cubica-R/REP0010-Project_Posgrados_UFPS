@@ -74,4 +74,12 @@ public class AspiranteProcessor implements
             throw new RuntimeException("Error deleting Aspirante by ID: " + e.getMessage(), e);
         }
     }
+
+    public List<AspiranteOutput> findWithDocuments() {
+        try {
+            return service.findWithDocuments().stream().map(map::toOutput).toList();
+        } catch (Exception e) {
+            throw new RuntimeException("Error finding Aspirantes with documents: " + e.getMessage(), e);
+        }
+    }
 }

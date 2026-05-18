@@ -13,26 +13,26 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ufps.edu.co.processor.crud.CriterioaceptacionProcessor;
-import ufps.edu.co.records.input.entity.CriterioaceptacionInput.*;
-import ufps.edu.co.records.output.entity.CriterioaceptacionOutput;
+import ufps.edu.co.processor.crud.CriterioevaluacionProcessor;
+import ufps.edu.co.records.input.entity.CriterioevaluacionInput.*;
+import ufps.edu.co.records.output.entity.CriterioevaluacionOutput;
 
 @RestController
-@RequestMapping(value = "/criterioaceptacion", produces = MediaType.APPLICATION_JSON_VALUE)
-public class CriterioaceptacionRestController {
+@RequestMapping(value = "/criterioevaluacion", produces = MediaType.APPLICATION_JSON_VALUE)
+public class CriterioevaluacionRestController {
 
     @Autowired
-    private CriterioaceptacionProcessor processor;
+    private CriterioevaluacionProcessor processor;
 
     @GetMapping("/listall")
-    public ResponseEntity<List<CriterioaceptacionOutput>> findAll() {
-        List<CriterioaceptacionOutput> list = processor.findAll();
+    public ResponseEntity<List<CriterioevaluacionOutput>> findAll() {
+        List<CriterioevaluacionOutput> list = processor.findAll();
         return ResponseEntity.ok(list);
     }
 
     @PostMapping(value = "/list", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CriterioaceptacionOutput> findById(@RequestBody CRITERIOACEPTACION_FIND request) {
-        CriterioaceptacionOutput output = processor.findById(request);
+    public ResponseEntity<CriterioevaluacionOutput> findById(@RequestBody CRITERIOEVALUACION_FIND request) {
+        CriterioevaluacionOutput output = processor.findById(request);
         if (output != null) {
             return ResponseEntity.ok(output);
         } else {
@@ -41,15 +41,15 @@ public class CriterioaceptacionRestController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<CriterioaceptacionOutput> create(@RequestBody CRITERIOACEPTACION_CREATE request) {
-        CriterioaceptacionOutput output = processor.create(request);
+    public ResponseEntity<CriterioevaluacionOutput> create(@RequestBody CRITERIOEVALUACION_CREATE request) {
+        CriterioevaluacionOutput output = processor.create(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(output);
     }
 
     @PutMapping("/update")
-    public ResponseEntity<CriterioaceptacionOutput> update(@RequestBody CRITERIOACEPTACION_UPDATE request) {
+    public ResponseEntity<CriterioevaluacionOutput> update(@RequestBody CRITERIOEVALUACION_UPDATE request) {
         try {
-            CriterioaceptacionOutput updated = processor.update(request);
+            CriterioevaluacionOutput updated = processor.update(request);
             return ResponseEntity.ok(updated);
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
@@ -57,7 +57,7 @@ public class CriterioaceptacionRestController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<Void> deleteById(@RequestBody CRITERIOACEPTACION_DELETE request) {
+    public ResponseEntity<Void> deleteById(@RequestBody CRITERIOEVALUACION_DELETE request) {
         try {
             processor.deleteById(request);
             return ResponseEntity.noContent().build();

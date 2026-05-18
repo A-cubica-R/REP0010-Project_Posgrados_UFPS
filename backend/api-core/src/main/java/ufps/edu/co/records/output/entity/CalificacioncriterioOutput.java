@@ -14,5 +14,5 @@ public record CalificacioncriterioOutput(
         BigDecimal pesoSnapshot,
         String observaciones,
         AspiranteOutput aspirante,
-        CriterioaceptacionOutput criterioaceptacion
+        CriterioevaluacionOutput criterioevaluacion
 ) implements OutputResponse {}

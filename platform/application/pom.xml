@@ -14,6 +14,12 @@
     <artifactId>application</artifactId>
 
     <dependencies>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
         <!-- Minimal Spring Boot runtime for @SpringBootApplication and auto-configuration -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

@@ -142,7 +142,7 @@ public class PersonaMap extends
                 .fechanacimiento(dto.getFechanacimiento())
                 .celular(dto.getCelular())
                 .telefono(dto.getTelefono())
-                .egresadoufps(dto.isEgresadoufps())
+                .egresadoufps(dto.getEgresadoufps())
                 .empresa(dto.getEmpresa())
                 .experiencialaboral(dto.getExperiencialaboral())
                 .promediopregrado(dto.getPromediopregrado())
@@ -163,9 +163,9 @@ public class PersonaMap extends
                 .poblacionindigena(dto.getPoblacionindigena() != null ? poblacionindigenaMap.toOutput(dto.getPoblacionindigena()) : null)
                 .discapacidad(dto.getDiscapacidad() != null ? discapacidadMap.toOutput(dto.getDiscapacidad()) : null)
                 .capacidadexepcional(dto.getCapacidadexepcional() != null ? capacidadexepcionalMap.toOutput(dto.getCapacidadexepcional()) : null)
-                .ubicacionVivienda(dto.getUbicacion() != null ? ubicacionMap.toOutput(dto.getUbicacion()) : null)
-                .ubicacionNacimiento(dto.getUbicacion2() != null ? ubicacionMap.toOutput(dto.getUbicacion2()) : null)
-                .ubicacionTrabajo(dto.getUbicacion3() != null ? ubicacionMap.toOutput(dto.getUbicacion3()) : null)
+                .ubicacionVivienda(dto.getUbicacionVivienda() != null ? ubicacionMap.toOutput(dto.getUbicacionVivienda()) : null)
+                .ubicacionNacimiento(dto.getUbicacionNacimiento() != null ? ubicacionMap.toOutput(dto.getUbicacionNacimiento()) : null)
+                .ubicacionTrabajo(dto.getUbicacionTrabajo() != null ? ubicacionMap.toOutput(dto.getUbicacionTrabajo()) : null)
                 .build();
     }
 

@@ -90,9 +90,9 @@ public class DocumentoProcessor implements
     public DocumentoOutput approveDocument(DOCUMENTO_FIND input) {
         try {
             DocumentoDTO dto = service.findById(input.id());
-            EstadodocumentoDTO estadodocumentoDTO = estadodocumentoService.findById(2);
+            EstadodocumentoDTO estadodocumentoDTO = estadodocumentoService.findByEstado("Aprobado");
             dto.setEstadodocumento(estadodocumentoDTO);
-            dto.setIdEstadodocumento(2);
+            dto.setIdEstadodocumento(estadodocumentoDTO.getId());
             DocumentoDTO approve = service.update(input.id(), dto);
             return map.toOutput(approve);
         } catch (Exception e) {
@@ -103,10 +103,10 @@ public class DocumentoProcessor implements
     public DocumentoOutput rejectDocument(DOCUMENTO_REJECT input) {
         try {
             DocumentoDTO dto = service.findById(input.id());
-            EstadodocumentoDTO estadodocumentoDTO = estadodocumentoService.findById(3);
+            EstadodocumentoDTO estadodocumentoDTO = estadodocumentoService.findByEstado("Rechazado");
             dto.setEstadodocumento(estadodocumentoDTO);
             dto.setObservaciones(input.observaciones());
-            dto.setIdEstadodocumento(3);
+            dto.setIdEstadodocumento(estadodocumentoDTO.getId());
             DocumentoDTO reject = service.update(input.id(), dto);
             return map.toOutput(reject);
         } catch (Exception e) {

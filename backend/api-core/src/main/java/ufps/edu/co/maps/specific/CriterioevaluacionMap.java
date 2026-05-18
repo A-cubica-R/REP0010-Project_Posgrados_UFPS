@@ -6,24 +6,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import ufps.edu.co.maps.GlobalMapper;
-import ufps.edu.co.records.input.entity.CriterioaceptacionInput.*;
-import ufps.edu.co.records.output.entity.CriterioaceptacionOutput;
-import ufps.edu.co.rest.dto.CriterioaceptacionDTO;
+import ufps.edu.co.records.input.entity.CriterioevaluacionInput.*;
+import ufps.edu.co.records.output.entity.CriterioevaluacionOutput;
+import ufps.edu.co.rest.dto.CriterioevaluacionDTO;
 
 @Component
-public class CriterioaceptacionMap extends
-        GlobalMapper<CRITERIOACEPTACION_CREATE, CRITERIOACEPTACION_UPDATE, CRITERIOACEPTACION_DELETE, CRITERIOACEPTACION_PATCH, CRITERIOACEPTACION_FIND, CriterioaceptacionOutput, CriterioaceptacionDTO> {
+public class CriterioevaluacionMap extends
+        GlobalMapper<CRITERIOEVALUACION_CREATE, CRITERIOEVALUACION_UPDATE, CRITERIOEVALUACION_DELETE, CRITERIOEVALUACION_PATCH, CRITERIOEVALUACION_FIND, CriterioevaluacionOutput, CriterioevaluacionDTO> {
 
     @Autowired private CohorteMap cohorteMap;
 
-    public CriterioaceptacionMap() {
-        super(CRITERIOACEPTACION_CREATE.class, CRITERIOACEPTACION_UPDATE.class, CRITERIOACEPTACION_DELETE.class,
-                CRITERIOACEPTACION_PATCH.class, CRITERIOACEPTACION_FIND.class);
+    public CriterioevaluacionMap() {
+        super(CRITERIOEVALUACION_CREATE.class, CRITERIOEVALUACION_UPDATE.class, CRITERIOEVALUACION_DELETE.class,
+                CRITERIOEVALUACION_PATCH.class, CRITERIOEVALUACION_FIND.class);
     }
 
     @Override
-    protected CriterioaceptacionDTO toDtoCreate(CRITERIOACEPTACION_CREATE input) {
-        return CriterioaceptacionDTO.builder()
+    protected CriterioevaluacionDTO toDtoCreate(CRITERIOEVALUACION_CREATE input) {
+        return CriterioevaluacionDTO.builder()
                 .nombre(input.nombre())
                 .descripcion(input.descripcion())
                 .peso(input.peso())
@@ -32,26 +32,8 @@ public class CriterioaceptacionMap extends
     }
 
     @Override
-    protected CriterioaceptacionDTO toDtoUpdate(CRITERIOACEPTACION_UPDATE input) {
-        return CriterioaceptacionDTO.builder()
-                .id(input.id())
-                .nombre(input.nombre())
-                .descripcion(input.descripcion())
-                .peso(input.peso())
-                .idCohorte(input.idCohorte())
-                .build();
-    }
-
-    @Override
-    protected CriterioaceptacionDTO toDtoDelete(CRITERIOACEPTACION_DELETE input) {
-        return CriterioaceptacionDTO.builder()
-                .id(input.id())
-                .build();
-    }
-
-    @Override
-    protected CriterioaceptacionDTO toDtoPatch(CRITERIOACEPTACION_PATCH input) {
-        return CriterioaceptacionDTO.builder()
+    protected CriterioevaluacionDTO toDtoUpdate(CRITERIOEVALUACION_UPDATE input) {
+        return CriterioevaluacionDTO.builder()
                 .id(input.id())
                 .nombre(input.nombre())
                 .descripcion(input.descripcion())
@@ -61,16 +43,34 @@ public class CriterioaceptacionMap extends
     }
 
     @Override
-    protected CriterioaceptacionDTO toDtoFind(CRITERIOACEPTACION_FIND input) {
-        return CriterioaceptacionDTO.builder()
+    protected CriterioevaluacionDTO toDtoDelete(CRITERIOEVALUACION_DELETE input) {
+        return CriterioevaluacionDTO.builder()
                 .id(input.id())
                 .build();
     }
 
     @Override
-    public CriterioaceptacionOutput toOutput(CriterioaceptacionDTO dto) {
+    protected CriterioevaluacionDTO toDtoPatch(CRITERIOEVALUACION_PATCH input) {
+        return CriterioevaluacionDTO.builder()
+                .id(input.id())
+                .nombre(input.nombre())
+                .descripcion(input.descripcion())
+                .peso(input.peso())
+                .idCohorte(input.idCohorte())
+                .build();
+    }
+
+    @Override
+    protected CriterioevaluacionDTO toDtoFind(CRITERIOEVALUACION_FIND input) {
+        return CriterioevaluacionDTO.builder()
+                .id(input.id())
+                .build();
+    }
+
+    @Override
+    public CriterioevaluacionOutput toOutput(CriterioevaluacionDTO dto) {
         if (dto == null) return null;
-        return CriterioaceptacionOutput.builder()
+        return CriterioevaluacionOutput.builder()
                 .id(dto.getId())
                 .nombre(dto.getNombre())
                 .descripcion(dto.getDescripcion())
@@ -80,7 +80,7 @@ public class CriterioaceptacionMap extends
                 .build();
     }
 
-    public List<CriterioaceptacionOutput> toOutputList(List<CriterioaceptacionDTO> dtoList) {
+    public List<CriterioevaluacionOutput> toOutputList(List<CriterioevaluacionDTO> dtoList) {
         return dtoList.stream().map(this::toOutput).toList();
     }
 }

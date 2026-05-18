@@ -41,4 +41,12 @@ public enum CalificacioncriterioInput {
     public record CALIFICACIONCRITERIO_FIND(
             @NotNull Integer id) implements FindType {
     }
+
+    public record CALIFICACIONCRITERIO_FIND_BY_ASPIRANTE(
+            @NotNull Integer idAspirante) {
+    }
+
+    public record CALIFICACIONCRITERIO_FIND_BY_CRITERIO(
+            @NotNull Integer idCriterio) {
+    }
 }
