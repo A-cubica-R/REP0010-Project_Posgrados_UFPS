@@ -49,28 +49,6 @@ public class UbicacionEntity implements Serializable {
 
     //--- LINKS ( RELATIONSHIPS )
     @OneToMany(mappedBy="ubicacion")
-    private List<DocumentopersonaEntity> documentopersonaList ; 
-
-    @OneToMany(mappedBy="ubicacionNacimiento")
-    private List<PersonaEntity> personaNacimientoList ;
-
-    @OneToMany(mappedBy="ubicacionTrabajo")
-    private List<PersonaEntity> personaTrabajoList ;
-
-    @OneToMany(mappedBy="ubicacionVivienda")
-    private List<PersonaEntity> personaViviendaList ;
-
-    @OneToMany
-    private List<PersonaEntity> personaList2 ; 
-
-    @OneToMany
-    private List<PersonaEntity> personaList3 ; 
-
-    @OneToMany(mappedBy="ubicacion")
-    private List<PruebaEntity> pruebaList ; 
-
-    @OneToMany(mappedBy="ubicacion")
-    private List<SedeEntity> sedeList ; 
 
     @ManyToOne
     @JoinColumn(name="id_municipio", referencedColumnName="id", insertable=false, updatable=false)

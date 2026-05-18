@@ -40,7 +40,7 @@ public class CohorteDTO implements Serializable {
     private int idPlazodocumentacion ;
     private int idPlazoinscripcion ;
     private int idPlazopago ;
-    private int idPrograma ;
+    private Integer idPrograma ;
     //--- LINKS ( RELATIONSHIPS )
     private List<AspiranteDTO> aspiranteList ; 
     private EstadoDTO estado ; 

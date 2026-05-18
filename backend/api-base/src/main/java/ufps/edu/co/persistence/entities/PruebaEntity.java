@@ -44,6 +44,9 @@ public class PruebaEntity implements Serializable {
     @Column(name="descripcion", length=65535)
     private String     descripcion ;
 
+    @Column(name="id_aspirante", nullable=false)
+    private int        idAspirante ;
+
     @Column(name="id_cohorte", nullable=false)
     private int        idCohorte ;
 
@@ -52,8 +55,12 @@ public class PruebaEntity implements Serializable {
 
     //--- LINKS ( RELATIONSHIPS )
     @ManyToOne
+    @JoinColumn(name="id_aspirante", referencedColumnName="id", insertable=false, updatable=false)
+    private AspiranteEntity  aspirante ;
+
+    @ManyToOne
     @JoinColumn(name="id_ubicacion", referencedColumnName="id", insertable=false, updatable=false)
-    private UbicacionEntity  ubicacion ; 
+    private UbicacionEntity  ubicacion ;
 
     @ManyToOne
     @JoinColumn(name="id_cohorte", referencedColumnName="id", insertable=false, updatable=false)

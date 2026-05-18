@@ -5,6 +5,7 @@
 package ufps.edu.co.rest.services;
 
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,5 +55,28 @@ public class ListaadmitidosService extends GenericService<ListaadmitidosEntity, 
         repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Listaadmitidos no encontrado con id: " + id));
         repository.deleteById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ListaadmitidosDTO> findByIdCohorte(Integer idCohorte) {
+        return entityListToDtoList(repository.findByIdCohorte(idCohorte));
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<ListaadmitidosDTO> findByIdCohorteAndIdAspirante(Integer idCohorte, Integer idAspirante) {
+        return repository.findByIdCohorteAndIdAspirante(idCohorte, idAspirante)
+                .map(entity -> entityToDto(entity));
+    }
+
+    @Transactional(readOnly = true)
+    public boolean existsByIdCohorteAndIdAspirante(Integer idCohorte, Integer idAspirante) {
+        return repository.existsByIdCohorteAndIdAspirante(idCohorte, idAspirante);
+    }
+
+    public void deleteByIdCohorteAndIdAspirante(Integer idCohorte, Integer idAspirante) {
+        ListaadmitidosEntity entity = repository.findByIdCohorteAndIdAspirante(idCohorte, idAspirante)
+                .orElseThrow(() -> new RuntimeException(
+                        "Listaadmitidos no encontrado para cohorte: " + idCohorte + ", aspirante: " + idAspirante));
+        repository.deleteById(entity.getId());
     }
 }

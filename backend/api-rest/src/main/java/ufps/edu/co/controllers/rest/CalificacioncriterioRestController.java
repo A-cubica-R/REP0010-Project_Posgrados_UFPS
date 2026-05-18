@@ -8,7 +8,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -42,15 +41,17 @@ public class CalificacioncriterioRestController {
         }
     }
 
-    @GetMapping("/aspirante/{idAspirante}")
-    public ResponseEntity<List<CalificacioncriterioOutput>> findByIdAspirante(@PathVariable Integer idAspirante) {
-        List<CalificacioncriterioOutput> list = processor.findByIdAspirante(idAspirante);
+    @PostMapping(value = "/aspirante", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<CalificacioncriterioOutput>> findByIdAspirante(
+            @RequestBody CALIFICACIONCRITERIO_FIND_BY_ASPIRANTE request) {
+        List<CalificacioncriterioOutput> list = processor.findByIdAspirante(request.idAspirante());
         return ResponseEntity.ok(list);
     }
 
-    @GetMapping("/criterio/{idCriterio}")
-    public ResponseEntity<List<CalificacioncriterioOutput>> findByIdCriterio(@PathVariable Integer idCriterio) {
-        List<CalificacioncriterioOutput> list = processor.findByIdCriterio(idCriterio);
+    @PostMapping(value = "/criterio", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<CalificacioncriterioOutput>> findByIdCriterio(
+            @RequestBody CALIFICACIONCRITERIO_FIND_BY_CRITERIO request) {
+        List<CalificacioncriterioOutput> list = processor.findByIdCriterio(request.idCriterio());
         return ResponseEntity.ok(list);
     }
 

@@ -4,6 +4,8 @@
  */
 package ufps.edu.co.persistence.repositories;
 
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -37,15 +39,5 @@ import ufps.edu.co.persistence.entities.EstadodocumentoEntity;
 @Repository
 public interface EstadodocumentoRepository extends JpaRepository<EstadodocumentoEntity, Integer> {
 
-	// Insert specific finders here 
-
-	//List<EstadodocumentoEntity> findByXxx(String xxx);
-
-	//List<EstadodocumentoEntity> findByXxxStartingWith(String xxx);
-
-	//List<EstadodocumentoEntity> findByXxxContaining(String xxx);
-
-	//List<EstadodocumentoEntity> findByYyy(BigDecimal yyy);
-
-	//List<EstadodocumentoEntity> findByXxxContainingAndYyy(String xxx, BigDecimal yyy);
+	Optional<EstadodocumentoEntity> findByEstado(String estado);
 }

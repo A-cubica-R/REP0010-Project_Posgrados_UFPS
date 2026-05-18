@@ -39,4 +39,6 @@ import ufps.edu.co.persistence.entities.CriterioaceptacionEntity;
 public interface CriterioaceptacionRepository extends JpaRepository<CriterioaceptacionEntity, Integer> {
 
 	List<CriterioaceptacionEntity> findByIdCohorte(Integer idCohorte);
+
+	List<CriterioaceptacionEntity> findByNombreContainingIgnoreCase(String nombre);
 }

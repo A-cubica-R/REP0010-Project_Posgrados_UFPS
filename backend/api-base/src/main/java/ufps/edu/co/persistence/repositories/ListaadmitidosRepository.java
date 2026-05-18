@@ -4,6 +4,8 @@
  */
 package ufps.edu.co.persistence.repositories;
 
+import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -37,15 +39,9 @@ import ufps.edu.co.persistence.entities.ListaadmitidosEntity;
 @Repository
 public interface ListaadmitidosRepository extends JpaRepository<ListaadmitidosEntity, Integer> {
 
-	// Insert specific finders here 
+	List<ListaadmitidosEntity> findByIdCohorte(Integer idCohorte);
 
-	//List<ListaadmitidosEntity> findByXxx(String xxx);
+	Optional<ListaadmitidosEntity> findByIdCohorteAndIdAspirante(Integer idCohorte, Integer idAspirante);
 
-	//List<ListaadmitidosEntity> findByXxxStartingWith(String xxx);
-
-	//List<ListaadmitidosEntity> findByXxxContaining(String xxx);
-
-	//List<ListaadmitidosEntity> findByYyy(BigDecimal yyy);
-
-	//List<ListaadmitidosEntity> findByXxxContainingAndYyy(String xxx, BigDecimal yyy);
+	boolean existsByIdCohorteAndIdAspirante(Integer idCohorte, Integer idAspirante);
 }

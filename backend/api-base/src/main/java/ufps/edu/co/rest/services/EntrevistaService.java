@@ -4,6 +4,7 @@
  */
 package ufps.edu.co.rest.services;
 
+import java.math.BigDecimal;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -54,5 +55,12 @@ public class EntrevistaService extends GenericService<EntrevistaEntity, Entrevis
         repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Entrevista no encontrado con id: " + id));
         repository.deleteById(id);
+    }
+
+    public EntrevistaDTO rateInterview(Integer id, BigDecimal calificacion) {
+        EntrevistaEntity entity = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Entrevista no encontrada con id: " + id));
+        entity.setCalificacion(calificacion);
+        return entityToDto(repository.save(entity));
     }
 }
