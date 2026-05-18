@@ -38,13 +38,17 @@ public class AuthenticationProcessor implements AuthenticationUseCase {
             throw new MissingCredentialsException();
         }
 
+        String roleToValidate = requestedRole != null && !requestedRole.isBlank() 
+                ? requestedRole 
+                : input.requestedRole();
+
         AuthPrincipal principal = credentialService.authenticate(input.username(), input.password());
         if (principal == null) {
             throw new InvalidCredentialsException();
         }
 
-        if (requestedRole != null && !requestedRole.isBlank()) {
-            validateUserRoleMatchesRequested(principal, requestedRole);
+        if (roleToValidate != null && !roleToValidate.isBlank()) {
+            validateUserRoleMatchesRequested(principal, roleToValidate);
         }
 
         return tokenIssuer.issueTokens(principal);

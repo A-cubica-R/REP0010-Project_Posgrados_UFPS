@@ -6,7 +6,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -32,11 +31,9 @@ public class AuthController {
     private RefreshTokenUseCase refreshTokenUseCase;
 
     @PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<LoginOutput> login(
-            @RequestBody @Valid LoginInput input,
-            @RequestHeader(name = "X-Login-Role") String requestedRole) {
+    public ResponseEntity<LoginOutput> login(@RequestBody @Valid LoginInput input) {
         try {
-            return ResponseEntity.ok(authenticationUseCase.login(input, requestedRole));
+            return ResponseEntity.ok(authenticationUseCase.login(input));
         } catch (MissingCredentialsException ex) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         } catch (InvalidCredentialsException ex) {
