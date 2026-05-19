@@ -21,12 +21,17 @@ import ufps.edu.co.domain.exceptions.DuplicateAdmisionException;
 import ufps.edu.co.exception.PdfEmailException;
 import ufps.edu.co.processor.crud.AdministrativoProcessor;
 import ufps.edu.co.processor.crud.AspiranteProcessor;
+import ufps.edu.co.processor.crud.CalificacioncriterioProcessor;
 import ufps.edu.co.processor.crud.DocumentoProcessor;
 import ufps.edu.co.processor.crud.EntrevistaProcessor;
 import ufps.edu.co.processor.crud.ListaadmitidosProcessor;
 import ufps.edu.co.processor.crud.TipodocumentoProcessor;
 import ufps.edu.co.records.input.entity.AdministrativoInput.ADMINISTRATIVO_FIND;
 import ufps.edu.co.records.input.entity.AspiranteInput.ASPIRANTE_FIND;
+import ufps.edu.co.records.input.entity.CalificacioncriterioInput.CALIFICACIONCRITERIO_CREATE;
+import ufps.edu.co.records.input.entity.CalificacioncriterioInput.CALIFICACIONCRITERIO_FIND_BY_ASPIRANTE;
+import ufps.edu.co.records.input.entity.CalificacioncriterioInput.CALIFICACIONCRITERIO_UPDATE;
+import ufps.edu.co.records.output.entity.CalificacioncriterioOutput;
 import ufps.edu.co.records.input.entity.DocumentoInput.DOCUMENTO_FIND;
 import ufps.edu.co.records.input.entity.DocumentoInput.DOCUMENTO_REJECT;
 import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_CREATE;
@@ -82,6 +87,9 @@ public class DirectorProgramaCase {
 
     @Autowired
     private ListaadmitidosProcessor listaadmitidosProcessor;
+
+    @Autowired
+    private CalificacioncriterioProcessor calificacioncriterioProcessor;
 
     private String correo = "jljb1704@gmail.com";
 
@@ -211,6 +219,38 @@ public class DirectorProgramaCase {
         try {
             return ResponseEntity.ok(aspiranteProcessor.countCalificados());
         } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PostMapping(value = "/calificacion/criterio/aspirante", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<CalificacioncriterioOutput>> findCalificacionesByAspirante(
+            @RequestBody CALIFICACIONCRITERIO_FIND_BY_ASPIRANTE request) {
+        try {
+            return ResponseEntity.ok(calificacioncriterioProcessor.findByIdAspirante(request.idAspirante()));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PostMapping(value = "/calificacion/criterio/create", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<CalificacioncriterioOutput> createCalificacionCriterio(
+            @RequestBody CALIFICACIONCRITERIO_CREATE request) {
+        try {
+            return ResponseEntity.ok(calificacioncriterioProcessor.create(request));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PutMapping(value = "/calificacion/criterio/update", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<CalificacioncriterioOutput> updateCalificacionCriterio(
+            @RequestBody CALIFICACIONCRITERIO_UPDATE request) {
+        try {
+            return ResponseEntity.ok(calificacioncriterioProcessor.update(request));
+        } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.internalServerError().build();
         }
     }

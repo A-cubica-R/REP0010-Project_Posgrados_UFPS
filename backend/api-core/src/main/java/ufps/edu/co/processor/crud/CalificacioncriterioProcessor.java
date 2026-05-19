@@ -110,6 +110,7 @@ public class CalificacioncriterioProcessor implements
     private void recalcularPuntuacionAspirante(Integer idAspirante) {
         List<CalificacioncriterioDTO> calificaciones = service.findByIdAspirante(idAspirante);
         BigDecimal total = calificaciones.stream()
+                .filter(c -> c.getPuntuacion() != null && c.getPesoSnapshot() != null)
                 .map(c -> c.getPuntuacion()
                         .multiply(c.getPesoSnapshot())
                         .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP))
