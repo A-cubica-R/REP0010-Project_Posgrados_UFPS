@@ -53,6 +53,9 @@ public class AdministrativoDTO implements Serializable {
 		sb.append(separator).append("idCargo=").append(idCargo);
 		sb.append(separator).append("idEstado=").append(idEstado);
 		sb.append(separator).append("idPersona=").append(idPersona);
+        sb.append(separator).append("cargo=").append(cargo != null ? cargo : "null");
+        sb.append(separator).append("estado=").append(estado != null ? estado : "null");
+        sb.append(separator).append("persona=").append(persona != null ? persona : "null");
 		sb.append("]");
 		return sb.toString();
 	}

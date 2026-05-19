@@ -35,7 +35,7 @@ public class SecurityConfig {
          */
         private static final String[] DIRECTOR_FACULTAD_PATHS = {
                         "/api/dev/endpoint/programa/**",
-                        "/api/application/case/administrativo/Directorfacultad/**"
+                        "/api/application/case/Directorfacultad/**"
         };
 
         @Bean

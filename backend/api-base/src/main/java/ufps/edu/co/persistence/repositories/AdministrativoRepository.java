@@ -5,6 +5,7 @@
 package ufps.edu.co.persistence.repositories;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -40,6 +41,8 @@ import ufps.edu.co.persistence.entities.AdministrativoEntity;
 public interface AdministrativoRepository extends JpaRepository<AdministrativoEntity, Integer> {
 
 	List<AdministrativoEntity> findByCargoNombreNotIn(List<String> nombres);
+
+	Optional<AdministrativoEntity> findByIdPersona(Integer idPersona);
 
 	// Insert specific finders here 
 
