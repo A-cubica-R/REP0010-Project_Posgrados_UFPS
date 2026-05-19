@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ufps.edu.co.persistence.entities.EntrevistaEntity;
 import ufps.edu.co.persistence.repositories.EntrevistaRepository;
+import ufps.edu.co.persistence.repositories.EstadoRepository;
 import ufps.edu.co.rest.dto.EntrevistaDTO;
 import ufps.edu.co.rest.services.commons.GenericService;
 
@@ -27,6 +28,9 @@ public class EntrevistaService extends GenericService<EntrevistaEntity, Entrevis
 
     @Autowired
     private EntrevistaRepository repository;
+
+    @Autowired
+    private EstadoRepository estadoRepository;
 
     public EntrevistaService() {
         super(EntrevistaEntity.class, EntrevistaDTO.class);
@@ -84,10 +88,15 @@ public class EntrevistaService extends GenericService<EntrevistaEntity, Entrevis
         if (!"SOLICITUD_CAMBIO".equalsIgnoreCase(estadoTipo)) {
             throw new RuntimeException("Solo se puede reagendar una entrevista en estado 'Solicitud de cambio'");
         }
+        Integer idEstadoPendiente = estadoRepository
+                .findByTipoIgnoreCaseAndEntidadIgnoreCase("PENDIENTE_CONFIRMACION", "entrevista")
+                .orElseThrow(() -> new RuntimeException("Estado 'PENDIENTE_CONFIRMACION' no encontrado para entidad 'entrevista'"))
+                .getId();
         entity.setFecha(fecha);
         entity.setTiempo(tiempo);
         entity.setIdTipoentrevista(idTipoentrevista);
         entity.setIdUbicacion(idUbicacion);
+        entity.setIdEstado(idEstadoPendiente);
         return entityToDto(repository.save(entity));
     }
 

@@ -6,6 +6,7 @@ import ufps.edu.co.records.OutputResponse;
 
 @Builder
 public record AspiranteCalificacionOutput(
+        Integer id,
         String nombreCompleto,
         String estadoCalificacion,
         String correo,

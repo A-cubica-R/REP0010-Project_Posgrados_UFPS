@@ -15,7 +15,7 @@ public enum EntrevistaInput {
     public record ENTREVISTA_CREATE(
             @NotNull LocalDate fecha,
             @NotNull LocalTime tiempo,
-            @NotBlank String modalidad,
+            @NotNull Integer idTipoentrevista,
             @NotNull Integer idAspirante,
             @NotBlank String ubicacion) implements CreateType {
     }
@@ -35,7 +35,7 @@ public enum EntrevistaInput {
             @NotNull Integer id,
             @NotNull LocalDate fecha,
             @NotNull LocalTime tiempo,
-            @NotBlank String modalidad,
+            @NotNull Integer idTipoentrevista,
             @NotBlank String ubicacion) implements UpdateType {
     }
 

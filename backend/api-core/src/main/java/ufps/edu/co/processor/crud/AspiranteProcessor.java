@@ -156,6 +156,7 @@ public class AspiranteProcessor implements
             }
 
             return AspiranteCalificacionOutput.builder()
+                    .id(aspirante.getId())
                     .nombreCompleto(nombreCompleto)
                     .estadoCalificacion(estado)
                     .correo(persona != null ? persona.getCorreo() : null)
