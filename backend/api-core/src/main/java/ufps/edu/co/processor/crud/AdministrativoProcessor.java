@@ -10,6 +10,7 @@ import ufps.edu.co.maps.specific.AdministrativoMap;
 import ufps.edu.co.processor.abstracts.contract.CrudProcessor;
 import ufps.edu.co.records.input.entity.AdministrativoInput.*;
 import ufps.edu.co.records.output.entity.AdministrativoOutput;
+import ufps.edu.co.records.output.entity.ProgramaOutput;
 import ufps.edu.co.rest.dto.AdministrativoDTO;
 import ufps.edu.co.rest.services.AdministrativoService;
 
@@ -78,6 +79,8 @@ public class AdministrativoProcessor implements
         }
     }
 
+    // #region PERSONALIZADOS
+
     public List<AdministrativoOutput> findPosiblesDirectores() {
         try {
             return service.findPosiblesDirectores().stream().map(map::toOutput).toList();
@@ -85,5 +88,23 @@ public class AdministrativoProcessor implements
             throw new RuntimeException("Error finding posibles directores: " + e.getMessage(), e);
         }
     }
+
+    public List<ProgramaOutput> findProgramasFacultad(ADMINISTRATIVO_FIND input) {
+        try {
+            if (input != null && input.id() != null) {
+                AdministrativoDTO admin = service.findById(input.id());
+                if (admin != null && admin.getCargo() != null && admin.getCargo().getIdFacultad() != null) {
+                    ProgramaProcessor programaProcessor = new ProgramaProcessor();
+                    return programaProcessor.findByIdFacultad(admin.getCargo().getIdFacultad());
+                }
+                throw new RuntimeException("Administrativo no tiene cargo asignado o cargo no tiene facultad asociada");
+            }
+            throw new RuntimeException("Input inválido: id de administrativo es requerido");
+        } catch (Exception e) {
+            throw new RuntimeException("Error finding programas de facultad: " + e.getMessage(), e);
+        }
+    }
+
+    // #endregion
 
 }
