@@ -51,6 +51,7 @@ public class AspiranteProcessor implements
         }
     }
 
+    // Eliminar
     @Override
     public AspiranteOutput patch(ASPIRANTE_PATCH input) {
         throw new UnsupportedOperationException("Patch operation is not supported for Aspirante");
