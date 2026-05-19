@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import ufps.edu.co.domain.utilities.PrinterObjects;
 import ufps.edu.co.maps.specific.AdministrativoMap;
 import ufps.edu.co.processor.abstracts.contract.CrudProcessor;
 import ufps.edu.co.records.input.entity.AdministrativoInput.*;
@@ -23,6 +24,9 @@ public class AdministrativoProcessor implements
 
     @Autowired
     private AdministrativoMap map;
+
+    @Autowired
+    private ProgramaProcessor programaProcessor;
 
     @Override
     public AdministrativoOutput create(ADMINISTRATIVO_CREATE input) {
@@ -93,8 +97,8 @@ public class AdministrativoProcessor implements
         try {
             if (input != null && input.id() != null) {
                 AdministrativoDTO admin = service.findById(input.id());
+                PrinterObjects.printNotorious(admin);
                 if (admin != null && admin.getCargo() != null && admin.getCargo().getIdFacultad() != null) {
-                    ProgramaProcessor programaProcessor = new ProgramaProcessor();
                     return programaProcessor.findByIdFacultad(admin.getCargo().getIdFacultad());
                 }
                 throw new RuntimeException("Administrativo no tiene cargo asignado o cargo no tiene facultad asociada");
