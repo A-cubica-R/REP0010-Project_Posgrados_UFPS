@@ -25,8 +25,6 @@ public class EntrevistaMap extends
                 .fecha(input.fecha())
                 .tiempo(input.tiempo())
                 .idAspirante(input.idAspirante())
-                .idEstado(input.idEstado())
-                .idTipoentrevista(input.idTipoentrevista())
                 .build();
     }
 

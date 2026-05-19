@@ -37,7 +37,7 @@ import ufps.edu.co.persistence.entities.EstadoEntity;
 @Repository
 public interface EstadoRepository extends JpaRepository<EstadoEntity, Integer> {
 
-	// Insert specific finders here 
+	java.util.Optional<EstadoEntity> findByTipoIgnoreCaseAndEntidadIgnoreCase(String tipo, String entidad);
 
 	//List<EstadoEntity> findByXxx(String xxx);
 

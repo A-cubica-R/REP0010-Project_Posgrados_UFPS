@@ -5,6 +5,8 @@
 package ufps.edu.co.rest.services;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -55,6 +57,38 @@ public class EntrevistaService extends GenericService<EntrevistaEntity, Entrevis
         repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Entrevista no encontrado con id: " + id));
         repository.deleteById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public List<EntrevistaDTO> findByIdAspirante(Integer idAspirante) {
+        return entityListToDtoList(repository.findByIdAspirante(idAspirante));
+    }
+
+    public EntrevistaDTO changeEstado(Integer id, Integer idEstado, String expectedCurrentEstado) {
+        EntrevistaEntity entity = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Entrevista no encontrada con id: " + id));
+        String estadoActual = entity.getEstado() != null ? entity.getEstado().getTipo() : "";
+        if (!expectedCurrentEstado.equalsIgnoreCase(estadoActual)) {
+            throw new RuntimeException(
+                    "La entrevista no está en estado '" + expectedCurrentEstado + "'. Estado actual: " + estadoActual);
+        }
+        entity.setIdEstado(idEstado);
+        return entityToDto(repository.save(entity));
+    }
+
+    public EntrevistaDTO reschedule(Integer id, LocalDate fecha, LocalTime tiempo,
+            Integer idTipoentrevista, Integer idUbicacion) {
+        EntrevistaEntity entity = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Entrevista no encontrada con id: " + id));
+        String estadoTipo = entity.getEstado() != null ? entity.getEstado().getTipo() : "";
+        if (!"SOLICITUD_CAMBIO".equalsIgnoreCase(estadoTipo)) {
+            throw new RuntimeException("Solo se puede reagendar una entrevista en estado 'Solicitud de cambio'");
+        }
+        entity.setFecha(fecha);
+        entity.setTiempo(tiempo);
+        entity.setIdTipoentrevista(idTipoentrevista);
+        entity.setIdUbicacion(idUbicacion);
+        return entityToDto(repository.save(entity));
     }
 
     public EntrevistaDTO rateInterview(Integer id, BigDecimal calificacion) {

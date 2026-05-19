@@ -55,4 +55,9 @@ public class TipoentrevistaService extends GenericService<TipoentrevistaEntity, 
                 .orElseThrow(() -> new RuntimeException("Tipoentrevista no encontrado con id: " + id));
         repository.deleteById(id);
     }
+
+    @Transactional(readOnly = true)
+    public TipoentrevistaDTO findByTipo(String tipo) {
+        return entityToDto(repository.findByTipoIgnoreCase(tipo));
+    }
 }

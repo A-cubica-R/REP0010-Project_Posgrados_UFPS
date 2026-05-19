@@ -75,4 +75,11 @@ public class AspiranteService extends GenericService<AspiranteEntity, AspiranteD
     public List<AspiranteDTO> findByCohorte(int idCohorte) {
         return entityListToDtoList(repository.findByIdCohorte(idCohorte));
     }
+
+    public AspiranteDTO updateEstado(Integer idAspirante, Integer idEstado) {
+        AspiranteEntity entity = repository.findById(idAspirante)
+                .orElseThrow(() -> new RuntimeException("Aspirante no encontrado con id: " + idAspirante));
+        entity.setIdEstado(idEstado);
+        return entityToDto(repository.save(entity));
+    }
 }

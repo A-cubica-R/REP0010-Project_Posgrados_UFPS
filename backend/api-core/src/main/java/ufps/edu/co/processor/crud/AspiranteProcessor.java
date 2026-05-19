@@ -1,6 +1,8 @@
 package ufps.edu.co.processor.crud;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,11 +11,17 @@ import ufps.edu.co.maps.specific.AspiranteMap;
 import ufps.edu.co.maps.specific.EstadoMap;
 import ufps.edu.co.records.input.entity.AspiranteInput.*;
 import ufps.edu.co.records.output.entity.AspiranteCalificacionOutput;
+import ufps.edu.co.records.output.entity.AspiranteCriteriosOutput;
 import ufps.edu.co.records.output.entity.AspiranteOutput;
+import ufps.edu.co.records.output.entity.CriterioFilaOutput;
 import ufps.edu.co.records.output.entity.EstadoOutput;
 import ufps.edu.co.rest.dto.AspiranteDTO;
+import ufps.edu.co.rest.dto.CalificacioncriterioDTO;
+import ufps.edu.co.rest.dto.CriterioevaluacionDTO;
 import ufps.edu.co.rest.dto.PersonaDTO;
 import ufps.edu.co.rest.services.AspiranteService;
+import ufps.edu.co.rest.services.CalificacioncriterioService;
+import ufps.edu.co.rest.services.CriterioevaluacionService;
 import ufps.edu.co.usecase.GlobalUseCase;
 
 @Service
@@ -28,6 +36,12 @@ public class AspiranteProcessor implements
 
     @Autowired
     private EstadoMap estadoMap;
+
+    @Autowired
+    private CriterioevaluacionService criterioevaluacionService;
+
+    @Autowired
+    private CalificacioncriterioService calificacioncriterioService;
 
     @Override
     public AspiranteOutput create(ASPIRANTE_CREATE input) {
@@ -148,6 +162,37 @@ public class AspiranteProcessor implements
                     .puntajeTotal(aspirante.getPuntuacion())
                     .build();
         }).toList();
+    }
+
+    public AspiranteCriteriosOutput findCriteriosCalificacion(ASPIRANTE_FIND input) {
+        try {
+            AspiranteDTO aspirante = service.findById(input.id());
+
+            List<CriterioevaluacionDTO> criterios = criterioevaluacionService
+                    .findByIdCohorte(aspirante.getIdCohorte());
+
+            Map<Integer, BigDecimal> puntuacionPorCriterio = calificacioncriterioService
+                    .findByIdAspirante(input.id()).stream()
+                    .filter(c -> c.getIdCriterio() != null && c.getPuntuacion() != null)
+                    .collect(Collectors.toMap(
+                            CalificacioncriterioDTO::getIdCriterio,
+                            CalificacioncriterioDTO::getPuntuacion,
+                            (a, b) -> a));
+
+            List<CriterioFilaOutput> filas = criterios.stream()
+                    .map(c -> CriterioFilaOutput.builder()
+                            .nombreCriterio(c.getNombre())
+                            .puntajeObtenido(puntuacionPorCriterio.get(c.getId()))
+                            .build())
+                    .toList();
+
+            return AspiranteCriteriosOutput.builder()
+                    .criterios(filas)
+                    .puntajeTotal(aspirante.getPuntuacion())
+                    .build();
+        } catch (Exception e) {
+            throw new RuntimeException("Error finding criterios for Aspirante: " + e.getMessage(), e);
+        }
     }
 
     public EstadoOutput findEstadoById(ASPIRANTE_FIND input) {
