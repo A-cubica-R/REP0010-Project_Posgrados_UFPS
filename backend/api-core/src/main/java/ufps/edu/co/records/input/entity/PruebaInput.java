@@ -12,7 +12,7 @@ public enum PruebaInput {
             String descripcion,
             @NotNull Integer idAspirante,
             @NotNull Integer idCohorte,
-            @NotNull Integer idUbicacion) implements CreateType {
+            @NotBlank String ubicacion) implements CreateType {
     }
 
     public record PRUEBA_UPDATE(
@@ -21,7 +21,7 @@ public enum PruebaInput {
             String descripcion,
             @NotNull Integer idAspirante,
             @NotNull Integer idCohorte,
-            @NotNull Integer idUbicacion) implements UpdateType {
+            @NotBlank String ubicacion) implements UpdateType {
     }
 
     public record PRUEBA_PATCH(
@@ -30,7 +30,7 @@ public enum PruebaInput {
             String descripcion,
             Integer idAspirante,
             Integer idCohorte,
-            Integer idUbicacion) implements PatchType {
+            String ubicacion) implements PatchType {
     }
 
     public record PRUEBA_DELETE(

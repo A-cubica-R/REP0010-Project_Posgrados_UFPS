@@ -25,7 +25,6 @@ public class PruebaMap extends
                 .descripcion(input.descripcion())
                 .idAspirante(input.idAspirante())
                 .idCohorte(input.idCohorte())
-                .idUbicacion(input.idUbicacion())
                 .build();
     }
 
@@ -37,7 +36,6 @@ public class PruebaMap extends
                 .descripcion(input.descripcion())
                 .idAspirante(input.idAspirante())
                 .idCohorte(input.idCohorte())
-                .idUbicacion(input.idUbicacion())
                 .build();
     }
 
@@ -56,7 +54,6 @@ public class PruebaMap extends
                 .descripcion(input.descripcion())
                 .idAspirante(input.idAspirante())
                 .idCohorte(input.idCohorte())
-                .idUbicacion(input.idUbicacion())
                 .build();
     }
 

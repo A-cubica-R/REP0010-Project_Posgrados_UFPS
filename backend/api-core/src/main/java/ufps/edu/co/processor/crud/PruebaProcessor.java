@@ -14,8 +14,10 @@ import ufps.edu.co.records.input.entity.PruebaInput.*;
 import ufps.edu.co.records.output.entity.PruebaOutput;
 import ufps.edu.co.rest.dto.AspiranteDTO;
 import ufps.edu.co.rest.dto.PruebaDTO;
+import ufps.edu.co.rest.dto.UbicacionDTO;
 import ufps.edu.co.rest.services.AspiranteService;
 import ufps.edu.co.rest.services.PruebaService;
+import ufps.edu.co.rest.services.UbicacionService;
 import ufps.edu.co.services.EmailService;
 import ufps.edu.co.usecase.GlobalUseCase;
 
@@ -27,12 +29,16 @@ public class PruebaProcessor implements
 
     @Autowired private PruebaService service;
     @Autowired private AspiranteService aspiranteService;
+    @Autowired private UbicacionService ubicacionService;
     @Autowired private PruebaMap map;
     @Autowired private EmailService emailService;
 
     @Override
     public PruebaOutput create(PRUEBA_CREATE input) {
-        PruebaDTO created = service.create(map.toDto(input));
+        UbicacionDTO ubicacion = ubicacionService.create(UbicacionDTO.builder().direccion(input.ubicacion()).zonaurbana(true).build());
+        PruebaDTO dto = map.toDto(input);
+        dto.setIdUbicacion(ubicacion.getId());
+        PruebaDTO created = service.create(dto);
         PruebaOutput output = map.toOutput(created);
         notifyPruebaCreada(created.getId(), input.idAspirante());
         return output;
@@ -41,7 +47,10 @@ public class PruebaProcessor implements
     @Override
     public PruebaOutput update(PRUEBA_UPDATE input) {
         try {
-            return map.toOutput(service.update(input.id(), map.toDto(input)));
+            UbicacionDTO ubicacion = ubicacionService.create(UbicacionDTO.builder().direccion(input.ubicacion()).zonaurbana(true).build());
+            PruebaDTO dto = map.toDto(input);
+            dto.setIdUbicacion(ubicacion.getId());
+            return map.toOutput(service.update(input.id(), dto));
         } catch (Exception e) {
             throw new DomainException(PruebaErrorCode.PRUEBA_NOT_FOUND, input.id());
         }
