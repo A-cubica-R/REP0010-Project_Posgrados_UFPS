@@ -169,6 +169,7 @@ public class DirectorProgramaCase {
         }
     }
 
+    // Revisar
     @PostMapping(value = "/aspirants/evaluationcriteriaById", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AspiranteOutput> getEvaluationCriteriaByAspirantId(@RequestBody ASPIRANTE_FIND request) {
         try {

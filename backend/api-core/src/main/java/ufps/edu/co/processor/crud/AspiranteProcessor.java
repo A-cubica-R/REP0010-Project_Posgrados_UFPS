@@ -108,7 +108,7 @@ public class AspiranteProcessor implements
 
     public long countValidados() {
         try {
-            return service.findWithDocuments().size();
+            return service.countValidados();
         } catch (Exception e) {
             throw new RuntimeException("Error counting validados: " + e.getMessage(), e);
         }
@@ -116,7 +116,7 @@ public class AspiranteProcessor implements
 
     public long countPorCalificar() {
         try {
-            return service.findPorCalificar().size();
+            return service.countPorCalificar();
         } catch (Exception e) {
             throw new RuntimeException("Error counting por calificar: " + e.getMessage(), e);
         }
@@ -124,7 +124,7 @@ public class AspiranteProcessor implements
 
     public long countCalificados() {
         try {
-            return service.findCalificados().size();
+            return service.countCalificados();
         } catch (Exception e) {
             throw new RuntimeException("Error counting calificados: " + e.getMessage(), e);
         }
