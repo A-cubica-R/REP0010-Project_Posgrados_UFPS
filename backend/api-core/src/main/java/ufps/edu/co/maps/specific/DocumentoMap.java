@@ -56,7 +56,6 @@ public class DocumentoMap extends
 
     @Override
     protected DocumentoDTO toDtoPatch(DOCUMENTO_PATCH input) {
-        // TODO funcion patch no implementada aún
         throw new UnsupportedOperationException("Función PATCH no implementada para Documento");
     }
 

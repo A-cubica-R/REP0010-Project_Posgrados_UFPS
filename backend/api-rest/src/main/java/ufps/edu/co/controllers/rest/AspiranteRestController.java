@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ufps.edu.co.processor.crud.AspiranteProcessor;
 import ufps.edu.co.records.input.entity.AspiranteInput.*;
 import ufps.edu.co.records.output.entity.AspiranteOutput;
+import ufps.edu.co.records.output.entity.EstadoOutput;
 
 @RestController
 @RequestMapping(value = "/aspirante", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -65,5 +66,14 @@ public class AspiranteRestController {
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @PostMapping(value = "/estado", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<EstadoOutput> findEstadoById(@Valid @RequestBody ASPIRANTE_FIND request) {
+        EstadoOutput estado = processor.findEstadoById(request);
+        if (estado == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(estado);
     }
 }

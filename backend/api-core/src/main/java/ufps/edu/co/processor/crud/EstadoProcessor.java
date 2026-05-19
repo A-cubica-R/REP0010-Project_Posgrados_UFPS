@@ -83,7 +83,6 @@ public class EstadoProcessor
 
     @Override
     public EstadoOutput patch(ESTADO_PATCH input) {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'patch'");
     }
 }

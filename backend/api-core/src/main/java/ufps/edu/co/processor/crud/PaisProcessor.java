@@ -81,7 +81,6 @@ public class PaisProcessor implements GlobalUseCase<PAIS_CREATE, PAIS_UPDATE, PA
 
     @Override
     public PaisOutput patch(PAIS_PATCH input) {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'patch'");
     }
 }

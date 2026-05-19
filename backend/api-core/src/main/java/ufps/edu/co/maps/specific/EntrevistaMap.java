@@ -27,7 +27,6 @@ public class EntrevistaMap extends
                 .idAspirante(input.idAspirante())
                 .idEstado(input.idEstado())
                 .idTipoentrevista(input.idTipoentrevista())
-                .idUbicacion(input.idUbicacion())
                 .build();
     }
 
@@ -40,7 +39,6 @@ public class EntrevistaMap extends
                 .idAspirante(input.idAspirante())
                 .idEstado(input.idEstado())
                 .idTipoentrevista(input.idTipoentrevista())
-                .idUbicacion(input.idUbicacion())
                 .build();
     }
 
@@ -53,7 +51,6 @@ public class EntrevistaMap extends
 
     @Override
     protected EntrevistaDTO toDtoPatch(ENTREVISTA_PATCH input) {
-        // TODO Aún no usaremos funciones PATCH
         throw new UnsupportedOperationException("Función PATCH no implementada para Entrevista");
     }
 

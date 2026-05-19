@@ -4,8 +4,10 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ufps.edu.co.maps.specific.AspiranteMap;
+import ufps.edu.co.maps.specific.EstadoMap;
 import ufps.edu.co.records.input.entity.AspiranteInput.*;
 import ufps.edu.co.records.output.entity.AspiranteOutput;
+import ufps.edu.co.records.output.entity.EstadoOutput;
 import ufps.edu.co.rest.dto.AspiranteDTO;
 import ufps.edu.co.rest.services.AspiranteService;
 import ufps.edu.co.usecase.GlobalUseCase;
@@ -19,6 +21,9 @@ public class AspiranteProcessor implements
 
     @Autowired
     private AspiranteMap map;
+
+    @Autowired
+    private EstadoMap estadoMap;
 
     @Override
     public AspiranteOutput create(ASPIRANTE_CREATE input) {
@@ -80,6 +85,18 @@ public class AspiranteProcessor implements
             return service.findWithDocuments().stream().map(map::toOutput).toList();
         } catch (Exception e) {
             throw new RuntimeException("Error finding Aspirantes with documents: " + e.getMessage(), e);
+        }
+    }
+
+    public EstadoOutput findEstadoById(ASPIRANTE_FIND input) {
+        try {
+            AspiranteDTO dto = service.findById(input.id());
+            if (dto == null || dto.getEstado() == null) {
+                return null;
+            }
+            return estadoMap.toOutput(dto.getEstado());
+        } catch (Exception e) {
+            throw new RuntimeException("Error finding estado for Aspirante: " + e.getMessage(), e);
         }
     }
 }

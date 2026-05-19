@@ -81,7 +81,6 @@ public class ModalidadProcessor implements GlobalUseCase<MODALIDAD_CREATE, MODAL
 
     @Override
     public ModalidadOutput patch(MODALIDAD_PATCH input) {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'patch'");
     }
 }
