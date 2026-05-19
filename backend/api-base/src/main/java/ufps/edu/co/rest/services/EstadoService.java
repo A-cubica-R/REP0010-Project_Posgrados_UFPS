@@ -55,4 +55,9 @@ public class EstadoService extends GenericService<EstadoEntity, EstadoDTO> {
                 .orElseThrow(() -> new RuntimeException("Estado no encontrado con id: " + id));
         repository.deleteById(id);
     }
+
+    @Transactional(readOnly = true)
+    public EstadoDTO findByTipoAndEntidad(String tipo, String entidad) {
+        return entityToDto(repository.findByTipoIgnoreCaseAndEntidadIgnoreCase(tipo, entidad));
+    }
 }
