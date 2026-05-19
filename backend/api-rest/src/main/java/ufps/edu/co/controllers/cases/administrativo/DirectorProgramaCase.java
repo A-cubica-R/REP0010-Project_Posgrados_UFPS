@@ -34,6 +34,7 @@ import ufps.edu.co.records.input.entity.ListaadmitidosInput.GENERATE_LISTA;
 import ufps.edu.co.records.input.entity.ListaadmitidosInput.RECHAZAR_ASPIRANTE;
 import ufps.edu.co.records.input.entity.TipodocumentoInput.TIPODOCUMENTO_FIND;
 import ufps.edu.co.records.output.entity.AdministrativoOutput;
+import ufps.edu.co.records.output.entity.AspiranteCalificacionOutput;
 import ufps.edu.co.records.output.entity.AspiranteOutput;
 import ufps.edu.co.records.output.entity.DocumentoOutput;
 import ufps.edu.co.records.output.entity.EntrevistaOutput;
@@ -45,7 +46,7 @@ import ufps.edu.co.services.PdfGeneratorService;
 import ufps.edu.co.services.S3Service;
 
 @RestController
-@RequestMapping("/documents")
+@RequestMapping("/director-programa")
 public class DirectorProgramaCase {
 
     private static final Logger logger = LoggerFactory.getLogger(DirectorProgramaCase.class);
@@ -79,7 +80,7 @@ public class DirectorProgramaCase {
 
     private String correo = "jljb1704@gmail.com";
 
-    @PostMapping(value = "/list", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/downloadByDocumentId", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<byte[]> download(@RequestBody DOCUMENTO_FIND request) {
         try {
             byte[] fileContent = s3Service.downloadDocument(request);
@@ -95,7 +96,7 @@ public class DirectorProgramaCase {
 
     }
 
-    @PostMapping(value = "/approve", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/approveByDocumentId", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<DocumentoOutput> approveDocument(@RequestBody DOCUMENTO_FIND request) {
         try {
             DocumentoOutput output = documentoProcessor.approveDocument(request);
@@ -113,7 +114,7 @@ public class DirectorProgramaCase {
         }
     }
 
-    @PostMapping(value = "/reject", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/rejectByDocumentId", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<DocumentoOutput> rejectDocument(@RequestBody DOCUMENTO_REJECT request) {
         try {
             DocumentoOutput output = documentoProcessor.rejectDocument(request);
@@ -133,7 +134,7 @@ public class DirectorProgramaCase {
         }
     }
 
-    @PostMapping(value = "/aspirantList", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/listByAspirantId", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<DocumentoOutput>> findDocumentByAspirantId(@RequestBody ASPIRANTE_FIND request) {
         try {
             List<DocumentoOutput> outputs = documentoProcessor.findByAspiranteId(request);
@@ -148,6 +149,42 @@ public class DirectorProgramaCase {
         try {
             List<AspiranteOutput> outputs = aspiranteProcessor.findWithDocuments();
             return ResponseEntity.ok(outputs);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @GetMapping("/calificacion/listado")
+    public ResponseEntity<List<AspiranteCalificacionOutput>> findAllValidadosCalificacion() {
+        try {
+            return ResponseEntity.ok(aspiranteProcessor.findAllValidadosCalificacion());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @GetMapping("/calificacion/count/validados")
+    public ResponseEntity<Long> countValidados() {
+        try {
+            return ResponseEntity.ok(aspiranteProcessor.countValidados());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @GetMapping("/calificacion/count/por-calificar")
+    public ResponseEntity<Long> countPorCalificar() {
+        try {
+            return ResponseEntity.ok(aspiranteProcessor.countPorCalificar());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @GetMapping("/calificacion/count/calificados")
+    public ResponseEntity<Long> countCalificados() {
+        try {
+            return ResponseEntity.ok(aspiranteProcessor.countCalificados());
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
@@ -171,7 +208,7 @@ public class DirectorProgramaCase {
         }
     }
 
-    @PostMapping(value = "/admitirAspirantes", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/admitAspirants", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<ListaadmitidosOutput>> admitirAspirantes(@RequestBody GENERATE_LISTA request) {
         List<ListaadmitidosOutput> outputs;
         try {
@@ -216,7 +253,7 @@ public class DirectorProgramaCase {
         return ResponseEntity.ok(outputs);
     }
 
-    @PostMapping(value = "/rechazarAspirante", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/rejectAspirant", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<ListaadmitidosOutput>> rechazarAspirante(@RequestBody RECHAZAR_ASPIRANTE request) {
         try {
             List<ListaadmitidosOutput> outputs = listaadmitidosProcessor.rechazarAspirante(request);

@@ -1,14 +1,18 @@
 package ufps.edu.co.processor.crud;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ufps.edu.co.maps.specific.AspiranteMap;
 import ufps.edu.co.maps.specific.EstadoMap;
 import ufps.edu.co.records.input.entity.AspiranteInput.*;
+import ufps.edu.co.records.output.entity.AspiranteCalificacionOutput;
 import ufps.edu.co.records.output.entity.AspiranteOutput;
 import ufps.edu.co.records.output.entity.EstadoOutput;
 import ufps.edu.co.rest.dto.AspiranteDTO;
+import ufps.edu.co.rest.dto.PersonaDTO;
 import ufps.edu.co.rest.services.AspiranteService;
 import ufps.edu.co.usecase.GlobalUseCase;
 
@@ -86,6 +90,64 @@ public class AspiranteProcessor implements
         } catch (Exception e) {
             throw new RuntimeException("Error finding Aspirantes with documents: " + e.getMessage(), e);
         }
+    }
+
+    public long countValidados() {
+        try {
+            return service.findWithDocuments().size();
+        } catch (Exception e) {
+            throw new RuntimeException("Error counting validados: " + e.getMessage(), e);
+        }
+    }
+
+    public long countPorCalificar() {
+        try {
+            return service.findPorCalificar().size();
+        } catch (Exception e) {
+            throw new RuntimeException("Error counting por calificar: " + e.getMessage(), e);
+        }
+    }
+
+    public long countCalificados() {
+        try {
+            return service.findCalificados().size();
+        } catch (Exception e) {
+            throw new RuntimeException("Error counting calificados: " + e.getMessage(), e);
+        }
+    }
+
+    public List<AspiranteCalificacionOutput> findAllValidadosCalificacion() {
+        List<AspiranteDTO> validados = service.findWithDocuments();
+
+        Set<Integer> calificadosIds = service.findCalificados().stream()
+                .map(AspiranteDTO::getId).collect(Collectors.toSet());
+        Set<Integer> porCalificarIds = service.findPorCalificar().stream()
+                .map(AspiranteDTO::getId).collect(Collectors.toSet());
+
+        return validados.stream().map(aspirante -> {
+            PersonaDTO persona = aspirante.getPersona();
+
+            String nombreCompleto = persona != null
+                    ? ((persona.getNombres() != null ? persona.getNombres() : "") + " "
+                            + (persona.getApellidos() != null ? persona.getApellidos() : "")).trim()
+                    : "";
+
+            String estado;
+            if (calificadosIds.contains(aspirante.getId())) {
+                estado = "Calificado";
+            } else if (porCalificarIds.contains(aspirante.getId())) {
+                estado = "Por calificar";
+            } else {
+                estado = "En progreso";
+            }
+
+            return AspiranteCalificacionOutput.builder()
+                    .nombreCompleto(nombreCompleto)
+                    .estadoCalificacion(estado)
+                    .correo(persona != null ? persona.getCorreo() : null)
+                    .puntajeTotal(aspirante.getPuntuacion())
+                    .build();
+        }).toList();
     }
 
     public EstadoOutput findEstadoById(ASPIRANTE_FIND input) {
