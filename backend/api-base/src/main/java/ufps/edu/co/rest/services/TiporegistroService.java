@@ -39,6 +39,11 @@ public class TiporegistroService extends GenericService<TiporegistroEntity, Tipo
         return entityToDto(repository.findById(id));
     }
 
+    @Transactional(readOnly = true)
+    public TiporegistroDTO findByTipo(String tipo) {
+        return repository.findByTipo(tipo).map(this::entityToDto).orElse(null);
+    }
+
     public TiporegistroDTO create(TiporegistroDTO dto) {
         return entityToDto(repository.save(dtoToEntity(dto)));
     }

@@ -37,6 +37,8 @@ import ufps.edu.co.persistence.entities.SedeEntity;
 @Repository
 public interface SedeRepository extends JpaRepository<SedeEntity, Integer> {
 
+	java.util.Optional<SedeEntity> findFirstByNombre(String nombre);
+
 	// Insert specific finders here 
 
 	//List<SedeEntity> findByXxx(String xxx);

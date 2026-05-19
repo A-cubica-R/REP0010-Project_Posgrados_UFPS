@@ -4,6 +4,8 @@
  */
 package ufps.edu.co.persistence.repositories;
 
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -36,6 +38,8 @@ import ufps.edu.co.persistence.entities.TiporegistroEntity;
  */
 @Repository
 public interface TiporegistroRepository extends JpaRepository<TiporegistroEntity, Integer> {
+
+	Optional<TiporegistroEntity> findByTipo(String tipo);
 
 	// Insert specific finders here 
 

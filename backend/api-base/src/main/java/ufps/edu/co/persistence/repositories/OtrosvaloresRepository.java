@@ -37,6 +37,9 @@ import ufps.edu.co.persistence.entities.OtrosvaloresEntity;
 @Repository
 public interface OtrosvaloresRepository extends JpaRepository<OtrosvaloresEntity, Integer> {
 
+	java.util.Optional<OtrosvaloresEntity> findFirstByCarnetAndEstampillaAndSeguro(
+			boolean carnet, boolean estampilla, boolean seguro);
+
 	// Insert specific finders here 
 
 	//List<OtrosvaloresEntity> findByXxx(String xxx);
