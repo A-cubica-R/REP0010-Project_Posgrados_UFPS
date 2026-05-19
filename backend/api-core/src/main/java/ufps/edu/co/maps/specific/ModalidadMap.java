@@ -56,16 +56,17 @@ public class ModalidadMap extends UniversalMapper<ModalidadOutput, ModalidadDTO>
             // CohorteMap
             CohorteMap cohorteMap = new CohorteMap();
             return ModalidadOutput.builder()
-                    .id(dto.getId())
-                    .nombre(dto.getNombre())
-                    .cohorteList(
-                            dto.getCohorteList() != null ? (dto.getCohorteList().stream()
-                                    .map(
-                                            cohorteDto -> {
-                                                return cohorteMap.toOutput(cohorteDto);
-                                            })
-                                    .toList()) : null)
-                    .build();
+                .id(dto.getId())
+                .nombre(dto.getNombre())
+                .cohorteList(
+                    dto.getCohorteList() != null ? (dto.getCohorteList().stream()
+                        .map(
+                            cohorteDto -> {
+                                cohorteDto.setModalidad(null);
+                                return cohorteMap.toOutput(cohorteDto);
+                            }).toList()
+                        ) : null)
+                .build();
         }
         return null;
     }

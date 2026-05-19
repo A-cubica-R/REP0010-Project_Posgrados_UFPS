@@ -7,6 +7,7 @@ import ufps.edu.co.maps.GlobalMapper;
 import ufps.edu.co.rest.dto.CohorteDTO;
 import ufps.edu.co.records.input.entity.CohorteInput.*;
 import ufps.edu.co.records.output.entity.CohorteOutput;
+import ufps.edu.co.records.output.entity.ModalidadOutput;
 
 @Component
 public class CohorteMap extends
@@ -106,10 +107,9 @@ public class CohorteMap extends
                     .semestre(dto.getSemestre() != null ? (
                             semestreMap.toOutput(dto.getSemestre())
                         ) : null)
-                    .modalidad(
-                        dto.getModalidad() != null ? (
-                            modalidadMap.toOutput(dto.getModalidad())
-                        ) : null)
+                    .modalidad(dto.getModalidad() != null ? (
+                            aux_Modalidad_cutCohortes(dto.getModalidad(), modalidadMap)
+                    ) : null)
                     .plazodocumentacion(dto.getPlazo() != null ? (
                             plazoMap.toOutput(dto.getPlazo())
                         ) : null)
@@ -131,5 +131,11 @@ public class CohorteMap extends
         return dtoList.stream()
                 .map(this::toOutput)
                 .toList();
+    }
+
+    private ModalidadOutput aux_Modalidad_cutCohortes(
+            ufps.edu.co.rest.dto.ModalidadDTO modalidadDTO, ModalidadMap modalidadMap) {
+        modalidadDTO.setCohorteList(null);
+        return modalidadMap.toOutput(modalidadDTO);
     }
 }

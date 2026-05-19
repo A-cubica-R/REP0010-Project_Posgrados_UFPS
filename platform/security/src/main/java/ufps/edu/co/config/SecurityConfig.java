@@ -58,7 +58,7 @@ public class SecurityConfig {
 
                                                 // Rutas específicas por rol (antes del catch-all)
                                                 .requestMatchers(DIRECTOR_FACULTAD_PATHS)
-                                                .hasRole("DIRECTOR_DE_FACULTAD")
+                                                .hasAnyRole("DIRECTOR_DE_FACULTAD", "SUPER_ADMINISTRADOR")
 
                                                 // Rutas protegidas para el rol SUPER_ADMINISTRADOR (catch-all)
                                                 .requestMatchers(SUPER_ADMIN_PATHS)
