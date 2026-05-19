@@ -7,6 +7,7 @@ package ufps.edu.co.persistence.repositories;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import ufps.edu.co.persistence.entities.AspiranteEntity;
@@ -54,4 +55,63 @@ public interface AspiranteRepository extends JpaRepository<AspiranteEntity, Inte
 	List<AspiranteEntity> findByDocumentoListIsNotEmpty();
 
 	List<AspiranteEntity> findByIdCohorte(int idCohorte);
+
+	// Aspirantes que tienen al menos un documento APROBADO por cada tipodocumento existente
+	@Query("SELECT a FROM AspiranteEntity a " +
+		   "WHERE NOT EXISTS (" +
+		   "  SELECT td FROM TipodocumentoEntity td " +
+		   "  WHERE NOT EXISTS (" +
+		   "    SELECT d FROM DocumentoEntity d " +
+		   "    WHERE d.aspirante = a " +
+		   "      AND d.tipodocumento = td " +
+		   "      AND d.estadodocumento.estado = 'APROBADO'" +
+		   "  )" +
+		   ")")
+	List<AspiranteEntity> findValidados();
+
+	// Validados a los que les falta al menos un criterioevaluacion de su cohorte calificado
+	@Query("SELECT a FROM AspiranteEntity a " +
+		   "WHERE NOT EXISTS (" +
+		   "  SELECT td FROM TipodocumentoEntity td " +
+		   "  WHERE NOT EXISTS (" +
+		   "    SELECT d FROM DocumentoEntity d " +
+		   "    WHERE d.aspirante = a " +
+		   "      AND d.tipodocumento = td " +
+		   "      AND d.estadodocumento.estado = 'APROBADO'" +
+		   "  )" +
+		   ") " +
+		   "AND EXISTS (" +
+		   "  SELECT ce FROM CriterioevaluacionEntity ce " +
+		   "  WHERE ce.idCohorte = a.idCohorte " +
+		   "    AND NOT EXISTS (" +
+		   "      SELECT cc FROM CalificacioncriterioEntity cc " +
+		   "      WHERE cc.aspirante = a " +
+		   "        AND cc.criterioevaluacion = ce " +
+		   "        AND cc.puntuacion IS NOT NULL" +
+		   "    )" +
+		   ")")
+	List<AspiranteEntity> findPorCalificar();
+
+	// Validados con todos los criterioevaluacion de su cohorte calificados (puntuacion no nula)
+	@Query("SELECT a FROM AspiranteEntity a " +
+		   "WHERE NOT EXISTS (" +
+		   "  SELECT td FROM TipodocumentoEntity td " +
+		   "  WHERE NOT EXISTS (" +
+		   "    SELECT d FROM DocumentoEntity d " +
+		   "    WHERE d.aspirante = a " +
+		   "      AND d.tipodocumento = td " +
+		   "      AND d.estadodocumento.estado = 'APROBADO'" +
+		   "  )" +
+		   ") " +
+		   "AND NOT EXISTS (" +
+		   "  SELECT ce FROM CriterioevaluacionEntity ce " +
+		   "  WHERE ce.idCohorte = a.idCohorte " +
+		   "    AND NOT EXISTS (" +
+		   "      SELECT cc FROM CalificacioncriterioEntity cc " +
+		   "      WHERE cc.aspirante = a " +
+		   "        AND cc.criterioevaluacion = ce " +
+		   "        AND cc.puntuacion IS NOT NULL" +
+		   "    )" +
+		   ")")
+	List<AspiranteEntity> findCalificados();
 }

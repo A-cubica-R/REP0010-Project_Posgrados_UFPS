@@ -58,7 +58,17 @@ public class AspiranteService extends GenericService<AspiranteEntity, AspiranteD
 
     @Transactional(readOnly = true)
     public List<AspiranteDTO> findWithDocuments() {
-        return entityListToDtoList(repository.findByDocumentoListIsNotEmpty());
+        return entityListToDtoList(repository.findValidados());
+    }
+
+    @Transactional(readOnly = true)
+    public List<AspiranteDTO> findCalificados() {
+        return entityListToDtoList(repository.findCalificados());
+    }
+
+    @Transactional(readOnly = true)
+    public List<AspiranteDTO> findPorCalificar() {
+        return entityListToDtoList(repository.findPorCalificar());
     }
 
     @Transactional(readOnly = true)
