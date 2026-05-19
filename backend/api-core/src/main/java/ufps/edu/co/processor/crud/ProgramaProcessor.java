@@ -15,7 +15,8 @@ import ufps.edu.co.rest.services.ProgramaService;
 import ufps.edu.co.usecase.GlobalUseCase;
 
 @Service
-public class ProgramaProcessor implements GlobalUseCase<PROGRAMA_CREATE, PROGRAMA_UPDATE, PROGRAMA_DELETE, PROGRAMA_PATCH, PROGRAMA_FIND, ProgramaOutput> {
+public class ProgramaProcessor implements
+        GlobalUseCase<PROGRAMA_CREATE, PROGRAMA_UPDATE, PROGRAMA_DELETE, PROGRAMA_PATCH, PROGRAMA_FIND, ProgramaOutput> {
 
     @Autowired
     private ProgramaService service;
@@ -80,6 +81,8 @@ public class ProgramaProcessor implements GlobalUseCase<PROGRAMA_CREATE, PROGRAM
         }
     }
 
+    // #region PERSONALIZADOS
+
     public List<ProgramaOutput> findByIdFacultad(Integer idFacultad) {
         try {
             return map.toOutputList(service.findByIdFacultad(idFacultad));
@@ -95,4 +98,6 @@ public class ProgramaProcessor implements GlobalUseCase<PROGRAMA_CREATE, PROGRAM
             throw new DomainException(CohorteErrorCode.COHORTE_NOT_FOUND, cohorteId);
         }
     }
+
+    // #endregion
 }
