@@ -12,6 +12,5 @@ public record EntrevistaResumenOutput(
         LocalTime hora,
         String estado,
         String modalidad,
-        String enlace,
-        String lugar
+        String ubicacion
 ) implements OutputResponse {}
