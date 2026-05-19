@@ -76,6 +76,20 @@ public class AspiranteService extends GenericService<AspiranteEntity, AspiranteD
         return entityListToDtoList(repository.findByIdCohorte(idCohorte));
     }
 
+    public long countValidados() {
+        return repository.countByEstadoTipoIn(
+                List.of("VALIDADO_POR_CALIFICAR", "VALIDADO_EN_PROGRESO", "VALIDADO_CALIFICADO"));
+    }
+
+    public long countPorCalificar() {
+        return repository.countByEstadoTipoIn(
+                List.of("VALIDADO_POR_CALIFICAR", "VALIDADO_EN_PROGRESO"));
+    }
+
+    public long countCalificados() {
+        return repository.countByEstadoTipoIn(List.of("VALIDADO_CALIFICADO"));
+    }
+
     public AspiranteDTO updateEstado(Integer idAspirante, Integer idEstado) {
         AspiranteEntity entity = repository.findById(idAspirante)
                 .orElseThrow(() -> new RuntimeException("Aspirante no encontrado con id: " + idAspirante));

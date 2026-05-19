@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import ufps.edu.co.persistence.entities.AspiranteEntity;
@@ -68,6 +69,9 @@ public interface AspiranteRepository extends JpaRepository<AspiranteEntity, Inte
 		   "  )" +
 		   ")")
 	List<AspiranteEntity> findValidados();
+
+	@Query("SELECT COUNT(a) FROM AspiranteEntity a WHERE a.estado.tipo IN :tipos")
+	long countByEstadoTipoIn(@Param("tipos") List<String> tipos);
 
 	// Validados a los que les falta al menos un criterioevaluacion de su cohorte calificado
 	@Query("SELECT a FROM AspiranteEntity a " +
