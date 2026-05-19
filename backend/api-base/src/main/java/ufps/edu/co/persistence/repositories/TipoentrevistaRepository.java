@@ -37,7 +37,7 @@ import ufps.edu.co.persistence.entities.TipoentrevistaEntity;
 @Repository
 public interface TipoentrevistaRepository extends JpaRepository<TipoentrevistaEntity, Integer> {
 
-	// Insert specific finders here 
+	java.util.Optional<TipoentrevistaEntity> findByTipoIgnoreCase(String tipo);
 
 	//List<TipoentrevistaEntity> findByXxx(String xxx);
 
