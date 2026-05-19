@@ -56,9 +56,9 @@ public class EntrevistaProcessor implements
     @Override
     public EntrevistaOutput create(ENTREVISTA_CREATE input) {
         try {
-            TipoentrevistaDTO tipoentrevista = tipoentrevistaService.findByTipo(input.modalidad());
+            TipoentrevistaDTO tipoentrevista = tipoentrevistaService.findById(input.idTipoentrevista());
             if (tipoentrevista == null) {
-                throw new RuntimeException("Modalidad no encontrada: " + input.modalidad());
+                throw new RuntimeException("Modalidad no encontrada: " + input.idTipoentrevista());
             }
             EstadoDTO estadoInicial = estadoService.findByTipoAndEntidad("PENDIENTE_CONFIRMACION", "entrevista");
             if (estadoInicial == null) {
@@ -164,9 +164,9 @@ public class EntrevistaProcessor implements
 
     public EntrevistaOutput reschedule(ENTREVISTA_RESCHEDULE input) {
         try {
-            TipoentrevistaDTO tipoentrevista = tipoentrevistaService.findByTipo(input.modalidad());
+            TipoentrevistaDTO tipoentrevista = tipoentrevistaService.findById(input.idTipoentrevista());
             if (tipoentrevista == null) {
-                throw new RuntimeException("Modalidad no encontrada: " + input.modalidad());
+                throw new RuntimeException("Modalidad no encontrada: " + input.idTipoentrevista());
             }
             UbicacionDTO ubicacion = ubicacionService.create(
                     UbicacionDTO.builder().direccion(input.ubicacion()).zonaurbana(true).build());
@@ -185,14 +185,12 @@ public class EntrevistaProcessor implements
                 String estado = dto.getEstado() != null ? dto.getEstado().getTipo() : null;
                 String tipo = dto.getTipoentrevista() != null ? dto.getTipoentrevista().getTipo() : null;
                 String direccion = dto.getUbicacion() != null ? dto.getUbicacion().getDireccion() : null;
-                boolean esVirtual = "VIRTUAL".equalsIgnoreCase(tipo);
                 return EntrevistaResumenOutput.builder()
                         .fecha(dto.getFecha())
                         .hora(dto.getTiempo())
                         .estado(estado)
                         .modalidad(tipo)
-                        .enlace(esVirtual ? direccion : null)
-                        .lugar(esVirtual ? null : direccion)
+                        .ubicacion(direccion)
                         .build();
             }).toList();
         } catch (Exception e) {
