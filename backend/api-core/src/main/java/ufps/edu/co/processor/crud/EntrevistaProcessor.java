@@ -13,8 +13,10 @@ import ufps.edu.co.records.input.entity.EntrevistaInput.*;
 import ufps.edu.co.records.output.entity.EntrevistaOutput;
 import ufps.edu.co.rest.dto.AspiranteDTO;
 import ufps.edu.co.rest.dto.EntrevistaDTO;
+import ufps.edu.co.rest.dto.UbicacionDTO;
 import ufps.edu.co.rest.services.AspiranteService;
 import ufps.edu.co.rest.services.EntrevistaService;
+import ufps.edu.co.rest.services.UbicacionService;
 import ufps.edu.co.services.EmailService;
 import ufps.edu.co.usecase.GlobalUseCase;
 
@@ -31,6 +33,9 @@ public class EntrevistaProcessor implements
     private AspiranteService aspiranteService;
 
     @Autowired
+    private UbicacionService ubicacionService;
+
+    @Autowired
     private EntrevistaMap map;
 
     @Autowired
@@ -39,7 +44,9 @@ public class EntrevistaProcessor implements
     @Override
     public EntrevistaOutput create(ENTREVISTA_CREATE input) {
         try {
+            UbicacionDTO ubicacion = ubicacionService.create(UbicacionDTO.builder().direccion(input.ubicacion()).zonaurbana(true).build());
             EntrevistaDTO dto = map.toDto(input);
+            dto.setIdUbicacion(ubicacion.getId());
             EntrevistaDTO created = service.create(dto);
             EntrevistaOutput output = map.toOutput(created);
             notifyEntrevistaCreada(created.getId(), input.idAspirante());
@@ -52,7 +59,9 @@ public class EntrevistaProcessor implements
     @Override
     public EntrevistaOutput update(ENTREVISTA_UPDATE input) {
         try {
+            UbicacionDTO ubicacion = ubicacionService.create(UbicacionDTO.builder().direccion(input.ubicacion()).zonaurbana(true).build());
             EntrevistaDTO dto = map.toDto(input);
+            dto.setIdUbicacion(ubicacion.getId());
             EntrevistaDTO updated = service.update(input.id(), dto);
             return map.toOutput(updated);
         } catch (Exception e) {

@@ -27,7 +27,6 @@ public class EntrevistaMap extends
                 .idAspirante(input.idAspirante())
                 .idEstado(input.idEstado())
                 .idTipoentrevista(input.idTipoentrevista())
-                .idUbicacion(input.idUbicacion())
                 .build();
     }
 
@@ -40,7 +39,6 @@ public class EntrevistaMap extends
                 .idAspirante(input.idAspirante())
                 .idEstado(input.idEstado())
                 .idTipoentrevista(input.idTipoentrevista())
-                .idUbicacion(input.idUbicacion())
                 .build();
     }
 
