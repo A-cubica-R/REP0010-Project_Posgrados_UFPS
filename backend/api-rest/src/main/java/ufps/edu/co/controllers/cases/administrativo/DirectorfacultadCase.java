@@ -11,6 +11,7 @@ import org.springframework.http.MediaType;
 
 import ufps.edu.co.processor.crud.AdministrativoProcessor;
 import ufps.edu.co.records.output.entity.AdministrativoOutput;
+import ufps.edu.co.records.output.entity.ProgramaOutput;
 
 
 @RestController
@@ -24,6 +25,13 @@ public class DirectorfacultadCase {
     public ResponseEntity<List<AdministrativoOutput>> findPosiblesDirectores() {
         List<AdministrativoOutput> list = processor.findPosiblesDirectores();
             return ResponseEntity.ok(list);
+    }
+
+    public ResponseEntity<List<ProgramaOutput>> findProgramasFacultad() {
+        // TODO
+        return null;
+        /*List<ProgramaOutput> list = processor.findProgramasFacultad();
+            return ResponseEntity.ok(list);*/
     }
     
 }

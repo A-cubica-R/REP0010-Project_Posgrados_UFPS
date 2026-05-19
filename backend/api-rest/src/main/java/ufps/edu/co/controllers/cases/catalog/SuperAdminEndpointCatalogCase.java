@@ -1,4 +1,4 @@
-package ufps.edu.co.controllers.cases.admin;
+package ufps.edu.co.controllers.cases.catalog;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;

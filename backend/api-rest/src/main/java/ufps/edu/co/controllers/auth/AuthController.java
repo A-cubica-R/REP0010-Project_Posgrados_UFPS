@@ -15,6 +15,7 @@ import ufps.edu.co.auth.contract.RefreshTokenUseCase;
 import ufps.edu.co.auth.exception.InvalidCredentialsException;
 import ufps.edu.co.auth.exception.InvalidTokenException;
 import ufps.edu.co.auth.exception.MissingCredentialsException;
+import ufps.edu.co.auth.exception.RoleMismatchException;
 import ufps.edu.co.auth.records.input.LoginInput;
 import ufps.edu.co.auth.records.input.RefreshTokenInput;
 import ufps.edu.co.auth.records.output.LoginOutput;
@@ -37,6 +38,8 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         } catch (InvalidCredentialsException ex) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        } catch (RoleMismatchException ex) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
     }
 

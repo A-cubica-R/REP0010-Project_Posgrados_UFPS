@@ -16,7 +16,6 @@ public class CredentialService {
 
     private final UsuarioRepository usuarioRepository;
     private final PasswordHashService passwordHashService;
-    private final RoleNameNormalizer roleNameNormalizer;
 
     public CredentialService(
             UsuarioRepository usuarioRepository,
@@ -24,11 +23,11 @@ public class CredentialService {
             RoleNameNormalizer roleNameNormalizer) {
         this.usuarioRepository = usuarioRepository;
         this.passwordHashService = passwordHashService;
-        this.roleNameNormalizer = roleNameNormalizer;
     }
 
     public AuthPrincipal authenticate(String username, String rawPassword) {
-        UsuarioEntity usuario = usuarioRepository.findByNombreusuario(username).orElseThrow(InvalidCredentialsException::new);
+        UsuarioEntity usuario = usuarioRepository.findByNombreusuario(username)
+                .orElseThrow(InvalidCredentialsException::new);
 
         String storedPassword = Optional.ofNullable(usuario.getClave())
                 .map(clave -> clave.getValor())
@@ -48,7 +47,7 @@ public class CredentialService {
 
     public List<String> resolveRoles(UsuarioEntity usuario) {
         return Optional.ofNullable(usuario.getRol())
-                .map(rol -> roleNameNormalizer.normalize(rol.getNombre()))
+                .map(rol -> RoleNameNormalizer.normalize(rol.getNombre()))
                 .filter(role -> !role.isBlank())
                 .map(List::of)
                 .orElseGet(List::of);

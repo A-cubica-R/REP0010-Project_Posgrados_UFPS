@@ -82,4 +82,12 @@ public class CohorteProcessor implements GlobalUseCase<COHORTE_CREATE, COHORTE_U
         throw new UnsupportedOperationException("No se puede crear una cohorte con plazo desde este endpoint");
     }
 
+    public long countAspirantesEnProcesoEnCohorteAbierta(Integer cohorteId) {
+        try {
+            return service.countAspirantesEnProcesoEnCohorteAbierta(cohorteId);
+        } catch (Exception e) {
+            throw new DomainException(CohorteErrorCode.COHORTE_NOT_FOUND, cohorteId);
+        }
+    }
+
 }
