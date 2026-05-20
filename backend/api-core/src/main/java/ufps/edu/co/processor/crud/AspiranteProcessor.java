@@ -12,6 +12,7 @@ import ufps.edu.co.records.input.entity.AspiranteInput.*;
 import ufps.edu.co.records.output.entity.AspiranteCalificacionOutput;
 import ufps.edu.co.records.output.entity.AspiranteCriteriosOutput;
 import ufps.edu.co.records.output.entity.AspiranteOutput;
+import ufps.edu.co.records.output.entity.CohorteDetalleOutput;
 import ufps.edu.co.records.output.entity.CohorteListadoOutput;
 import ufps.edu.co.records.output.entity.CriterioFilaOutput;
 import ufps.edu.co.records.output.entity.CriteriosCohorteOutput;
@@ -280,6 +281,81 @@ public class AspiranteProcessor implements
         } catch (Exception e) {
             throw new RuntimeException("Error finding estado for Aspirante: " + e.getMessage(), e);
         }
+    }
+
+    public CohorteDetalleOutput getCohorteDetalle(Integer cohorteId) {
+        CohorteDTO cohorte = cohorteService.findById(cohorteId);
+        if (cohorte == null) {
+            throw new RuntimeException("Cohorte no encontrada: " + cohorteId);
+        }
+        boolean activa = cohorte.getEstado() != null
+                && "ABIERTA".equalsIgnoreCase(cohorte.getEstado().getTipo());
+
+        List<CohorteDetalleOutput.CriterioInfo> criterios = criterioevaluacionService
+                .findByIdCohorte(cohorteId).stream()
+                .map(c -> CohorteDetalleOutput.CriterioInfo.builder()
+                        .nombre(c.getNombre())
+                        .peso(c.getPeso())
+                        .build())
+                .toList();
+
+        List<AspiranteDTO> aspirantes = service.findByCohorte(cohorteId);
+
+        List<CohorteDetalleOutput.AspiranteInfo> inscritosData = aspirantes.stream()
+                .map(a -> {
+                    PersonaDTO p = a.getPersona();
+                    String nombre = p != null
+                            ? ((p.getNombres() != null ? p.getNombres() : "") + " "
+                                    + (p.getApellidos() != null ? p.getApellidos() : "")).trim()
+                            : "";
+                    String cedula = p != null && p.getDocumentopersona() != null
+                            && p.getDocumentopersona().getNumerodocumento() != null
+                            ? p.getDocumentopersona().getNumerodocumento().toString() : null;
+                    return CohorteDetalleOutput.AspiranteInfo.builder()
+                            .id(a.getId())
+                            .nombre(nombre)
+                            .cedula(cedula)
+                            .correo(p != null ? p.getCorreo() : null)
+                            .build();
+                }).toList();
+
+        List<CohorteDetalleOutput.AspiranteInfo> admitidosData = admitidoService
+                .findByCohorte(cohorteId).stream()
+                .map(admitido -> {
+                    AspiranteDTO a = admitido.getAspirante();
+                    if (a == null) return null;
+                    PersonaDTO p = a.getPersona();
+                    String nombre = p != null
+                            ? ((p.getNombres() != null ? p.getNombres() : "") + " "
+                                    + (p.getApellidos() != null ? p.getApellidos() : "")).trim()
+                            : "";
+                    String cedula = p != null && p.getDocumentopersona() != null
+                            && p.getDocumentopersona().getNumerodocumento() != null
+                            ? p.getDocumentopersona().getNumerodocumento().toString() : null;
+                    return CohorteDetalleOutput.AspiranteInfo.builder()
+                            .id(a.getId())
+                            .nombre(nombre)
+                            .cedula(cedula)
+                            .correo(p != null ? p.getCorreo() : null)
+                            .build();
+                })
+                .filter(java.util.Objects::nonNull)
+                .toList();
+
+        return CohorteDetalleOutput.builder()
+                .id(cohorte.getId())
+                .nombre(cohorte.getNombre())
+                .activa(activa)
+                .inscritos(aspirantes.size())
+                .admitidos(admitidosData.size())
+                .cupos(cohorte.getCupos())
+                .fechaLimiteDocumentos(cohorte.getPlazo() != null ? cohorte.getPlazo().getFechafin() : null)
+                .fechaLimitePago(cohorte.getPlazo3() != null ? cohorte.getPlazo3().getFechafin() : null)
+                .fechaInicio(cohorte.getSemestre() != null ? cohorte.getSemestre().getFechaInicio() : null)
+                .criterios(criterios)
+                .inscritosData(inscritosData)
+                .admitidosData(admitidosData)
+                .build();
     }
 
     public List<AspiranteOutput> findPazYSalvoByCohorte(Integer cohorteId) {

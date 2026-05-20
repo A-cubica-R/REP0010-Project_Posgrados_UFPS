@@ -54,6 +54,7 @@ import ufps.edu.co.records.input.entity.ListaadmitidosInput.RECHAZAR_ASPIRANTE;
 import ufps.edu.co.records.input.entity.TipodocumentoInput.TIPODOCUMENTO_FIND;
 import ufps.edu.co.records.input.entity.ProgramaInput.PROGRAMA_FIND;
 import ufps.edu.co.records.output.entity.AdministrativoOutput;
+import ufps.edu.co.records.output.entity.CohorteDetalleOutput;
 import ufps.edu.co.records.output.entity.CohorteListadoOutput;
 import ufps.edu.co.records.output.entity.ListaAdmitidosResumenOutput;
 import ufps.edu.co.records.output.entity.CriteriosCohorteOutput;
@@ -302,6 +303,15 @@ public class DirectorProgramaCase {
             return ResponseEntity.ok(calificacioncriterioProcessor.update(request));
         } catch (Exception e) {
             e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @GetMapping("/cohorte/{cohorteId}")
+    public ResponseEntity<CohorteDetalleOutput> getCohorteDetalle(@PathVariable Integer cohorteId) {
+        try {
+            return ResponseEntity.ok(aspiranteProcessor.getCohorteDetalle(cohorteId));
+        } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
     }
