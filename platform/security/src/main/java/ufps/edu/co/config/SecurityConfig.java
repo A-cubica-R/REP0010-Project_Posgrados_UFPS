@@ -45,7 +45,6 @@ public class SecurityConfig {
         };
 
         private static final String[] ASPIRANTE_PATHS = {
-                        ""
         };
 
         @Bean
