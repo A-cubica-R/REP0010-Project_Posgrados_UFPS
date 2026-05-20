@@ -306,6 +306,15 @@ public class DirectorProgramaCase {
         }
     }
 
+    @GetMapping("/cohorte/{cohorteId}/aspirantes/paz-y-salvo")
+    public ResponseEntity<List<AspiranteOutput>> findPazYSalvoByCohorte(@PathVariable Integer cohorteId) {
+        try {
+            return ResponseEntity.ok(aspiranteProcessor.findPazYSalvoByCohorte(cohorteId));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
     @PostMapping(value = "/programa/{programaId}/cohorte/{cohorteId}/criterios",
             consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CriterioevaluacionOutput> createCriterio(

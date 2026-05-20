@@ -282,6 +282,18 @@ public class AspiranteProcessor implements
         }
     }
 
+    public List<AspiranteOutput> findPazYSalvoByCohorte(Integer cohorteId) {
+        try {
+            return service.findByCohorte(cohorteId).stream()
+                    .filter(a -> a.getEstado() != null
+                            && "PAZ Y SALVO".equalsIgnoreCase(a.getEstado().getTipo()))
+                    .map(map::toOutput)
+                    .toList();
+        } catch (Exception e) {
+            throw new RuntimeException("Error finding aspirantes PAZ Y SALVO: " + e.getMessage(), e);
+        }
+    }
+
     private List<AspiranteDTO> findAspirantesByCohorteActiva(Integer programaId) {
         CohorteDTO cohorte = cohorteService.findActiveByIdPrograma(programaId);
         if (cohorte == null) {
