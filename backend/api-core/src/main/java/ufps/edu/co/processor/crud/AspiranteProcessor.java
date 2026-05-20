@@ -3,7 +3,6 @@ package ufps.edu.co.processor.crud;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -144,11 +143,6 @@ public class AspiranteProcessor implements
 
     public List<AspiranteCalificacionOutput> findAllValidadosCalificacion() {
         List<AspiranteDTO> validados = service.findWithDocuments();
-
-        Set<Integer> calificadosIds = service.findCalificados().stream()
-                .map(AspiranteDTO::getId).collect(Collectors.toSet());
-        Set<Integer> porCalificarIds = service.findPorCalificar().stream()
-                .map(AspiranteDTO::getId).collect(Collectors.toSet());
 
         return validados.stream().map(aspirante -> {
             PersonaDTO persona = aspirante.getPersona();
