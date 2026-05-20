@@ -11,7 +11,8 @@ public record EntrevistaResumenOutput(
         Integer id,
         LocalDate fecha,
         LocalTime hora,
-        String estado,
-        String modalidad,
-        String ubicacion
+        Integer idEstado,
+        Integer idTipoentrevista,
+        String ubicacion,
+        String motivocambio
 ) implements OutputResponse {}

@@ -17,7 +17,8 @@ public enum EntrevistaInput {
             @NotNull LocalTime tiempo,
             @NotNull Integer idTipoentrevista,
             @NotNull Integer idAspirante,
-            @NotBlank String ubicacion) implements CreateType {
+            @NotBlank String ubicacion,
+            String motivocambio) implements CreateType {
     }
 
     public record ENTREVISTA_UPDATE(
@@ -28,7 +29,8 @@ public enum EntrevistaInput {
             @NotNull Integer idAspirante,
             @NotNull Integer idEstado,
             @NotNull Integer idTipoentrevista,
-            @NotBlank String ubicacion) implements UpdateType {
+            @NotBlank String ubicacion,
+            String motivocambio) implements UpdateType {
     }
 
     public record ENTREVISTA_RESCHEDULE(
@@ -36,7 +38,8 @@ public enum EntrevistaInput {
             @NotNull LocalDate fecha,
             @NotNull LocalTime tiempo,
             @NotNull Integer idTipoentrevista,
-            @NotBlank String ubicacion) implements UpdateType {
+            @NotBlank String ubicacion,
+            String motivocambio) implements UpdateType {
     }
 
     public record ENTREVISTA_PATCH(

@@ -25,6 +25,7 @@ public class EntrevistaMap extends
                 .fecha(input.fecha())
                 .tiempo(input.tiempo())
                 .idAspirante(input.idAspirante())
+                .motivocambio(input.motivocambio())
                 .build();
     }
 
@@ -37,6 +38,7 @@ public class EntrevistaMap extends
                 .idAspirante(input.idAspirante())
                 .idEstado(input.idEstado())
                 .idTipoentrevista(input.idTipoentrevista())
+                .motivocambio(input.motivocambio())
                 .build();
     }
 
@@ -74,6 +76,7 @@ public class EntrevistaMap extends
                 .calificacion(dto.getCalificacion())
                 .fecha(dto.getFecha())
                 .tiempo(dto.getTiempo())
+                .motivocambio(dto.getMotivocambio())
                 .idAspirante(dto.getIdAspirante())
                 .idEstado(dto.getIdEstado())
                 .idTipoentrevista(dto.getIdTipoentrevista())
