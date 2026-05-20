@@ -9,16 +9,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ufps.edu.co.domain.utilities.PrinterObjects;
 import ufps.edu.co.maps.specific.AdministrativoMap;
-import ufps.edu.co.maps.specific.PersonaMap;
 import ufps.edu.co.processor.abstracts.contract.CrudProcessor;
-import ufps.edu.co.records.output.entity.PersonaOutput;
 import ufps.edu.co.records.input.entity.AdministrativoInput.*;
 import ufps.edu.co.records.input.entity.ProgramaInput.PROGRAMA_CREATE_WITH_RELATIONS;
 import ufps.edu.co.records.input.entity.ProgramaInput.PROGRAMA_UPDATE_WITH_RELATIONS;
 import ufps.edu.co.records.output.entity.AdministrativoOutput;
 import ufps.edu.co.records.output.entity.CohorteInscritosOutput;
 import ufps.edu.co.records.output.entity.CohorteOutput;
-import ufps.edu.co.records.output.entity.ProgramaDirectorOutput;
 import ufps.edu.co.records.output.entity.ProgramaOutput;
 import ufps.edu.co.rest.dto.AdministrativoDTO;
 import ufps.edu.co.rest.dto.UsuarioDTO;
