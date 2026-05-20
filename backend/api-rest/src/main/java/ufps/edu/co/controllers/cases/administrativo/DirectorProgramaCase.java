@@ -35,6 +35,8 @@ import ufps.edu.co.processor.crud.TipodocumentoProcessor;
 import ufps.edu.co.records.input.entity.AdministrativoInput.ADMINISTRATIVO_FIND;
 import ufps.edu.co.records.input.entity.AspiranteInput.ASPIRANTE_FIND;
 import ufps.edu.co.records.input.entity.CalificacioncriterioInput.CALIFICACIONCRITERIO_CREATE;
+import ufps.edu.co.records.input.entity.CohorteInput.COHORTE_DIRECTOR_CREATE;
+import ufps.edu.co.records.input.entity.CohorteInput.COHORTE_DIRECTOR_UPDATE;
 import ufps.edu.co.records.input.entity.CriterioevaluacionInput.CRITERIO_BULK_SAVE;
 import ufps.edu.co.records.input.entity.CriterioevaluacionInput.CRITERIO_CREATE_BODY;
 import ufps.edu.co.records.input.entity.CriterioevaluacionInput.CRITERIO_UPDATE_BODY;
@@ -259,6 +261,31 @@ public class DirectorProgramaCase {
     public ResponseEntity<List<CohorteListadoOutput>> getCohortesByPrograma(@PathVariable Integer programaId) {
         try {
             return ResponseEntity.ok(aspiranteProcessor.getCohortesByPrograma(programaId));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PostMapping(value = "/programa/{programaId}/cohortes", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<CohorteListadoOutput> createCohorte(
+            @PathVariable Integer programaId,
+            @RequestBody COHORTE_DIRECTOR_CREATE body) {
+        try {
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(aspiranteProcessor.createCohorte(programaId, body));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PutMapping(value = "/cohorte/{cohorteId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<CohorteListadoOutput> updateCohorte(
+            @PathVariable Integer cohorteId,
+            @RequestBody COHORTE_DIRECTOR_UPDATE body) {
+        try {
+            return ResponseEntity.ok(aspiranteProcessor.updateCohorte(cohorteId, body));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();

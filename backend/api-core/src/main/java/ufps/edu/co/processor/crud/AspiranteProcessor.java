@@ -1,6 +1,7 @@
 package ufps.edu.co.processor.crud;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -9,6 +10,8 @@ import org.springframework.stereotype.Service;
 import ufps.edu.co.maps.specific.AspiranteMap;
 import ufps.edu.co.maps.specific.EstadoMap;
 import ufps.edu.co.records.input.entity.AspiranteInput.*;
+import ufps.edu.co.records.input.entity.CohorteInput.COHORTE_DIRECTOR_CREATE;
+import ufps.edu.co.records.input.entity.CohorteInput.COHORTE_DIRECTOR_UPDATE;
 import ufps.edu.co.records.output.entity.AspiranteCalificacionOutput;
 import ufps.edu.co.records.output.entity.AspiranteCriteriosOutput;
 import ufps.edu.co.records.output.entity.AspiranteOutput;
@@ -22,12 +25,22 @@ import ufps.edu.co.rest.dto.CohorteDTO;
 import ufps.edu.co.rest.dto.AspiranteDTO;
 import ufps.edu.co.rest.dto.CalificacioncriterioDTO;
 import ufps.edu.co.rest.dto.CriterioevaluacionDTO;
+import ufps.edu.co.rest.dto.EstadoDTO;
+import ufps.edu.co.rest.dto.ModalidadDTO;
 import ufps.edu.co.rest.dto.PersonaDTO;
+import ufps.edu.co.rest.dto.PlazoDTO;
+import ufps.edu.co.rest.dto.SemestreDTO;
+import ufps.edu.co.rest.dto.TipoplazoDTO;
 import ufps.edu.co.rest.services.AdmitidoService;
 import ufps.edu.co.rest.services.AspiranteService;
 import ufps.edu.co.rest.services.CalificacioncriterioService;
 import ufps.edu.co.rest.services.CohorteService;
 import ufps.edu.co.rest.services.CriterioevaluacionService;
+import ufps.edu.co.rest.services.EstadoService;
+import ufps.edu.co.rest.services.ModalidadService;
+import ufps.edu.co.rest.services.PlazoService;
+import ufps.edu.co.rest.services.SemestreService;
+import ufps.edu.co.rest.services.TipoplazoService;
 import ufps.edu.co.usecase.GlobalUseCase;
 
 @Service
@@ -54,6 +67,21 @@ public class AspiranteProcessor implements
 
     @Autowired
     private AdmitidoService admitidoService;
+
+    @Autowired
+    private PlazoService plazoService;
+
+    @Autowired
+    private SemestreService semestreService;
+
+    @Autowired
+    private ModalidadService modalidadService;
+
+    @Autowired
+    private EstadoService estadoService;
+
+    @Autowired
+    private TipoplazoService tipoplazoService;
 
     @Override
     public AspiranteOutput create(ASPIRANTE_CREATE input) {
@@ -417,5 +445,132 @@ public class AspiranteProcessor implements
                 .filter(a -> a.getEstado() != null
                         && "VALIDADO_CALIFICADO".equalsIgnoreCase(a.getEstado().getTipo()))
                 .count();
+    }
+
+    public CohorteListadoOutput createCohorte(Integer programaId, COHORTE_DIRECTOR_CREATE body) {
+        LocalDate fechaInicio = body.fechaInicio();
+        int year = fechaInicio.getYear();
+        int semNum = fechaInicio.getMonthValue() <= 6 ? 1 : 2;
+
+        long n = cohorteService.findByIdPrograma(programaId).size() + 1;
+        String nombre = "Cohorte-" + n + " " + year + "-" + semNum;
+
+        List<TipoplazoDTO> tipoplazos = tipoplazoService.findAll();
+        if (tipoplazos.isEmpty()) {
+            throw new RuntimeException("No hay tipos de plazo configurados");
+        }
+        Integer tipoplazoId = tipoplazos.get(0).getId();
+
+        PlazoDTO plazoDoc = plazoService.create(PlazoDTO.builder()
+                .fechainicio(fechaInicio)
+                .fechafin(body.fechaLimiteDocumentos())
+                .idTipoplazo(tipoplazoId)
+                .build());
+
+        PlazoDTO plazoPago = plazoService.create(PlazoDTO.builder()
+                .fechainicio(fechaInicio)
+                .fechafin(body.fechaLimitePago())
+                .idTipoplazo(tipoplazoId)
+                .build());
+
+        EstadoDTO estadoSemestre = estadoService.findAll().stream()
+                .filter(e -> "semestre".equalsIgnoreCase(e.getEntidad()))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("No hay estado configurado para semestre"));
+
+        LocalDate fechaFin = semNum == 1 ? LocalDate.of(year, 6, 30) : LocalDate.of(year, 12, 31);
+        SemestreDTO semestre = semestreService.create(SemestreDTO.builder()
+                .nombre(year + "-" + semNum)
+                .fechaInicio(fechaInicio)
+                .fechaFin(fechaFin)
+                .idEstado(estadoSemestre.getId())
+                .build());
+
+        EstadoDTO estadoCohorte = estadoService.findByTipoAndEntidad("ABIERTA", "cohorte");
+        if (estadoCohorte == null) {
+            throw new RuntimeException("No hay estado ABIERTA configurado para cohorte");
+        }
+
+        List<ModalidadDTO> modalidades = modalidadService.findAll();
+        if (modalidades.isEmpty()) {
+            throw new RuntimeException("No hay modalidades configuradas");
+        }
+
+        CohorteDTO cohorte = cohorteService.create(CohorteDTO.builder()
+                .nombre(nombre)
+                .cupos(body.cupos())
+                .requiereentrevista(false)
+                .requiereprueba(false)
+                .idEstado(estadoCohorte.getId())
+                .idSemestre(semestre.getId())
+                .idModalidad(modalidades.get(0).getId())
+                .idPlazodocumentacion(plazoDoc.getId())
+                .idPlazoinscripcion(plazoDoc.getId())
+                .idPlazopago(plazoPago.getId())
+                .idPrograma(programaId)
+                .build());
+
+        return CohorteListadoOutput.builder()
+                .id(cohorte.getId())
+                .nombre(cohorte.getNombre())
+                .activa(true)
+                .inscritos(0)
+                .admitidos(0)
+                .cupos(cohorte.getCupos())
+                .fechaLimiteDocumentos(body.fechaLimiteDocumentos())
+                .fechaLimitePago(body.fechaLimitePago())
+                .fechaInicio(fechaInicio)
+                .build();
+    }
+
+    public CohorteListadoOutput updateCohorte(Integer cohorteId, COHORTE_DIRECTOR_UPDATE body) {
+        CohorteDTO cohorte = cohorteService.findById(cohorteId);
+        if (cohorte == null) {
+            throw new RuntimeException("Cohorte no encontrada: " + cohorteId);
+        }
+
+        if (body.cupos() != null) {
+            cohorte.setCupos(body.cupos());
+        }
+
+        LocalDate fechaInicio = cohorte.getSemestre() != null ? cohorte.getSemestre().getFechaInicio() : null;
+        if (body.fechaInicio() != null && cohorte.getSemestre() != null) {
+            SemestreDTO semestre = cohorte.getSemestre();
+            semestre.setFechaInicio(body.fechaInicio());
+            semestreService.update(semestre.getId(), semestre);
+            fechaInicio = body.fechaInicio();
+        }
+
+        LocalDate fechaLimiteDocumentos = cohorte.getPlazo() != null ? cohorte.getPlazo().getFechafin() : null;
+        if (body.fechaLimiteDocumentos() != null && cohorte.getPlazo() != null) {
+            PlazoDTO plazo = cohorte.getPlazo();
+            plazo.setFechafin(body.fechaLimiteDocumentos());
+            plazoService.update(plazo.getId(), plazo);
+            fechaLimiteDocumentos = body.fechaLimiteDocumentos();
+        }
+
+        LocalDate fechaLimitePago = cohorte.getPlazo3() != null ? cohorte.getPlazo3().getFechafin() : null;
+        if (body.fechaLimitePago() != null && cohorte.getPlazo3() != null) {
+            PlazoDTO plazo3 = cohorte.getPlazo3();
+            plazo3.setFechafin(body.fechaLimitePago());
+            plazoService.update(plazo3.getId(), plazo3);
+            fechaLimitePago = body.fechaLimitePago();
+        }
+
+        cohorteService.update(cohorteId, cohorte);
+
+        boolean activa = cohorte.getEstado() != null && "ABIERTA".equalsIgnoreCase(cohorte.getEstado().getTipo());
+
+        return CohorteListadoOutput.builder()
+                .id(cohorteId)
+                .nombre(cohorte.getNombre())
+                .activa(activa)
+                .inscritos(service.countByCohorte(cohorteId))
+                .admitidos(admitidoService.countByCohorte(cohorteId))
+                .cupos(cohorte.getCupos())
+                .fechaLimiteDocumentos(fechaLimiteDocumentos)
+                .fechaLimitePago(fechaLimitePago)
+                .fechaInicio(fechaInicio)
+                .build();
     }
 }
