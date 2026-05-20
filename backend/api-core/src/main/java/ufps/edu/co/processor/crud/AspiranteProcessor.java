@@ -281,4 +281,53 @@ public class AspiranteProcessor implements
             throw new RuntimeException("Error finding estado for Aspirante: " + e.getMessage(), e);
         }
     }
+
+    private List<AspiranteDTO> findAspirantesByCohorteActiva(Integer programaId) {
+        CohorteDTO cohorte = cohorteService.findActiveByIdPrograma(programaId);
+        if (cohorte == null) {
+            throw new RuntimeException("No hay cohorte activa para el programa: " + programaId);
+        }
+        return service.findByCohorte(cohorte.getId());
+    }
+
+    public List<AspiranteCalificacionOutput> findAllValidadosCalificacion(Integer programaId) {
+        List<String> estados = List.of("VALIDADO_POR_CALIFICAR", "VALIDADO_EN_PROGRESO", "VALIDADO_CALIFICADO");
+        return findAspirantesByCohorteActiva(programaId).stream()
+                .filter(a -> a.getEstado() != null && estados.contains(a.getEstado().getTipo()))
+                .map(aspirante -> {
+                    PersonaDTO persona = aspirante.getPersona();
+                    String nombreCompleto = persona != null
+                            ? ((persona.getNombres() != null ? persona.getNombres() : "") + " "
+                                    + (persona.getApellidos() != null ? persona.getApellidos() : "")).trim()
+                            : "";
+                    return AspiranteCalificacionOutput.builder()
+                            .id(aspirante.getId())
+                            .nombreCompleto(nombreCompleto)
+                            .idEstado(aspirante.getIdEstado())
+                            .correo(persona != null ? persona.getCorreo() : null)
+                            .puntajeTotal(aspirante.getPuntuacion())
+                            .build();
+                }).toList();
+    }
+
+    public long countValidados(Integer programaId) {
+        List<String> estados = List.of("VALIDADO_POR_CALIFICAR", "VALIDADO_EN_PROGRESO", "VALIDADO_CALIFICADO");
+        return findAspirantesByCohorteActiva(programaId).stream()
+                .filter(a -> a.getEstado() != null && estados.contains(a.getEstado().getTipo()))
+                .count();
+    }
+
+    public long countPorCalificar(Integer programaId) {
+        List<String> estados = List.of("VALIDADO_POR_CALIFICAR", "VALIDADO_EN_PROGRESO");
+        return findAspirantesByCohorteActiva(programaId).stream()
+                .filter(a -> a.getEstado() != null && estados.contains(a.getEstado().getTipo()))
+                .count();
+    }
+
+    public long countCalificados(Integer programaId) {
+        return findAspirantesByCohorteActiva(programaId).stream()
+                .filter(a -> a.getEstado() != null
+                        && "VALIDADO_CALIFICADO".equalsIgnoreCase(a.getEstado().getTipo()))
+                .count();
+    }
 }
