@@ -12,8 +12,12 @@ import ufps.edu.co.maps.specific.DocumentoMap;
 import ufps.edu.co.maps.specific.PersonaMap;
 import ufps.edu.co.records.input.entity.AspiranteInput.ASPIRANTE_FIND;
 import ufps.edu.co.records.input.entity.DocumentoInput.*;
+import ufps.edu.co.records.output.entity.AspiranteDocumentosOutput;
+import ufps.edu.co.records.output.entity.AspiranteDocumentosOutput.DocumentoResumenOutput;
+import ufps.edu.co.records.output.entity.DocumentoEstadoOutput;
 import ufps.edu.co.records.output.entity.DocumentoOutput;
 import ufps.edu.co.records.output.entity.PersonaOutput;
+import ufps.edu.co.rest.dto.AspiranteDTO;
 import ufps.edu.co.rest.dto.DocumentoDTO;
 import ufps.edu.co.rest.dto.EstadoDTO;
 import ufps.edu.co.rest.dto.EstadodocumentoDTO;
@@ -173,5 +177,78 @@ public class DocumentoProcessor implements
         DocumentoDTO documento = service.findById(input.id());
         PersonaDTO persona = documento.getAspirante().getPersona();
         return personaMap.toOutput(persona);
+    }
+
+    public AspiranteDocumentosOutput getDocumentosDeAspirante(Integer aspiranteId) {
+        try {
+            AspiranteDTO aspirante = aspiranteService.findById(aspiranteId);
+            PersonaDTO p = aspirante != null ? aspirante.getPersona() : null;
+            String nombre = p != null
+                    ? ((p.getNombres() != null ? p.getNombres() : "") + " "
+                            + (p.getApellidos() != null ? p.getApellidos() : "")).trim()
+                    : "";
+            String cedula = p != null && p.getDocumentopersona() != null
+                    && p.getDocumentopersona().getNumerodocumento() != null
+                    ? p.getDocumentopersona().getNumerodocumento().toString() : null;
+
+            List<DocumentoDTO> docs = service.findByIdAspirante(aspiranteId);
+            long total = docs.size();
+            long validados = docs.stream()
+                    .filter(d -> d.getEstadodocumento() != null
+                            && "APROBADO".equalsIgnoreCase(d.getEstadodocumento().getEstado()))
+                    .count();
+
+            String estadoGeneral;
+            if (total > 0 && validados == total) {
+                estadoGeneral = "validados";
+            } else if (validados > 0) {
+                estadoGeneral = "en progreso";
+            } else {
+                estadoGeneral = "pendiente";
+            }
+
+            List<DocumentoResumenOutput> documentosResumen = docs.stream()
+                    .map(doc -> DocumentoResumenOutput.builder()
+                            .id(doc.getId())
+                            .nombre(doc.getTipodocumento() != null ? doc.getTipodocumento().getDescripcion() : null)
+                            .estado(doc.getEstadodocumento() != null ? doc.getEstadodocumento().getEstado() : "PENDIENTE")
+                            .motivoRechazo(doc.getObservaciones())
+                            .linkArchivo(doc.getEnlaceurl())
+                            .build())
+                    .toList();
+
+            return AspiranteDocumentosOutput.builder()
+                    .idAspirante(aspiranteId)
+                    .nombreAspirante(nombre)
+                    .cedula(cedula)
+                    .estadoGeneral(estadoGeneral)
+                    .documentos(documentosResumen)
+                    .build();
+        } catch (Exception e) {
+            throw new RuntimeException("Error obteniendo documentos del aspirante: " + e.getMessage(), e);
+        }
+    }
+
+    public DocumentoEstadoOutput updateEstadoDocumento(Integer docId, DOCUMENTO_ESTADO_UPDATE input) {
+        try {
+            DocumentoDTO dto = service.findById(docId);
+            EstadodocumentoDTO estadodocumentoDTO = estadodocumentoService.findByEstado(input.estado());
+            dto.setEstadodocumento(estadodocumentoDTO);
+            dto.setIdEstadodocumento(estadodocumentoDTO.getId());
+            dto.setObservaciones(input.motivoRechazo());
+            service.update(docId, dto);
+            if ("APROBADO".equalsIgnoreCase(input.estado())) {
+                checkAndUpdateEstadoValidacion(dto.getIdAspirante());
+            }
+            String nombreDoc = dto.getTipodocumento() != null ? dto.getTipodocumento().getDescripcion() : null;
+            return DocumentoEstadoOutput.builder()
+                    .id(docId)
+                    .nombre(nombreDoc)
+                    .estado(input.estado())
+                    .motivoRechazo(input.motivoRechazo())
+                    .build();
+        } catch (Exception e) {
+            throw new RuntimeException("Error actualizando estado del documento: " + e.getMessage(), e);
+        }
     }
 }

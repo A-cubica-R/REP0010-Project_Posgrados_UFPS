@@ -13,16 +13,20 @@ import ufps.edu.co.records.input.entity.AspiranteInput.*;
 import ufps.edu.co.records.input.entity.CohorteInput.COHORTE_DIRECTOR_CREATE;
 import ufps.edu.co.records.input.entity.CohorteInput.COHORTE_DIRECTOR_UPDATE;
 import ufps.edu.co.records.output.entity.AspiranteCalificacionOutput;
+import ufps.edu.co.records.output.entity.AspiranteCohorteOutput;
 import ufps.edu.co.records.output.entity.AspiranteCriteriosOutput;
 import ufps.edu.co.records.output.entity.AspiranteOutput;
 import ufps.edu.co.records.output.entity.CohorteDetalleOutput;
 import ufps.edu.co.records.output.entity.CohorteListadoOutput;
+import ufps.edu.co.records.output.entity.CohorteResumenOutput;
 import ufps.edu.co.records.output.entity.CriterioFilaOutput;
 import ufps.edu.co.records.output.entity.CriteriosCohorteOutput;
 import ufps.edu.co.records.output.entity.EstadoOutput;
 import ufps.edu.co.records.output.entity.ProgramaInicioOutput;
 import ufps.edu.co.rest.dto.CohorteDTO;
 import ufps.edu.co.rest.dto.AspiranteDTO;
+import ufps.edu.co.rest.dto.DocumentoDTO;
+import ufps.edu.co.rest.services.DocumentoService;
 import ufps.edu.co.rest.dto.CalificacioncriterioDTO;
 import ufps.edu.co.rest.dto.CriterioevaluacionDTO;
 import ufps.edu.co.rest.dto.EstadoDTO;
@@ -82,6 +86,9 @@ public class AspiranteProcessor implements
 
     @Autowired
     private TipoplazoService tipoplazoService;
+
+    @Autowired
+    private DocumentoService documentoService;
 
     @Override
     public AspiranteOutput create(ASPIRANTE_CREATE input) {
@@ -521,6 +528,67 @@ public class AspiranteProcessor implements
                 .fechaLimitePago(body.fechaLimitePago())
                 .fechaInicio(fechaInicio)
                 .build();
+    }
+
+    public List<CohorteResumenOutput> getCohortesByProgramaResumen(Integer programaId) {
+        return cohorteService.findByIdPrograma(programaId).stream().map(cohorte -> {
+            boolean activa = cohorte.getEstado() != null
+                    && "ABIERTA".equalsIgnoreCase(cohorte.getEstado().getTipo());
+            long inscritos = service.countByCohorte(cohorte.getId());
+            long validados = service.countValidadosByCohorte(cohorte.getId());
+            Long admitidos = activa ? null : admitidoService.countByCohorte(cohorte.getId());
+            return CohorteResumenOutput.builder()
+                    .id(cohorte.getId())
+                    .nombre(cohorte.getNombre())
+                    .activa(activa)
+                    .semestre(cohorte.getSemestre() != null ? cohorte.getSemestre().getNombre() : null)
+                    .cupos(cohorte.getCupos())
+                    .fechaLimiteDocs(cohorte.getPlazo() != null ? cohorte.getPlazo().getFechafin() : null)
+                    .fechaLimiteInscripcion(cohorte.getPlazo2() != null ? cohorte.getPlazo2().getFechafin() : null)
+                    .totalInscritos(inscritos)
+                    .totalValidados(validados)
+                    .totalAdmitidos(admitidos)
+                    .build();
+        }).toList();
+    }
+
+    public List<AspiranteCohorteOutput> findByCohorteConResumen(Integer cohorteId) {
+        return service.findByCohorte(cohorteId).stream().map(aspirante -> {
+            PersonaDTO p = aspirante.getPersona();
+            String nombre = p != null
+                    ? ((p.getNombres() != null ? p.getNombres() : "") + " "
+                            + (p.getApellidos() != null ? p.getApellidos() : "")).trim()
+                    : "";
+            String cedula = p != null && p.getDocumentopersona() != null
+                    && p.getDocumentopersona().getNumerodocumento() != null
+                    ? p.getDocumentopersona().getNumerodocumento().toString() : null;
+
+            List<DocumentoDTO> docs = documentoService.findByIdAspirante(aspirante.getId());
+            long total = docs.size();
+            long validados = docs.stream()
+                    .filter(d -> d.getEstadodocumento() != null
+                            && "APROBADO".equalsIgnoreCase(d.getEstadodocumento().getEstado()))
+                    .count();
+
+            String estadoGeneral;
+            if (total > 0 && validados == total) {
+                estadoGeneral = "validados";
+            } else if (validados > 0) {
+                estadoGeneral = "en progreso";
+            } else {
+                estadoGeneral = "pendiente";
+            }
+
+            return AspiranteCohorteOutput.builder()
+                    .id(aspirante.getId())
+                    .nombre(nombre)
+                    .cedula(cedula)
+                    .correo(p != null ? p.getCorreo() : null)
+                    .documentosValidados(validados)
+                    .totalDocumentos(total)
+                    .estadoGeneral(estadoGeneral)
+                    .build();
+        }).toList();
     }
 
     public CohorteListadoOutput updateCohorte(Integer cohorteId, COHORTE_DIRECTOR_UPDATE body) {

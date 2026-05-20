@@ -84,10 +84,6 @@ public class EntrevistaService extends GenericService<EntrevistaEntity, Entrevis
             Integer idTipoentrevista, Integer idUbicacion, String motivocambio) {
         EntrevistaEntity entity = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Entrevista no encontrada con id: " + id));
-        String estadoTipo = entity.getEstado() != null ? entity.getEstado().getTipo() : "";
-        if (!"SOLICITUD_CAMBIO".equalsIgnoreCase(estadoTipo)) {
-            throw new RuntimeException("Solo se puede reagendar una entrevista en estado 'Solicitud de cambio'");
-        }
         Integer idEstadoPendiente = estadoRepository
                 .findByTipoIgnoreCaseAndEntidadIgnoreCase("PENDIENTE_CONFIRMACION", "entrevista")
                 .orElseThrow(() -> new RuntimeException("Estado 'PENDIENTE_CONFIRMACION' no encontrado para entidad 'entrevista'"))

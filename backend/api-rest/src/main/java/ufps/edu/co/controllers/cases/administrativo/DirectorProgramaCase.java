@@ -31,7 +31,6 @@ import ufps.edu.co.processor.crud.CriterioevaluacionProcessor;
 import ufps.edu.co.processor.crud.DocumentoProcessor;
 import ufps.edu.co.processor.crud.EntrevistaProcessor;
 import ufps.edu.co.processor.crud.ListaadmitidosProcessor;
-import ufps.edu.co.processor.crud.TipodocumentoProcessor;
 import ufps.edu.co.records.input.entity.AdministrativoInput.ADMINISTRATIVO_FIND;
 import ufps.edu.co.records.input.entity.AspiranteInput.ASPIRANTE_FIND;
 import ufps.edu.co.records.input.entity.CalificacioncriterioInput.CALIFICACIONCRITERIO_CREATE;
@@ -46,14 +45,12 @@ import ufps.edu.co.records.output.entity.CalificacioncriterioOutput;
 import ufps.edu.co.records.output.entity.CriterioevaluacionOutput;
 import ufps.edu.co.records.output.entity.SuccessOutput;
 import ufps.edu.co.records.input.entity.DocumentoInput.DOCUMENTO_FIND;
-import ufps.edu.co.records.input.entity.DocumentoInput.DOCUMENTO_REJECT;
 import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_CREATE;
 import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_FIND;
 import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_RATE;
 import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_RESCHEDULE;
 import ufps.edu.co.records.input.entity.ListaadmitidosInput.GENERATE_LISTA;
 import ufps.edu.co.records.input.entity.ListaadmitidosInput.RECHAZAR_ASPIRANTE;
-import ufps.edu.co.records.input.entity.TipodocumentoInput.TIPODOCUMENTO_FIND;
 import ufps.edu.co.records.input.entity.ProgramaInput.PROGRAMA_FIND;
 import ufps.edu.co.records.output.entity.AdministrativoOutput;
 import ufps.edu.co.records.output.entity.CohorteDetalleOutput;
@@ -68,9 +65,8 @@ import ufps.edu.co.records.output.entity.DocumentoOutput;
 import ufps.edu.co.records.output.entity.EntrevistaOutput;
 import ufps.edu.co.records.output.entity.EntrevistaResumenOutput;
 import ufps.edu.co.records.output.entity.ListaadmitidosOutput;
-import ufps.edu.co.records.output.entity.PersonaOutput;
-import ufps.edu.co.records.output.entity.TipodocumentoOutput;
 import ufps.edu.co.services.EmailService;
+
 import ufps.edu.co.services.PdfGeneratorService;
 import ufps.edu.co.services.S3Service;
 
@@ -96,9 +92,6 @@ public class DirectorProgramaCase {
     private AdministrativoProcessor administrativoProcessor;
 
     @Autowired
-    private TipodocumentoProcessor tipoDocumentoProcessor;
-
-    @Autowired
     private AspiranteProcessor aspiranteProcessor;
 
     @Autowired
@@ -112,8 +105,6 @@ public class DirectorProgramaCase {
 
     @Autowired
     private CriterioevaluacionProcessor criterioevaluacionProcessor;
-
-    private String correo = "jljb1704@gmail.com";
 
     @PostMapping(value = "/downloadByDocumentId", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<byte[]> download(@RequestBody DOCUMENTO_FIND request) {
@@ -129,54 +120,6 @@ public class DirectorProgramaCase {
             return ResponseEntity.notFound().build();
         }
 
-    }
-
-    @PostMapping(value = "/approveByDocumentId", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<DocumentoOutput> approveDocument(@RequestBody DOCUMENTO_FIND request) {
-        try {
-            DocumentoOutput output = documentoProcessor.approveDocument(request);
-            PersonaOutput persona = documentoProcessor.findPersonByDocument(request);
-            TipodocumentoOutput documento = tipoDocumentoProcessor
-                    .findById(TIPODOCUMENTO_FIND.builder().id(output.tipodocumento().id()).build());
-            notifyAspirant(persona.correo(), persona.nombres(), "Su documento " +
-                    documento.descripcion() + " ha sido aprobado. ¡Felicidades!");
-            notifyAspirant(this.correo, persona.nombres(),
-                    "Su documento '" + documento.tipo() + "' ha sido aprobado. ¡Felicidades!");
-            return ResponseEntity.ok(output);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    @PostMapping(value = "/rejectByDocumentId", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<DocumentoOutput> rejectDocument(@RequestBody DOCUMENTO_REJECT request) {
-        try {
-            DocumentoOutput output = documentoProcessor.rejectDocument(request);
-            PersonaOutput persona = documentoProcessor
-                    .findPersonByDocument(DOCUMENTO_FIND.builder().id(request.id()).build());
-            TipodocumentoOutput documento = tipoDocumentoProcessor
-                    .findById(TIPODOCUMENTO_FIND.builder().id(output.tipodocumento().id()).build());
-            notifyAspirant(persona.correo(), persona.nombres(), "Su documento " +
-                    documento.descripcion()
-                    + " ha sido rechazado. Realice el cargue nuevamente teniendo en cuenta las observaciones");
-            notifyAspirant(this.correo, persona.nombres(), "Su documento '" + documento.tipo()
-                    + "' ha sido rechazado. Realice el cargue nuevamente teniendo en cuenta las observaciones");
-            return ResponseEntity.ok(output);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    @PostMapping(value = "/listByAspirantId", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<DocumentoOutput>> findDocumentByAspirantId(@RequestBody ASPIRANTE_FIND request) {
-        try {
-            List<DocumentoOutput> outputs = documentoProcessor.findByAspiranteId(request);
-            return ResponseEntity.ok(outputs);
-        } catch (Exception e) {
-            return ResponseEntity.notFound().build();
-        }
     }
 
     @GetMapping(value = "/aspirantsWithDocuments")
@@ -251,16 +194,6 @@ public class DirectorProgramaCase {
     public ResponseEntity<CriteriosCohorteOutput> getCriteriosByPrograma(@PathVariable Integer programaId) {
         try {
             return ResponseEntity.ok(aspiranteProcessor.getCriteriosByPrograma(programaId));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.internalServerError().build();
-        }
-    }
-
-    @GetMapping("/programa/{programaId}/cohortes")
-    public ResponseEntity<List<CohorteListadoOutput>> getCohortesByPrograma(@PathVariable Integer programaId) {
-        try {
-            return ResponseEntity.ok(aspiranteProcessor.getCohortesByPrograma(programaId));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
@@ -414,13 +347,6 @@ public class DirectorProgramaCase {
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
-    }
-
-    private void notifyAspirant(String email, String name, String message) {
-        emailService.sendEmail(
-                email,
-                "Notificación sobre tu documento - Posgrados UFPS",
-                "<p>Hola <strong>" + name + "</strong>,</p><p>" + message + "</p>");
     }
 
     @PostMapping(value = "/generateAdmittedList", consumes = MediaType.APPLICATION_JSON_VALUE)
