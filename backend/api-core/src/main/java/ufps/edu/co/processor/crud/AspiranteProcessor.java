@@ -194,6 +194,7 @@ public class AspiranteProcessor implements
 
             List<CriterioFilaOutput> filas = criterios.stream()
                     .map(c -> CriterioFilaOutput.builder()
+                            .id(c.getId())
                             .nombreCriterio(c.getNombre())
                             .puntajeObtenido(puntuacionPorCriterio.get(c.getId()))
                             .build())

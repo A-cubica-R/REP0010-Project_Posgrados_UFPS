@@ -8,6 +8,7 @@ import ufps.edu.co.records.OutputResponse;
 
 @Builder
 public record EntrevistaResumenOutput(
+        Integer id,
         LocalDate fecha,
         LocalTime hora,
         String estado,
