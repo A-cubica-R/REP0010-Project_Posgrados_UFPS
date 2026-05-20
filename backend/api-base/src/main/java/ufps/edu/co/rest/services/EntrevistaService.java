@@ -85,8 +85,8 @@ public class EntrevistaService extends GenericService<EntrevistaEntity, Entrevis
         EntrevistaEntity entity = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Entrevista no encontrada con id: " + id));
         Integer idEstadoPendiente = estadoRepository
-                .findByTipoIgnoreCaseAndEntidadIgnoreCase("PENDIENTE_CONFIRMACION", "entrevista")
-                .orElseThrow(() -> new RuntimeException("Estado 'PENDIENTE_CONFIRMACION' no encontrado para entidad 'entrevista'"))
+                .findByTipoIgnoreCaseAndEntidadIgnoreCase("PENDIENTE DE CONFIRMACION", "entrevista")
+                .orElseThrow(() -> new RuntimeException("Estado 'PENDIENTE DE CONFIRMACION' no encontrado para entidad 'entrevista'"))
                 .getId();
         entity.setFecha(fecha);
         entity.setTiempo(tiempo);
