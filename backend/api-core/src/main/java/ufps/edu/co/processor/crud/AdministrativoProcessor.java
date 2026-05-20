@@ -9,16 +9,21 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ufps.edu.co.domain.utilities.PrinterObjects;
 import ufps.edu.co.maps.specific.AdministrativoMap;
+import ufps.edu.co.maps.specific.PersonaMap;
 import ufps.edu.co.processor.abstracts.contract.CrudProcessor;
+import ufps.edu.co.records.output.entity.PersonaOutput;
 import ufps.edu.co.records.input.entity.AdministrativoInput.*;
 import ufps.edu.co.records.input.entity.ProgramaInput.PROGRAMA_CREATE_WITH_RELATIONS;
 import ufps.edu.co.records.input.entity.ProgramaInput.PROGRAMA_UPDATE_WITH_RELATIONS;
 import ufps.edu.co.records.output.entity.AdministrativoOutput;
 import ufps.edu.co.records.output.entity.CohorteInscritosOutput;
 import ufps.edu.co.records.output.entity.CohorteOutput;
+import ufps.edu.co.records.output.entity.ProgramaDirectorOutput;
 import ufps.edu.co.records.output.entity.ProgramaOutput;
 import ufps.edu.co.rest.dto.AdministrativoDTO;
+import ufps.edu.co.rest.dto.UsuarioDTO;
 import ufps.edu.co.rest.services.AdministrativoService;
+import ufps.edu.co.rest.services.UsuarioService;
 
 @Service
 public class AdministrativoProcessor implements
@@ -26,6 +31,9 @@ public class AdministrativoProcessor implements
 
     @Autowired
     private AdministrativoService service;
+
+    @Autowired
+    private UsuarioService usuarioService;
 
     @Autowired
     private AdministrativoMap map;
@@ -159,6 +167,53 @@ public class AdministrativoProcessor implements
             return programaProcessor.updateWithRelations(request, idFacultad);
         } catch (Exception e) {
             throw new RuntimeException("Error updating programa for facultad: " + e.getMessage(), e);
+        }
+    }
+
+    public ProgramaDirectorOutput findProgramaDirectorByUsuarioId(Integer idUsuario) {
+        try {
+            if (idUsuario == null) {
+                throw new RuntimeException("Id de usuario es requerido");
+            }
+
+            UsuarioDTO usuario = usuarioService.findById(idUsuario);
+            if (usuario == null || usuario.getIdPersona() == null) {
+                throw new RuntimeException("No existe un usuario asociado al id enviado");
+            }
+
+            AdministrativoDTO admin = service.findByIdPersona(usuario.getIdPersona());
+            if (admin == null || admin.getId() == null) {
+                throw new RuntimeException("El usuario no pertenece a un administrativo");
+            }
+            if (admin.getCargo() == null || admin.getCargo().getIdPrograma() == null) {
+                throw new RuntimeException("El administrativo no tiene cargo de programa asignado");
+            }
+            if (admin.getCargo().getNombre() == null
+                    || !"DIRECTOR DE PROGRAMA".equalsIgnoreCase(admin.getCargo().getNombre().trim())) {
+                throw new RuntimeException("El usuario no pertenece a un director de programa");
+            }
+
+            Integer idPrograma = admin.getCargo().getIdPrograma();
+            ProgramaOutput programa = programaProcessor.findById(new ufps.edu.co.records.input.entity.ProgramaInput.PROGRAMA_FIND(idPrograma));
+            if (programa == null) {
+                throw new RuntimeException("No existe un programa asociado al cargo del director");
+            }
+
+            PersonaMap personaMap = new PersonaMap();
+            PersonaOutput persona = admin.getPersona() != null ? personaMap.toOutput(admin.getPersona())
+                    : usuario.getPersona() != null ? personaMap.toOutput(usuario.getPersona()) : null;
+            if (persona == null) {
+                throw new RuntimeException("No se pudo obtener la información de la persona del usuario");
+            }
+
+            return ProgramaDirectorOutput.builder()
+                    .idUsuario(idUsuario)
+                    .administrativo(map.toOutput(admin))
+                    .persona(persona)
+                    .programa(programa)
+                    .build();
+        } catch (Exception e) {
+            throw new RuntimeException("Error finding programa director by usuario id: " + e.getMessage(), e);
         }
     }
 

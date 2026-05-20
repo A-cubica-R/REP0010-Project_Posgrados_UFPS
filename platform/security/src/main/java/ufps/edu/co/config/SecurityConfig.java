@@ -38,6 +38,15 @@ public class SecurityConfig {
                         "/api/application/case/Directorfacultad/**"
         };
 
+        private static final String[] DIRECTOR_PROGRAMA_PATHS = {
+                        "/api/application/case/director-programa/**",
+                        "/api/dev/endpoint/tipoentrevista/listall",
+                        "/api/dev/endpoint/estado/listall"
+        };
+
+        private static final String[] ASPIRANTE_PATHS = {
+        };
+
         @Bean
         public SecurityFilterChain filterChain(HttpSecurity http, CorsConfigurationSource corsConfigurationSource,
                         JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
@@ -59,6 +68,14 @@ public class SecurityConfig {
                                                 // Rutas específicas por rol (antes del catch-all)
                                                 .requestMatchers(DIRECTOR_FACULTAD_PATHS)
                                                 .hasAnyRole("DIRECTOR_DE_FACULTAD", "SUPER_ADMINISTRADOR")
+
+                                                // Rutas específicas por rol (antes del catch-all)
+                                                .requestMatchers(DIRECTOR_PROGRAMA_PATHS)
+                                                .hasAnyRole("DIRECTOR_DE_PROGRAMA", "SUPER_ADMINISTRADOR")
+
+                                                // Rutas específicas por rol (antes del catch-all)
+                                                .requestMatchers(ASPIRANTE_PATHS)
+                                                .hasAnyRole("ASPIRANTE", "SUPER_ADMINISTRADOR")
 
                                                 // Rutas protegidas para el rol SUPER_ADMINISTRADOR (catch-all)
                                                 .requestMatchers(SUPER_ADMIN_PATHS)

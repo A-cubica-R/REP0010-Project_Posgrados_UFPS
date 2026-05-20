@@ -56,6 +56,7 @@ import ufps.edu.co.records.output.entity.EntrevistaOutput;
 import ufps.edu.co.records.output.entity.EntrevistaResumenOutput;
 import ufps.edu.co.records.output.entity.ListaadmitidosOutput;
 import ufps.edu.co.records.output.entity.PersonaOutput;
+import ufps.edu.co.records.output.entity.ProgramaDirectorOutput;
 import ufps.edu.co.records.output.entity.TipodocumentoOutput;
 import ufps.edu.co.services.EmailService;
 import ufps.edu.co.services.PdfGeneratorService;
@@ -215,6 +216,17 @@ public class DirectorProgramaCase {
         try {
             return ResponseEntity.ok(aspiranteProcessor.countCalificados());
         } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @GetMapping("/programa/director/{idUsuario}")
+    public ResponseEntity<ProgramaDirectorOutput> findProgramaByUsuarioDirector(@PathVariable Integer idUsuario) {
+        try {
+            ProgramaDirectorOutput output = administrativoProcessor.findProgramaDirectorByUsuarioId(idUsuario);
+            return ResponseEntity.ok(output);
+        } catch (Exception e) {
+            logger.error("Error obteniendo la información del director de programa para el usuario {}", idUsuario, e);
             return ResponseEntity.internalServerError().build();
         }
     }
