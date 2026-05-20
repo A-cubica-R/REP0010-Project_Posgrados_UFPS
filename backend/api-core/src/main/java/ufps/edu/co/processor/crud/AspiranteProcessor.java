@@ -145,11 +145,6 @@ public class AspiranteProcessor implements
     public List<AspiranteCalificacionOutput> findAllValidadosCalificacion() {
         List<AspiranteDTO> validados = service.findWithDocuments();
 
-        Set<Integer> calificadosIds = service.findCalificados().stream()
-                .map(AspiranteDTO::getId).collect(Collectors.toSet());
-        Set<Integer> porCalificarIds = service.findPorCalificar().stream()
-                .map(AspiranteDTO::getId).collect(Collectors.toSet());
-
         return validados.stream().map(aspirante -> {
             PersonaDTO persona = aspirante.getPersona();
 
