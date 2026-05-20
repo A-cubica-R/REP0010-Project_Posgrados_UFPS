@@ -44,6 +44,7 @@ public class PersonaDTO implements Serializable {
     private String telefono ;
     private String titulopregrado ;
     private String titulosposgrados ;
+    private Integer idDocumentopersona ;
     private Integer idCapacidadexepcional ;
     private Integer idDiscapacidad ;
     private Integer idEstadocivil ;
@@ -54,6 +55,7 @@ public class PersonaDTO implements Serializable {
     private Integer idUbicaciontrabajo ;
     private Integer idUbicacionvivienda ;
     //--- LINKS ( RELATIONSHIPS )
+    private DocumentopersonaDTO documentopersona ;
     private List<AdministrativoDTO> administrativoList ; 
     private List<AspiranteDTO> aspiranteList ; 
     private GeneroDTO genero ; 

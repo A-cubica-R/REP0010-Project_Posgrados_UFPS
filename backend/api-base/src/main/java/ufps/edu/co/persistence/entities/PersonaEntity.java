@@ -76,6 +76,9 @@ public class PersonaEntity implements Serializable {
     @Column(name="titulosposgrados", length=65535)
     private String     titulosposgrados ;
 
+    @Column(name="id_documentopersona", nullable=false)
+    private Integer        idDocumentopersona ;
+
     @Column(name="id_capacidadexepcional", nullable=false)
     private Integer        idCapacidadexepcional ;
 
@@ -129,6 +132,10 @@ public class PersonaEntity implements Serializable {
     @ManyToOne
     @JoinColumn(name="id_discapacidad", referencedColumnName="id", insertable=false, updatable=false)
     private DiscapacidadEntity discapacidad ; 
+
+    @ManyToOne
+    @JoinColumn(name="id_documentopersona", referencedColumnName="id", insertable=false, updatable=false)
+    private DocumentopersonaEntity documentopersona ;
 
     @ManyToOne
     @JoinColumn(name="id_capacidadexepcional", referencedColumnName="id", insertable=false, updatable=false)
