@@ -46,6 +46,7 @@ public class PersonaMap extends
         dto.setIdEstadocivil(input.idEstadocivil());
         dto.setIdGrupoetnico(input.idGrupoetnico());
         dto.setIdPoblacionindigena(input.idPoblacionindigena());
+        dto.setIdDocumentopersona(input.idDocumentopersona());
         return dto;
     }
 
@@ -74,6 +75,7 @@ public class PersonaMap extends
         dto.setIdEstadocivil(input.idEstadocivil());
         dto.setIdGrupoetnico(input.idGrupoetnico());
         dto.setIdPoblacionindigena(input.idPoblacionindigena());
+        dto.setIdDocumentopersona(input.idDocumentopersona());
         return dto;
     }
 
@@ -132,6 +134,8 @@ public class PersonaMap extends
             builder.idGrupoetnico(input.idGrupoetnico());
         if (input.idPoblacionindigena() != null)
             builder.idPoblacionindigena(input.idPoblacionindigena());
+        if (input.idDocumentopersona() != null)
+            builder.idDocumentopersona(input.idDocumentopersona());
 
         return builder.build();
     }
@@ -176,6 +180,7 @@ public class PersonaMap extends
                 .idPoblacionindigena(dto.getIdPoblacionindigena())
                 .idDiscapacidad(dto.getIdDiscapacidad())
                 .idCapacidadexepcional(dto.getIdCapacidadexepcional())
+                .idDocumentopersona(dto.getIdDocumentopersona())
                 .idUbicacionvivienda(dto.getIdUbicacionvivienda())
                 .idUbicacionnacimiento(dto.getIdUbicacionnacimiento())
                 .idUbicaciontrabajo(dto.getIdUbicaciontrabajo())

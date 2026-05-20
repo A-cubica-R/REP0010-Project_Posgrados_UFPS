@@ -57,6 +57,11 @@ public class AdmitidoService extends GenericService<AdmitidoEntity, AdmitidoDTO>
     }
 
     @Transactional(readOnly = true)
+    public List<AdmitidoDTO> findByCohorte(Integer cohorteId) {
+        return entityListToDtoList(repository.findByIdCohorte(cohorteId));
+    }
+
+    @Transactional(readOnly = true)
     public long countByCohorte(Integer cohorteId) {
         return repository.countByIdCohorte(cohorteId);
     }
