@@ -31,9 +31,10 @@ public class EntrevistaDTO implements Serializable {
 
     //--- PRIMARY KEY 
     private Integer id ;
-    //--- OTHER DATA FIELDS 
+    //--- OTHER DATA FIELDS
     private BigDecimal calificacion ;
     private LocalDate fecha ;
+    private String motivocambio ;
     private Integer idAspirante ;
     private Integer idEstado ;
     private Integer idTipoentrevista ;

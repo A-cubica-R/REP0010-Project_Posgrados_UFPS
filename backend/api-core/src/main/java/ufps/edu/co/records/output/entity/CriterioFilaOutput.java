@@ -9,5 +9,6 @@ import ufps.edu.co.records.OutputResponse;
 public record CriterioFilaOutput(
         Integer id,
         String nombreCriterio,
+        BigDecimal peso,
         BigDecimal puntajeObtenido
 ) implements OutputResponse {}

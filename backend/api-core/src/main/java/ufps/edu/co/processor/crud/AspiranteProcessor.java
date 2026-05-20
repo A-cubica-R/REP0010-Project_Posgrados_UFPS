@@ -196,6 +196,7 @@ public class AspiranteProcessor implements
                     .map(c -> CriterioFilaOutput.builder()
                             .id(c.getId())
                             .nombreCriterio(c.getNombre())
+                            .peso(c.getPeso())
                             .puntajeObtenido(puntuacionPorCriterio.get(c.getId()))
                             .build())
                     .toList();

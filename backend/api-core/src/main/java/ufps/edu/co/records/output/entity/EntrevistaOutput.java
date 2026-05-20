@@ -13,6 +13,7 @@ public record EntrevistaOutput(
                 BigDecimal calificacion,
                 LocalDate fecha,
                 LocalTime tiempo,
+                String motivocambio,
                 Integer idAspirante,
                 Integer idEstado,
                 Integer idTipoentrevista,
