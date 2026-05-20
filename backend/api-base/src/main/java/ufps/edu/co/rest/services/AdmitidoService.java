@@ -55,4 +55,9 @@ public class AdmitidoService extends GenericService<AdmitidoEntity, AdmitidoDTO>
                 .orElseThrow(() -> new RuntimeException("Admitido no encontrado con id: " + id));
         repository.deleteById(id);
     }
+
+    @Transactional(readOnly = true)
+    public long countByCohorte(Integer cohorteId) {
+        return repository.countByIdCohorte(cohorteId);
+    }
 }

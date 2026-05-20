@@ -13,6 +13,7 @@ import ufps.edu.co.domain.exceptions.DuplicateAdmisionException;
 import ufps.edu.co.maps.specific.ListaadmitidosMap;
 import ufps.edu.co.records.input.entity.ListaadmitidosInput.GENERATE_LISTA;
 import ufps.edu.co.records.input.entity.ListaadmitidosInput.RECHAZAR_ASPIRANTE;
+import ufps.edu.co.records.output.entity.ListaAdmitidosResumenOutput;
 import ufps.edu.co.records.output.entity.ListaadmitidosOutput;
 import ufps.edu.co.rest.dto.AdministrativoDTO;
 import ufps.edu.co.rest.dto.AspiranteDTO;
@@ -49,21 +50,40 @@ public class ListaadmitidosProcessor {
 
     private String correo = "jljb1704@gmail.com";
 
-    public List<ListaadmitidosOutput> generateAdmittedList(GENERATE_LISTA input) {
+    public ListaAdmitidosResumenOutput generateAdmittedList(GENERATE_LISTA input) {
         CohorteDTO cohorte = validateAndGetCohorte(input.idCohorte(), input.idAdministrativo());
-        List<AspiranteDTO> admitidos = getTopCandidates(input.idCohorte(), null, cohorte.getCupos());
-        LocalDate today = LocalDate.now();
-        return admitidos.stream()
+        List<AspiranteDTO> candidatos = getTopCandidates(input.idCohorte(), null, cohorte.getCupos());
+
+        long totalAdmitidos = listaadmitidosService.findByIdCohorte(input.idCohorte()).size();
+        int cuposDisponibles = Math.max(0, cohorte.getCupos() - (int) totalAdmitidos);
+        boolean activa = cohorte.getEstado() != null
+                && "ABIERTA".equalsIgnoreCase(cohorte.getEstado().getTipo());
+
+        List<ListaAdmitidosResumenOutput.AspiranteResumen> aspirantes = candidatos.stream()
                 .map(a -> {
-                    AdmitidoDTO dto = new AdmitidoDTO();
-                    dto.setIdCohorte(input.idCohorte());
-                    dto.setIdAspirante(a.getId());
-                    dto.setFechageneracion(today);
-                    dto.setAspirante(a);
-                    dto.setCohorte(cohorte);
-                    return map.toOutput(dto);
+                    String nombre = a.getPersona() != null
+                            ? ((a.getPersona().getNombres() != null ? a.getPersona().getNombres() : "") + " "
+                                    + (a.getPersona().getApellidos() != null ? a.getPersona().getApellidos() : "")).trim()
+                            : "";
+                    return ListaAdmitidosResumenOutput.AspiranteResumen.builder()
+                            .id(a.getId())
+                            .nombre(nombre)
+                            .correo(a.getPersona() != null ? a.getPersona().getCorreo() : null)
+                            .puntaje(a.getPuntuacion())
+                            .build();
                 })
                 .toList();
+
+        return ListaAdmitidosResumenOutput.builder()
+                .cohorteActual(ListaAdmitidosResumenOutput.CohorteResumen.builder()
+                        .id(cohorte.getId())
+                        .nombre(cohorte.getNombre())
+                        .activa(activa)
+                        .cuposDisponibles(cuposDisponibles)
+                        .totalAdmitidos(totalAdmitidos)
+                        .build())
+                .aspirantes(aspirantes)
+                .build();
     }
 
     public List<ListaadmitidosOutput> admitirAspirantes(GENERATE_LISTA input) {

@@ -57,6 +57,11 @@ public interface AspiranteRepository extends JpaRepository<AspiranteEntity, Inte
 
 	List<AspiranteEntity> findByIdCohorte(int idCohorte);
 
+	long countByIdCohorte(Integer idCohorte);
+
+	@Query("SELECT COUNT(a) FROM AspiranteEntity a WHERE a.idCohorte = :cohorteId AND a.estado.tipo IN :tipos")
+	long countByIdCohorteAndEstadoTipoIn(@Param("cohorteId") Integer cohorteId, @Param("tipos") List<String> tipos);
+
 	// Aspirantes que tienen al menos un documento APROBADO por cada tipodocumento existente
 	@Query("SELECT a FROM AspiranteEntity a " +
 		   "WHERE NOT EXISTS (" +
