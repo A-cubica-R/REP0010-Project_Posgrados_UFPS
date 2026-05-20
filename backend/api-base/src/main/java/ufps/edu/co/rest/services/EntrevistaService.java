@@ -81,7 +81,7 @@ public class EntrevistaService extends GenericService<EntrevistaEntity, Entrevis
     }
 
     public EntrevistaDTO reschedule(Integer id, LocalDate fecha, LocalTime tiempo,
-            Integer idTipoentrevista, Integer idUbicacion) {
+            Integer idTipoentrevista, Integer idUbicacion, String motivocambio) {
         EntrevistaEntity entity = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Entrevista no encontrada con id: " + id));
         String estadoTipo = entity.getEstado() != null ? entity.getEstado().getTipo() : "";
@@ -97,6 +97,7 @@ public class EntrevistaService extends GenericService<EntrevistaEntity, Entrevis
         entity.setIdTipoentrevista(idTipoentrevista);
         entity.setIdUbicacion(idUbicacion);
         entity.setIdEstado(idEstadoPendiente);
+        entity.setMotivocambio(motivocambio);
         return entityToDto(repository.save(entity));
     }
 

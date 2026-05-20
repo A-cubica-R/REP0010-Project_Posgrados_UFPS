@@ -8,7 +8,7 @@ import ufps.edu.co.records.OutputResponse;
 public record AspiranteCalificacionOutput(
         Integer id,
         String nombreCompleto,
-        String estadoCalificacion,
+        Integer idEstado,
         String correo,
         BigDecimal puntajeTotal
 ) implements OutputResponse {}

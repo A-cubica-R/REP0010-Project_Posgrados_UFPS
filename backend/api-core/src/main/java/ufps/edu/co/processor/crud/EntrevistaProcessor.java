@@ -172,7 +172,7 @@ public class EntrevistaProcessor implements
                     UbicacionDTO.builder().direccion(input.ubicacion()).zonaurbana(true).build());
             EntrevistaDTO updated = service.reschedule(
                     input.id(), input.fecha(), input.tiempo(),
-                    tipoentrevista.getId(), ubicacion.getId());
+                    tipoentrevista.getId(), ubicacion.getId(), input.motivocambio());
             return map.toOutput(updated);
         } catch (Exception e) {
             throw new RuntimeException("Error rescheduling Entrevista: " + e.getMessage(), e);
@@ -182,16 +182,15 @@ public class EntrevistaProcessor implements
     public List<EntrevistaResumenOutput> findByIdAspirante(ASPIRANTE_FIND input) {
         try {
             return service.findByIdAspirante(input.id()).stream().map(dto -> {
-                String estado = dto.getEstado() != null ? dto.getEstado().getTipo() : null;
-                String tipo = dto.getTipoentrevista() != null ? dto.getTipoentrevista().getTipo() : null;
                 String direccion = dto.getUbicacion() != null ? dto.getUbicacion().getDireccion() : null;
                 return EntrevistaResumenOutput.builder()
                         .id(dto.getId())
                         .fecha(dto.getFecha())
                         .hora(dto.getTiempo())
-                        .estado(estado)
-                        .modalidad(tipo)
+                        .idEstado(dto.getIdEstado())
+                        .idTipoentrevista(dto.getIdTipoentrevista())
                         .ubicacion(direccion)
+                        .motivocambio(dto.getMotivocambio())
                         .build();
             }).toList();
         } catch (Exception e) {

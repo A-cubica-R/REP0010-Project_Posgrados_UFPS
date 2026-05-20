@@ -46,6 +46,9 @@ public class EntrevistaEntity implements Serializable {
     @Column(name="fecha", nullable=false)
     private LocalDate  fecha ;
 
+    @Column(name="motivocambio", columnDefinition="TEXT")
+    private String motivocambio ;
+
     @Column(name="id_aspirante", nullable=false)
     private Integer        idAspirante ;
 

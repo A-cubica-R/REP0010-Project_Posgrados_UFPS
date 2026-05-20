@@ -183,16 +183,6 @@ public class DirectorProgramaCase {
         }
     }
 
-    // Revisar
-    @PostMapping(value = "/aspirants/evaluationcriteriaById", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<AspiranteOutput> getEvaluationCriteriaByAspirantId(@RequestBody ASPIRANTE_FIND request) {
-        try {
-            return ResponseEntity.ok(aspiranteProcessor.findById(request));
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
-        }
-    }
-
     @GetMapping("/calificacion/listado")
     public ResponseEntity<List<AspiranteCalificacionOutput>> findAllValidadosCalificacion() {
         try {
@@ -365,7 +355,8 @@ public class DirectorProgramaCase {
     }
 
     @PostMapping(value = "/aspirants/interviewsById", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<EntrevistaResumenOutput>> findInterviewsByAspirantId(@RequestBody ASPIRANTE_FIND request) {
+    public ResponseEntity<List<EntrevistaResumenOutput>> findInterviewsByAspirantId(
+            @RequestBody ASPIRANTE_FIND request) {
         try {
             List<EntrevistaResumenOutput> outputs = entrevistaProcessor.findByIdAspirante(request);
             return ResponseEntity.ok(outputs);

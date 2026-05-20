@@ -158,19 +158,10 @@ public class AspiranteProcessor implements
                             + (persona.getApellidos() != null ? persona.getApellidos() : "")).trim()
                     : "";
 
-            String estado;
-            if (calificadosIds.contains(aspirante.getId())) {
-                estado = "Calificado";
-            } else if (porCalificarIds.contains(aspirante.getId())) {
-                estado = "Por calificar";
-            } else {
-                estado = "En progreso";
-            }
-
             return AspiranteCalificacionOutput.builder()
                     .id(aspirante.getId())
                     .nombreCompleto(nombreCompleto)
-                    .estadoCalificacion(estado)
+                    .idEstado(aspirante.getIdEstado())
                     .correo(persona != null ? persona.getCorreo() : null)
                     .puntajeTotal(aspirante.getPuntuacion())
                     .build();
@@ -196,6 +187,7 @@ public class AspiranteProcessor implements
                     .map(c -> CriterioFilaOutput.builder()
                             .id(c.getId())
                             .nombreCriterio(c.getNombre())
+                            .peso(c.getPeso())
                             .puntajeObtenido(puntuacionPorCriterio.get(c.getId()))
                             .build())
                     .toList();

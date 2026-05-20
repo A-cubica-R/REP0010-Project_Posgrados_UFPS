@@ -121,7 +121,7 @@ public class ProgramaProcessor implements
             ProgramaDTO dto = buildDtoFromRelations(
                     input.codigo(),
                     input.nombre(),
-                    input.semestres(),
+                    input.duracion(),
                     input.correo(),
                     input.registrosnies(),
                     input.nivelformacion(),
@@ -146,7 +146,7 @@ public class ProgramaProcessor implements
             ProgramaDTO dto = buildDtoFromRelations(
                     input.codigo(),
                     input.nombre(),
-                    input.semestres(),
+                    input.duracion(),
                     input.correo(),
                     input.registrosnies(),
                     input.nivelformacion(),
@@ -166,10 +166,10 @@ public class ProgramaProcessor implements
         }
     }
 
-    private ProgramaDTO buildDtoFromRelations(
+        private ProgramaDTO buildDtoFromRelations(
             Integer codigo,
             String nombre,
-            Integer semestres,
+            Integer duracion,
             String correo,
             String registrosnies,
             String nivelformacion,
@@ -218,7 +218,7 @@ public class ProgramaProcessor implements
         return ProgramaDTO.builder()
                 .codigo(codigo)
                 .nombre(nombre)
-                .duracion(semestres)
+            .duracion(duracion)
                 .correo(correo)
                 .registrosnies(registrosnies)
                 .nivelformacion(nivelformacion)
