@@ -186,6 +186,7 @@ public class EntrevistaProcessor implements
                 String tipo = dto.getTipoentrevista() != null ? dto.getTipoentrevista().getTipo() : null;
                 String direccion = dto.getUbicacion() != null ? dto.getUbicacion().getDireccion() : null;
                 return EntrevistaResumenOutput.builder()
+                        .id(dto.getId())
                         .fecha(dto.getFecha())
                         .hora(dto.getTiempo())
                         .estado(estado)

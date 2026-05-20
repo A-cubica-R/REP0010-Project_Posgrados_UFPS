@@ -7,6 +7,7 @@ import ufps.edu.co.records.OutputResponse;
 
 @Builder
 public record CriterioFilaOutput(
+        Integer id,
         String nombreCriterio,
         BigDecimal puntajeObtenido
 ) implements OutputResponse {}
