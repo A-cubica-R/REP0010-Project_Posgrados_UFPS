@@ -13,7 +13,7 @@ public enum ProgramaInput {
     public record PROGRAMA_CREATE(
             @NotNull Integer codigo,
             @NotBlank String nombre,
-            @NotNull Integer semestres,
+            @NotNull Integer duracion,
             String correo,
             String registrosnies,
             String nivelformacion,
@@ -23,15 +23,15 @@ public enum ProgramaInput {
             String periodicidad,
             BigDecimal valormatricula,
             @NotNull Integer idSede,
-            @NotNull Integer idAdministrativo,
             @NotNull Integer idFacultad,
+            @NotNull Integer idTiporegistro,
             @NotNull Integer idOtros) implements CreateType {}
 
     public record PROGRAMA_UPDATE(
             @NotNull Integer id,
             @NotNull Integer codigo,
             @NotBlank String nombre,
-            @NotNull Integer semestres,
+            @NotNull Integer duracion,
             String correo,
             String registrosnies,
             String nivelformacion,
@@ -41,15 +41,15 @@ public enum ProgramaInput {
             String periodicidad,
             BigDecimal valormatricula,
             @NotNull Integer idSede,
-            @NotNull Integer idAdministrativo,
             @NotNull Integer idFacultad,
+            @NotNull Integer idTiporegistro,
             @NotNull Integer idOtros) implements UpdateType {}
 
     public record PROGRAMA_PATCH(
             @NotNull Integer id,
             Integer codigo,
             String nombre,
-            Integer semestres,
+            Integer duracion,
             String correo,
             String registrosnies,
             String nivelformacion,
@@ -59,8 +59,8 @@ public enum ProgramaInput {
             String periodicidad,
             BigDecimal valormatricula,
             Integer idSede,
-            Integer idAdministrativo,
             Integer idFacultad,
+            Integer idTiporegistro,
             Integer idOtros) implements PatchType {}
 
     public record PROGRAMA_DELETE(@NotNull Integer id) implements DeleteType {}
@@ -70,7 +70,7 @@ public enum ProgramaInput {
     public record PROGRAMA_CREATE_WITH_RELATIONS(
             @NotNull Integer codigo,
             @NotBlank String nombre,
-            @NotNull Integer semestres,
+            @NotNull Integer duracion,
             String correo,
             String registrosnies,
             String nivelformacion,
@@ -87,7 +87,7 @@ public enum ProgramaInput {
             @NotNull Integer id,
             @NotNull Integer codigo,
             @NotBlank String nombre,
-            @NotNull Integer semestres,
+            @NotNull Integer duracion,
             String correo,
             String registrosnies,
             String nivelformacion,

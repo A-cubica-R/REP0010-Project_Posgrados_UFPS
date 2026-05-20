@@ -24,7 +24,7 @@ public class ProgramaMap extends
         ProgramaDTO dto = ProgramaDTO.builder()
                 .codigo(input.codigo())
                 .nombre(input.nombre())
-                .duracion(input.semestres())
+                .duracion(input.duracion())
                 .correo(input.correo())
                 .registrosnies(input.registrosnies())
                 .nivelformacion(input.nivelformacion())
@@ -35,6 +35,7 @@ public class ProgramaMap extends
                 .valormatricula(input.valormatricula())
                 .idSede(input.idSede())
                 .idFacultad(input.idFacultad())
+                .idTiporegistro(input.idTiporegistro())
                 .idOtros(input.idOtros())
                 .build();
         return dto;
@@ -46,7 +47,7 @@ public class ProgramaMap extends
         dto.setId(input.id());
         dto.setCodigo(input.codigo());
         dto.setNombre(input.nombre());
-        dto.setDuracion(input.semestres());
+        dto.setDuracion(input.duracion());
         dto.setCorreo(input.correo());
         dto.setRegistrosnies(input.registrosnies());
         dto.setNivelformacion(input.nivelformacion());
@@ -57,6 +58,7 @@ public class ProgramaMap extends
         dto.setValormatricula(input.valormatricula());
         dto.setIdSede(input.idSede());
         dto.setIdFacultad(input.idFacultad());
+        dto.setIdTiporegistro(input.idTiporegistro());
         dto.setIdOtros(input.idOtros());
         return dto;
     }
@@ -76,8 +78,8 @@ public class ProgramaMap extends
             dto.setCodigo(input.codigo());
         if (input.nombre() != null)
             dto.setNombre(input.nombre());
-        if (input.semestres() != null)
-            dto.setDuracion(input.semestres());
+        if (input.duracion() != null)
+            dto.setDuracion(input.duracion());
         if (input.correo() != null)
             dto.setCorreo(input.correo());
         if (input.registrosnies() != null)
@@ -98,6 +100,8 @@ public class ProgramaMap extends
             dto.setIdSede(input.idSede());
         if (input.idFacultad() != null)
             dto.setIdFacultad(input.idFacultad());
+        if (input.idTiporegistro() != null)
+            dto.setIdTiporegistro(input.idTiporegistro());
         if (input.idOtros() != null)
             dto.setIdOtros(input.idOtros());
         return dto;
