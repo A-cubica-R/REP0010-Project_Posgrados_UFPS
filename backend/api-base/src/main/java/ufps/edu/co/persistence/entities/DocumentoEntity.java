@@ -67,10 +67,10 @@ public class DocumentoEntity implements Serializable {
     private String     observaciones ;
 
     //--- LINKS ( RELATIONSHIPS )
-    @OneToMany
+    @OneToMany(mappedBy = "documento")
     private List<CambiodocumentoEntity> cambiodocumentoList ; 
 
-    @OneToMany
+    @OneToMany(mappedBy = "documento2")
     private List<CambiodocumentoEntity> cambiodocumentoList2 ; 
 
     @ManyToOne
