@@ -3,7 +3,12 @@ package ufps.edu.co.processor.crud;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,14 +20,18 @@ import ufps.edu.co.records.output.entity.CalificacioncriterioOutput;
 import ufps.edu.co.rest.dto.AspiranteDTO;
 import ufps.edu.co.rest.dto.CalificacioncriterioDTO;
 import ufps.edu.co.rest.dto.CriterioevaluacionDTO;
+import ufps.edu.co.rest.dto.EstadoDTO;
 import ufps.edu.co.rest.services.AspiranteService;
 import ufps.edu.co.rest.services.CalificacioncriterioService;
 import ufps.edu.co.rest.services.CriterioevaluacionService;
+import ufps.edu.co.rest.services.EstadoService;
 import ufps.edu.co.usecase.GlobalUseCase;
 
 @Service
 public class CalificacioncriterioProcessor implements
         GlobalUseCase<CALIFICACIONCRITERIO_CREATE, CALIFICACIONCRITERIO_UPDATE, CALIFICACIONCRITERIO_DELETE, CALIFICACIONCRITERIO_PATCH, CALIFICACIONCRITERIO_FIND, CalificacioncriterioOutput> {
+
+    private static final Logger logger = LoggerFactory.getLogger(CalificacioncriterioProcessor.class);
 
     @Autowired
     private CalificacioncriterioService service;
@@ -36,6 +45,9 @@ public class CalificacioncriterioProcessor implements
     @Autowired
     private AspiranteService aspiranteService;
 
+    @Autowired
+    private EstadoService estadoService;
+
     @Override
     public CalificacioncriterioOutput create(CALIFICACIONCRITERIO_CREATE input) {
         if (service.existsByAspiranteAndCriterio(input.idAspirante(), input.idCriterio())) {
@@ -48,6 +60,7 @@ public class CalificacioncriterioProcessor implements
             dto.setPesoSnapshot(criterio.getPeso());
             CalificacioncriterioOutput output = map.toOutput(service.create(dto));
             recalcularPuntuacionAspirante(input.idAspirante());
+            actualizarEstadoCalificacion(input.idAspirante());
             return output;
         } catch (DomainException e) {
             throw e;
@@ -64,6 +77,7 @@ public class CalificacioncriterioProcessor implements
             dto.setPesoSnapshot(criterio.getPeso());
             CalificacioncriterioOutput output = map.toOutput(service.update(input.id(), dto));
             recalcularPuntuacionAspirante(input.idAspirante());
+            actualizarEstadoCalificacion(input.idAspirante());
             return output;
         } catch (Exception e) {
             throw new DomainException(CalificacioncriterioErrorCode.CALIFICACIONCRITERIO_NOT_FOUND, input.id());
@@ -104,6 +118,34 @@ public class CalificacioncriterioProcessor implements
 
     public List<CalificacioncriterioOutput> findByIdCriterio(Integer idCriterio) {
         return service.findByIdCriterio(idCriterio).stream().map(map::toOutput).toList();
+    }
+
+    private void actualizarEstadoCalificacion(Integer idAspirante) {
+        try {
+            EstadoDTO estadoEnProgreso = estadoService.findByTipoAndEntidad("VALIDADO_EN_PROGRESO", "aspirante");
+            if (estadoEnProgreso != null) {
+                aspiranteService.updateEstado(idAspirante, estadoEnProgreso.getId());
+            }
+            AspiranteDTO aspirante = aspiranteService.findById(idAspirante);
+            List<CriterioevaluacionDTO> criterios = criterioaceptacionService.findByIdCohorte(aspirante.getIdCohorte());
+            Set<Integer> criterioIds = criterios.stream()
+                    .map(CriterioevaluacionDTO::getId)
+                    .collect(Collectors.toSet());
+            Set<Integer> calificadosIds = service.findByIdAspirante(idAspirante).stream()
+                    .map(CalificacioncriterioDTO::getIdCriterio)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toSet());
+            boolean todosCalificados = !criterioIds.isEmpty()
+                    && criterioIds.stream().allMatch(calificadosIds::contains);
+            if (todosCalificados) {
+                EstadoDTO estadoCalificado = estadoService.findByTipoAndEntidad("VALIDADO_CALIFICADO", "aspirante");
+                if (estadoCalificado != null) {
+                    aspiranteService.updateEstado(idAspirante, estadoCalificado.getId());
+                }
+            }
+        } catch (Exception e) {
+            logger.warn("No se pudo actualizar estado de calificación del aspirante {}: {}", idAspirante, e.getMessage());
+        }
     }
 
     // Recalcula aspirante.puntuacion = sum(puntuacion_i * pesoSnapshot_i / 100)
