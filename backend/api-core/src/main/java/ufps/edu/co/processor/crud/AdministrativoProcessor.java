@@ -170,7 +170,7 @@ public class AdministrativoProcessor implements
         }
     }
 
-    public ProgramaDirectorOutput findProgramaDirectorByUsuarioId(Integer idUsuario) {
+    public Integer findProgramaDirectorByUsuarioId(Integer idUsuario) {
         try {
             if (idUsuario == null) {
                 throw new RuntimeException("Id de usuario es requerido");
@@ -193,25 +193,7 @@ public class AdministrativoProcessor implements
                 throw new RuntimeException("El usuario no pertenece a un director de programa");
             }
 
-            Integer idPrograma = admin.getCargo().getIdPrograma();
-            ProgramaOutput programa = programaProcessor.findById(new ufps.edu.co.records.input.entity.ProgramaInput.PROGRAMA_FIND(idPrograma));
-            if (programa == null) {
-                throw new RuntimeException("No existe un programa asociado al cargo del director");
-            }
-
-            PersonaMap personaMap = new PersonaMap();
-            PersonaOutput persona = admin.getPersona() != null ? personaMap.toOutput(admin.getPersona())
-                    : usuario.getPersona() != null ? personaMap.toOutput(usuario.getPersona()) : null;
-            if (persona == null) {
-                throw new RuntimeException("No se pudo obtener la información de la persona del usuario");
-            }
-
-            return ProgramaDirectorOutput.builder()
-                    .idUsuario(idUsuario)
-                    .administrativo(map.toOutput(admin))
-                    .persona(persona)
-                    .programa(programa)
-                    .build();
+            return admin.getCargo().getIdPrograma();
         } catch (Exception e) {
             throw new RuntimeException("Error finding programa director by usuario id: " + e.getMessage(), e);
         }
