@@ -55,4 +55,9 @@ public class DocumentoService extends GenericService<DocumentoEntity, DocumentoD
                 .orElseThrow(() -> new RuntimeException("Documento no encontrado con id: " + id));
         repository.deleteById(id);
     }
+
+    @Transactional(readOnly = true)
+    public List<DocumentoDTO> findByIdAspirante(Integer idAspirante) {
+        return entityListToDtoList(repository.findByIdAspirante(idAspirante));
+    }
 }

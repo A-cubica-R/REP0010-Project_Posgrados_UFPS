@@ -4,6 +4,8 @@
  */
 package ufps.edu.co.persistence.repositories;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -37,7 +39,9 @@ import ufps.edu.co.persistence.entities.DocumentoEntity;
 @Repository
 public interface DocumentoRepository extends JpaRepository<DocumentoEntity, Integer> {
 
-	// Insert specific finders here 
+	List<DocumentoEntity> findByIdAspirante(Integer idAspirante);
+
+	// Insert specific finders here
 
 	//List<DocumentoEntity> findByXxx(String xxx);
 
