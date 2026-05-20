@@ -1,6 +1,7 @@
 package ufps.edu.co.processor.crud;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,7 +11,11 @@ import ufps.edu.co.domain.utilities.PrinterObjects;
 import ufps.edu.co.maps.specific.AdministrativoMap;
 import ufps.edu.co.processor.abstracts.contract.CrudProcessor;
 import ufps.edu.co.records.input.entity.AdministrativoInput.*;
+import ufps.edu.co.records.input.entity.ProgramaInput.PROGRAMA_CREATE_WITH_RELATIONS;
+import ufps.edu.co.records.input.entity.ProgramaInput.PROGRAMA_UPDATE_WITH_RELATIONS;
 import ufps.edu.co.records.output.entity.AdministrativoOutput;
+import ufps.edu.co.records.output.entity.CohorteInscritosOutput;
+import ufps.edu.co.records.output.entity.CohorteOutput;
 import ufps.edu.co.records.output.entity.ProgramaOutput;
 import ufps.edu.co.rest.dto.AdministrativoDTO;
 import ufps.edu.co.rest.services.AdministrativoService;
@@ -27,6 +32,9 @@ public class AdministrativoProcessor implements
 
     @Autowired
     private ProgramaProcessor programaProcessor;
+
+    @Autowired
+    private CohorteProcessor cohorteProcessor;
 
     @Override
     public AdministrativoOutput create(ADMINISTRATIVO_CREATE input) {
@@ -107,6 +115,62 @@ public class AdministrativoProcessor implements
         } catch (Exception e) {
             throw new RuntimeException("Error finding programas de facultad: " + e.getMessage(), e);
         }
+    }
+
+    public List<CohorteOutput> findCohortesActivasFacultad(ADMINISTRATIVO_FIND input) {
+        try {
+            List<ProgramaOutput> programas = findProgramasFacultad(input);
+            return programas.stream()
+                    .map(programa -> cohorteProcessor.findActivaByIdPrograma(programa.id()))
+                    .filter(Objects::nonNull)
+                    .toList();
+        } catch (Exception e) {
+            throw new RuntimeException("Error finding active cohorts for facultad: " + e.getMessage(), e);
+        }
+    }
+
+    public List<CohorteInscritosOutput> findCohortesActivasFacultadConInscritos(ADMINISTRATIVO_FIND input) {
+        try {
+            List<CohorteOutput> cohortes = findCohortesActivasFacultad(input);
+            return cohortes.stream()
+                    .map(cohorte -> CohorteInscritosOutput.builder()
+                            .cohorte(cohorte)
+                            .inscritosEnProceso(
+                                    cohorteProcessor.countAspirantesEnProcesoByCohorteId(cohorte.id()))
+                            .build())
+                    .toList();
+        } catch (Exception e) {
+            throw new RuntimeException("Error counting aspirantes by cohort: " + e.getMessage(), e);
+        }
+    }
+
+    public ProgramaOutput createProgramaFacultad(ADMINISTRATIVO_FIND input, PROGRAMA_CREATE_WITH_RELATIONS request) {
+        try {
+            Integer idFacultad = resolveFacultadId(input);
+            return programaProcessor.createWithRelations(request, idFacultad);
+        } catch (Exception e) {
+            throw new RuntimeException("Error creating programa for facultad: " + e.getMessage(), e);
+        }
+    }
+
+    public ProgramaOutput updateProgramaFacultad(ADMINISTRATIVO_FIND input, PROGRAMA_UPDATE_WITH_RELATIONS request) {
+        try {
+            Integer idFacultad = resolveFacultadId(input);
+            return programaProcessor.updateWithRelations(request, idFacultad);
+        } catch (Exception e) {
+            throw new RuntimeException("Error updating programa for facultad: " + e.getMessage(), e);
+        }
+    }
+
+    private Integer resolveFacultadId(ADMINISTRATIVO_FIND input) {
+        if (input == null || input.id() == null) {
+            throw new RuntimeException("Input invalido: id de administrativo es requerido");
+        }
+        AdministrativoDTO admin = service.findById(input.id());
+        if (admin == null || admin.getCargo() == null || admin.getCargo().getIdFacultad() == null) {
+            throw new RuntimeException("Administrativo no tiene facultad asociada");
+        }
+        return admin.getCargo().getIdFacultad();
     }
 
     // #endregion

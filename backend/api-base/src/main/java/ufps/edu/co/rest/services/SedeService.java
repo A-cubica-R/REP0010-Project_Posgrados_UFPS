@@ -39,6 +39,13 @@ public class SedeService extends GenericService<SedeEntity, SedeDTO> {
         return entityToDto(repository.findById(id));
     }
 
+    @Transactional(readOnly = true)
+    public SedeDTO findFirstByNombre(String nombre) {
+        return repository.findFirstByNombre(nombre)
+                .map(this::entityToDto)
+                .orElse(null);
+    }
+
     public SedeDTO create(SedeDTO dto) {
         return entityToDto(repository.save(dtoToEntity(dto)));
     }

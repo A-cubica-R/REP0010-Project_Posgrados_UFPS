@@ -69,6 +69,19 @@ public interface CohorteRepository extends JpaRepository<CohorteEntity, Integer>
 
 	List<CohorteEntity> findByIdPrograma(Integer idPrograma);
 
+	@Query("SELECT c FROM CohorteEntity c WHERE c.idPrograma = :idPrograma AND c.estado.entidad = 'cohorte' AND c.estado.tipo = 'ABIERTA'")
+	List<CohorteEntity> findActivasByIdPrograma(@Param("idPrograma") Integer idPrograma);
+
+	@Query(value = """
+		SELECT COUNT(a.id)
+		FROM aspirante a
+		INNER JOIN estado ea ON a.id_estado = ea.id
+		WHERE a.id_cohorte = :cohorteId
+		AND ea.entidad = 'aspirante'
+		AND ea.tipo = 'EN PROCESO'
+		""", nativeQuery = true)
+	long countAspirantesEnProcesoByCohorteId(@Param("cohorteId") Integer cohorteId);
+
 	// Insert specific finders here
 
 	// List<CohorteEntity> findByXxx(String xxx);

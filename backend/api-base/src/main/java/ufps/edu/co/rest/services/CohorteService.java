@@ -72,4 +72,18 @@ public class CohorteService extends GenericService<CohorteEntity, CohorteDTO> {
                 .map(this::entityToDto)
                 .orElse(null);
     }
+
+    @Transactional(readOnly = true)
+    public CohorteDTO findActivaByIdPrograma(Integer idPrograma) {
+        return repository.findActivasByIdPrograma(idPrograma)
+                .stream()
+                .findFirst()
+                .map(this::entityToDto)
+                .orElse(null);
+    }
+
+    @Transactional(readOnly = true)
+    public long countAspirantesEnProcesoByCohorteId(Integer cohorteId) {
+        return repository.countAspirantesEnProcesoByCohorteId(cohorteId);
+    }
 }
