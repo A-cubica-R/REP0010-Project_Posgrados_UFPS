@@ -17,6 +17,8 @@ public interface AdmitidoRepository extends JpaRepository<AdmitidoEntity, Intege
 
     List<AdmitidoEntity> findByIdCohorte(Integer idCohorte);
 
+    long countByIdCohorte(Integer idCohorte);
+
     Optional<AdmitidoEntity> findByIdCohorteAndIdAspirante(Integer idCohorte, Integer idAspirante);
 
     boolean existsByIdCohorteAndIdAspirante(Integer idCohorte, Integer idAspirante);

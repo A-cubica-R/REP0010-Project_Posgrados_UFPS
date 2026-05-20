@@ -11,6 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -41,7 +42,12 @@ import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_RESCHEDULE;
 import ufps.edu.co.records.input.entity.ListaadmitidosInput.GENERATE_LISTA;
 import ufps.edu.co.records.input.entity.ListaadmitidosInput.RECHAZAR_ASPIRANTE;
 import ufps.edu.co.records.input.entity.TipodocumentoInput.TIPODOCUMENTO_FIND;
+import ufps.edu.co.records.input.entity.ProgramaInput.PROGRAMA_FIND;
 import ufps.edu.co.records.output.entity.AdministrativoOutput;
+import ufps.edu.co.records.output.entity.CohorteListadoOutput;
+import ufps.edu.co.records.output.entity.ListaAdmitidosResumenOutput;
+import ufps.edu.co.records.output.entity.CriteriosCohorteOutput;
+import ufps.edu.co.records.output.entity.ProgramaInicioOutput;
 import ufps.edu.co.records.output.entity.AspiranteCalificacionOutput;
 import ufps.edu.co.records.output.entity.AspiranteCriteriosOutput;
 import ufps.edu.co.records.output.entity.AspiranteOutput;
@@ -223,6 +229,36 @@ public class DirectorProgramaCase {
         }
     }
 
+    @GetMapping("/programa/{programaId}/cohorte-actual/criterios")
+    public ResponseEntity<CriteriosCohorteOutput> getCriteriosByPrograma(@PathVariable Integer programaId) {
+        try {
+            return ResponseEntity.ok(aspiranteProcessor.getCriteriosByPrograma(programaId));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @GetMapping("/programa/{programaId}/cohortes")
+    public ResponseEntity<List<CohorteListadoOutput>> getCohortesByPrograma(@PathVariable Integer programaId) {
+        try {
+            return ResponseEntity.ok(aspiranteProcessor.getCohortesByPrograma(programaId));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PostMapping(value = "/programa/inicio", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ProgramaInicioOutput> getProgramaInicio(@RequestBody PROGRAMA_FIND request) {
+        try {
+            return ResponseEntity.ok(aspiranteProcessor.getProgramaInicio(request.id()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
     @PostMapping(value = "/calificacion/criterio/aspirante", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<CalificacioncriterioOutput>> findCalificacionesByAspirante(
             @RequestBody CALIFICACIONCRITERIO_FIND_BY_ASPIRANTE request) {
@@ -263,10 +299,9 @@ public class DirectorProgramaCase {
     }
 
     @PostMapping(value = "/generateAdmittedList", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<ListaadmitidosOutput>> generateAdmittedList(@RequestBody GENERATE_LISTA request) {
+    public ResponseEntity<ListaAdmitidosResumenOutput> generateAdmittedList(@RequestBody GENERATE_LISTA request) {
         try {
-            List<ListaadmitidosOutput> outputs = listaadmitidosProcessor.generateAdmittedList(request);
-            return ResponseEntity.ok(outputs);
+            return ResponseEntity.ok(listaadmitidosProcessor.generateAdmittedList(request));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();

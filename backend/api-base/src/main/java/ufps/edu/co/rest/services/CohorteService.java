@@ -62,6 +62,18 @@ public class CohorteService extends GenericService<CohorteEntity, CohorteDTO> {
     }
 
     @Transactional(readOnly = true)
+    public List<CohorteDTO> findByIdPrograma(Integer programaId) {
+        return entityListToDtoList(repository.findByIdPrograma(programaId));
+    }
+
+    @Transactional(readOnly = true)
+    public CohorteDTO findActiveByIdPrograma(Integer programaId) {
+        return repository.findActiveByIdPrograma(programaId)
+                .map(this::entityToDto)
+                .orElse(null);
+    }
+
+    @Transactional(readOnly = true)
     public CohorteDTO findActivaByIdPrograma(Integer idPrograma) {
         return repository.findActivasByIdPrograma(idPrograma)
                 .stream()
