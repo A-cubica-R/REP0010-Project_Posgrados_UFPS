@@ -10,19 +10,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import ufps.edu.co.domain.exceptions.DomainException;
 import ufps.edu.co.domain.exceptions.DuplicateAdmisionException;
 import ufps.edu.co.exception.PdfEmailException;
 import ufps.edu.co.processor.crud.AdministrativoProcessor;
 import ufps.edu.co.processor.crud.AspiranteProcessor;
 import ufps.edu.co.processor.crud.CalificacioncriterioProcessor;
+import ufps.edu.co.processor.crud.CriterioevaluacionProcessor;
 import ufps.edu.co.processor.crud.DocumentoProcessor;
 import ufps.edu.co.processor.crud.EntrevistaProcessor;
 import ufps.edu.co.processor.crud.ListaadmitidosProcessor;
@@ -30,9 +35,14 @@ import ufps.edu.co.processor.crud.TipodocumentoProcessor;
 import ufps.edu.co.records.input.entity.AdministrativoInput.ADMINISTRATIVO_FIND;
 import ufps.edu.co.records.input.entity.AspiranteInput.ASPIRANTE_FIND;
 import ufps.edu.co.records.input.entity.CalificacioncriterioInput.CALIFICACIONCRITERIO_CREATE;
+import ufps.edu.co.records.input.entity.CriterioevaluacionInput.CRITERIO_BULK_SAVE;
+import ufps.edu.co.records.input.entity.CriterioevaluacionInput.CRITERIO_CREATE_BODY;
+import ufps.edu.co.records.input.entity.CriterioevaluacionInput.CRITERIO_UPDATE_BODY;
 import ufps.edu.co.records.input.entity.CalificacioncriterioInput.CALIFICACIONCRITERIO_FIND_BY_ASPIRANTE;
 import ufps.edu.co.records.input.entity.CalificacioncriterioInput.CALIFICACIONCRITERIO_UPDATE;
 import ufps.edu.co.records.output.entity.CalificacioncriterioOutput;
+import ufps.edu.co.records.output.entity.CriterioevaluacionOutput;
+import ufps.edu.co.records.output.entity.SuccessOutput;
 import ufps.edu.co.records.input.entity.DocumentoInput.DOCUMENTO_FIND;
 import ufps.edu.co.records.input.entity.DocumentoInput.DOCUMENTO_REJECT;
 import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_CREATE;
@@ -96,6 +106,9 @@ public class DirectorProgramaCase {
 
     @Autowired
     private CalificacioncriterioProcessor calificacioncriterioProcessor;
+
+    @Autowired
+    private CriterioevaluacionProcessor criterioevaluacionProcessor;
 
     private String correo = "jljb1704@gmail.com";
 
@@ -184,36 +197,37 @@ public class DirectorProgramaCase {
     }
 
     @GetMapping("/calificacion/listado")
-    public ResponseEntity<List<AspiranteCalificacionOutput>> findAllValidadosCalificacion() {
+    public ResponseEntity<List<AspiranteCalificacionOutput>> findAllValidadosCalificacion(
+            @RequestParam Integer programaId) {
         try {
-            return ResponseEntity.ok(aspiranteProcessor.findAllValidadosCalificacion());
+            return ResponseEntity.ok(aspiranteProcessor.findAllValidadosCalificacion(programaId));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
     }
 
     @GetMapping("/calificacion/count/validados")
-    public ResponseEntity<Long> countValidados() {
+    public ResponseEntity<Long> countValidados(@RequestParam Integer programaId) {
         try {
-            return ResponseEntity.ok(aspiranteProcessor.countValidados());
+            return ResponseEntity.ok(aspiranteProcessor.countValidados(programaId));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
     }
 
     @GetMapping("/calificacion/count/por-calificar")
-    public ResponseEntity<Long> countPorCalificar() {
+    public ResponseEntity<Long> countPorCalificar(@RequestParam Integer programaId) {
         try {
-            return ResponseEntity.ok(aspiranteProcessor.countPorCalificar());
+            return ResponseEntity.ok(aspiranteProcessor.countPorCalificar(programaId));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
     }
 
     @GetMapping("/calificacion/count/calificados")
-    public ResponseEntity<Long> countCalificados() {
+    public ResponseEntity<Long> countCalificados(@RequestParam Integer programaId) {
         try {
-            return ResponseEntity.ok(aspiranteProcessor.countCalificados());
+            return ResponseEntity.ok(aspiranteProcessor.countCalificados(programaId));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
@@ -288,6 +302,70 @@ public class DirectorProgramaCase {
             return ResponseEntity.ok(calificacioncriterioProcessor.update(request));
         } catch (Exception e) {
             e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PostMapping(value = "/programa/{programaId}/cohorte/{cohorteId}/criterios",
+            consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<CriterioevaluacionOutput> createCriterio(
+            @PathVariable Integer programaId,
+            @PathVariable Integer cohorteId,
+            @RequestBody CRITERIO_CREATE_BODY body) {
+        try {
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(criterioevaluacionProcessor.createForCohorte(programaId, cohorteId, body));
+        } catch (DomainException e) {
+            throw e;
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PutMapping(value = "/programa/{programaId}/cohorte/{cohorteId}/criterios/{criterioId}",
+            consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<CriterioevaluacionOutput> updateCriterio(
+            @PathVariable Integer programaId,
+            @PathVariable Integer cohorteId,
+            @PathVariable Integer criterioId,
+            @RequestBody CRITERIO_UPDATE_BODY body) {
+        try {
+            return ResponseEntity.ok(
+                    criterioevaluacionProcessor.updateForCohorte(programaId, cohorteId, criterioId, body));
+        } catch (DomainException e) {
+            throw e;
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @DeleteMapping("/programa/{programaId}/cohorte/{cohorteId}/criterios/{criterioId}")
+    public ResponseEntity<SuccessOutput> deleteCriterio(
+            @PathVariable Integer programaId,
+            @PathVariable Integer cohorteId,
+            @PathVariable Integer criterioId) {
+        try {
+            criterioevaluacionProcessor.deleteForCohorte(programaId, cohorteId, criterioId);
+            return ResponseEntity.ok(SuccessOutput.builder().success(true).build());
+        } catch (DomainException e) {
+            throw e;
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PostMapping(value = "/programa/{programaId}/cohorte/{cohorteId}/criterios/save",
+            consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<SuccessOutput> bulkSaveCriterios(
+            @PathVariable Integer programaId,
+            @PathVariable Integer cohorteId,
+            @RequestBody CRITERIO_BULK_SAVE body) {
+        try {
+            criterioevaluacionProcessor.bulkSaveForCohorte(programaId, cohorteId, body);
+            return ResponseEntity.ok(SuccessOutput.builder().success(true).build());
+        } catch (DomainException e) {
+            throw e;
+        } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
     }
