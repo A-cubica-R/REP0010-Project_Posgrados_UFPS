@@ -39,8 +39,10 @@ import ufps.edu.co.records.input.entity.CohorteInput.COHORTE_DIRECTOR_UPDATE;
 import ufps.edu.co.records.input.entity.CriterioevaluacionInput.CRITERIO_BULK_SAVE;
 import ufps.edu.co.records.input.entity.CriterioevaluacionInput.CRITERIO_CREATE_BODY;
 import ufps.edu.co.records.input.entity.CriterioevaluacionInput.CRITERIO_UPDATE_BODY;
+import ufps.edu.co.records.input.entity.CriterioevaluacionInput.CRITERIOEVALUACION_FIND;
 import ufps.edu.co.records.input.entity.CalificacioncriterioInput.CALIFICACIONCRITERIO_FIND_BY_ASPIRANTE;
 import ufps.edu.co.records.input.entity.CalificacioncriterioInput.CALIFICACIONCRITERIO_UPDATE;
+import ufps.edu.co.records.output.entity.CalificacionCriterioSimpleOutput;
 import ufps.edu.co.records.output.entity.CalificacioncriterioOutput;
 import ufps.edu.co.records.output.entity.CriterioevaluacionOutput;
 import ufps.edu.co.records.output.entity.SuccessOutput;
@@ -132,11 +134,11 @@ public class DirectorProgramaCase {
         }
     }
 
-    @PostMapping(value = "/aspirants/criteriosById", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping("/{idAspirante}/criterios")
     public ResponseEntity<AspiranteCriteriosOutput> getCriteriosCalificacionByAspirantId(
-            @RequestBody ASPIRANTE_FIND request) {
+            @PathVariable Integer idAspirante) {
         try {
-            return ResponseEntity.ok(aspiranteProcessor.findCriteriosCalificacion(request));
+            return ResponseEntity.ok(aspiranteProcessor.findCriteriosCalificacion(new ASPIRANTE_FIND(idAspirante)));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
@@ -245,11 +247,20 @@ public class DirectorProgramaCase {
         }
     }
 
-    @PostMapping(value = "/calificacion/criterio/create", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CalificacioncriterioOutput> createCalificacionCriterio(
+    @PostMapping(value = "/{idAspirante}/criterios/calificar", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<CalificacionCriterioSimpleOutput> calificarCriterio(
+            @PathVariable Integer idAspirante,
             @RequestBody CALIFICACIONCRITERIO_CREATE request) {
         try {
-            return ResponseEntity.ok(calificacioncriterioProcessor.create(request));
+            CalificacioncriterioOutput result = calificacioncriterioProcessor.create(request);
+            CriterioevaluacionOutput criterio = criterioevaluacionProcessor.findById(
+                    new CRITERIOEVALUACION_FIND(result.idCriterio()));
+            return ResponseEntity.ok(CalificacionCriterioSimpleOutput.builder()
+                    .idAspirante(result.idAspirante())
+                    .idCriterio(result.idCriterio())
+                    .nombreCriterio(criterio.nombre())
+                    .puntuacion(result.puntuacion())
+                    .build());
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
