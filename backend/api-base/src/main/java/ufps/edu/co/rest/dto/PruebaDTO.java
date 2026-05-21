@@ -37,9 +37,9 @@ public class PruebaDTO implements Serializable {
     private LocalDate fecha;
     private LocalTime tiempo;
     private String motivocambio;
-    private int idAspirante ;
-    private int idCohorte ;
-    private int idUbicacion ;
+    private Integer idAspirante ;
+    private Integer idCohorte ;
+    private Integer idUbicacion ;
     private Integer idEstado;
     private Integer idTipoprueba;
     //--- LINKS ( RELATIONSHIPS )

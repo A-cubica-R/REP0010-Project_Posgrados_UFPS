@@ -1,6 +1,7 @@
 package ufps.edu.co.records.output.entity;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import lombok.Builder;
 import ufps.edu.co.records.OutputResponse;
@@ -16,5 +17,6 @@ public record CohorteResumenOutput(
         LocalDate fechaLimiteInscripcion,
         long totalInscritos,
         long totalValidados,
-        Long totalAdmitidos
+        Long totalAdmitidos,
+        List<DocumentocohorteOutput> documentos
 ) implements OutputResponse {}
