@@ -2,16 +2,19 @@ package ufps.edu.co.processor.crud;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ufps.edu.co.maps.specific.AspiranteMap;
+import ufps.edu.co.maps.specific.DocumentocohorteMap;
 import ufps.edu.co.maps.specific.EstadoMap;
 import ufps.edu.co.records.input.entity.AspiranteInput.*;
 import ufps.edu.co.records.input.entity.CohorteInput.COHORTE_DIRECTOR_CREATE;
 import ufps.edu.co.records.input.entity.CohorteInput.COHORTE_DIRECTOR_UPDATE;
+import ufps.edu.co.records.input.entity.DocumentocohorteInput.DOCUMENTOCOHORTE_CREATE;
 import ufps.edu.co.records.output.entity.AspiranteCalificacionOutput;
 import ufps.edu.co.records.output.entity.AspiranteCohorteOutput;
 import ufps.edu.co.records.output.entity.AspiranteCriteriosOutput;
@@ -21,14 +24,17 @@ import ufps.edu.co.records.output.entity.CohorteListadoOutput;
 import ufps.edu.co.records.output.entity.CohorteResumenOutput;
 import ufps.edu.co.records.output.entity.CriterioFilaOutput;
 import ufps.edu.co.records.output.entity.CriteriosCohorteOutput;
+import ufps.edu.co.records.output.entity.DocumentocohorteOutput;
 import ufps.edu.co.records.output.entity.EstadoOutput;
 import ufps.edu.co.records.output.entity.PasoProcesoOutput;
 import ufps.edu.co.records.output.entity.ProgramaInicioOutput;
 import ufps.edu.co.rest.dto.CohorteDTO;
 import ufps.edu.co.rest.dto.AspiranteDTO;
 import ufps.edu.co.rest.dto.DocumentoDTO;
+import ufps.edu.co.rest.dto.DocumentocohorteDTO;
 import ufps.edu.co.rest.dto.PagoDTO;
 import ufps.edu.co.rest.services.DocumentoService;
+import ufps.edu.co.rest.services.DocumentocohorteService;
 import ufps.edu.co.rest.services.PagoService;
 import ufps.edu.co.rest.dto.CalificacioncriterioDTO;
 import ufps.edu.co.rest.dto.CriterioevaluacionDTO;
@@ -95,6 +101,9 @@ public class AspiranteProcessor implements
 
     @Autowired
     private PagoService pagoService;
+
+    @Autowired
+    private DocumentocohorteService documentocohorteService;
 
     @Override
     public AspiranteOutput create(ASPIRANTE_CREATE input) {
@@ -593,6 +602,21 @@ public class AspiranteProcessor implements
                 .idPrograma(programaId)
                 .build());
 
+        List<DocumentocohorteOutput> documentosCohorte = new ArrayList<>();
+
+        DocumentocohorteMap mapDocCohorte = new DocumentocohorteMap();
+
+        for (DOCUMENTOCOHORTE_CREATE documento : body.documentos()) {
+            documentosCohorte.add(
+                    mapDocCohorte.toOutput(
+                            documentocohorteService.create(
+                                    DocumentocohorteDTO.builder()
+                                            .nombre(documento.nombre())
+                                            .obligatorio(documento.obligatorio())
+                                            .idCohorte(cohorte.getId())
+                                            .build())));
+        }
+
         return CohorteListadoOutput.builder()
                 .id(cohorte.getId())
                 .nombre(cohorte.getNombre())
@@ -603,6 +627,7 @@ public class AspiranteProcessor implements
                 .fechaLimiteDocumentos(body.fechaLimiteDocumentos())
                 .fechaLimitePago(body.fechaLimitePago())
                 .fechaInicio(fechaInicio)
+                .documentos(documentosCohorte)
                 .build();
     }
 
