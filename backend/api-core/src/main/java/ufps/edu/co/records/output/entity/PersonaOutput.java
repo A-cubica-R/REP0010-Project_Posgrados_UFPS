@@ -29,6 +29,7 @@ public record PersonaOutput(
         Integer idPoblacionindigena,
         Integer idDiscapacidad,
         Integer idCapacidadexepcional,
+        Integer idDocumentopersona,
         Integer idUbicacionvivienda,
         Integer idUbicacionnacimiento,
         Integer idUbicaciontrabajo,

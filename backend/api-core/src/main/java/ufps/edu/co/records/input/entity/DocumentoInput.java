@@ -54,4 +54,9 @@ public enum DocumentoInput {
     public record DOCUMENTO_FIND(@NotNull Integer id) implements FindType {}
 
     public record DOCUMENTO_REJECT(@NotNull Integer id, @NotBlank String observaciones) implements PatchType {}
+
+    public record DOCUMENTO_ESTADO_UPDATE(
+        @NotBlank String estado,
+        String motivoRechazo
+    ) {}
 }
