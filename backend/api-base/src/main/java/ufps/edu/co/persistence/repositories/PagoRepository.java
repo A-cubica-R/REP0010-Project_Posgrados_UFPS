@@ -4,6 +4,8 @@
  */
 package ufps.edu.co.persistence.repositories;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -37,15 +39,6 @@ import ufps.edu.co.persistence.entities.PagoEntity;
 @Repository
 public interface PagoRepository extends JpaRepository<PagoEntity, Integer> {
 
-	// Insert specific finders here 
+	List<PagoEntity> findByIdAspirante(Integer idAspirante);
 
-	//List<PagoEntity> findByXxx(String xxx);
-
-	//List<PagoEntity> findByXxxStartingWith(String xxx);
-
-	//List<PagoEntity> findByXxxContaining(String xxx);
-
-	//List<PagoEntity> findByYyy(BigDecimal yyy);
-
-	//List<PagoEntity> findByXxxContainingAndYyy(String xxx, BigDecimal yyy);
 }

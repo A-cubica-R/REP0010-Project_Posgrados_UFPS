@@ -60,7 +60,7 @@ public class EntrevistaProcessor implements
             if (tipoentrevista == null) {
                 throw new RuntimeException("Modalidad no encontrada: " + input.idTipoentrevista());
             }
-            EstadoDTO estadoInicial = estadoService.findByTipoAndEntidad("PENDIENTE_CONFIRMACION", "entrevista");
+            EstadoDTO estadoInicial = estadoService.findByTipoAndEntidad("PENDIENTE DE CONFIRMACION", "entrevista");
             if (estadoInicial == null) {
                 throw new RuntimeException("Estado inicial 'PENDIENTE_CONFIRMACION' no encontrado para entidad 'entrevista'");
             }
@@ -159,6 +159,28 @@ public class EntrevistaProcessor implements
             return map.toOutput(updated);
         } catch (Exception e) {
             throw new RuntimeException("Error cancelling Entrevista: " + e.getMessage(), e);
+        }
+    }
+
+    public EntrevistaOutput confirmInterview(ENTREVISTA_FIND input) {
+        try {
+            EstadoDTO estadoConfirmada = estadoService.findByTipoAndEntidad("CONFIRMADA", "entrevista");
+            if (estadoConfirmada == null) {
+                throw new RuntimeException("Estado 'CONFIRMADA' no encontrado para entidad 'entrevista'");
+            }
+            EntrevistaDTO updated = service.changeEstado(input.id(), estadoConfirmada.getId(), "PENDIENTE DE CONFIRMACION");
+            return map.toOutput(updated);
+        } catch (Exception e) {
+            throw new RuntimeException("Error confirming Entrevista: " + e.getMessage(), e);
+        }
+    }
+
+    public EntrevistaOutput requestChangeInterview(Integer id, String motivocambio) {
+        try {
+            EntrevistaDTO updated = service.requestChange(id, motivocambio);
+            return map.toOutput(updated);
+        } catch (Exception e) {
+            throw new RuntimeException("Error requesting change for Entrevista: " + e.getMessage(), e);
         }
     }
 

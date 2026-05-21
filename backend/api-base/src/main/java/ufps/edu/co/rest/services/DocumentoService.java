@@ -60,4 +60,10 @@ public class DocumentoService extends GenericService<DocumentoEntity, DocumentoD
     public List<DocumentoDTO> findByIdAspirante(Integer idAspirante) {
         return entityListToDtoList(repository.findByIdAspirante(idAspirante));
     }
+
+    @Transactional(readOnly = true)
+    public java.util.Optional<DocumentoDTO> findByIdAspiranteAndIdTipodocumento(Integer idAspirante, Integer idTipodocumento) {
+        return repository.findByIdAspiranteAndIdTipodocumento(idAspirante, idTipodocumento)
+                .map(this::entityToDto);
+    }
 }

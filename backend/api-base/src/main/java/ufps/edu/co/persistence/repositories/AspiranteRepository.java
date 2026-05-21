@@ -5,6 +5,7 @@
 package ufps.edu.co.persistence.repositories;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -41,17 +42,7 @@ import ufps.edu.co.persistence.entities.AspiranteEntity;
 @Repository
 public interface AspiranteRepository extends JpaRepository<AspiranteEntity, Integer> {
 
-	// Insert specific finders here
-
-	//List<AspiranteEntity> findByXxx(String xxx);
-
-	//List<AspiranteEntity> findByXxxStartingWith(String xxx);
-
-	//List<AspiranteEntity> findByXxxContaining(String xxx);
-
-	//List<AspiranteEntity> findByYyy(BigDecimal yyy);
-
-	//List<AspiranteEntity> findByXxxContainingAndYyy(String xxx, BigDecimal yyy);
+	Optional<AspiranteEntity> findFirstByIdPersona(Integer idPersona);
 
 	List<AspiranteEntity> findByDocumentoListIsNotEmpty();
 
