@@ -7,14 +7,16 @@ import lombok.Builder;
 import ufps.edu.co.records.OutputResponse;
 
 @Builder
-public record EntrevistaResumenOutput(
+public record PruebaResumenOutput(
         Integer id,
+        String nombre,
+        String descripcion,
         LocalDate fecha,
         LocalTime tiempo,
         Integer idEstado,
         String estado,
-        Integer idTipoentrevista,
-        String tipoentrevista,
+        Integer idTipoprueba,
+        String tipoprueba,
         String ubicacion,
         String motivocambio
 ) implements OutputResponse {}

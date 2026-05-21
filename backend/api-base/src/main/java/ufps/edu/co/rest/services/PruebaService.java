@@ -4,11 +4,14 @@
  */
 package ufps.edu.co.rest.services;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ufps.edu.co.persistence.entities.PruebaEntity;
+import ufps.edu.co.persistence.repositories.EstadoRepository;
 import ufps.edu.co.persistence.repositories.PruebaRepository;
 import ufps.edu.co.rest.dto.PruebaDTO;
 import ufps.edu.co.rest.services.commons.GenericService;
@@ -24,6 +27,9 @@ public class PruebaService extends GenericService<PruebaEntity, PruebaDTO> {
 
     @Autowired
     private PruebaRepository repository;
+
+    @Autowired
+    private EstadoRepository estadoRepository;
 
     public PruebaService() {
         super(PruebaEntity.class, PruebaDTO.class);
@@ -54,5 +60,57 @@ public class PruebaService extends GenericService<PruebaEntity, PruebaDTO> {
         repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Prueba no encontrado con id: " + id));
         repository.deleteById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public List<PruebaDTO> findByIdAspirante(Integer idAspirante) {
+        return entityListToDtoList(repository.findByIdAspirante(idAspirante));
+    }
+
+    public PruebaDTO changeEstado(Integer id, Integer idEstado, String expectedCurrentEstado) {
+        PruebaEntity entity = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Prueba no encontrada con id: " + id));
+        String estadoActual = entity.getEstado() != null ? entity.getEstado().getTipo() : "";
+        if (!expectedCurrentEstado.equalsIgnoreCase(estadoActual)) {
+            throw new RuntimeException(
+                    "La prueba no está en estado '" + expectedCurrentEstado + "'. Estado actual: " + estadoActual);
+        }
+        entity.setIdEstado(idEstado);
+        return entityToDto(repository.save(entity));
+    }
+
+    public PruebaDTO changeEstadoWithMotivo(Integer id, Integer idEstado, String expectedCurrentEstado, String motivocambio) {
+        PruebaEntity entity = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Prueba no encontrada con id: " + id));
+        String estadoActual = entity.getEstado() != null ? entity.getEstado().getTipo() : "";
+        if (!expectedCurrentEstado.equalsIgnoreCase(estadoActual)) {
+            throw new RuntimeException(
+                    "La prueba no está en estado '" + expectedCurrentEstado + "'. Estado actual: " + estadoActual);
+        }
+        entity.setIdEstado(idEstado);
+        entity.setMotivocambio(motivocambio);
+        return entityToDto(repository.save(entity));
+    }
+
+    public PruebaDTO reschedule(Integer id, LocalDate fecha, LocalTime tiempo,
+            Integer idTipoprueba, Integer idUbicacion) {
+        PruebaEntity entity = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Prueba no encontrada con id: " + id));
+        String estadoActual = entity.getEstado() != null ? entity.getEstado().getTipo() : "";
+        if (!"SOLICITUD DE CAMBIO".equalsIgnoreCase(estadoActual)) {
+            throw new IllegalStateException(
+                    "La prueba no está en estado 'SOLICITUD DE CAMBIO'. Estado actual: " + estadoActual);
+        }
+        Integer idEstadoPendiente = estadoRepository
+                .findByTipoIgnoreCaseAndEntidadIgnoreCase("PENDIENTE DE CONFIRMACION", "prueba")
+                .orElseThrow(() -> new RuntimeException("Estado 'PENDIENTE DE CONFIRMACION' no encontrado para entidad 'prueba'"))
+                .getId();
+        entity.setFecha(fecha);
+        entity.setTiempo(tiempo);
+        entity.setIdTipoprueba(idTipoprueba);
+        entity.setIdUbicacion(idUbicacion);
+        entity.setIdEstado(idEstadoPendiente);
+        entity.setMotivocambio(null);
+        return entityToDto(repository.save(entity));
     }
 }

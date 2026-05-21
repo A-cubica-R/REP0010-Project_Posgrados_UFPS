@@ -70,4 +70,22 @@ public enum EntrevistaInput {
             @NotNull Integer id,
             String motivocambio) implements PatchType {
     }
+
+    public record ENTREVISTA_SCHEDULE_REQUEST(
+            @NotNull LocalDate fecha,
+            @NotNull LocalTime tiempo,
+            @NotNull Integer idTipoentrevista,
+            @NotBlank String ubicacion) implements CreateType {
+    }
+
+    public record ENTREVISTA_REAGENDAR_REQUEST(
+            @NotNull LocalDate fecha,
+            @NotNull LocalTime tiempo,
+            @NotNull Integer idTipoentrevista,
+            @NotBlank String ubicacion) implements UpdateType {
+    }
+
+    public record ENTREVISTA_CANCELAR_REQUEST(
+            @NotBlank String motivocambio) implements PatchType {
+    }
 }

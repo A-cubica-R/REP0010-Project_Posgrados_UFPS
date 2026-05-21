@@ -46,4 +46,13 @@ public interface PruebaRepository extends JpaRepository<PruebaEntity, Integer> {
 		   "LEFT JOIN FETCH p.cohorte " +
 		   "LEFT JOIN FETCH p.ubicacion")
 	List<PruebaEntity> findAllWithRelations();
+
+	@Query("SELECT DISTINCT p FROM PruebaEntity p " +
+		   "LEFT JOIN FETCH p.aspirante a " +
+		   "LEFT JOIN FETCH a.persona " +
+		   "LEFT JOIN FETCH p.ubicacion " +
+		   "LEFT JOIN FETCH p.estado " +
+		   "LEFT JOIN FETCH p.tipoprueba " +
+		   "WHERE p.idAspirante = :idAspirante")
+	List<PruebaEntity> findByIdAspirante(Integer idAspirante);
 }

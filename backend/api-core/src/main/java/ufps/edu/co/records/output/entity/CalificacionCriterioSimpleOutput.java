@@ -10,5 +10,6 @@ public record CalificacionCriterioSimpleOutput(
         Integer idAspirante,
         Integer idCriterio,
         String nombreCriterio,
-        BigDecimal puntuacion
+        BigDecimal puntajeObtenido,
+        BigDecimal puntajeTotal
 ) implements OutputResponse {}
