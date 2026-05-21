@@ -510,12 +510,16 @@ public class AspiranteProcessor implements
                             ? ((persona.getNombres() != null ? persona.getNombres() : "") + " "
                                     + (persona.getApellidos() != null ? persona.getApellidos() : "")).trim()
                             : "";
+                    Integer numerodocumento = persona != null && persona.getDocumentopersona() != null
+                            ? persona.getDocumentopersona().getNumerodocumento()
+                            : null;
                     return AspiranteCalificacionOutput.builder()
                             .id(aspirante.getId())
                             .nombreCompleto(nombreCompleto)
                             .idEstado(aspirante.getIdEstado())
                             .correo(persona != null ? persona.getCorreo() : null)
                             .puntajeTotal(aspirante.getPuntuacion())
+                            .numerodocumento(numerodocumento)
                             .build();
                 }).toList();
     }

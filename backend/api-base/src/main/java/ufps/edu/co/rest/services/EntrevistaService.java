@@ -84,6 +84,11 @@ public class EntrevistaService extends GenericService<EntrevistaEntity, Entrevis
             Integer idTipoentrevista, Integer idUbicacion, String motivocambio) {
         EntrevistaEntity entity = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Entrevista no encontrada con id: " + id));
+        String estadoActual = entity.getEstado() != null ? entity.getEstado().getTipo() : "";
+        if (!"SOLICITUD DE CAMBIO".equalsIgnoreCase(estadoActual)) {
+            throw new IllegalStateException(
+                    "La entrevista no está en estado 'SOLICITUD DE CAMBIO'. Estado actual: " + estadoActual);
+        }
         Integer idEstadoPendiente = estadoRepository
                 .findByTipoIgnoreCaseAndEntidadIgnoreCase("PENDIENTE DE CONFIRMACION", "entrevista")
                 .orElseThrow(() -> new RuntimeException("Estado 'PENDIENTE DE CONFIRMACION' no encontrado para entidad 'entrevista'"))
@@ -93,6 +98,19 @@ public class EntrevistaService extends GenericService<EntrevistaEntity, Entrevis
         entity.setIdTipoentrevista(idTipoentrevista);
         entity.setIdUbicacion(idUbicacion);
         entity.setIdEstado(idEstadoPendiente);
+        entity.setMotivocambio(motivocambio);
+        return entityToDto(repository.save(entity));
+    }
+
+    public EntrevistaDTO changeEstadoWithMotivo(Integer id, Integer idEstado, String expectedCurrentEstado, String motivocambio) {
+        EntrevistaEntity entity = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Entrevista no encontrada con id: " + id));
+        String estadoActual = entity.getEstado() != null ? entity.getEstado().getTipo() : "";
+        if (!expectedCurrentEstado.equalsIgnoreCase(estadoActual)) {
+            throw new RuntimeException(
+                    "La entrevista no está en estado '" + expectedCurrentEstado + "'. Estado actual: " + estadoActual);
+        }
+        entity.setIdEstado(idEstado);
         entity.setMotivocambio(motivocambio);
         return entityToDto(repository.save(entity));
     }

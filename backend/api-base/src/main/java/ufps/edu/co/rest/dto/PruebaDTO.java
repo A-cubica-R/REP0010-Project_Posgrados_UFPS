@@ -5,6 +5,8 @@
 package ufps.edu.co.rest.dto;
 
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,18 +29,25 @@ public class PruebaDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    //--- PRIMARY KEY 
+    //--- PRIMARY KEY
     private Integer id ;
     //--- OTHER DATA FIELDS
     private String nombre ;
     private String descripcion ;
+    private LocalDate fecha;
+    private LocalTime tiempo;
+    private String motivocambio;
     private Integer idAspirante ;
     private Integer idCohorte ;
     private Integer idUbicacion ;
+    private Integer idEstado;
+    private Integer idTipoprueba;
     //--- LINKS ( RELATIONSHIPS )
     private AspiranteDTO aspirante ;
     private UbicacionDTO ubicacion ;
     private CohorteDTO cohorte ;
+    private EstadoDTO estado;
+    private TipopruebaDTO tipoprueba;
     private List<ResultadopruebaDTO> resultadopruebaList ; 
 
     @Override

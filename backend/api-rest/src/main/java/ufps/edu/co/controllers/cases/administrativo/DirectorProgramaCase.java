@@ -11,6 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -32,26 +33,33 @@ import ufps.edu.co.processor.crud.CriterioevaluacionProcessor;
 import ufps.edu.co.processor.crud.DocumentoProcessor;
 import ufps.edu.co.processor.crud.EntrevistaProcessor;
 import ufps.edu.co.processor.crud.ListaadmitidosProcessor;
+import ufps.edu.co.processor.crud.PruebaProcessor;
 import ufps.edu.co.records.input.entity.AdministrativoInput.ADMINISTRATIVO_FIND;
 import ufps.edu.co.records.input.entity.AspiranteInput.ASPIRANTE_FIND;
-import ufps.edu.co.records.input.entity.CalificacioncriterioInput.CALIFICACIONCRITERIO_CREATE;
+import ufps.edu.co.records.input.entity.CalificacioncriterioInput.CALIFICACION_PUNTAJE_REQUEST;
 import ufps.edu.co.records.input.entity.CohorteInput.COHORTE_DIRECTOR_CREATE;
 import ufps.edu.co.records.input.entity.CohorteInput.COHORTE_DIRECTOR_UPDATE;
 import ufps.edu.co.records.input.entity.CriterioevaluacionInput.CRITERIO_BULK_SAVE;
 import ufps.edu.co.records.input.entity.CriterioevaluacionInput.CRITERIO_CREATE_BODY;
 import ufps.edu.co.records.input.entity.CriterioevaluacionInput.CRITERIO_UPDATE_BODY;
-import ufps.edu.co.records.input.entity.CriterioevaluacionInput.CRITERIOEVALUACION_FIND;
 import ufps.edu.co.records.input.entity.CalificacioncriterioInput.CALIFICACIONCRITERIO_FIND_BY_ASPIRANTE;
 import ufps.edu.co.records.input.entity.CalificacioncriterioInput.CALIFICACIONCRITERIO_UPDATE;
+import ufps.edu.co.records.input.entity.DocumentoInput.DOCUMENTO_ESTADO_UPDATE;
 import ufps.edu.co.records.output.entity.CalificacionCriterioSimpleOutput;
 import ufps.edu.co.records.output.entity.CalificacioncriterioOutput;
+import ufps.edu.co.records.output.entity.AspiranteCohorteOutput;
+import ufps.edu.co.records.output.entity.AspiranteDocumentosOutput;
 import ufps.edu.co.records.output.entity.CriterioevaluacionOutput;
+import ufps.edu.co.records.output.entity.DocumentoEstadoOutput;
 import ufps.edu.co.records.output.entity.SuccessOutput;
 import ufps.edu.co.records.input.entity.DocumentoInput.DOCUMENTO_FIND;
+import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_CANCELAR_REQUEST;
 import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_CREATE;
 import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_FIND;
 import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_RATE;
+import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_REAGENDAR_REQUEST;
 import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_RESCHEDULE;
+import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_SCHEDULE_REQUEST;
 import ufps.edu.co.records.input.entity.ListaadmitidosInput.GENERATE_LISTA;
 import ufps.edu.co.records.input.entity.ListaadmitidosInput.RECHAZAR_ASPIRANTE;
 import ufps.edu.co.records.input.entity.ProgramaInput.PROGRAMA_FIND;
@@ -70,6 +78,18 @@ import ufps.edu.co.records.output.entity.EntrevistaOutput;
 import ufps.edu.co.records.output.entity.EntrevistaResumenOutput;
 import ufps.edu.co.records.output.entity.EntrevistaSimpleOutput;
 import ufps.edu.co.records.output.entity.ListaadmitidosOutput;
+<<<<<<< HEAD
+import ufps.edu.co.records.input.entity.PruebaInput.PRUEBA_CANCELAR_REQUEST;
+import ufps.edu.co.records.input.entity.PruebaInput.PRUEBA_CREAR_REQUEST;
+import ufps.edu.co.records.input.entity.PruebaInput.PRUEBA_REAGENDAR_REQUEST;
+import ufps.edu.co.records.output.entity.PruebaResumenOutput;
+import ufps.edu.co.records.output.entity.PruebaSimpleOutput;
+=======
+import ufps.edu.co.rest.dto.AdministrativoDTO;
+import ufps.edu.co.rest.dto.UsuarioDTO;
+import ufps.edu.co.rest.services.AdministrativoService;
+import ufps.edu.co.rest.services.UsuarioService;
+>>>>>>> a3141004469f054ef5d46c056c0a80d250027c87
 import ufps.edu.co.services.EmailService;
 
 import ufps.edu.co.services.PdfGeneratorService;
@@ -109,7 +129,55 @@ public class DirectorProgramaCase {
     private CalificacioncriterioProcessor calificacioncriterioProcessor;
 
     @Autowired
+    private PruebaProcessor pruebaProcessor;
+
+    @Autowired
     private CriterioevaluacionProcessor criterioevaluacionProcessor;
+
+    @Autowired
+    private UsuarioService usuarioService;
+
+    @Autowired
+    private AdministrativoService administrativoService;
+
+    @GetMapping(value = "/cohortes")
+    public ResponseEntity<List<CohorteResumenOutput>> getCohortesByPrograma() {
+        try {
+            Integer programaId = resolvePrograma();
+            return ResponseEntity.ok(aspiranteProcessor.getCohortesByProgramaResumen(programaId));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @GetMapping(value = "/cohortes/{idCohorte}/aspirantes")
+    public ResponseEntity<List<AspiranteCohorteOutput>> getAspirantesByCohorte(@PathVariable Integer idCohorte) {
+        try {
+            return ResponseEntity.ok(aspiranteProcessor.findByCohorteConResumen(idCohorte));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @GetMapping(value = "/aspirantes/{idAspirante}/documentos")
+    public ResponseEntity<AspiranteDocumentosOutput> getDocumentosDeAspirante(@PathVariable Integer idAspirante) {
+        try {
+            return ResponseEntity.ok(documentoProcessor.getDocumentosDeAspirante(idAspirante));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PatchMapping(value = "/documentos/{idDoc}/estado", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<DocumentoEstadoOutput> updateEstadoDocumento(
+            @PathVariable Integer idDoc,
+            @RequestBody DOCUMENTO_ESTADO_UPDATE body) {
+        try {
+            return ResponseEntity.ok(documentoProcessor.updateEstadoDocumento(idDoc, body));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
 
     @PostMapping(value = "/downloadByDocumentId", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<byte[]> download(@RequestBody DOCUMENTO_FIND request) {
@@ -137,7 +205,7 @@ public class DirectorProgramaCase {
         }
     }
 
-    @GetMapping("/{idAspirante}/criterios")
+    @GetMapping("/aspirantes/{idAspirante}/criterios")
     public ResponseEntity<AspiranteCriteriosOutput> getCriteriosCalificacionByAspirantId(
             @PathVariable Integer idAspirante) {
         try {
@@ -260,20 +328,14 @@ public class DirectorProgramaCase {
         }
     }
 
-    @PostMapping(value = "/{idAspirante}/criterios/calificar", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PatchMapping(value = "/aspirantes/{idAspirante}/criterios/{idCriterio}/calificar", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CalificacionCriterioSimpleOutput> calificarCriterio(
             @PathVariable Integer idAspirante,
-            @RequestBody CALIFICACIONCRITERIO_CREATE request) {
+            @PathVariable Integer idCriterio,
+            @RequestBody CALIFICACION_PUNTAJE_REQUEST request) {
         try {
-            CalificacioncriterioOutput result = calificacioncriterioProcessor.create(request);
-            CriterioevaluacionOutput criterio = criterioevaluacionProcessor.findById(
-                    new CRITERIOEVALUACION_FIND(result.idCriterio()));
-            return ResponseEntity.ok(CalificacionCriterioSimpleOutput.builder()
-                    .idAspirante(result.idAspirante())
-                    .idCriterio(result.idCriterio())
-                    .nombreCriterio(criterio.nombre())
-                    .puntuacion(result.puntuacion())
-                    .build());
+            return ResponseEntity.ok(
+                    calificacioncriterioProcessor.calificarCriterio(idAspirante, idCriterio, request.puntajeObtenido()));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
@@ -439,7 +501,7 @@ public class DirectorProgramaCase {
         }
     }
 
-    @GetMapping("/{idAspirante}/entrevistas")
+    @GetMapping("/aspirantes/{idAspirante}/entrevistas")
     public ResponseEntity<List<EntrevistaResumenOutput>> findInterviewsByAspirantId(
             @PathVariable Integer idAspirante) {
         try {
@@ -449,24 +511,30 @@ public class DirectorProgramaCase {
         }
     }
 
-    @PostMapping(value = "/{idAspirante}/entrevistas/agendar", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/aspirantes/{idAspirante}/entrevistas/agendar", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<EntrevistaResumenOutput> scheduleInterview(
             @PathVariable Integer idAspirante,
-            @RequestBody ENTREVISTA_CREATE request) {
+            @RequestBody ENTREVISTA_SCHEDULE_REQUEST request) {
         try {
-            return ResponseEntity.ok(toResumen(entrevistaProcessor.create(request)));
+            ENTREVISTA_CREATE create = new ENTREVISTA_CREATE(
+                    request.fecha(), request.tiempo(), request.idTipoentrevista(),
+                    idAspirante, request.ubicacion(), null);
+            return ResponseEntity.ok(toResumen(entrevistaProcessor.create(create)));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
         }
     }
 
-    @PatchMapping(value = "/{idAspirante}/entrevistas/reagendar", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PatchMapping(value = "/entrevistas/{idEntrevista}/reagendar", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<EntrevistaResumenOutput> rescheduleInterview(
-            @PathVariable Integer idAspirante,
-            @RequestBody ENTREVISTA_RESCHEDULE request) {
+            @PathVariable Integer idEntrevista,
+            @RequestBody ENTREVISTA_REAGENDAR_REQUEST request) {
         try {
-            return ResponseEntity.ok(toResumen(entrevistaProcessor.reschedule(request)));
+            ENTREVISTA_RESCHEDULE reschedule = new ENTREVISTA_RESCHEDULE(
+                    idEntrevista, request.fecha(), request.tiempo(), request.idTipoentrevista(),
+                    request.ubicacion(), null);
+            return ResponseEntity.ok(toResumen(entrevistaProcessor.reschedule(reschedule)));
         } catch (IllegalStateException e) {
             return ResponseEntity.badRequest().build();
         } catch (Exception e) {
@@ -475,24 +543,90 @@ public class DirectorProgramaCase {
         }
     }
 
-    @PatchMapping(value = "/{idAspirante}/entrevistas/completar", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PatchMapping(value = "/entrevistas/{idEntrevista}/completar")
     public ResponseEntity<EntrevistaSimpleOutput> completeInterview(
-            @PathVariable Integer idAspirante,
-            @RequestBody ENTREVISTA_FIND request) {
+            @PathVariable Integer idEntrevista) {
         try {
-            return ResponseEntity.ok(toSimple(entrevistaProcessor.completeInterview(request)));
+            return ResponseEntity.ok(toSimple(entrevistaProcessor.completeInterview(new ENTREVISTA_FIND(idEntrevista))));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
         }
     }
 
-    @PatchMapping(value = "/{idAspirante}/entrevistas/cancelar", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PatchMapping(value = "/entrevistas/{idEntrevista}/cancelar", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<EntrevistaSimpleOutput> cancelInterview(
-            @PathVariable Integer idAspirante,
-            @RequestBody ENTREVISTA_FIND request) {
+            @PathVariable Integer idEntrevista,
+            @RequestBody ENTREVISTA_CANCELAR_REQUEST request) {
         try {
-            return ResponseEntity.ok(toSimple(entrevistaProcessor.cancelInterview(request)));
+            EntrevistaOutput o = entrevistaProcessor.cancelInterview(idEntrevista, request.motivocambio());
+            return ResponseEntity.ok(EntrevistaSimpleOutput.builder()
+                    .idEntrevista(o.id())
+                    .idAspirante(o.idAspirante())
+                    .estado(o.estado() != null ? o.estado().tipo() : null)
+                    .motivocambio(o.motivocambio())
+                    .build());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    // --- Pruebas ---
+
+    @GetMapping("/aspirantes/{idAspirante}/pruebas")
+    public ResponseEntity<List<PruebaResumenOutput>> findPruebasByAspiranteId(
+            @PathVariable Integer idAspirante) {
+        try {
+            return ResponseEntity.ok(pruebaProcessor.findByIdAspirante(new ASPIRANTE_FIND(idAspirante)));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PostMapping(value = "/aspirantes/{idAspirante}/pruebas/crear", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<PruebaResumenOutput> crearPrueba(
+            @PathVariable Integer idAspirante,
+            @RequestBody PRUEBA_CREAR_REQUEST request) {
+        try {
+            return ResponseEntity.ok(pruebaProcessor.crearPrueba(idAspirante, request));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PatchMapping(value = "/pruebas/{idPrueba}/reagendar", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<PruebaResumenOutput> reagendarPrueba(
+            @PathVariable Integer idPrueba,
+            @RequestBody PRUEBA_REAGENDAR_REQUEST request) {
+        try {
+            return ResponseEntity.ok(pruebaProcessor.reagendarPrueba(idPrueba, request));
+        } catch (IllegalStateException e) {
+            return ResponseEntity.badRequest().build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PatchMapping("/pruebas/{idPrueba}/completar")
+    public ResponseEntity<PruebaSimpleOutput> completarPrueba(@PathVariable Integer idPrueba) {
+        try {
+            return ResponseEntity.ok(pruebaProcessor.completarPrueba(idPrueba));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PatchMapping(value = "/pruebas/{idPrueba}/cancelar", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<PruebaSimpleOutput> cancelarPrueba(
+            @PathVariable Integer idPrueba,
+            @RequestBody PRUEBA_CANCELAR_REQUEST request) {
+        try {
+            return ResponseEntity.ok(pruebaProcessor.cancelarPrueba(idPrueba, request.motivocambio()));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
@@ -503,9 +637,11 @@ public class DirectorProgramaCase {
         return EntrevistaResumenOutput.builder()
                 .id(o.id())
                 .fecha(o.fecha())
-                .hora(o.tiempo())
+                .tiempo(o.tiempo())
                 .idEstado(o.idEstado())
+                .estado(o.estado() != null ? o.estado().tipo() : null)
                 .idTipoentrevista(o.idTipoentrevista())
+                .tipoentrevista(o.tipoentrevista() != null ? o.tipoentrevista().tipo() : null)
                 .ubicacion(o.ubicacion() != null ? o.ubicacion().direccion() : null)
                 .motivocambio(o.motivocambio())
                 .build();
@@ -518,6 +654,19 @@ public class DirectorProgramaCase {
                 .estado(o.estado() != null ? o.estado().tipo() : null)
                 .motivocambio(null)
                 .build();
+    }
+
+    private Integer resolvePrograma() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        UsuarioDTO usuario = usuarioService.findByNombreusuario(username);
+        if (usuario == null || usuario.getIdPersona() == null) {
+            throw new RuntimeException("No se pudo derivar el administrativo desde el usuario autenticado");
+        }
+        AdministrativoDTO admin = administrativoService.findByIdPersona(usuario.getIdPersona());
+        if (admin == null || admin.getCargo() == null || admin.getCargo().getIdPrograma() == null) {
+            throw new RuntimeException("El usuario autenticado no tiene un programa asignado");
+        }
+        return admin.getCargo().getIdPrograma();
     }
 
     @PutMapping("/interview/rate")
