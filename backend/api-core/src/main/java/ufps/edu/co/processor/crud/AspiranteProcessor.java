@@ -351,7 +351,8 @@ public class AspiranteProcessor implements
                             : "";
                     String cedula = p != null && p.getDocumentopersona() != null
                             && p.getDocumentopersona().getNumerodocumento() != null
-                            ? p.getDocumentopersona().getNumerodocumento().toString() : null;
+                                    ? p.getDocumentopersona().getNumerodocumento().toString()
+                                    : null;
                     return CohorteDetalleOutput.AspiranteInfo.builder()
                             .id(a.getId())
                             .nombre(nombre)
@@ -364,7 +365,8 @@ public class AspiranteProcessor implements
                 .findByCohorte(cohorteId).stream()
                 .map(admitido -> {
                     AspiranteDTO a = admitido.getAspirante();
-                    if (a == null) return null;
+                    if (a == null)
+                        return null;
                     PersonaDTO p = a.getPersona();
                     String nombre = p != null
                             ? ((p.getNombres() != null ? p.getNombres() : "") + " "
@@ -372,7 +374,8 @@ public class AspiranteProcessor implements
                             : "";
                     String cedula = p != null && p.getDocumentopersona() != null
                             && p.getDocumentopersona().getNumerodocumento() != null
-                            ? p.getDocumentopersona().getNumerodocumento().toString() : null;
+                                    ? p.getDocumentopersona().getNumerodocumento().toString()
+                                    : null;
                     return CohorteDetalleOutput.AspiranteInfo.builder()
                             .id(a.getId())
                             .nombre(nombre)
@@ -537,9 +540,7 @@ public class AspiranteProcessor implements
         LocalDate fechaInicio = body.fechaInicio();
         int year = fechaInicio.getYear();
         int semNum = fechaInicio.getMonthValue() <= 6 ? 1 : 2;
-
-        long n = cohorteService.findByIdPrograma(programaId).size() + 1;
-        String nombre = "Cohorte-" + n + " " + year + "-" + semNum;
+        String nombre = body.nombre();
 
         List<TipoplazoDTO> tipoplazos = tipoplazoService.findAll();
         if (tipoplazos.isEmpty()) {
@@ -572,9 +573,9 @@ public class AspiranteProcessor implements
                 .idEstado(estadoSemestre.getId())
                 .build());
 
-        EstadoDTO estadoCohorte = estadoService.findByTipoAndEntidad("ABIERTA", "cohorte");
+        EstadoDTO estadoCohorte = estadoService.findByTipoAndEntidad("CERRADA", "cohorte");
         if (estadoCohorte == null) {
-            throw new RuntimeException("No hay estado ABIERTA configurado para cohorte");
+            throw new RuntimeException("No hay estado CERRADA configurado para cohorte");
         }
 
         List<ModalidadDTO> modalidades = modalidadService.findAll();
@@ -599,7 +600,7 @@ public class AspiranteProcessor implements
         return CohorteListadoOutput.builder()
                 .id(cohorte.getId())
                 .nombre(cohorte.getNombre())
-                .activa(true)
+                .activa(false)
                 .inscritos(0)
                 .admitidos(0)
                 .cupos(cohorte.getCupos())
@@ -640,7 +641,8 @@ public class AspiranteProcessor implements
                     : "";
             String cedula = p != null && p.getDocumentopersona() != null
                     && p.getDocumentopersona().getNumerodocumento() != null
-                    ? p.getDocumentopersona().getNumerodocumento().toString() : null;
+                            ? p.getDocumentopersona().getNumerodocumento().toString()
+                            : null;
 
             List<DocumentoDTO> docs = documentoService.findByIdAspirante(aspirante.getId());
             long total = docs.size();

@@ -62,7 +62,7 @@ public class EntrevistaProcessor implements
             }
             EstadoDTO estadoInicial = estadoService.findByTipoAndEntidad("PENDIENTE DE CONFIRMACION", "entrevista");
             if (estadoInicial == null) {
-                throw new RuntimeException("Estado inicial 'PENDIENTE_CONFIRMACION' no encontrado para entidad 'entrevista'");
+                throw new RuntimeException("Estado inicial 'PENDIENTE DE CONFIRMACION' no encontrado para entidad 'entrevista'");
             }
             UbicacionDTO ubicacion = ubicacionService.create(
                     UbicacionDTO.builder().direccion(input.ubicacion()).zonaurbana(true).build());
