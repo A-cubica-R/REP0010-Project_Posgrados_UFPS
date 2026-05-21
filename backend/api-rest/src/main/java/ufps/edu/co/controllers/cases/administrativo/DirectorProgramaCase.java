@@ -58,6 +58,7 @@ import ufps.edu.co.records.input.entity.ProgramaInput.PROGRAMA_FIND;
 import ufps.edu.co.records.output.entity.AdministrativoOutput;
 import ufps.edu.co.records.output.entity.CohorteDetalleOutput;
 import ufps.edu.co.records.output.entity.CohorteListadoOutput;
+import ufps.edu.co.records.output.entity.CohorteResumenOutput;
 import ufps.edu.co.records.output.entity.ListaAdmitidosResumenOutput;
 import ufps.edu.co.records.output.entity.CriteriosCohorteOutput;
 import ufps.edu.co.records.output.entity.ProgramaInicioOutput;
@@ -211,6 +212,16 @@ public class DirectorProgramaCase {
         try {
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(aspiranteProcessor.createCohorte(programaId, body));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @GetMapping(value = "/programa/{programaId}/cohortes")
+    public ResponseEntity<List<CohorteResumenOutput>> listCohorteResumen(@PathVariable Integer programaId) {
+        try {
+            return ResponseEntity.status(HttpStatus.CREATED).body(aspiranteProcessor.getCohortesByProgramaResumen(programaId));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();

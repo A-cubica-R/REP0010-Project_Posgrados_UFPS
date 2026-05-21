@@ -568,9 +568,9 @@ public class AspiranteProcessor implements
                 .idEstado(estadoSemestre.getId())
                 .build());
 
-        EstadoDTO estadoCohorte = estadoService.findByTipoAndEntidad("ABIERTA", "cohorte");
+        EstadoDTO estadoCohorte = estadoService.findByTipoAndEntidad("CERRADA", "cohorte");
         if (estadoCohorte == null) {
-            throw new RuntimeException("No hay estado ABIERTA configurado para cohorte");
+            throw new RuntimeException("No hay estado CERRADA configurado para cohorte");
         }
 
         List<ModalidadDTO> modalidades = modalidadService.findAll();
@@ -595,7 +595,7 @@ public class AspiranteProcessor implements
         return CohorteListadoOutput.builder()
                 .id(cohorte.getId())
                 .nombre(cohorte.getNombre())
-                .activa(true)
+                .activa(false)
                 .inscritos(0)
                 .admitidos(0)
                 .cupos(cohorte.getCupos())
