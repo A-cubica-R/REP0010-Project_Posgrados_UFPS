@@ -24,16 +24,20 @@ import org.springframework.web.multipart.MultipartFile;
 import ufps.edu.co.processor.crud.AspiranteProcessor;
 import ufps.edu.co.processor.crud.DocumentoProcessor;
 import ufps.edu.co.processor.crud.EntrevistaProcessor;
+import ufps.edu.co.processor.crud.PruebaProcessor;
 import ufps.edu.co.records.input.entity.AspiranteInput.ASPIRANTE_FIND;
 import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_CANCELAR_REQUEST;
 import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_FIND;
 import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_REQUEST_CHANGE;
+import ufps.edu.co.records.input.entity.PruebaInput.PRUEBA_CANCELAR_REQUEST;
 import ufps.edu.co.records.output.entity.AspiranteDocumentosOutput;
 import ufps.edu.co.records.output.entity.DocumentoAspiranteOutput;
 import ufps.edu.co.records.output.entity.EntrevistaOutput;
 import ufps.edu.co.records.output.entity.EntrevistaResumenOutput;
 import ufps.edu.co.records.output.entity.EntrevistaSimpleOutput;
 import ufps.edu.co.records.output.entity.PasoProcesoOutput;
+import ufps.edu.co.records.output.entity.PruebaResumenOutput;
+import ufps.edu.co.records.output.entity.PruebaSimpleOutput;
 import ufps.edu.co.rest.dto.AspiranteDTO;
 import ufps.edu.co.rest.dto.CohorteDTO;
 import ufps.edu.co.rest.dto.DocumentoDTO;
@@ -81,6 +85,9 @@ public class AspiranteCase {
 
     @Autowired
     private EntrevistaProcessor entrevistaProcessor;
+
+    @Autowired
+    private PruebaProcessor pruebaProcessor;
 
     @GetMapping("/{idAspirante}/estado-proceso")
     public ResponseEntity<List<PasoProcesoOutput>> getEstadoProceso(@PathVariable Integer idAspirante) {
@@ -250,5 +257,30 @@ public class AspiranteCase {
                 .estado(o.estado() != null ? o.estado().tipo() : null)
                 .motivocambio(null)
                 .build();
+    }
+
+    @GetMapping("/{idAspirante}/pruebas")
+    public ResponseEntity<List<PruebaResumenOutput>> getPruebasByAspirante(
+            @PathVariable Integer idAspirante) {
+        return ResponseEntity.ok(pruebaProcessor.findByIdAspirante(new ASPIRANTE_FIND(idAspirante)));
+    }
+
+    @PatchMapping("/pruebas/{idPrueba}/aceptar")
+    public ResponseEntity<PruebaSimpleOutput> aceptarPrueba(@PathVariable Integer idPrueba) {
+        return ResponseEntity.ok(pruebaProcessor.confirmarPrueba(idPrueba));
+    }
+
+    @PatchMapping(value = "/pruebas/{idPrueba}/solicitar-cambio", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<PruebaSimpleOutput> solicitarCambioPrueba(
+            @PathVariable Integer idPrueba,
+            @RequestBody PRUEBA_CANCELAR_REQUEST body) {
+        return ResponseEntity.ok(pruebaProcessor.solicitarCambioPrueba(idPrueba, body.motivocambio()));
+    }
+
+    @PatchMapping(value = "/pruebas/{idPrueba}/cancelar", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<PruebaSimpleOutput> cancelarPrueba(
+            @PathVariable Integer idPrueba,
+            @RequestBody PRUEBA_CANCELAR_REQUEST body) {
+        return ResponseEntity.ok(pruebaProcessor.cancelarPrueba(idPrueba, body.motivocambio()));
     }
 }

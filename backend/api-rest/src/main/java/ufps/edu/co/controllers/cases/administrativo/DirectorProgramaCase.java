@@ -32,6 +32,7 @@ import ufps.edu.co.processor.crud.CriterioevaluacionProcessor;
 import ufps.edu.co.processor.crud.DocumentoProcessor;
 import ufps.edu.co.processor.crud.EntrevistaProcessor;
 import ufps.edu.co.processor.crud.ListaadmitidosProcessor;
+import ufps.edu.co.processor.crud.PruebaProcessor;
 import ufps.edu.co.records.input.entity.AdministrativoInput.ADMINISTRATIVO_FIND;
 import ufps.edu.co.records.input.entity.AspiranteInput.ASPIRANTE_FIND;
 import ufps.edu.co.records.input.entity.CalificacioncriterioInput.CALIFICACION_PUNTAJE_REQUEST;
@@ -73,6 +74,11 @@ import ufps.edu.co.records.output.entity.EntrevistaOutput;
 import ufps.edu.co.records.output.entity.EntrevistaResumenOutput;
 import ufps.edu.co.records.output.entity.EntrevistaSimpleOutput;
 import ufps.edu.co.records.output.entity.ListaadmitidosOutput;
+import ufps.edu.co.records.input.entity.PruebaInput.PRUEBA_CANCELAR_REQUEST;
+import ufps.edu.co.records.input.entity.PruebaInput.PRUEBA_CREAR_REQUEST;
+import ufps.edu.co.records.input.entity.PruebaInput.PRUEBA_REAGENDAR_REQUEST;
+import ufps.edu.co.records.output.entity.PruebaResumenOutput;
+import ufps.edu.co.records.output.entity.PruebaSimpleOutput;
 import ufps.edu.co.services.EmailService;
 
 import ufps.edu.co.services.PdfGeneratorService;
@@ -110,6 +116,9 @@ public class DirectorProgramaCase {
 
     @Autowired
     private CalificacioncriterioProcessor calificacioncriterioProcessor;
+
+    @Autowired
+    private PruebaProcessor pruebaProcessor;
 
     @Autowired
     private CriterioevaluacionProcessor criterioevaluacionProcessor;
@@ -491,6 +500,67 @@ public class DirectorProgramaCase {
                     .estado(o.estado() != null ? o.estado().tipo() : null)
                     .motivocambio(o.motivocambio())
                     .build());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    // --- Pruebas ---
+
+    @GetMapping("/aspirantes/{idAspirante}/pruebas")
+    public ResponseEntity<List<PruebaResumenOutput>> findPruebasByAspiranteId(
+            @PathVariable Integer idAspirante) {
+        try {
+            return ResponseEntity.ok(pruebaProcessor.findByIdAspirante(new ASPIRANTE_FIND(idAspirante)));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PostMapping(value = "/aspirantes/{idAspirante}/pruebas/crear", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<PruebaResumenOutput> crearPrueba(
+            @PathVariable Integer idAspirante,
+            @RequestBody PRUEBA_CREAR_REQUEST request) {
+        try {
+            return ResponseEntity.ok(pruebaProcessor.crearPrueba(idAspirante, request));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PatchMapping(value = "/pruebas/{idPrueba}/reagendar", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<PruebaResumenOutput> reagendarPrueba(
+            @PathVariable Integer idPrueba,
+            @RequestBody PRUEBA_REAGENDAR_REQUEST request) {
+        try {
+            return ResponseEntity.ok(pruebaProcessor.reagendarPrueba(idPrueba, request));
+        } catch (IllegalStateException e) {
+            return ResponseEntity.badRequest().build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PatchMapping("/pruebas/{idPrueba}/completar")
+    public ResponseEntity<PruebaSimpleOutput> completarPrueba(@PathVariable Integer idPrueba) {
+        try {
+            return ResponseEntity.ok(pruebaProcessor.completarPrueba(idPrueba));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PatchMapping(value = "/pruebas/{idPrueba}/cancelar", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<PruebaSimpleOutput> cancelarPrueba(
+            @PathVariable Integer idPrueba,
+            @RequestBody PRUEBA_CANCELAR_REQUEST request) {
+        try {
+            return ResponseEntity.ok(pruebaProcessor.cancelarPrueba(idPrueba, request.motivocambio()));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
