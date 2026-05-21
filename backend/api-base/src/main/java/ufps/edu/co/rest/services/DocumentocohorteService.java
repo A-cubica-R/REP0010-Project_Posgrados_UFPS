@@ -55,4 +55,8 @@ public class DocumentocohorteService extends GenericService<DocumentocohorteEnti
                 .orElseThrow(() -> new RuntimeException("Documentocohorte no encontrado con id: " + id));
         repository.deleteById(id);
     }
+
+    public List<DocumentocohorteDTO> findByIdCohorte(Integer idCohorte) {
+        return entityListToDtoList(repository.findByIdCohorte(idCohorte));
+    }
 }

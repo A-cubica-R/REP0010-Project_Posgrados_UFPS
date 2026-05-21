@@ -638,6 +638,16 @@ public class AspiranteProcessor implements
             long inscritos = service.countByCohorte(cohorte.getId());
             long validados = service.countValidadosByCohorte(cohorte.getId());
             Long admitidos = activa ? null : admitidoService.countByCohorte(cohorte.getId());
+
+            DocumentocohorteService documentocohorteService = this.documentocohorteService;
+            List<DocumentocohorteOutput> documentos = documentocohorteService.findByIdCohorte(cohorte.getId()).stream()
+                    .map(d -> DocumentocohorteOutput.builder()
+                            .id(d.getId())
+                            .nombre(d.getNombre())
+                            .obligatorio(d.getObligatorio())
+                            .build())
+                    .toList();
+
             return CohorteResumenOutput.builder()
                     .id(cohorte.getId())
                     .nombre(cohorte.getNombre())
@@ -649,6 +659,7 @@ public class AspiranteProcessor implements
                     .totalInscritos(inscritos)
                     .totalValidados(validados)
                     .totalAdmitidos(admitidos)
+                    .documentos(documentos)
                     .build();
         }).toList();
     }
