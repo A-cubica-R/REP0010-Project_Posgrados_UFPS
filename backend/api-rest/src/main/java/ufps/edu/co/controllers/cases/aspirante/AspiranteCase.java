@@ -25,6 +25,7 @@ import ufps.edu.co.processor.crud.AspiranteProcessor;
 import ufps.edu.co.processor.crud.DocumentoProcessor;
 import ufps.edu.co.processor.crud.EntrevistaProcessor;
 import ufps.edu.co.records.input.entity.AspiranteInput.ASPIRANTE_FIND;
+import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_CANCELAR_REQUEST;
 import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_FIND;
 import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_REQUEST_CHANGE;
 import ufps.edu.co.records.output.entity.AspiranteDocumentosOutput;
@@ -216,9 +217,8 @@ public class AspiranteCase {
         return ResponseEntity.ok(toSimpleEntrevista(o));
     }
 
-    @PatchMapping(value = "/{id}/entrevistas/{idEntrevista}/solicitar-cambio", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PatchMapping(value = "/entrevistas/{idEntrevista}/solicitar-cambio", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<EntrevistaSimpleOutput> solicitarCambioEntrevista(
-            @PathVariable Integer id,
             @PathVariable Integer idEntrevista,
             @RequestBody ENTREVISTA_REQUEST_CHANGE body) {
         EntrevistaOutput o = entrevistaProcessor.requestChangeInterview(idEntrevista, body.motivocambio());
@@ -230,12 +230,17 @@ public class AspiranteCase {
                 .build());
     }
 
-    @PatchMapping("/{id}/entrevistas/{idEntrevista}/cancelar")
+    @PatchMapping(value = "/entrevistas/{idEntrevista}/cancelar", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<EntrevistaSimpleOutput> cancelarEntrevista(
-            @PathVariable Integer id,
-            @PathVariable Integer idEntrevista) {
-        EntrevistaOutput o = entrevistaProcessor.cancelInterview(new ENTREVISTA_FIND(idEntrevista));
-        return ResponseEntity.ok(toSimpleEntrevista(o));
+            @PathVariable Integer idEntrevista,
+            @RequestBody ENTREVISTA_CANCELAR_REQUEST body) {
+        EntrevistaOutput o = entrevistaProcessor.cancelInterview(idEntrevista, body.motivocambio());
+        return ResponseEntity.ok(EntrevistaSimpleOutput.builder()
+                .idEntrevista(o.id())
+                .idAspirante(o.idAspirante())
+                .estado(o.estado() != null ? o.estado().tipo() : null)
+                .motivocambio(o.motivocambio())
+                .build());
     }
 
     private EntrevistaSimpleOutput toSimpleEntrevista(EntrevistaOutput o) {

@@ -16,6 +16,7 @@ import ufps.edu.co.domain.exceptions.DomainException;
 import ufps.edu.co.domain.exceptions.errorcodes.CalificacioncriterioErrorCode;
 import ufps.edu.co.maps.specific.CalificacioncriterioMap;
 import ufps.edu.co.records.input.entity.CalificacioncriterioInput.*;
+import ufps.edu.co.records.output.entity.CalificacionCriterioSimpleOutput;
 import ufps.edu.co.records.output.entity.CalificacioncriterioOutput;
 import ufps.edu.co.rest.dto.AspiranteDTO;
 import ufps.edu.co.rest.dto.CalificacioncriterioDTO;
@@ -118,6 +119,20 @@ public class CalificacioncriterioProcessor implements
 
     public List<CalificacioncriterioOutput> findByIdCriterio(Integer idCriterio) {
         return service.findByIdCriterio(idCriterio).stream().map(map::toOutput).toList();
+    }
+
+    public CalificacionCriterioSimpleOutput calificarCriterio(Integer idAspirante, Integer idCriterio, BigDecimal puntaje) {
+        CALIFICACIONCRITERIO_CREATE input = new CALIFICACIONCRITERIO_CREATE(idAspirante, idCriterio, puntaje, null);
+        CalificacioncriterioOutput result = create(input);
+        CriterioevaluacionDTO criterio = criterioaceptacionService.findById(idCriterio);
+        AspiranteDTO aspirante = aspiranteService.findById(idAspirante);
+        return CalificacionCriterioSimpleOutput.builder()
+                .idAspirante(result.idAspirante())
+                .idCriterio(result.idCriterio())
+                .nombreCriterio(criterio.getNombre())
+                .puntajeObtenido(result.puntuacion())
+                .puntajeTotal(aspirante.getPuntuacion())
+                .build();
     }
 
     private void actualizarEstadoCalificacion(Integer idAspirante) {

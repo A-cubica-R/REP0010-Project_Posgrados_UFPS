@@ -49,4 +49,8 @@ public enum CalificacioncriterioInput {
     public record CALIFICACIONCRITERIO_FIND_BY_CRITERIO(
             @NotNull Integer idCriterio) {
     }
+
+    public record CALIFICACION_PUNTAJE_REQUEST(
+            @NotNull @DecimalMin("0") @DecimalMax("100") BigDecimal puntajeObtenido) {
+    }
 }

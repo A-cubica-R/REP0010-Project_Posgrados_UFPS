@@ -34,6 +34,7 @@ import ufps.edu.co.processor.crud.EntrevistaProcessor;
 import ufps.edu.co.processor.crud.ListaadmitidosProcessor;
 import ufps.edu.co.records.input.entity.AdministrativoInput.ADMINISTRATIVO_FIND;
 import ufps.edu.co.records.input.entity.AspiranteInput.ASPIRANTE_FIND;
+import ufps.edu.co.records.input.entity.CalificacioncriterioInput.CALIFICACION_PUNTAJE_REQUEST;
 import ufps.edu.co.records.input.entity.CalificacioncriterioInput.CALIFICACIONCRITERIO_CREATE;
 import ufps.edu.co.records.input.entity.CohorteInput.COHORTE_DIRECTOR_CREATE;
 import ufps.edu.co.records.input.entity.CohorteInput.COHORTE_DIRECTOR_UPDATE;
@@ -139,7 +140,7 @@ public class DirectorProgramaCase {
         }
     }
 
-    @GetMapping("/{idAspirante}/criterios")
+    @GetMapping("/aspirantes/{idAspirante}/criterios")
     public ResponseEntity<AspiranteCriteriosOutput> getCriteriosCalificacionByAspirantId(
             @PathVariable Integer idAspirante) {
         try {
@@ -252,20 +253,14 @@ public class DirectorProgramaCase {
         }
     }
 
-    @PostMapping(value = "/{idAspirante}/criterios/calificar", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PatchMapping(value = "/aspirantes/{idAspirante}/criterios/{idCriterio}/calificar", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CalificacionCriterioSimpleOutput> calificarCriterio(
             @PathVariable Integer idAspirante,
-            @RequestBody CALIFICACIONCRITERIO_CREATE request) {
+            @PathVariable Integer idCriterio,
+            @RequestBody CALIFICACION_PUNTAJE_REQUEST request) {
         try {
-            CalificacioncriterioOutput result = calificacioncriterioProcessor.create(request);
-            CriterioevaluacionOutput criterio = criterioevaluacionProcessor.findById(
-                    new CRITERIOEVALUACION_FIND(result.idCriterio()));
-            return ResponseEntity.ok(CalificacionCriterioSimpleOutput.builder()
-                    .idAspirante(result.idAspirante())
-                    .idCriterio(result.idCriterio())
-                    .nombreCriterio(criterio.nombre())
-                    .puntuacion(result.puntuacion())
-                    .build());
+            return ResponseEntity.ok(
+                    calificacioncriterioProcessor.calificarCriterio(idAspirante, idCriterio, request.puntajeObtenido()));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
