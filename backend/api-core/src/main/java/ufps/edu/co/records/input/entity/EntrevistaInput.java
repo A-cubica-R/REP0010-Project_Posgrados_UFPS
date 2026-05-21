@@ -65,4 +65,9 @@ public enum EntrevistaInput {
             @NotNull Integer id,
             @NotNull BigDecimal calificacion) implements PatchType {
     }
+
+    public record ENTREVISTA_REQUEST_CHANGE(
+            @NotNull Integer id,
+            String motivocambio) implements PatchType {
+    }
 }

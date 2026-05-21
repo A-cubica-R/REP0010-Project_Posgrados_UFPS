@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -39,8 +40,10 @@ import ufps.edu.co.records.input.entity.CohorteInput.COHORTE_DIRECTOR_UPDATE;
 import ufps.edu.co.records.input.entity.CriterioevaluacionInput.CRITERIO_BULK_SAVE;
 import ufps.edu.co.records.input.entity.CriterioevaluacionInput.CRITERIO_CREATE_BODY;
 import ufps.edu.co.records.input.entity.CriterioevaluacionInput.CRITERIO_UPDATE_BODY;
+import ufps.edu.co.records.input.entity.CriterioevaluacionInput.CRITERIOEVALUACION_FIND;
 import ufps.edu.co.records.input.entity.CalificacioncriterioInput.CALIFICACIONCRITERIO_FIND_BY_ASPIRANTE;
 import ufps.edu.co.records.input.entity.CalificacioncriterioInput.CALIFICACIONCRITERIO_UPDATE;
+import ufps.edu.co.records.output.entity.CalificacionCriterioSimpleOutput;
 import ufps.edu.co.records.output.entity.CalificacioncriterioOutput;
 import ufps.edu.co.records.output.entity.CriterioevaluacionOutput;
 import ufps.edu.co.records.output.entity.SuccessOutput;
@@ -64,6 +67,7 @@ import ufps.edu.co.records.output.entity.AspiranteOutput;
 import ufps.edu.co.records.output.entity.DocumentoOutput;
 import ufps.edu.co.records.output.entity.EntrevistaOutput;
 import ufps.edu.co.records.output.entity.EntrevistaResumenOutput;
+import ufps.edu.co.records.output.entity.EntrevistaSimpleOutput;
 import ufps.edu.co.records.output.entity.ListaadmitidosOutput;
 import ufps.edu.co.services.EmailService;
 
@@ -132,11 +136,11 @@ public class DirectorProgramaCase {
         }
     }
 
-    @PostMapping(value = "/aspirants/criteriosById", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping("/{idAspirante}/criterios")
     public ResponseEntity<AspiranteCriteriosOutput> getCriteriosCalificacionByAspirantId(
-            @RequestBody ASPIRANTE_FIND request) {
+            @PathVariable Integer idAspirante) {
         try {
-            return ResponseEntity.ok(aspiranteProcessor.findCriteriosCalificacion(request));
+            return ResponseEntity.ok(aspiranteProcessor.findCriteriosCalificacion(new ASPIRANTE_FIND(idAspirante)));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
@@ -245,11 +249,20 @@ public class DirectorProgramaCase {
         }
     }
 
-    @PostMapping(value = "/calificacion/criterio/create", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CalificacioncriterioOutput> createCalificacionCriterio(
+    @PostMapping(value = "/{idAspirante}/criterios/calificar", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<CalificacionCriterioSimpleOutput> calificarCriterio(
+            @PathVariable Integer idAspirante,
             @RequestBody CALIFICACIONCRITERIO_CREATE request) {
         try {
-            return ResponseEntity.ok(calificacioncriterioProcessor.create(request));
+            CalificacioncriterioOutput result = calificacioncriterioProcessor.create(request);
+            CriterioevaluacionOutput criterio = criterioevaluacionProcessor.findById(
+                    new CRITERIOEVALUACION_FIND(result.idCriterio()));
+            return ResponseEntity.ok(CalificacionCriterioSimpleOutput.builder()
+                    .idAspirante(result.idAspirante())
+                    .idCriterio(result.idCriterio())
+                    .nombreCriterio(criterio.nombre())
+                    .puntuacion(result.puntuacion())
+                    .build());
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
@@ -415,33 +428,34 @@ public class DirectorProgramaCase {
         }
     }
 
-    @PostMapping(value = "/aspirants/interviewsById", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping("/{idAspirante}/entrevistas")
     public ResponseEntity<List<EntrevistaResumenOutput>> findInterviewsByAspirantId(
-            @RequestBody ASPIRANTE_FIND request) {
+            @PathVariable Integer idAspirante) {
         try {
-            List<EntrevistaResumenOutput> outputs = entrevistaProcessor.findByIdAspirante(request);
-            return ResponseEntity.ok(outputs);
+            return ResponseEntity.ok(entrevistaProcessor.findByIdAspirante(new ASPIRANTE_FIND(idAspirante)));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
     }
 
-    @PostMapping(value = "/interview/schedule", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<EntrevistaOutput> scheduleInterview(@RequestBody ENTREVISTA_CREATE request) {
+    @PostMapping(value = "/{idAspirante}/entrevistas/agendar", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<EntrevistaResumenOutput> scheduleInterview(
+            @PathVariable Integer idAspirante,
+            @RequestBody ENTREVISTA_CREATE request) {
         try {
-            EntrevistaOutput output = entrevistaProcessor.create(request);
-            return ResponseEntity.ok(output);
+            return ResponseEntity.ok(toResumen(entrevistaProcessor.create(request)));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
         }
     }
 
-    @PutMapping(value = "/interview/reschedule", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<EntrevistaOutput> rescheduleInterview(@RequestBody ENTREVISTA_RESCHEDULE request) {
+    @PatchMapping(value = "/{idAspirante}/entrevistas/reagendar", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<EntrevistaResumenOutput> rescheduleInterview(
+            @PathVariable Integer idAspirante,
+            @RequestBody ENTREVISTA_RESCHEDULE request) {
         try {
-            EntrevistaOutput output = entrevistaProcessor.reschedule(request);
-            return ResponseEntity.ok(output);
+            return ResponseEntity.ok(toResumen(entrevistaProcessor.reschedule(request)));
         } catch (IllegalStateException e) {
             return ResponseEntity.badRequest().build();
         } catch (Exception e) {
@@ -450,26 +464,49 @@ public class DirectorProgramaCase {
         }
     }
 
-    @PutMapping(value = "/interview/complete", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<EntrevistaOutput> completeInterview(@RequestBody ENTREVISTA_FIND request) {
+    @PatchMapping(value = "/{idAspirante}/entrevistas/completar", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<EntrevistaSimpleOutput> completeInterview(
+            @PathVariable Integer idAspirante,
+            @RequestBody ENTREVISTA_FIND request) {
         try {
-            EntrevistaOutput output = entrevistaProcessor.completeInterview(request);
-            return ResponseEntity.ok(output);
+            return ResponseEntity.ok(toSimple(entrevistaProcessor.completeInterview(request)));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
         }
     }
 
-    @PutMapping(value = "/interview/cancel", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<EntrevistaOutput> cancelInterview(@RequestBody ENTREVISTA_FIND request) {
+    @PatchMapping(value = "/{idAspirante}/entrevistas/cancelar", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<EntrevistaSimpleOutput> cancelInterview(
+            @PathVariable Integer idAspirante,
+            @RequestBody ENTREVISTA_FIND request) {
         try {
-            EntrevistaOutput output = entrevistaProcessor.cancelInterview(request);
-            return ResponseEntity.ok(output);
+            return ResponseEntity.ok(toSimple(entrevistaProcessor.cancelInterview(request)));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
         }
+    }
+
+    private EntrevistaResumenOutput toResumen(EntrevistaOutput o) {
+        return EntrevistaResumenOutput.builder()
+                .id(o.id())
+                .fecha(o.fecha())
+                .hora(o.tiempo())
+                .idEstado(o.idEstado())
+                .idTipoentrevista(o.idTipoentrevista())
+                .ubicacion(o.ubicacion() != null ? o.ubicacion().direccion() : null)
+                .motivocambio(o.motivocambio())
+                .build();
+    }
+
+    private EntrevistaSimpleOutput toSimple(EntrevistaOutput o) {
+        return EntrevistaSimpleOutput.builder()
+                .idEntrevista(o.id())
+                .idAspirante(o.idAspirante())
+                .estado(o.estado() != null ? o.estado().tipo() : null)
+                .motivocambio(null)
+                .build();
     }
 
     @PutMapping("/interview/rate")
