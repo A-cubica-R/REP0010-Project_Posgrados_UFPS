@@ -82,9 +82,9 @@ public class AspiranteCase {
     @Autowired
     private EntrevistaProcessor entrevistaProcessor;
 
-    @GetMapping("/{id}/estado")
-    public ResponseEntity<List<PasoProcesoOutput>> getEstadoProceso(@PathVariable Integer id) {
-        List<PasoProcesoOutput> pasos = processor.getPasosProceso(id);
+    @GetMapping("/{idAspirante}/estado-proceso")
+    public ResponseEntity<List<PasoProcesoOutput>> getEstadoProceso(@PathVariable Integer idAspirante) {
+        List<PasoProcesoOutput> pasos = processor.getPasosProceso(idAspirante);
         return ResponseEntity.ok(pasos);
     }
 
