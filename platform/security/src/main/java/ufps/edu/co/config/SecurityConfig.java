@@ -40,6 +40,8 @@ public class SecurityConfig {
 
         private static final String[] DIRECTOR_PROGRAMA_PATHS = {
                         "/api/application/case/director-programa/**",
+                        "/api/application/case/cohortes/**",
+                        "/api/application/case/documentos/**",
                         "/api/dev/endpoint/tipoentrevista/listall",
                         "/api/dev/endpoint/estado/listall"
         };
@@ -77,7 +79,7 @@ public class SecurityConfig {
 
                                                 // Rutas específicas por rol (antes del catch-all)
                                                 .requestMatchers(ASPIRANTE_PATHS)
-                                                .hasAnyRole("ASPIRANTE", "SUPER_ADMINISTRADOR")
+                                                .hasAnyRole("ASPIRANTE", "DIRECTOR_DE_PROGRAMA", "SUPER_ADMINISTRADOR")
 
                                                 // Rutas protegidas para el rol SUPER_ADMINISTRADOR (catch-all)
                                                 .requestMatchers(SUPER_ADMIN_PATHS)

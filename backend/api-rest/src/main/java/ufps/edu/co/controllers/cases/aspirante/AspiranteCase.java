@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import ufps.edu.co.processor.crud.AspiranteProcessor;
+import ufps.edu.co.processor.crud.DocumentoProcessor;
+import ufps.edu.co.records.output.entity.AspiranteDocumentosOutput;
 import ufps.edu.co.records.output.entity.DocumentoAspiranteOutput;
 import ufps.edu.co.records.output.entity.PasoProcesoOutput;
 import ufps.edu.co.rest.dto.AspiranteDTO;
@@ -42,6 +44,9 @@ public class AspiranteCase {
 
     @Autowired
     private AspiranteProcessor processor;
+
+    @Autowired
+    private DocumentoProcessor documentoProcessor;
 
     @Autowired
     private AspiranteService aspiranteService;
@@ -68,6 +73,12 @@ public class AspiranteCase {
     public ResponseEntity<List<PasoProcesoOutput>> getEstadoProceso(@PathVariable Integer id) {
         List<PasoProcesoOutput> pasos = processor.getPasosProceso(id);
         return ResponseEntity.ok(pasos);
+    }
+
+    @GetMapping("/{idAspirante}/documentos")
+    public ResponseEntity<AspiranteDocumentosOutput> getDocumentosDeAspirante(
+            @PathVariable Integer idAspirante) {
+        return ResponseEntity.ok(documentoProcessor.getDocumentosDeAspirante(idAspirante));
     }
 
     @GetMapping("/documentos")
