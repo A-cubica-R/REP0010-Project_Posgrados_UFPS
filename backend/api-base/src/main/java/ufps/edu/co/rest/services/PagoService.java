@@ -55,4 +55,9 @@ public class PagoService extends GenericService<PagoEntity, PagoDTO> {
                 .orElseThrow(() -> new RuntimeException("Pago no encontrado con id: " + id));
         repository.deleteById(id);
     }
+
+    @Transactional(readOnly = true)
+    public List<PagoDTO> findByIdAspirante(Integer idAspirante) {
+        return entityListToDtoList(repository.findByIdAspirante(idAspirante));
+    }
 }

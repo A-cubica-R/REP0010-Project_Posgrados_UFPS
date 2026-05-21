@@ -45,6 +45,8 @@ public class SecurityConfig {
         };
 
         private static final String[] ASPIRANTE_PATHS = {
+                        "/api/application/case/aspirantes/**",
+                        "/api/application/case/inscripciones/**"
         };
 
         @Bean
