@@ -10,5 +10,6 @@ public record AspiranteCalificacionOutput(
         String nombreCompleto,
         Integer idEstado,
         String correo,
-        BigDecimal puntajeTotal
+        BigDecimal puntajeTotal,
+        Integer numerodocumento
 ) implements OutputResponse {}
