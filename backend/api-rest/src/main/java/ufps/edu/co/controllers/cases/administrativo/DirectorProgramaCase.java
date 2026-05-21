@@ -87,6 +87,13 @@ import ufps.edu.co.records.input.entity.PruebaInput.PRUEBA_CREAR_REQUEST;
 import ufps.edu.co.records.input.entity.PruebaInput.PRUEBA_REAGENDAR_REQUEST;
 import ufps.edu.co.records.output.entity.PruebaResumenOutput;
 import ufps.edu.co.records.output.entity.PruebaSimpleOutput;
+<<<<<<< HEAD
+=======
+import ufps.edu.co.rest.dto.AdministrativoDTO;
+import ufps.edu.co.rest.dto.UsuarioDTO;
+import ufps.edu.co.rest.services.AdministrativoService;
+import ufps.edu.co.rest.services.UsuarioService;
+>>>>>>> c0edc62af42c99b09e46a6a90ba6ae32e073f9e1
 import ufps.edu.co.services.EmailService;
 
 import ufps.edu.co.services.PdfGeneratorService;
