@@ -48,10 +48,13 @@ import ufps.edu.co.records.output.entity.CalificacioncriterioOutput;
 import ufps.edu.co.records.output.entity.CriterioevaluacionOutput;
 import ufps.edu.co.records.output.entity.SuccessOutput;
 import ufps.edu.co.records.input.entity.DocumentoInput.DOCUMENTO_FIND;
+import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_CANCELAR_REQUEST;
 import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_CREATE;
 import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_FIND;
 import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_RATE;
+import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_REAGENDAR_REQUEST;
 import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_RESCHEDULE;
+import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_SCHEDULE_REQUEST;
 import ufps.edu.co.records.input.entity.ListaadmitidosInput.GENERATE_LISTA;
 import ufps.edu.co.records.input.entity.ListaadmitidosInput.RECHAZAR_ASPIRANTE;
 import ufps.edu.co.records.input.entity.ProgramaInput.PROGRAMA_FIND;
@@ -428,7 +431,7 @@ public class DirectorProgramaCase {
         }
     }
 
-    @GetMapping("/{idAspirante}/entrevistas")
+    @GetMapping("/aspirantes/{idAspirante}/entrevistas")
     public ResponseEntity<List<EntrevistaResumenOutput>> findInterviewsByAspirantId(
             @PathVariable Integer idAspirante) {
         try {
@@ -438,24 +441,30 @@ public class DirectorProgramaCase {
         }
     }
 
-    @PostMapping(value = "/{idAspirante}/entrevistas/agendar", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/aspirantes/{idAspirante}/entrevistas/agendar", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<EntrevistaResumenOutput> scheduleInterview(
             @PathVariable Integer idAspirante,
-            @RequestBody ENTREVISTA_CREATE request) {
+            @RequestBody ENTREVISTA_SCHEDULE_REQUEST request) {
         try {
-            return ResponseEntity.ok(toResumen(entrevistaProcessor.create(request)));
+            ENTREVISTA_CREATE create = new ENTREVISTA_CREATE(
+                    request.fecha(), request.tiempo(), request.idTipoentrevista(),
+                    idAspirante, request.ubicacion(), null);
+            return ResponseEntity.ok(toResumen(entrevistaProcessor.create(create)));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
         }
     }
 
-    @PatchMapping(value = "/{idAspirante}/entrevistas/reagendar", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PatchMapping(value = "/entrevistas/{idEntrevista}/reagendar", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<EntrevistaResumenOutput> rescheduleInterview(
-            @PathVariable Integer idAspirante,
-            @RequestBody ENTREVISTA_RESCHEDULE request) {
+            @PathVariable Integer idEntrevista,
+            @RequestBody ENTREVISTA_REAGENDAR_REQUEST request) {
         try {
-            return ResponseEntity.ok(toResumen(entrevistaProcessor.reschedule(request)));
+            ENTREVISTA_RESCHEDULE reschedule = new ENTREVISTA_RESCHEDULE(
+                    idEntrevista, request.fecha(), request.tiempo(), request.idTipoentrevista(),
+                    request.ubicacion(), null);
+            return ResponseEntity.ok(toResumen(entrevistaProcessor.reschedule(reschedule)));
         } catch (IllegalStateException e) {
             return ResponseEntity.badRequest().build();
         } catch (Exception e) {
@@ -464,24 +473,29 @@ public class DirectorProgramaCase {
         }
     }
 
-    @PatchMapping(value = "/{idAspirante}/entrevistas/completar", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PatchMapping(value = "/entrevistas/{idEntrevista}/completar")
     public ResponseEntity<EntrevistaSimpleOutput> completeInterview(
-            @PathVariable Integer idAspirante,
-            @RequestBody ENTREVISTA_FIND request) {
+            @PathVariable Integer idEntrevista) {
         try {
-            return ResponseEntity.ok(toSimple(entrevistaProcessor.completeInterview(request)));
+            return ResponseEntity.ok(toSimple(entrevistaProcessor.completeInterview(new ENTREVISTA_FIND(idEntrevista))));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
         }
     }
 
-    @PatchMapping(value = "/{idAspirante}/entrevistas/cancelar", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PatchMapping(value = "/entrevistas/{idEntrevista}/cancelar", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<EntrevistaSimpleOutput> cancelInterview(
-            @PathVariable Integer idAspirante,
-            @RequestBody ENTREVISTA_FIND request) {
+            @PathVariable Integer idEntrevista,
+            @RequestBody ENTREVISTA_CANCELAR_REQUEST request) {
         try {
-            return ResponseEntity.ok(toSimple(entrevistaProcessor.cancelInterview(request)));
+            EntrevistaOutput o = entrevistaProcessor.cancelInterview(idEntrevista, request.motivocambio());
+            return ResponseEntity.ok(EntrevistaSimpleOutput.builder()
+                    .idEntrevista(o.id())
+                    .idAspirante(o.idAspirante())
+                    .estado(o.estado() != null ? o.estado().tipo() : null)
+                    .motivocambio(o.motivocambio())
+                    .build());
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
@@ -492,9 +506,11 @@ public class DirectorProgramaCase {
         return EntrevistaResumenOutput.builder()
                 .id(o.id())
                 .fecha(o.fecha())
-                .hora(o.tiempo())
+                .tiempo(o.tiempo())
                 .idEstado(o.idEstado())
+                .estado(o.estado() != null ? o.estado().tipo() : null)
                 .idTipoentrevista(o.idTipoentrevista())
+                .tipoentrevista(o.tipoentrevista() != null ? o.tipoentrevista().tipo() : null)
                 .ubicacion(o.ubicacion() != null ? o.ubicacion().direccion() : null)
                 .motivocambio(o.motivocambio())
                 .build();

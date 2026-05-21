@@ -10,9 +10,11 @@ import ufps.edu.co.records.OutputResponse;
 public record EntrevistaResumenOutput(
         Integer id,
         LocalDate fecha,
-        LocalTime hora,
+        LocalTime tiempo,
         Integer idEstado,
+        String estado,
         Integer idTipoentrevista,
+        String tipoentrevista,
         String ubicacion,
         String motivocambio
 ) implements OutputResponse {}

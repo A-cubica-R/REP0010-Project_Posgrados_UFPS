@@ -150,12 +150,16 @@ public class EntrevistaProcessor implements
     }
 
     public EntrevistaOutput cancelInterview(ENTREVISTA_FIND input) {
+        return cancelInterview(input.id(), null);
+    }
+
+    public EntrevistaOutput cancelInterview(Integer id, String motivocambio) {
         try {
             EstadoDTO estadoCancelada = estadoService.findByTipoAndEntidad("CANCELADA", "entrevista");
             if (estadoCancelada == null) {
                 throw new RuntimeException("Estado 'CANCELADA' no encontrado para entidad 'entrevista'");
             }
-            EntrevistaDTO updated = service.changeEstado(input.id(), estadoCancelada.getId(), "CONFIRMADA");
+            EntrevistaDTO updated = service.changeEstadoWithMotivo(id, estadoCancelada.getId(), "CONFIRMADA", motivocambio);
             return map.toOutput(updated);
         } catch (Exception e) {
             throw new RuntimeException("Error cancelling Entrevista: " + e.getMessage(), e);
@@ -205,12 +209,16 @@ public class EntrevistaProcessor implements
         try {
             return service.findByIdAspirante(input.id()).stream().map(dto -> {
                 String direccion = dto.getUbicacion() != null ? dto.getUbicacion().getDireccion() : null;
+                String estadoNombre = dto.getEstado() != null ? dto.getEstado().getTipo() : null;
+                String tipoNombre = dto.getTipoentrevista() != null ? dto.getTipoentrevista().getTipo() : null;
                 return EntrevistaResumenOutput.builder()
                         .id(dto.getId())
                         .fecha(dto.getFecha())
-                        .hora(dto.getTiempo())
+                        .tiempo(dto.getTiempo())
                         .idEstado(dto.getIdEstado())
+                        .estado(estadoNombre)
                         .idTipoentrevista(dto.getIdTipoentrevista())
+                        .tipoentrevista(tipoNombre)
                         .ubicacion(direccion)
                         .motivocambio(dto.getMotivocambio())
                         .build();
