@@ -103,6 +103,11 @@ public class AspiranteService extends GenericService<AspiranteEntity, AspiranteD
         return repository.countByIdCohorteAndEstadoTipoIn(cohorteId, List.of("VALIDADO_CALIFICADO"));
     }
 
+    @Transactional(readOnly = true)
+    public AspiranteDTO findByIdPersona(Integer idPersona) {
+        return entityToDto(repository.findFirstByIdPersona(idPersona));
+    }
+
     public AspiranteDTO updateEstado(Integer idAspirante, Integer idEstado) {
         AspiranteEntity entity = repository.findById(idAspirante)
                 .orElseThrow(() -> new RuntimeException("Aspirante no encontrado con id: " + idAspirante));
