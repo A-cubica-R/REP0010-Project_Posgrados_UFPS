@@ -12,8 +12,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,8 +23,15 @@ import org.springframework.web.multipart.MultipartFile;
 
 import ufps.edu.co.processor.crud.AspiranteProcessor;
 import ufps.edu.co.processor.crud.DocumentoProcessor;
+import ufps.edu.co.processor.crud.EntrevistaProcessor;
+import ufps.edu.co.records.input.entity.AspiranteInput.ASPIRANTE_FIND;
+import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_FIND;
+import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_REQUEST_CHANGE;
 import ufps.edu.co.records.output.entity.AspiranteDocumentosOutput;
 import ufps.edu.co.records.output.entity.DocumentoAspiranteOutput;
+import ufps.edu.co.records.output.entity.EntrevistaOutput;
+import ufps.edu.co.records.output.entity.EntrevistaResumenOutput;
+import ufps.edu.co.records.output.entity.EntrevistaSimpleOutput;
 import ufps.edu.co.records.output.entity.PasoProcesoOutput;
 import ufps.edu.co.rest.dto.AspiranteDTO;
 import ufps.edu.co.rest.dto.CohorteDTO;
@@ -68,6 +77,9 @@ public class AspiranteCase {
 
     @Autowired
     private S3Service s3Service;
+
+    @Autowired
+    private EntrevistaProcessor entrevistaProcessor;
 
     @GetMapping("/{id}/estado")
     public ResponseEntity<List<PasoProcesoOutput>> getEstadoProceso(@PathVariable Integer id) {
@@ -189,5 +201,49 @@ public class AspiranteCase {
         if (keyfile == null) return null;
         int idx = keyfile.indexOf('-');
         return idx >= 0 && idx < keyfile.length() - 1 ? keyfile.substring(idx + 1) : keyfile;
+    }
+
+    @GetMapping("/{idAspirante}/entrevistas")
+    public ResponseEntity<List<EntrevistaResumenOutput>> getEntrevistasByAspirante(
+            @PathVariable Integer idAspirante) {
+        return ResponseEntity.ok(entrevistaProcessor.findByIdAspirante(new ASPIRANTE_FIND(idAspirante)));
+    }
+
+    @PatchMapping("/entrevistas/{idEntrevista}/aceptar")
+    public ResponseEntity<EntrevistaSimpleOutput> aceptarEntrevista(
+            @PathVariable Integer idEntrevista) {
+        EntrevistaOutput o = entrevistaProcessor.confirmInterview(new ENTREVISTA_FIND(idEntrevista));
+        return ResponseEntity.ok(toSimpleEntrevista(o));
+    }
+
+    @PatchMapping(value = "/{id}/entrevistas/{idEntrevista}/solicitar-cambio", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<EntrevistaSimpleOutput> solicitarCambioEntrevista(
+            @PathVariable Integer id,
+            @PathVariable Integer idEntrevista,
+            @RequestBody ENTREVISTA_REQUEST_CHANGE body) {
+        EntrevistaOutput o = entrevistaProcessor.requestChangeInterview(idEntrevista, body.motivocambio());
+        return ResponseEntity.ok(EntrevistaSimpleOutput.builder()
+                .idEntrevista(o.id())
+                .idAspirante(o.idAspirante())
+                .estado(o.estado() != null ? o.estado().tipo() : null)
+                .motivocambio(o.motivocambio())
+                .build());
+    }
+
+    @PatchMapping("/{id}/entrevistas/{idEntrevista}/cancelar")
+    public ResponseEntity<EntrevistaSimpleOutput> cancelarEntrevista(
+            @PathVariable Integer id,
+            @PathVariable Integer idEntrevista) {
+        EntrevistaOutput o = entrevistaProcessor.cancelInterview(new ENTREVISTA_FIND(idEntrevista));
+        return ResponseEntity.ok(toSimpleEntrevista(o));
+    }
+
+    private EntrevistaSimpleOutput toSimpleEntrevista(EntrevistaOutput o) {
+        return EntrevistaSimpleOutput.builder()
+                .idEntrevista(o.id())
+                .idAspirante(o.idAspirante())
+                .estado(o.estado() != null ? o.estado().tipo() : null)
+                .motivocambio(null)
+                .build();
     }
 }
