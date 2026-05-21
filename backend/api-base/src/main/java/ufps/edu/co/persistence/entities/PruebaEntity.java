@@ -5,6 +5,8 @@
 package ufps.edu.co.persistence.entities;
 
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -44,6 +46,15 @@ public class PruebaEntity implements Serializable {
     @Column(name="descripcion", length=65535)
     private String     descripcion ;
 
+    @Column(name="fecha")
+    private LocalDate fecha;
+
+    @Column(name="tiempo")
+    private LocalTime tiempo;
+
+    @Column(name="motivocambio", columnDefinition="TEXT")
+    private String motivocambio;
+
     @Column(name="id_aspirante", nullable=false)
     private Integer        idAspirante ;
 
@@ -52,6 +63,12 @@ public class PruebaEntity implements Serializable {
 
     @Column(name="id_ubicacion", nullable=false)
     private Integer        idUbicacion ;
+
+    @Column(name="id_estado")
+    private Integer        idEstado;
+
+    @Column(name="id_tipoprueba")
+    private Integer        idTipoprueba;
 
     //--- LINKS ( RELATIONSHIPS )
     @ManyToOne
@@ -64,9 +81,17 @@ public class PruebaEntity implements Serializable {
 
     @ManyToOne
     @JoinColumn(name="id_cohorte", referencedColumnName="id", insertable=false, updatable=false)
-    private CohorteEntity    cohorte ; 
+    private CohorteEntity    cohorte ;
+
+    @ManyToOne
+    @JoinColumn(name="id_estado", referencedColumnName="id", insertable=false, updatable=false)
+    private EstadoEntity     estado;
+
+    @ManyToOne
+    @JoinColumn(name="id_tipoprueba", referencedColumnName="id", insertable=false, updatable=false)
+    private TipopruebaEntity tipoprueba;
 
     @OneToMany(mappedBy="prueba")
-    private List<ResultadopruebaEntity> resultadopruebaList ; 
+    private List<ResultadopruebaEntity> resultadopruebaList ;
 
 }
