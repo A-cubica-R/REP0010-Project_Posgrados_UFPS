@@ -11,6 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -43,9 +44,13 @@ import ufps.edu.co.records.input.entity.CriterioevaluacionInput.CRITERIO_UPDATE_
 import ufps.edu.co.records.input.entity.CriterioevaluacionInput.CRITERIOEVALUACION_FIND;
 import ufps.edu.co.records.input.entity.CalificacioncriterioInput.CALIFICACIONCRITERIO_FIND_BY_ASPIRANTE;
 import ufps.edu.co.records.input.entity.CalificacioncriterioInput.CALIFICACIONCRITERIO_UPDATE;
+import ufps.edu.co.records.input.entity.DocumentoInput.DOCUMENTO_ESTADO_UPDATE;
 import ufps.edu.co.records.output.entity.CalificacionCriterioSimpleOutput;
 import ufps.edu.co.records.output.entity.CalificacioncriterioOutput;
+import ufps.edu.co.records.output.entity.AspiranteCohorteOutput;
+import ufps.edu.co.records.output.entity.AspiranteDocumentosOutput;
 import ufps.edu.co.records.output.entity.CriterioevaluacionOutput;
+import ufps.edu.co.records.output.entity.DocumentoEstadoOutput;
 import ufps.edu.co.records.output.entity.SuccessOutput;
 import ufps.edu.co.records.input.entity.DocumentoInput.DOCUMENTO_FIND;
 import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_CREATE;
@@ -70,6 +75,10 @@ import ufps.edu.co.records.output.entity.EntrevistaOutput;
 import ufps.edu.co.records.output.entity.EntrevistaResumenOutput;
 import ufps.edu.co.records.output.entity.EntrevistaSimpleOutput;
 import ufps.edu.co.records.output.entity.ListaadmitidosOutput;
+import ufps.edu.co.rest.dto.AdministrativoDTO;
+import ufps.edu.co.rest.dto.UsuarioDTO;
+import ufps.edu.co.rest.services.AdministrativoService;
+import ufps.edu.co.rest.services.UsuarioService;
 import ufps.edu.co.services.EmailService;
 
 import ufps.edu.co.services.PdfGeneratorService;
@@ -110,6 +119,51 @@ public class DirectorProgramaCase {
 
     @Autowired
     private CriterioevaluacionProcessor criterioevaluacionProcessor;
+
+    @Autowired
+    private UsuarioService usuarioService;
+
+    @Autowired
+    private AdministrativoService administrativoService;
+
+    @GetMapping(value = "/cohortes")
+    public ResponseEntity<List<CohorteResumenOutput>> getCohortesByPrograma() {
+        try {
+            Integer programaId = resolvePrograma();
+            return ResponseEntity.ok(aspiranteProcessor.getCohortesByProgramaResumen(programaId));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @GetMapping(value = "/cohortes/{idCohorte}/aspirantes")
+    public ResponseEntity<List<AspiranteCohorteOutput>> getAspirantesByCohorte(@PathVariable Integer idCohorte) {
+        try {
+            return ResponseEntity.ok(aspiranteProcessor.findByCohorteConResumen(idCohorte));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @GetMapping(value = "/aspirantes/{idAspirante}/documentos")
+    public ResponseEntity<AspiranteDocumentosOutput> getDocumentosDeAspirante(@PathVariable Integer idAspirante) {
+        try {
+            return ResponseEntity.ok(documentoProcessor.getDocumentosDeAspirante(idAspirante));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PatchMapping(value = "/documentos/{idDoc}/estado", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<DocumentoEstadoOutput> updateEstadoDocumento(
+            @PathVariable Integer idDoc,
+            @RequestBody DOCUMENTO_ESTADO_UPDATE body) {
+        try {
+            return ResponseEntity.ok(documentoProcessor.updateEstadoDocumento(idDoc, body));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
 
     @PostMapping(value = "/downloadByDocumentId", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<byte[]> download(@RequestBody DOCUMENTO_FIND request) {
@@ -518,6 +572,19 @@ public class DirectorProgramaCase {
                 .estado(o.estado() != null ? o.estado().tipo() : null)
                 .motivocambio(null)
                 .build();
+    }
+
+    private Integer resolvePrograma() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        UsuarioDTO usuario = usuarioService.findByNombreusuario(username);
+        if (usuario == null || usuario.getIdPersona() == null) {
+            throw new RuntimeException("No se pudo derivar el administrativo desde el usuario autenticado");
+        }
+        AdministrativoDTO admin = administrativoService.findByIdPersona(usuario.getIdPersona());
+        if (admin == null || admin.getCargo() == null || admin.getCargo().getIdPrograma() == null) {
+            throw new RuntimeException("El usuario autenticado no tiene un programa asignado");
+        }
+        return admin.getCargo().getIdPrograma();
     }
 
     @PutMapping("/interview/rate")
