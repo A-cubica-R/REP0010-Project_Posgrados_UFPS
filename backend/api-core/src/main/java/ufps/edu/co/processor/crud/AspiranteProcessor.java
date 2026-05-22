@@ -846,25 +846,32 @@ public class AspiranteProcessor implements
                 .collect(Collectors.toSet());
 
             for (DocumentocohorteDTO existente : existentes) {
-            Integer id = existente.getId();
-            if (id != null && !idsEntrantes.contains(id)) {
-                documentocohorteService.deleteById(id);
-            }
+                Integer id = existente.getId();
+                if (id != null && !idsEntrantes.contains(id)) {
+                    documentocohorteService.deleteById(id);
+                }
             }
 
             documentosCohorte = new ArrayList<>();
             for (DOCUMENTOCOHORTE_UPDATE doc : body.documentos()) {
-            if (doc.id() != null) {
-                DOCUMENTOCOHORTE_UPDATE update = new DOCUMENTOCOHORTE_UPDATE(
-                    doc.id(), doc.nombre(), doc.obligatorio(), cohorteId);
-                documentosCohorte.add(mapDocCohorte
-                    .toOutput(documentocohorteService.update(update.id(), mapDocCohorte.toDto(update))));
-            } else {
-                DOCUMENTOCOHORTE_CREATE create = new DOCUMENTOCOHORTE_CREATE(
-                    doc.nombre(), doc.obligatorio(), cohorteId);
-                documentosCohorte.add(mapDocCohorte
-                    .toOutput(documentocohorteService.create(mapDocCohorte.toDto(create))));
-            }
+                if (doc.id() != null) {
+                    DocumentocohorteDTO dto = DocumentocohorteDTO.builder()
+                            .id(doc.id())
+                            .nombre(doc.nombre())
+                            .obligatorio(doc.obligatorio())
+                            .idCohorte(cohorteId)
+                            .build();
+                    documentosCohorte.add(mapDocCohorte
+                            .toOutput(documentocohorteService.update(dto.getId(), dto)));
+                } else {
+                    DocumentocohorteDTO dto = DocumentocohorteDTO.builder()
+                            .nombre(doc.nombre())
+                            .obligatorio(doc.obligatorio())
+                            .idCohorte(cohorteId)
+                            .build();
+                    documentosCohorte.add(mapDocCohorte
+                            .toOutput(documentocohorteService.create(dto)));
+                }
             }
         } else {
             documentosCohorte = documentocohorteService.findByIdCohorte(cohorteId).stream()
