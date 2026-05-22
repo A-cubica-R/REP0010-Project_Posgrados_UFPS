@@ -172,6 +172,19 @@ public class CalificacioncriterioProcessor implements
         }
     }
 
+    public void actualizarPesoSnapshotYRecalcular(Integer idCriterio, BigDecimal newPeso) {
+        List<CalificacioncriterioDTO> calificaciones = service.findByIdCriterio(idCriterio);
+        calificaciones.forEach(cal -> {
+            cal.setPesoSnapshot(newPeso);
+            service.update(cal.getId(), cal);
+        });
+        calificaciones.stream()
+                .map(CalificacioncriterioDTO::getIdAspirante)
+                .filter(java.util.Objects::nonNull)
+                .distinct()
+                .forEach(this::recalcularPuntuacionAspirante);
+    }
+
     // Recalcula aspirante.puntuacion = sum(puntuacion_i * pesoSnapshot_i / 100)
     private void recalcularPuntuacionAspirante(Integer idAspirante) {
         List<CalificacioncriterioDTO> calificaciones = service.findByIdAspirante(idAspirante);

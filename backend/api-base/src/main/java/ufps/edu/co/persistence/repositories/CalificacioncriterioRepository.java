@@ -44,6 +44,8 @@ public interface CalificacioncriterioRepository extends JpaRepository<Calificaci
 
 	Boolean existsByIdAspiranteAndIdCriterio(Integer idAspirante, Integer idCriterio);
 
+	boolean existsByIdCriterio(Integer idCriterio);
+
 	List<CalificacioncriterioEntity> findByIdAspirante(Integer idAspirante);
 
 	List<CalificacioncriterioEntity> findByIdCriterio(Integer idCriterio);

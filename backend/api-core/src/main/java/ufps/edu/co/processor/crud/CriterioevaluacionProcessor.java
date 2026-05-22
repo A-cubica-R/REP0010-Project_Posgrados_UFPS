@@ -16,8 +16,12 @@ import ufps.edu.co.records.input.entity.CriterioevaluacionInput.*;
 import ufps.edu.co.records.output.entity.CriterioevaluacionOutput;
 import ufps.edu.co.rest.dto.CohorteDTO;
 import ufps.edu.co.rest.dto.CriterioevaluacionDTO;
+import ufps.edu.co.rest.dto.EstadoDTO;
+import ufps.edu.co.rest.services.AspiranteService;
+import ufps.edu.co.rest.services.CalificacioncriterioService;
 import ufps.edu.co.rest.services.CohorteService;
 import ufps.edu.co.rest.services.CriterioevaluacionService;
+import ufps.edu.co.rest.services.EstadoService;
 import ufps.edu.co.usecase.GlobalUseCase;
 
 @Service
@@ -33,19 +37,39 @@ public class CriterioevaluacionProcessor implements
     @Autowired
     private CohorteService cohorteService;
 
+    @Autowired
+    private CalificacioncriterioService calificacioncriterioService;
+
+    @Autowired
+    private CalificacioncriterioProcessor calificacioncriterioProcessor;
+
+    @Autowired
+    private AspiranteService aspiranteService;
+
+    @Autowired
+    private EstadoService estadoService;
+
     @Override
     public CriterioevaluacionOutput create(CRITERIOEVALUACION_CREATE input) {
         validatePesoSum(input.idCohorte(), input.peso(), null);
-            CriterioevaluacionDTO dto = map.toDto(input);
-            return map.toOutput(service.create(dto));
+        CriterioevaluacionDTO dto = map.toDto(input);
+        CriterioevaluacionOutput output = map.toOutput(service.create(dto));
+        marcarAspirantesEnProgreso(input.idCohorte());
+        return output;
     }
 
     @Override
     public CriterioevaluacionOutput update(CRITERIOEVALUACION_UPDATE input) {
         validatePesoSum(input.idCohorte(), input.peso(), input.id());
         try {
+            CriterioevaluacionDTO old = service.findById(input.id());
+            BigDecimal oldPeso = old != null ? old.getPeso() : null;
             CriterioevaluacionDTO dto = map.toDto(input);
-            return map.toOutput(service.update(input.id(), dto));
+            CriterioevaluacionOutput output = map.toOutput(service.update(input.id(), dto));
+            if (input.peso() != null && oldPeso != null && input.peso().compareTo(oldPeso) != 0) {
+                calificacioncriterioProcessor.actualizarPesoSnapshotYRecalcular(input.id(), input.peso());
+            }
+            return output;
         } catch (Exception e) {
             throw new DomainException(CriterioevaluacionErrorCode.CRITERIOEVALUACION_NOT_FOUND, input.id());
         }
@@ -72,6 +96,9 @@ public class CriterioevaluacionProcessor implements
 
     @Override
     public void deleteById(CRITERIOEVALUACION_DELETE input) {
+        if (calificacioncriterioService.existsByCriterio(input.id())) {
+            throw new DomainException(CriterioevaluacionErrorCode.CRITERIO_CON_ASPIRANTES_CALIFICADOS, input.id());
+        }
         try {
             service.deleteById(input.id());
         } catch (Exception e) {
@@ -142,7 +169,12 @@ public class CriterioevaluacionProcessor implements
                     .idCohorte(cohorteId)
                     .build();
             if (item.id() != null) {
+                CriterioevaluacionDTO old = service.findById(item.id());
+                BigDecimal oldPeso = old != null ? old.getPeso() : null;
                 service.update(item.id(), dto);
+                if (item.peso() != null && oldPeso != null && item.peso().compareTo(oldPeso) != 0) {
+                    calificacioncriterioProcessor.actualizarPesoSnapshotYRecalcular(item.id(), item.peso());
+                }
             } else {
                 service.create(dto);
             }
@@ -164,6 +196,15 @@ public class CriterioevaluacionProcessor implements
         if (criterio == null || !cohorteId.equals(criterio.getIdCohorte())) {
             throw new DomainException(CriterioevaluacionErrorCode.CRITERIO_COHORTE_MISMATCH, criterioId);
         }
+    }
+
+    private void marcarAspirantesEnProgreso(Integer idCohorte) {
+        EstadoDTO estadoEnProgreso = estadoService.findByTipoAndEntidad("VALIDADO_EN_PROGRESO", "aspirante");
+        if (estadoEnProgreso == null) return;
+        aspiranteService.findByCohorte(idCohorte).stream()
+                .filter(a -> a.getEstado() != null
+                        && "VALIDADO_CALIFICADO".equalsIgnoreCase(a.getEstado().getTipo()))
+                .forEach(a -> aspiranteService.updateEstado(a.getId(), estadoEnProgreso.getId()));
     }
 
     private void validatePesoSum(Integer idCohorte, BigDecimal newPeso, Integer excludeId) {

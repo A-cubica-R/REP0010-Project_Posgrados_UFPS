@@ -57,6 +57,10 @@ public class CalificacioncriterioService extends GenericService<Calificacioncrit
         return repository.existsByIdAspiranteAndIdCriterio(idAspirante, idCriterio);
     }
 
+    public boolean existsByCriterio(Integer idCriterio) {
+        return repository.existsByIdCriterio(idCriterio);
+    }
+
     @Transactional(readOnly = true)
     public Optional<CalificacioncriterioDTO> findByIdAspiranteAndIdCriterio(Integer idAspirante, Integer idCriterio) {
         return repository.findByIdAspiranteAndIdCriterio(idAspirante, idCriterio).map(entity -> entityToDto(entity));
