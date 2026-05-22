@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import ufps.edu.co.persistence.entities.AdministrativoEntity;
 import ufps.edu.co.persistence.entities.AspiranteEntity;
 import ufps.edu.co.persistence.entities.CohorteEntity;
+import ufps.edu.co.persistence.entities.EstadoEntity;
 import ufps.edu.co.persistence.entities.PersonaEntity;
 import ufps.edu.co.persistence.entities.PruebaEntity;
 import ufps.edu.co.persistence.entities.ResultadopruebaEntity;
@@ -15,6 +16,7 @@ import ufps.edu.co.persistence.entities.UbicacionEntity;
 import ufps.edu.co.rest.dto.AdministrativoDTO;
 import ufps.edu.co.rest.dto.AspiranteDTO;
 import ufps.edu.co.rest.dto.CohorteDTO;
+import ufps.edu.co.rest.dto.EstadoDTO;
 import ufps.edu.co.rest.dto.PersonaDTO;
 import ufps.edu.co.rest.dto.PruebaDTO;
 import ufps.edu.co.rest.dto.ResultadopruebaDTO;
@@ -79,6 +81,17 @@ public class ModelMapperConfig {
                   m.skip(CohorteEntity::setPruebaList);
                     })
                     .implicitMappings();
+
+        // Estado → listas bidireccionales (evita referencias circulares)
+        mapper.createTypeMap(EstadoEntity.class, EstadoDTO.class)
+              .addMappings(m -> {
+                  m.skip(EstadoDTO::setAdministrativoList);
+                  m.skip(EstadoDTO::setAspiranteList);
+                  m.skip(EstadoDTO::setCohorteList);
+                  m.skip(EstadoDTO::setEntrevistaList);
+                  m.skip(EstadoDTO::setPagoList);
+                  m.skip(EstadoDTO::setSemestreList);
+              });
 
         // Aspirante → listas bidireccionales
         mapper.createTypeMap(AspiranteEntity.class, AspiranteDTO.class)
