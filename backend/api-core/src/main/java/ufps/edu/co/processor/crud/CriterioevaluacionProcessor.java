@@ -99,10 +99,15 @@ public class CriterioevaluacionProcessor implements
         if (calificacioncriterioService.existsByCriterio(input.id())) {
             throw new DomainException(CriterioevaluacionErrorCode.CRITERIO_CON_ASPIRANTES_CALIFICADOS, input.id());
         }
+        CriterioevaluacionDTO criterio = service.findById(input.id());
+        Integer idCohorte = criterio != null ? criterio.getIdCohorte() : null;
         try {
             service.deleteById(input.id());
         } catch (Exception e) {
             throw new DomainException(CriterioevaluacionErrorCode.CRITERIOEVALUACION_NOT_FOUND, input.id());
+        }
+        if (idCohorte != null) {
+            recalcularEstadosTrasBorrado(idCohorte);
         }
     }
 
@@ -196,6 +201,31 @@ public class CriterioevaluacionProcessor implements
         if (criterio == null || !cohorteId.equals(criterio.getIdCohorte())) {
             throw new DomainException(CriterioevaluacionErrorCode.CRITERIO_COHORTE_MISMATCH, criterioId);
         }
+    }
+
+    private void recalcularEstadosTrasBorrado(Integer idCohorte) {
+        Set<Integer> criterioIds = service.findByIdCohorte(idCohorte).stream()
+                .map(CriterioevaluacionDTO::getId)
+                .collect(Collectors.toSet());
+
+        EstadoDTO estadoCalificado = estadoService.findByTipoAndEntidad("VALIDADO_CALIFICADO", "aspirante");
+        if (estadoCalificado == null) return;
+
+        aspiranteService.findByCohorte(idCohorte).stream()
+                .filter(a -> a.getEstado() != null
+                        && "VALIDADO_EN_PROGRESO".equalsIgnoreCase(a.getEstado().getTipo()))
+                .forEach(aspirante -> {
+                    Set<Integer> calificadosIds = calificacioncriterioService
+                            .findByIdAspirante(aspirante.getId()).stream()
+                            .map(c -> c.getIdCriterio())
+                            .filter(Objects::nonNull)
+                            .collect(Collectors.toSet());
+                    boolean todosCalificados = !criterioIds.isEmpty()
+                            && criterioIds.stream().allMatch(calificadosIds::contains);
+                    if (todosCalificados) {
+                        aspiranteService.updateEstado(aspirante.getId(), estadoCalificado.getId());
+                    }
+                });
     }
 
     private void marcarAspirantesEnProgreso(Integer idCohorte) {
