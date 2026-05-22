@@ -729,10 +729,11 @@ public class AspiranteProcessor implements
         int cuposDisponibles = Math.max(0, cohorte.getCupos() - (int) totalAdmitidos);
 
         List<RankingAdmitidosOutput.AspiranteResumen> aspirantesResumen = service.findByCohorte(cohorte.getId())
-                .stream()
-                .sorted(Comparator.comparing(AspiranteDTO::getPuntuacion,
-                        Comparator.nullsLast(Comparator.reverseOrder())))
-                .map(a -> {
+            .stream()
+            .filter(a -> a.getEstado() != null && "VALIDADO_CALIFICADO".equalsIgnoreCase(a.getEstado().getTipo()))
+            .sorted(Comparator.comparing(AspiranteDTO::getPuntuacion,
+                Comparator.nullsLast(Comparator.reverseOrder())))
+            .map(a -> {
                     PersonaDTO persona = a.getPersona();
                     String nombre = persona != null
                             ? ((persona.getNombres() != null ? persona.getNombres() : "") + " "
