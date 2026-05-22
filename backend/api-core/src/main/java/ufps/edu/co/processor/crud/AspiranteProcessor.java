@@ -802,6 +802,10 @@ public class AspiranteProcessor implements
         }
 
         boolean cohorteChanged = false;
+        if (body.nombre() != null && !body.nombre().isBlank()) {
+            cohorte.setNombre(body.nombre());
+            cohorteChanged = true;
+        }
         if (body.cupos() != null) {
             cohorte.setCupos(body.cupos());
             cohorteChanged = true;
@@ -883,9 +887,7 @@ public class AspiranteProcessor implements
 
         return CohorteListadoOutput.builder()
                 .id(cohorteId)
-                .nombre(body.nombre() != null ? (
-                    !(body.nombre().isBlank() && body.nombre().isEmpty()) ? body.nombre() : cohorte.getNombre()
-                ) : cohorte.getNombre())
+                .nombre(cohorte.getNombre())
                 .activa(activa)
                 .inscritos(service.countByCohorte(cohorteId))
                 .admitidos(admitidoService.countByCohorte(cohorteId))
