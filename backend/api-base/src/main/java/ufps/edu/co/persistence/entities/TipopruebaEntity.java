@@ -7,7 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import java.util.List;
+// import java.util.List;
 
 @Entity
 @Table(name = "tipoprueba")
@@ -31,6 +31,6 @@ public class TipopruebaEntity implements Serializable {
     @Column(name = "descripcion", length = 65535)
     private String descripcion;
 
-    @OneToMany(mappedBy = "tipoprueba")
-    private List<PruebaEntity> pruebaList;
+    // @OneToMany(mappedBy = "tipoprueba")
+    // private List<PruebaEntity> pruebaList;
 }
