@@ -801,8 +801,10 @@ public class AspiranteProcessor implements
             throw new RuntimeException("Cohorte no encontrada: " + cohorteId);
         }
 
+        boolean cohorteChanged = false;
         if (body.cupos() != null) {
             cohorte.setCupos(body.cupos());
+            cohorteChanged = true;
         }
 
         LocalDate fechaInicio = cohorte.getSemestre() != null ? cohorte.getSemestre().getFechaInicio() : null;
@@ -829,20 +831,45 @@ public class AspiranteProcessor implements
             fechaLimitePago = body.fechaLimitePago();
         }
 
-        List<DOCUMENTOCOHORTE_UPDATE> documentos = cohorte.getDocumentocohorteList() != null
-                ? cohorte.getDocumentocohorteList().stream()
-                        .map(d -> new DOCUMENTOCOHORTE_UPDATE(
-                                d.getId(), d.getNombre(), d.getObligatorio(), cohorteId))
-                        .collect(java.util.stream.Collectors.toList())
-                : java.util.Collections.emptyList();
-
-        List<DocumentocohorteOutput> documentosCohorte = new ArrayList<>();
+        if (cohorteChanged) {
+            cohorteService.update(cohorteId, cohorte);
+        }
 
         DocumentocohorteMap mapDocCohorte = new DocumentocohorteMap();
+        List<DocumentocohorteOutput> documentosCohorte;
 
-        for (DOCUMENTOCOHORTE_UPDATE documento : documentos) {
-            documentosCohorte.add(mapDocCohorte
-                    .toOutput(this.documentocohorteService.update(documento.id(), mapDocCohorte.toDto(documento))));
+        if (body.documentos() != null) {
+            List<DocumentocohorteDTO> existentes = documentocohorteService.findByIdCohorte(cohorteId);
+            Set<Integer> idsEntrantes = body.documentos().stream()
+                .map(DOCUMENTOCOHORTE_UPDATE::id)
+                .filter(id -> id != null)
+                .collect(Collectors.toSet());
+
+            for (DocumentocohorteDTO existente : existentes) {
+            Integer id = existente.getId();
+            if (id != null && !idsEntrantes.contains(id)) {
+                documentocohorteService.deleteById(id);
+            }
+            }
+
+            documentosCohorte = new ArrayList<>();
+            for (DOCUMENTOCOHORTE_UPDATE doc : body.documentos()) {
+            if (doc.id() != null) {
+                DOCUMENTOCOHORTE_UPDATE update = new DOCUMENTOCOHORTE_UPDATE(
+                    doc.id(), doc.nombre(), doc.obligatorio(), cohorteId);
+                documentosCohorte.add(mapDocCohorte
+                    .toOutput(documentocohorteService.update(update.id(), mapDocCohorte.toDto(update))));
+            } else {
+                DOCUMENTOCOHORTE_CREATE create = new DOCUMENTOCOHORTE_CREATE(
+                    doc.nombre(), doc.obligatorio(), cohorteId);
+                documentosCohorte.add(mapDocCohorte
+                    .toOutput(documentocohorteService.create(mapDocCohorte.toDto(create))));
+            }
+            }
+        } else {
+            documentosCohorte = documentocohorteService.findByIdCohorte(cohorteId).stream()
+                .map(mapDocCohorte::toOutput)
+                .toList();
         }
 
         boolean activa = cohorte.getEstado() != null && "ABIERTA".equalsIgnoreCase(cohorte.getEstado().getTipo());
