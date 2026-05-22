@@ -687,14 +687,6 @@ public class AspiranteProcessor implements
                             && "APROBADO".equalsIgnoreCase(d.getEstadodocumento().getEstado()))
                     .count();
 
-            String estadoGeneral;
-            if (total > 0 && validados == total) {
-                estadoGeneral = "validados";
-            } else if (validados > 0) {
-                estadoGeneral = "en progreso";
-            } else {
-                estadoGeneral = "pendiente";
-            }
 
             return AspiranteCohorteOutput.builder()
                     .id(aspirante.getId())
@@ -703,9 +695,9 @@ public class AspiranteProcessor implements
                     .correo(p != null ? p.getCorreo() : null)
                     .documentosValidados(validados)
                     .totalDocumentos(total)
-                    .estadoGeneral(estadoGeneral)
+                    .estadoGeneral(aspirante.getEstado().getTipo())
                     .build();
-        }).toList();
+                }).toList();
     }
 
     public CohorteListadoOutput updateCohorte(Integer cohorteId, COHORTE_DIRECTOR_UPDATE body) {
