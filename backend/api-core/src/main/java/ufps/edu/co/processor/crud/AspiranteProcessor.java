@@ -883,7 +883,9 @@ public class AspiranteProcessor implements
 
         return CohorteListadoOutput.builder()
                 .id(cohorteId)
-                .nombre(cohorte.getNombre())
+                .nombre(body.nombre() != null ? (
+                    !(body.nombre().isBlank() && body.nombre().isEmpty()) ? body.nombre() : cohorte.getNombre()
+                ) : cohorte.getNombre())
                 .activa(activa)
                 .inscritos(service.countByCohorte(cohorteId))
                 .admitidos(admitidoService.countByCohorte(cohorteId))
