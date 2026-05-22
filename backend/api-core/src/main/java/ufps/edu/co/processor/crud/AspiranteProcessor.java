@@ -759,6 +759,40 @@ public class AspiranteProcessor implements
                 .build();
     }
 
+    public CohorteListadoOutput abrirCohorte(Integer cohorteId) {
+        return cambiarEstadoCohorte(cohorteId, "ABIERTA");
+    }
+
+    public CohorteListadoOutput cerrarCohorte(Integer cohorteId) {
+        return cambiarEstadoCohorte(cohorteId, "CERRADA");
+    }
+
+    private CohorteListadoOutput cambiarEstadoCohorte(Integer cohorteId, String nuevoEstado) {
+        CohorteDTO cohorte = cohorteService.findById(cohorteId);
+        if (cohorte == null) {
+            throw new RuntimeException("Cohorte no encontrada: " + cohorteId);
+        }
+        EstadoDTO estado = estadoService.findByTipoAndEntidad(nuevoEstado, "cohorte");
+        if (estado == null) {
+            throw new RuntimeException("Estado '" + nuevoEstado + "' no configurado para cohorte");
+        }
+        cohorte.setIdEstado(estado.getId());
+        cohorteService.update(cohorteId, cohorte);
+
+        boolean activa = "ABIERTA".equalsIgnoreCase(nuevoEstado);
+        return CohorteListadoOutput.builder()
+                .id(cohorteId)
+                .nombre(cohorte.getNombre())
+                .activa(activa)
+                .inscritos(service.countByCohorte(cohorteId))
+                .admitidos(admitidoService.countByCohorte(cohorteId))
+                .cupos(cohorte.getCupos())
+                .fechaLimiteDocumentos(cohorte.getPlazo() != null ? cohorte.getPlazo().getFechafin() : null)
+                .fechaLimitePago(cohorte.getPlazo3() != null ? cohorte.getPlazo3().getFechafin() : null)
+                .fechaInicio(cohorte.getSemestre() != null ? cohorte.getSemestre().getFechaInicio() : null)
+                .build();
+    }
+
     public CohorteListadoOutput updateCohorte(Integer cohorteId, COHORTE_DIRECTOR_UPDATE body) {
         CohorteDTO cohorte = cohorteService.findById(cohorteId);
         if (cohorte == null) {

@@ -293,6 +293,26 @@ public class DirectorProgramaCase {
         }
     }
 
+    @PostMapping("/cohorte/{cohorteId}/abrir")
+    public ResponseEntity<CohorteListadoOutput> abrirCohorte(@PathVariable Integer cohorteId) {
+        try {
+            return ResponseEntity.ok(aspiranteProcessor.abrirCohorte(cohorteId));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PostMapping("/cohorte/{cohorteId}/cerrar")
+    public ResponseEntity<CohorteListadoOutput> cerrarCohorte(@PathVariable Integer cohorteId) {
+        try {
+            return ResponseEntity.ok(aspiranteProcessor.cerrarCohorte(cohorteId));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
     @PutMapping(value = "/cohorte/{cohorteId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CohorteListadoOutput> updateCohorte(
             @PathVariable Integer cohorteId,
