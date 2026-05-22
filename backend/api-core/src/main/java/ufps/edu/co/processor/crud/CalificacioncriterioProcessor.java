@@ -122,8 +122,17 @@ public class CalificacioncriterioProcessor implements
     }
 
     public CalificacionCriterioSimpleOutput calificarCriterio(Integer idAspirante, Integer idCriterio, BigDecimal puntaje) {
-        CALIFICACIONCRITERIO_CREATE input = new CALIFICACIONCRITERIO_CREATE(idAspirante, idCriterio, puntaje, null);
-        CalificacioncriterioOutput result = create(input);
+        CalificacioncriterioOutput result = service.findByIdAspiranteAndIdCriterio(idAspirante, idCriterio)
+                .map(existing -> {
+                    CALIFICACIONCRITERIO_UPDATE updateInput = new CALIFICACIONCRITERIO_UPDATE(
+                            existing.getId(), idAspirante, idCriterio, puntaje, null);
+                    return update(updateInput);
+                })
+                .orElseGet(() -> {
+                    CALIFICACIONCRITERIO_CREATE createInput = new CALIFICACIONCRITERIO_CREATE(
+                            idAspirante, idCriterio, puntaje, null);
+                    return create(createInput);
+                });
         CriterioevaluacionDTO criterio = criterioaceptacionService.findById(idCriterio);
         AspiranteDTO aspirante = aspiranteService.findById(idAspirante);
         return CalificacionCriterioSimpleOutput.builder()
