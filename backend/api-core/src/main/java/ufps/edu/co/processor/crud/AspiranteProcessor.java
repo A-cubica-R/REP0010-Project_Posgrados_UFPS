@@ -3,8 +3,10 @@ package ufps.edu.co.processor.crud;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,7 @@ import ufps.edu.co.records.input.entity.CohorteInput.COHORTE_DIRECTOR_CREATE;
 import ufps.edu.co.records.input.entity.CohorteInput.COHORTE_DIRECTOR_UPDATE;
 import ufps.edu.co.records.input.entity.DocumentocohorteInput.DOCUMENTOCOHORTE_CREATE;
 import ufps.edu.co.records.output.entity.AspiranteCalificacionOutput;
+import ufps.edu.co.records.output.entity.RankingAdmitidosOutput;
 import ufps.edu.co.records.output.entity.AspiranteCohorteOutput;
 import ufps.edu.co.records.output.entity.AspiranteCriteriosOutput;
 import ufps.edu.co.records.output.entity.AspiranteOutput;
@@ -706,6 +709,88 @@ public class AspiranteProcessor implements
                     .estadoGeneral(estadoGeneral)
                     .build();
         }).toList();
+    }
+
+    public RankingAdmitidosOutput getRankingAdmitidos(Integer programaId) {
+        CohorteDTO cohorte = cohorteService.findActiveByIdPrograma(programaId);
+        if (cohorte == null) {
+            throw new RuntimeException("No hay cohorte activa para el programa: " + programaId);
+        }
+        boolean activa = cohorte.getEstado() != null
+                && "ABIERTA".equalsIgnoreCase(cohorte.getEstado().getTipo());
+
+        var admitidosList = admitidoService.findByCohorte(cohorte.getId());
+        Set<Integer> admitidosIds = admitidosList.stream()
+                .map(a -> a.getIdAspirante())
+                .collect(Collectors.toSet());
+
+        long totalAdmitidos = admitidosList.size();
+        int cuposDisponibles = Math.max(0, cohorte.getCupos() - (int) totalAdmitidos);
+
+        List<RankingAdmitidosOutput.AspiranteResumen> aspirantesResumen = service.findByCohorte(cohorte.getId())
+                .stream()
+                .sorted(Comparator.comparing(AspiranteDTO::getPuntuacion,
+                        Comparator.nullsLast(Comparator.reverseOrder())))
+                .map(a -> {
+                    PersonaDTO persona = a.getPersona();
+                    String nombre = persona != null
+                            ? ((persona.getNombres() != null ? persona.getNombres() : "") + " "
+                                    + (persona.getApellidos() != null ? persona.getApellidos() : "")).trim()
+                            : "";
+                    return RankingAdmitidosOutput.AspiranteResumen.builder()
+                            .id(a.getId())
+                            .nombre(nombre)
+                            .correo(persona != null ? persona.getCorreo() : null)
+                            .puntaje(a.getPuntuacion())
+                            .admitido(admitidosIds.contains(a.getId()))
+                            .build();
+                })
+                .toList();
+
+        return RankingAdmitidosOutput.builder()
+                .cohorteActual(RankingAdmitidosOutput.CohorteResumen.builder()
+                        .id(cohorte.getId())
+                        .nombre(cohorte.getNombre())
+                        .activa(activa)
+                        .cuposDisponibles(cuposDisponibles)
+                        .totalAdmitidos(totalAdmitidos)
+                        .build())
+                .aspirantes(aspirantesResumen)
+                .build();
+    }
+
+    public CohorteListadoOutput abrirCohorte(Integer cohorteId) {
+        return cambiarEstadoCohorte(cohorteId, "ABIERTA");
+    }
+
+    public CohorteListadoOutput cerrarCohorte(Integer cohorteId) {
+        return cambiarEstadoCohorte(cohorteId, "CERRADA");
+    }
+
+    private CohorteListadoOutput cambiarEstadoCohorte(Integer cohorteId, String nuevoEstado) {
+        CohorteDTO cohorte = cohorteService.findById(cohorteId);
+        if (cohorte == null) {
+            throw new RuntimeException("Cohorte no encontrada: " + cohorteId);
+        }
+        EstadoDTO estado = estadoService.findByTipoAndEntidad(nuevoEstado, "cohorte");
+        if (estado == null) {
+            throw new RuntimeException("Estado '" + nuevoEstado + "' no configurado para cohorte");
+        }
+        cohorte.setIdEstado(estado.getId());
+        cohorteService.update(cohorteId, cohorte);
+
+        boolean activa = "ABIERTA".equalsIgnoreCase(nuevoEstado);
+        return CohorteListadoOutput.builder()
+                .id(cohorteId)
+                .nombre(cohorte.getNombre())
+                .activa(activa)
+                .inscritos(service.countByCohorte(cohorteId))
+                .admitidos(admitidoService.countByCohorte(cohorteId))
+                .cupos(cohorte.getCupos())
+                .fechaLimiteDocumentos(cohorte.getPlazo() != null ? cohorte.getPlazo().getFechafin() : null)
+                .fechaLimitePago(cohorte.getPlazo3() != null ? cohorte.getPlazo3().getFechafin() : null)
+                .fechaInicio(cohorte.getSemestre() != null ? cohorte.getSemestre().getFechaInicio() : null)
+                .build();
     }
 
     public CohorteListadoOutput updateCohorte(Integer cohorteId, COHORTE_DIRECTOR_UPDATE body) {
