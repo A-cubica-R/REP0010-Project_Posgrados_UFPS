@@ -1,6 +1,8 @@
 package ufps.edu.co.controllers.cases.administrativo;
 
 import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.util.Map;
 import java.util.List;
 import java.util.Objects;
 
@@ -53,8 +55,15 @@ import ufps.edu.co.records.output.entity.DocumentoEstadoOutput;
 import ufps.edu.co.records.output.entity.SuccessOutput;
 import ufps.edu.co.rest.dto.AdministrativoDTO;
 import ufps.edu.co.rest.dto.UsuarioDTO;
+import ufps.edu.co.rest.dto.CohorteDTO;
+import ufps.edu.co.rest.dto.AdmitidoDTO;
+import ufps.edu.co.rest.dto.EstadoDTO;
 import ufps.edu.co.rest.services.AdministrativoService;
 import ufps.edu.co.rest.services.UsuarioService;
+import ufps.edu.co.rest.services.CohorteService;
+import ufps.edu.co.rest.services.ListaadmitidosService;
+import ufps.edu.co.rest.services.AspiranteService;
+import ufps.edu.co.rest.services.EstadoService;
 import ufps.edu.co.records.input.entity.DocumentoInput.DOCUMENTO_FIND;
 import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_CANCELAR_REQUEST;
 import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_CREATE;
@@ -64,6 +73,7 @@ import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_REAGENDAR_REQ
 import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_RESCHEDULE;
 import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_SCHEDULE_REQUEST;
 import ufps.edu.co.records.input.entity.ListaadmitidosInput.GENERATE_LISTA;
+import ufps.edu.co.records.input.entity.ListaadmitidosInput.ADMITIR_ASPIRANTE;
 import ufps.edu.co.records.input.entity.ListaadmitidosInput.RECHAZAR_ASPIRANTE;
 import ufps.edu.co.records.input.entity.ProgramaInput.PROGRAMA_FIND;
 import ufps.edu.co.records.output.entity.AdministrativoOutput;
@@ -121,6 +131,18 @@ public class DirectorProgramaCase {
 
     @Autowired
     private ListaadmitidosProcessor listaadmitidosProcessor;
+
+    @Autowired
+    private CohorteService cohorteService;
+
+    @Autowired
+    private ListaadmitidosService listaadmitidosService;
+
+    @Autowired
+    private AspiranteService aspiranteService;
+
+    @Autowired
+    private EstadoService estadoService;
 
     @Autowired
     private CalificacioncriterioProcessor calificacioncriterioProcessor;
@@ -286,7 +308,8 @@ public class DirectorProgramaCase {
     @GetMapping(value = "/programa/{programaId}/cohortes")
     public ResponseEntity<List<CohorteResumenOutput>> listCohorteResumen(@PathVariable Integer programaId) {
         try {
-            return ResponseEntity.status(HttpStatus.CREATED).body(aspiranteProcessor.getCohortesByProgramaResumen(programaId));
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(aspiranteProcessor.getCohortesByProgramaResumen(programaId));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
@@ -362,7 +385,8 @@ public class DirectorProgramaCase {
             @RequestBody CALIFICACION_PUNTAJE_REQUEST request) {
         try {
             return ResponseEntity.ok(
-                    calificacioncriterioProcessor.calificarCriterio(idAspirante, idCriterio, request.puntajeObtenido()));
+                    calificacioncriterioProcessor.calificarCriterio(idAspirante, idCriterio,
+                            request.puntajeObtenido()));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
@@ -398,8 +422,7 @@ public class DirectorProgramaCase {
         }
     }
 
-    @PostMapping(value = "/programa/{programaId}/cohorte/{cohorteId}/criterios",
-            consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/programa/{programaId}/cohorte/{cohorteId}/criterios", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CriterioevaluacionOutput> createCriterio(
             @PathVariable Integer programaId,
             @PathVariable Integer cohorteId,
@@ -414,8 +437,7 @@ public class DirectorProgramaCase {
         }
     }
 
-    @PutMapping(value = "/programa/{programaId}/cohorte/{cohorteId}/criterios/{criterioId}",
-            consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/programa/{programaId}/cohorte/{cohorteId}/criterios/{criterioId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CriterioevaluacionOutput> updateCriterio(
             @PathVariable Integer programaId,
             @PathVariable Integer cohorteId,
@@ -446,8 +468,7 @@ public class DirectorProgramaCase {
         }
     }
 
-    @PostMapping(value = "/programa/{programaId}/cohorte/{cohorteId}/criterios/save",
-            consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/programa/{programaId}/cohorte/{cohorteId}/criterios/save", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SuccessOutput> bulkSaveCriterios(
             @PathVariable Integer programaId,
             @PathVariable Integer cohorteId,
@@ -466,6 +487,71 @@ public class DirectorProgramaCase {
     public ResponseEntity<ListaAdmitidosResumenOutput> generateAdmittedList(@RequestBody GENERATE_LISTA request) {
         try {
             return ResponseEntity.ok(listaadmitidosProcessor.generateAdmittedList(request));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PostMapping(value = "/programa/{programaId}/admitidos/{aspiranteId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Map<String, Object>> admitAspirant(
+            @PathVariable Integer programaId,
+            @PathVariable Integer aspiranteId,
+            @RequestBody ADMITIR_ASPIRANTE body) {
+        try {
+            Boolean admitido = body != null ? body.admitido() : Boolean.TRUE;
+            if (admitido == null) {
+                admitido = Boolean.TRUE;
+            }
+
+            CohorteDTO cohorte = cohorteService.findActiveByIdPrograma(programaId);
+            if (cohorte == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+
+            Integer idCohorte = cohorte.getId();
+
+            if (!admitido) {
+                EstadoDTO estadoValidadoCalificado = estadoService.findByTipoAndEntidad("VALIDADO_CALIFICADO", "aspirante");
+                if (estadoValidadoCalificado == null) {
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+                }
+
+                aspiranteService.updateEstado(aspiranteId, estadoValidadoCalificado.getId());
+
+                Map<String, Object> resp = Map.of(
+                        "success", true,
+                        "aspiranteId", aspiranteId.toString(),
+                        "admitido", false);
+                return ResponseEntity.ok(resp);
+            }
+
+            EstadoDTO estadoAdmitido = estadoService.findByTipoAndEntidad("ADMITIDO", "aspirante");
+            if (estadoAdmitido == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+
+            aspiranteService.updateEstado(aspiranteId, estadoAdmitido.getId());
+
+            if (listaadmitidosService.existsByIdCohorteAndIdAspirante(idCohorte, aspiranteId)) {
+                Map<String, Object> resp = Map.of(
+                        "success", true,
+                        "aspiranteId", aspiranteId.toString(),
+                        "admitido", true);
+                return ResponseEntity.ok(resp);
+            }
+
+            AdmitidoDTO dto = new AdmitidoDTO();
+            dto.setIdCohorte(idCohorte);
+            dto.setIdAspirante(aspiranteId);
+            dto.setFechageneracion(LocalDate.now());
+            listaadmitidosService.create(dto);
+
+            Map<String, Object> resp = Map.of(
+                    "success", true,
+                    "aspiranteId", aspiranteId.toString(),
+                    "admitido", true);
+            return ResponseEntity.status(HttpStatus.CREATED).body(resp);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
@@ -574,7 +660,8 @@ public class DirectorProgramaCase {
     public ResponseEntity<EntrevistaSimpleOutput> completeInterview(
             @PathVariable Integer idEntrevista) {
         try {
-            return ResponseEntity.ok(toSimple(entrevistaProcessor.completeInterview(new ENTREVISTA_FIND(idEntrevista))));
+            return ResponseEntity
+                    .ok(toSimple(entrevistaProcessor.completeInterview(new ENTREVISTA_FIND(idEntrevista))));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();

@@ -15,4 +15,8 @@ public enum ListaadmitidosInput {
             @NotNull Integer idCohorte,
             @NotNull Integer idAdministrativo
     ) {}
+
+    public record ADMITIR_ASPIRANTE(
+            @NotNull Boolean admitido
+    ) {}
 }
