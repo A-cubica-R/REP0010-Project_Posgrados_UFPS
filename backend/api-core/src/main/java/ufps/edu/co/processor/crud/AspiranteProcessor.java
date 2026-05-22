@@ -17,6 +17,7 @@ import ufps.edu.co.records.input.entity.AspiranteInput.*;
 import ufps.edu.co.records.input.entity.CohorteInput.COHORTE_DIRECTOR_CREATE;
 import ufps.edu.co.records.input.entity.CohorteInput.COHORTE_DIRECTOR_UPDATE;
 import ufps.edu.co.records.input.entity.DocumentocohorteInput.DOCUMENTOCOHORTE_CREATE;
+import ufps.edu.co.records.input.entity.DocumentocohorteInput.DOCUMENTOCOHORTE_UPDATE;
 import ufps.edu.co.records.output.entity.AspiranteCalificacionOutput;
 import ufps.edu.co.records.output.entity.RankingAdmitidosOutput;
 import ufps.edu.co.records.output.entity.AspiranteCohorteOutput;
@@ -699,7 +700,6 @@ public class AspiranteProcessor implements
                             && "APROBADO".equalsIgnoreCase(d.getEstadodocumento().getEstado()))
                     .count();
 
-
             return AspiranteCohorteOutput.builder()
                     .id(aspirante.getId())
                     .nombre(nombre)
@@ -709,7 +709,7 @@ public class AspiranteProcessor implements
                     .totalDocumentos(total)
                     .estadoGeneral(aspirante.getEstado().getTipo())
                     .build();
-                }).toList();
+        }).toList();
     }
 
     public RankingAdmitidosOutput getRankingAdmitidos(Integer programaId) {
@@ -829,7 +829,21 @@ public class AspiranteProcessor implements
             fechaLimitePago = body.fechaLimitePago();
         }
 
-        cohorteService.update(cohorteId, cohorte);
+        List<DOCUMENTOCOHORTE_UPDATE> documentos = cohorte.getDocumentocohorteList() != null
+                ? cohorte.getDocumentocohorteList().stream()
+                        .map(d -> new DOCUMENTOCOHORTE_UPDATE(
+                                d.getId(), d.getNombre(), d.getObligatorio(), cohorteId))
+                        .collect(java.util.stream.Collectors.toList())
+                : java.util.Collections.emptyList();
+
+        List<DocumentocohorteOutput> documentosCohorte = new ArrayList<>();
+
+        DocumentocohorteMap mapDocCohorte = new DocumentocohorteMap();
+
+        for (DOCUMENTOCOHORTE_UPDATE documento : documentos) {
+            documentosCohorte.add(mapDocCohorte
+                    .toOutput(this.documentocohorteService.update(documento.id(), mapDocCohorte.toDto(documento))));
+        }
 
         boolean activa = cohorte.getEstado() != null && "ABIERTA".equalsIgnoreCase(cohorte.getEstado().getTipo());
 
@@ -843,6 +857,7 @@ public class AspiranteProcessor implements
                 .fechaLimiteDocumentos(fechaLimiteDocumentos)
                 .fechaLimitePago(fechaLimitePago)
                 .fechaInicio(fechaInicio)
+                .documentos(documentosCohorte)
                 .build();
     }
 }
