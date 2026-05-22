@@ -519,6 +519,16 @@ public class DirectorProgramaCase {
 
                 aspiranteService.updateEstado(aspiranteId, estadoValidadoCalificado.getId());
 
+                // Si el aspirante estaba previamente en la lista de admitidos, eliminar ese registro
+                try {
+                    if (listaadmitidosService.existsByIdCohorteAndIdAspirante(idCohorte, aspiranteId)) {
+                        listaadmitidosService.deleteByIdCohorteAndIdAspirante(idCohorte, aspiranteId);
+                    }
+                } catch (Exception ex) {
+                    // No detener el flujo por errores al limpiar la lista de admitidos, solo loguear
+                    logger.error("Error eliminando registro de lista de admitidos para cohorte {} aspirante {}", idCohorte, aspiranteId, ex);
+                }
+
                 Map<String, Object> resp = Map.of(
                         "success", true,
                         "aspiranteId", aspiranteId.toString(),
