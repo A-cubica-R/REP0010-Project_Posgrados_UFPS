@@ -1,8 +1,6 @@
 package ufps.edu.co.processor.crud;
 
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,12 +20,10 @@ import ufps.edu.co.rest.dto.DocumentoDTO;
 import ufps.edu.co.rest.dto.EstadoDTO;
 import ufps.edu.co.rest.dto.EstadodocumentoDTO;
 import ufps.edu.co.rest.dto.PersonaDTO;
-import ufps.edu.co.rest.dto.TipodocumentoDTO;
 import ufps.edu.co.rest.services.AspiranteService;
 import ufps.edu.co.rest.services.DocumentoService;
 import ufps.edu.co.rest.services.EstadoService;
 import ufps.edu.co.rest.services.EstadodocumentoService;
-import ufps.edu.co.rest.services.TipodocumentoService;
 import ufps.edu.co.usecase.GlobalUseCase;
 
 @Service
@@ -47,9 +43,6 @@ public class DocumentoProcessor implements
 
     @Autowired
     private PersonaMap personaMap;
-
-    @Autowired
-    private TipodocumentoService tipodocumentoService;
 
     @Autowired
     private AspiranteService aspiranteService;
@@ -153,15 +146,14 @@ public class DocumentoProcessor implements
 
     private void checkAndUpdateEstadoValidacion(Integer idAspirante) {
         try {
-            List<TipodocumentoDTO> allTipos = tipodocumentoService.findAll();
             List<DocumentoDTO> docsAspirante = service.findByIdAspirante(idAspirante);
-            Set<Integer> tiposAprobados = docsAspirante.stream()
-                    .filter(d -> d.getEstadodocumento() != null
-                            && "APROBADO".equalsIgnoreCase(d.getEstadodocumento().getEstado()))
-                    .map(DocumentoDTO::getIdTipodocumento)
-                    .collect(Collectors.toSet());
-            boolean todosAprobados = !allTipos.isEmpty()
-                    && allTipos.stream().allMatch(t -> tiposAprobados.contains(t.getId()));
+            if (docsAspirante.isEmpty()) {
+                return;
+            }
+
+            boolean todosAprobados = docsAspirante.stream().allMatch(d -> d.getEstadodocumento() != null
+                    && "APROBADO".equalsIgnoreCase(d.getEstadodocumento().getEstado()));
+
             if (todosAprobados) {
                 EstadoDTO estadoValidado = estadoService.findByTipoAndEntidad("VALIDADO_POR_CALIFICAR", "aspirante");
                 if (estadoValidado != null) {
