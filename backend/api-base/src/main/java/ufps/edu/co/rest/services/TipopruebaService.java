@@ -29,4 +29,21 @@ public class TipopruebaService extends GenericService<TipopruebaEntity, Tipoprue
     public TipopruebaDTO findById(Integer id) {
         return entityToDto(repository.findById(id));
     }
+
+    public TipopruebaDTO create(TipopruebaDTO dto) {
+        return entityToDto(repository.save(dtoToEntity(dto)));
+    }
+
+    public TipopruebaDTO update(Integer id, TipopruebaDTO dto) {
+        repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Tipoprueba no encontrado con id: " + id));
+        dto.setId(id);
+        return entityToDto(repository.save(dtoToEntity(dto)));
+    }
+
+    public void deleteById(Integer id) {
+        repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Tipoprueba no encontrado con id: " + id));
+        repository.deleteById(id);
+    }
 }
