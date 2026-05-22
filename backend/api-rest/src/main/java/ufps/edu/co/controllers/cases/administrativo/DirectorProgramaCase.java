@@ -73,6 +73,7 @@ import ufps.edu.co.records.output.entity.CohorteResumenOutput;
 import ufps.edu.co.records.output.entity.ListaAdmitidosResumenOutput;
 import ufps.edu.co.records.output.entity.CriteriosCohorteOutput;
 import ufps.edu.co.records.output.entity.ProgramaInicioOutput;
+import ufps.edu.co.records.output.entity.RankingAdmitidosOutput;
 import ufps.edu.co.records.output.entity.AspiranteCalificacionOutput;
 import ufps.edu.co.records.output.entity.AspiranteCriteriosOutput;
 import ufps.edu.co.records.output.entity.AspiranteOutput;
@@ -298,6 +299,16 @@ public class DirectorProgramaCase {
             @RequestBody COHORTE_DIRECTOR_UPDATE body) {
         try {
             return ResponseEntity.ok(aspiranteProcessor.updateCohorte(cohorteId, body));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @GetMapping("/programa/{programaId}/admitidos/ranking")
+    public ResponseEntity<RankingAdmitidosOutput> getRankingAdmitidos(@PathVariable Integer programaId) {
+        try {
+            return ResponseEntity.ok(aspiranteProcessor.getRankingAdmitidos(programaId));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
