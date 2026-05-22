@@ -70,6 +70,7 @@ public enum CohorteInput {
         }
 
         public record COHORTE_DIRECTOR_UPDATE(
+                        @NotBlank String nombre,
                         @NotNull Integer cupos,
                         LocalDate fechaInicio,
                         LocalDate fechaLimiteDocumentos,
