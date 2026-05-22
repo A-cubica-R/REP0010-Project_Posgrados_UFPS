@@ -373,6 +373,14 @@ public class AspiranteProcessor implements
                             .build();
                 }).toList();
 
+        List<DocumentocohorteOutput> listDocumentosCohorte = documentocohorteService.findByIdCohorte(cohorteId).stream()
+                .map(d -> DocumentocohorteOutput.builder()
+                        .id(d.getId())
+                        .nombre(d.getNombre())
+                        .obligatorio(d.getObligatorio())
+                        .build())
+                .toList();
+
         List<CohorteDetalleOutput.AspiranteInfo> admitidosData = admitidoService
                 .findByCohorte(cohorteId).stream()
                 .map(admitido -> {
@@ -411,6 +419,7 @@ public class AspiranteProcessor implements
                 .criterios(criterios)
                 .inscritosData(inscritosData)
                 .admitidosData(admitidosData)
+                .documentos(listDocumentosCohorte)
                 .build();
     }
 
