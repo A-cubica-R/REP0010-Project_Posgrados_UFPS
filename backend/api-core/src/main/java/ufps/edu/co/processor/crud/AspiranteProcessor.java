@@ -730,7 +730,7 @@ public class AspiranteProcessor implements
 
         List<RankingAdmitidosOutput.AspiranteResumen> aspirantesResumen = service.findByCohorte(cohorte.getId())
             .stream()
-            .filter(a -> a.getEstado() != null && "VALIDADO_CALIFICADO".equalsIgnoreCase(a.getEstado().getTipo()))
+            .filter(a -> a.getEstado() != null && "VALIDADO_CALIFICADO".equalsIgnoreCase(a.getEstado().getTipo()) || "ADMITIDO".equalsIgnoreCase(a.getEstado().getTipo()))
             .sorted(Comparator.comparing(AspiranteDTO::getPuntuacion,
                 Comparator.nullsLast(Comparator.reverseOrder())))
             .map(a -> {
