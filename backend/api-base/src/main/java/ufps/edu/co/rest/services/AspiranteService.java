@@ -103,6 +103,11 @@ public class AspiranteService extends GenericService<AspiranteEntity, AspiranteD
         return repository.countByIdCohorteAndEstadoTipoIn(cohorteId, List.of("VALIDADO_CALIFICADO"));
     }
 
+    public long countPorCalificarByCohorte(Integer cohorteId) {
+        return repository.countByIdCohorteAndEstadoTipoIn(cohorteId,
+                List.of("VALIDADO_POR_CALIFICAR", "VALIDADO_EN_PROGRESO"));
+    }
+
     public long countPazYSalvoByCohorte(Integer cohorteId) {
         return repository.countByIdCohorteAndEstadoTipoIn(cohorteId, List.of("PAZ_Y_SALVO"));
     }
