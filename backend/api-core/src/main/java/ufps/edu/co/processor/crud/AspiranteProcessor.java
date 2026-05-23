@@ -36,7 +36,6 @@ import ufps.edu.co.rest.dto.CohorteDTO;
 import ufps.edu.co.rest.dto.AspiranteDTO;
 import ufps.edu.co.rest.dto.DocumentoDTO;
 import ufps.edu.co.rest.dto.DocumentocohorteDTO;
-import ufps.edu.co.rest.dto.PagoDTO;
 import ufps.edu.co.rest.services.DocumentoService;
 import ufps.edu.co.rest.services.DocumentocohorteService;
 import ufps.edu.co.rest.services.PagoService;
@@ -438,71 +437,40 @@ public class AspiranteProcessor implements
 
     public List<PasoProcesoOutput> getPasosProceso(Integer idAspirante) {
         AspiranteDTO aspirante = service.findById(idAspirante);
-        String estadoTipo = aspirante.getEstado() != null ? aspirante.getEstado().getTipo() : "";
+        String estado = aspirante.getEstado() != null ? aspirante.getEstado().getTipo().toUpperCase() : "";
 
-        // Paso 1 - Inscripción: siempre completado si el aspirante existe
-        PasoProcesoOutput inscripcion = PasoProcesoOutput.builder()
-                .id(1).name("Inscripción").status("completado").build();
-
-        // Paso 2 - Pago
-        List<PagoDTO> pagos = pagoService.findByIdAspirante(idAspirante);
-        String statusPago;
-        boolean pagoAprobado = pagos.stream()
-                .anyMatch(p -> p.getEstado() != null && "APROBADO".equalsIgnoreCase(p.getEstado().getTipo()));
-        if (pagoAprobado) {
-            statusPago = "completado";
-        } else if (!pagos.isEmpty()) {
-            statusPago = "En revisión";
-        } else {
-            statusPago = "Pendiente";
-        }
-        PasoProcesoOutput pago = PasoProcesoOutput.builder()
-                .id(2).name("Pago").status(statusPago).build();
-
-        // Paso 3 - Documentos
-        String statusDocs;
-        boolean estadoValidado = List.of("VALIDADO_POR_CALIFICAR", "VALIDADO_EN_PROGRESO", "VALIDADO_CALIFICADO")
-                .contains(estadoTipo);
-        if (estadoValidado) {
-            statusDocs = "completado";
-        } else {
-            List<DocumentoDTO> docs = documentoService.findByIdAspirante(idAspirante);
-            long aprobados = docs.stream()
-                    .filter(d -> d.getEstadodocumento() != null
-                            && "APROBADO".equalsIgnoreCase(d.getEstadodocumento().getEstado()))
-                    .count();
-            if (aprobados > 0) {
-                statusDocs = "En revisión";
-            } else if (!docs.isEmpty()) {
-                statusDocs = "En revisión";
-            } else {
-                statusDocs = "Pendiente";
+        String s1, s2, s3, s4, s5;
+        switch (estado) {
+            case "INSCRITO" -> {
+                s1 = "completado"; s2 = "en progreso"; s3 = "pendiente"; s4 = "pendiente"; s5 = "pendiente";
+            }
+            case "PAZ Y SALVO" -> {
+                s1 = "completado"; s2 = "completado"; s3 = "en progreso"; s4 = "pendiente"; s5 = "pendiente";
+            }
+            case "VALIDADO_POR_CALIFICAR" -> {
+                s1 = "completado"; s2 = "completado"; s3 = "completado"; s4 = "pendiente"; s5 = "pendiente";
+            }
+            case "VALIDADO_EN_PROGRESO" -> {
+                s1 = "completado"; s2 = "completado"; s3 = "completado"; s4 = "en progreso"; s5 = "pendiente";
+            }
+            case "VALIDADO_CALIFICADO" -> {
+                s1 = "completado"; s2 = "completado"; s3 = "completado"; s4 = "completado"; s5 = "en progreso";
+            }
+            case "ADMITIDO" -> {
+                s1 = "completado"; s2 = "completado"; s3 = "completado"; s4 = "completado"; s5 = "completado";
+            }
+            default -> {
+                s1 = "completado"; s2 = "pendiente"; s3 = "pendiente"; s4 = "pendiente"; s5 = "pendiente";
             }
         }
-        PasoProcesoOutput documentos = PasoProcesoOutput.builder()
-                .id(3).name("Documentos").status(statusDocs).build();
 
-        // Paso 4 - Calificación
-        String statusCalificacion;
-        if ("VALIDADO_CALIFICADO".equalsIgnoreCase(estadoTipo)) {
-            statusCalificacion = "completado";
-        } else if ("VALIDADO_EN_PROGRESO".equalsIgnoreCase(estadoTipo)) {
-            statusCalificacion = "En progreso";
-        } else if ("VALIDADO_POR_CALIFICAR".equalsIgnoreCase(estadoTipo)) {
-            statusCalificacion = "Pendiente";
-        } else {
-            statusCalificacion = "Pendiente";
-        }
-        PasoProcesoOutput calificacion = PasoProcesoOutput.builder()
-                .id(4).name("Calificación").status(statusCalificacion).build();
-
-        // Paso 5 - Resultado
-        boolean admitido = admitidoService.findByCohorte(aspirante.getIdCohorte()).stream()
-                .anyMatch(a -> idAspirante.equals(a.getIdAspirante()));
-        PasoProcesoOutput resultado = PasoProcesoOutput.builder()
-                .id(5).name("Resultado").status(admitido ? "completado" : "Pendiente").build();
-
-        return List.of(inscripcion, pago, documentos, calificacion, resultado);
+        return List.of(
+                PasoProcesoOutput.builder().id(1).name("Inscripción").status(s1).build(),
+                PasoProcesoOutput.builder().id(2).name("Pago").status(s2).build(),
+                PasoProcesoOutput.builder().id(3).name("Documentos").status(s3).build(),
+                PasoProcesoOutput.builder().id(4).name("Calificación").status(s4).build(),
+                PasoProcesoOutput.builder().id(5).name("Resultado").status(s5).build()
+        );
     }
 
     private List<AspiranteDTO> findAspirantesByCohorteActiva(Integer programaId) {
