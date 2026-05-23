@@ -13,10 +13,13 @@ public record CohorteResumenOutput(
         boolean activa,
         String semestre,
         int cupos,
+        LocalDate fechaLimitePago,
         LocalDate fechaLimiteDocs,
         LocalDate fechaLimiteInscripcion,
         long totalInscritos,
+        long totalPazysalvo,
         long totalValidados,
-        Long totalAdmitidos,
+        long totalCalificados,
+        long totalAdmitidos,
         List<DocumentocohorteOutput> documentos
 ) implements OutputResponse {}
