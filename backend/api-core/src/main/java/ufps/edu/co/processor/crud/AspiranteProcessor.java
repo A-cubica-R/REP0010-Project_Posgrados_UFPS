@@ -653,8 +653,10 @@ public class AspiranteProcessor implements
             boolean activa = cohorte.getEstado() != null
                     && "ABIERTA".equalsIgnoreCase(cohorte.getEstado().getTipo());
             long inscritos = service.countByCohorte(cohorte.getId());
+            long pazYSalvo = service.countPazYSalvoByCohorte(cohorte.getId());
             long validados = service.countValidadosByCohorte(cohorte.getId());
-            Long admitidos = activa ? null : admitidoService.countByCohorte(cohorte.getId());
+            long calificados = service.countCalificadosByCohorte(cohorte.getId());
+            long admitidos = service.countAdmitidosByCohorte(cohorte.getId());
 
             DocumentocohorteService documentocohorteService = this.documentocohorteService;
             List<DocumentocohorteOutput> documentos = documentocohorteService.findByIdCohorte(cohorte.getId()).stream()
@@ -671,10 +673,13 @@ public class AspiranteProcessor implements
                     .activa(activa)
                     .semestre(cohorte.getSemestre() != null ? cohorte.getSemestre().getNombre() : null)
                     .cupos(cohorte.getCupos())
+                    .fechaLimitePago(cohorte.getPlazo3() != null ? cohorte.getPlazo3().getFechafin() : null)
                     .fechaLimiteDocs(cohorte.getPlazo() != null ? cohorte.getPlazo().getFechafin() : null)
                     .fechaLimiteInscripcion(cohorte.getPlazo2() != null ? cohorte.getPlazo2().getFechafin() : null)
                     .totalInscritos(inscritos)
+                    .totalPazysalvo(pazYSalvo)
                     .totalValidados(validados)
+                    .totalCalificados(calificados)
                     .totalAdmitidos(admitidos)
                     .documentos(documentos)
                     .build();
