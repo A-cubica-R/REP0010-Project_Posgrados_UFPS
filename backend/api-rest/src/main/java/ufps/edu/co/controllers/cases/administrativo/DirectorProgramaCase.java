@@ -234,38 +234,38 @@ public class DirectorProgramaCase {
         }
     }
 
-    @GetMapping("/calificacion/{idPrograma}/aspirante-validados")
+    @GetMapping("/calificacion/programa/cohorte/{idCohorte}/aspirante-validados")
     public ResponseEntity<List<AspiranteCalificacionOutput>> findAllValidadosCalificacion(
-            @PathVariable Integer idPrograma) {
+            @PathVariable Integer idCohorte) {
         try {
-            return ResponseEntity.ok(aspiranteProcessor.findAllValidadosCalificacion(idPrograma));
+            return ResponseEntity.ok(aspiranteProcessor.findAllValidadosCalificacion(idCohorte));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
     }
 
-    @GetMapping("/calificacion/{idPrograma}/aspirante-validados/count")
-    public ResponseEntity<Long> countValidados(@PathVariable Integer idPrograma) {
+    @GetMapping("/calificacion/programa/cohorte/{idCohorte}/aspirante-validados/count")
+    public ResponseEntity<Long> countValidados(@PathVariable Integer idCohorte) {
         try {
-            return ResponseEntity.ok(aspiranteProcessor.countValidados(idPrograma));
+            return ResponseEntity.ok(aspiranteProcessor.countValidados(idCohorte));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
     }
 
-    @GetMapping("/calificacion/{idPrograma}/aspirante-validados/count/por-calificar")
-    public ResponseEntity<Long> countPorCalificar(@PathVariable Integer idPrograma) {
+    @GetMapping("/calificacion/programa/cohorte/{idCohorte}/aspirante-validados/count/por-calificar")
+    public ResponseEntity<Long> countPorCalificar(@PathVariable Integer idCohorte) {
         try {
-            return ResponseEntity.ok(aspiranteProcessor.countPorCalificar(idPrograma));
+            return ResponseEntity.ok(aspiranteProcessor.countPorCalificar(idCohorte));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
     }
 
-    @GetMapping("/calificacion/{idPrograma}/aspirante-validados/count/calificados")
-    public ResponseEntity<Long> countCalificados(@PathVariable Integer idPrograma) {
+    @GetMapping("/calificacion/programa/cohorte/{idCohorte}/aspirante-validados/count/calificados")
+    public ResponseEntity<Long> countCalificados(@PathVariable Integer idCohorte) {
         try {
-            return ResponseEntity.ok(aspiranteProcessor.countCalificados(idPrograma));
+            return ResponseEntity.ok(aspiranteProcessor.countCalificados(idCohorte));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }

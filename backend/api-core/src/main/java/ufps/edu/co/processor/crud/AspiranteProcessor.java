@@ -513,9 +513,9 @@ public class AspiranteProcessor implements
         return service.findByCohorte(cohorte.getId());
     }
 
-    public List<AspiranteCalificacionOutput> findAllValidadosCalificacion(Integer programaId) {
+    public List<AspiranteCalificacionOutput> findAllValidadosCalificacion(Integer cohorteId) {
         List<String> estados = List.of("VALIDADO_POR_CALIFICAR", "VALIDADO_EN_PROGRESO", "VALIDADO_CALIFICADO");
-        return findAspirantesByCohorteActiva(programaId).stream()
+        return service.findByCohorte(cohorteId).stream()
                 .filter(a -> a.getEstado() != null && estados.contains(a.getEstado().getTipo()))
                 .map(aspirante -> {
                     PersonaDTO persona = aspirante.getPersona();
@@ -537,25 +537,16 @@ public class AspiranteProcessor implements
                 }).toList();
     }
 
-    public long countValidados(Integer programaId) {
-        List<String> estados = List.of("VALIDADO_POR_CALIFICAR", "VALIDADO_EN_PROGRESO", "VALIDADO_CALIFICADO");
-        return findAspirantesByCohorteActiva(programaId).stream()
-                .filter(a -> a.getEstado() != null && estados.contains(a.getEstado().getTipo()))
-                .count();
+    public long countValidados(Integer cohorteId) {
+        return service.countValidadosByCohorte(cohorteId);
     }
 
-    public long countPorCalificar(Integer programaId) {
-        List<String> estados = List.of("VALIDADO_POR_CALIFICAR", "VALIDADO_EN_PROGRESO");
-        return findAspirantesByCohorteActiva(programaId).stream()
-                .filter(a -> a.getEstado() != null && estados.contains(a.getEstado().getTipo()))
-                .count();
+    public long countPorCalificar(Integer cohorteId) {
+        return service.countPorCalificarByCohorte(cohorteId);
     }
 
-    public long countCalificados(Integer programaId) {
-        return findAspirantesByCohorteActiva(programaId).stream()
-                .filter(a -> a.getEstado() != null
-                        && "VALIDADO_CALIFICADO".equalsIgnoreCase(a.getEstado().getTipo()))
-                .count();
+    public long countCalificados(Integer cohorteId) {
+        return service.countCalificadosByCohorte(cohorteId);
     }
 
     public CohorteListadoOutput createCohorte(Integer programaId, COHORTE_DIRECTOR_CREATE body) {
