@@ -249,10 +249,10 @@ public class AspiranteProcessor implements
         }
     }
 
-    public CriteriosCohorteOutput getCriteriosByPrograma(Integer programaId) {
-        CohorteDTO cohorte = cohorteService.findActiveByIdPrograma(programaId);
+    public CriteriosCohorteOutput getCriteriosByCohorte(Integer cohorteId) {
+        CohorteDTO cohorte = cohorteService.findById(cohorteId);
         if (cohorte == null) {
-            throw new RuntimeException("No hay cohorte activa para el programa: " + programaId);
+            throw new RuntimeException("Cohorte no encontrada: " + cohorteId);
         }
         boolean activa = cohorte.getEstado() != null
                 && "ABIERTA".equalsIgnoreCase(cohorte.getEstado().getTipo());
@@ -295,10 +295,10 @@ public class AspiranteProcessor implements
         }).toList();
     }
 
-    public ProgramaInicioOutput getProgramaInicio(Integer programaId) {
-        CohorteDTO cohorte = cohorteService.findActiveByIdPrograma(programaId);
+    public ProgramaInicioOutput getProgramaInicio(Integer cohorteId) {
+        CohorteDTO cohorte = cohorteService.findById(cohorteId);
         if (cohorte == null) {
-            throw new RuntimeException("No hay cohorte activa para el programa: " + programaId);
+            throw new RuntimeException("Cohorte no encontrada: " + cohorteId);
         }
 
         long totalInscritos = service.countByCohorte(cohorte.getId());
@@ -473,10 +473,10 @@ public class AspiranteProcessor implements
         );
     }
 
-    private List<AspiranteDTO> findAspirantesByCohorteActiva(Integer programaId) {
-        CohorteDTO cohorte = cohorteService.findActiveByIdPrograma(programaId);
+    private List<AspiranteDTO> findAspirantesByCohorte(Integer cohorteId) {
+        CohorteDTO cohorte = cohorteService.findById(cohorteId);
         if (cohorte == null) {
-            throw new RuntimeException("No hay cohorte activa para el programa: " + programaId);
+            throw new RuntimeException("Cohorte no encontrada: " + cohorteId);
         }
         return service.findByCohorte(cohorte.getId());
     }
@@ -676,10 +676,10 @@ public class AspiranteProcessor implements
         }).toList();
     }
 
-    public RankingAdmitidosOutput getRankingAdmitidos(Integer programaId) {
-        CohorteDTO cohorte = cohorteService.findActiveByIdPrograma(programaId);
+    public RankingAdmitidosOutput getRankingAdmitidos(Integer cohorteId) {
+        CohorteDTO cohorte = cohorteService.findById(cohorteId);
         if (cohorte == null) {
-            throw new RuntimeException("No hay cohorte activa para el programa: " + programaId);
+            throw new RuntimeException("Cohorte no encontrada: " + cohorteId);
         }
         boolean activa = cohorte.getEstado() != null
                 && "ABIERTA".equalsIgnoreCase(cohorte.getEstado().getTipo());

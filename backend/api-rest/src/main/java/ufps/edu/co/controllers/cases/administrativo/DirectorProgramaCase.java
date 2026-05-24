@@ -282,10 +282,10 @@ public class DirectorProgramaCase {
         }
     }
 
-    @GetMapping("/programa/{programaId}/cohorte-actual/criterios")
-    public ResponseEntity<CriteriosCohorteOutput> getCriteriosByPrograma(@PathVariable Integer programaId) {
+    @GetMapping("/cohorte/{cohorteId}/criterios")
+    public ResponseEntity<CriteriosCohorteOutput> getCriteriosByCohorte(@PathVariable Integer cohorteId) {
         try {
-            return ResponseEntity.ok(aspiranteProcessor.getCriteriosByPrograma(programaId));
+            return ResponseEntity.ok(aspiranteProcessor.getCriteriosByCohorte(cohorteId));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
@@ -348,20 +348,20 @@ public class DirectorProgramaCase {
         }
     }
 
-    @GetMapping("/programa/{programaId}/admitidos/ranking")
-    public ResponseEntity<RankingAdmitidosOutput> getRankingAdmitidos(@PathVariable Integer programaId) {
+    @GetMapping("/cohorte/{cohorteId}/admitidos/ranking")
+    public ResponseEntity<RankingAdmitidosOutput> getRankingAdmitidos(@PathVariable Integer cohorteId) {
         try {
-            return ResponseEntity.ok(aspiranteProcessor.getRankingAdmitidos(programaId));
+            return ResponseEntity.ok(aspiranteProcessor.getRankingAdmitidos(cohorteId));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
         }
     }
 
-    @PostMapping(value = "/programa/inicio", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ProgramaInicioOutput> getProgramaInicio(@RequestBody PROGRAMA_FIND request) {
+    @GetMapping("/cohorte/{cohorteId}/inicio")
+    public ResponseEntity<ProgramaInicioOutput> getProgramaInicio(@PathVariable Integer cohorteId) {
         try {
-            return ResponseEntity.ok(aspiranteProcessor.getProgramaInicio(request.id()));
+            return ResponseEntity.ok(aspiranteProcessor.getProgramaInicio(cohorteId));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
@@ -493,9 +493,9 @@ public class DirectorProgramaCase {
         }
     }
 
-    @PostMapping(value = "/programa/{programaId}/admitidos/{aspiranteId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/cohorte/{cohorteId}/admitidos/{aspiranteId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String, Object>> admitAspirant(
-            @PathVariable Integer programaId,
+            @PathVariable Integer cohorteId,
             @PathVariable Integer aspiranteId,
             @RequestBody ADMITIR_ASPIRANTE body) {
         try {
@@ -504,12 +504,7 @@ public class DirectorProgramaCase {
                 admitido = Boolean.TRUE;
             }
 
-            CohorteDTO cohorte = cohorteService.findActiveByIdPrograma(programaId);
-            if (cohorte == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-            }
-
-            Integer idCohorte = cohorte.getId();
+            Integer idCohorte = cohorteId;
 
             if (!admitido) {
                 EstadoDTO estadoValidadoCalificado = estadoService.findByTipoAndEntidad("VALIDADO_CALIFICADO", "aspirante");
