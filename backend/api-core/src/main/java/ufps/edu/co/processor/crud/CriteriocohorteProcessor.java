@@ -1,5 +1,6 @@
 package ufps.edu.co.processor.crud;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,5 +75,27 @@ public class CriteriocohorteProcessor implements
         } catch (Exception e) {
             throw new DomainException(CriteriocohorteErrorCode.CRITERIOCOHORTE_NOT_FOUND, input.id());
         }
+    }
+
+    public List<CriteriocohorteOutput> findByIdCohorte(Integer idCohorte) {
+        return service.findByIdCohorte(idCohorte).stream().map(map::toOutput).toList();
+    }
+
+    public CriteriocohorteOutput assign(Integer idCohorte, Integer idCriterio, BigDecimal pesoSnapshot) {
+        return create(CRITERIOCOHORTE_CREATE.builder()
+                .idCohorte(idCohorte)
+                .idCriterio(idCriterio)
+                .pesoSnapshot(pesoSnapshot)
+                .build());
+    }
+
+    public CriteriocohorteOutput updatePeso(Integer id, BigDecimal pesoSnapshot) {
+        CriteriocohorteOutput existing = findById(new CRITERIOCOHORTE_FIND(id));
+        return update(CRITERIOCOHORTE_UPDATE.builder()
+                .id(id)
+                .idCohorte(existing.idCohorte())
+                .idCriterio(existing.idCriterio())
+                .pesoSnapshot(pesoSnapshot)
+                .build());
     }
 }

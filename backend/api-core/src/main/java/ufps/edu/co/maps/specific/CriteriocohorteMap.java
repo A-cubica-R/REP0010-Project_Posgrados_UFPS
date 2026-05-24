@@ -1,11 +1,14 @@
 package ufps.edu.co.maps.specific;
 
+import org.springframework.stereotype.Component;
+
 import ufps.edu.co.domain.annotations.UniversalMapping;
 import ufps.edu.co.maps.UniversalMapper;
 import ufps.edu.co.records.input.entity.CriteriocohorteInput.*;
 import ufps.edu.co.records.output.entity.CriteriocohorteOutput;
 import ufps.edu.co.rest.dto.CriteriocohorteDTO;
 
+@Component
 @UniversalMapping(
     create = CRITERIOCOHORTE_CREATE.class,
     update = CRITERIOCOHORTE_UPDATE.class,

@@ -2,6 +2,7 @@ package ufps.edu.co.records.input.entity;
 
 import java.math.BigDecimal;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import ufps.edu.co.records.contracts.*;
 
@@ -39,5 +40,14 @@ public enum CriteriocohorteInput {
         @Builder
         public record CRITERIOCOHORTE_FIND(
                         Integer id) implements FindType {
+        }
+
+        public record CRITERIOCOHORTE_ASSIGN_BODY(
+                        @NotNull Integer idCriterio,
+                        BigDecimal pesoSnapshot) {
+        }
+
+        public record CRITERIOCOHORTE_PESO_UPDATE(
+                        BigDecimal pesoSnapshot) {
         }
 }

@@ -69,7 +69,7 @@ public interface AspiranteRepository extends JpaRepository<AspiranteEntity, Inte
 	@Query("SELECT COUNT(a) FROM AspiranteEntity a WHERE a.estado.tipo IN :tipos")
 	long countByEstadoTipoIn(@Param("tipos") List<String> tipos);
 
-	// Validados a los que les falta al menos un criterioevaluacion de su cohorte calificado
+	// Validados a los que les falta al menos un criteriocohorte de su cohorte calificado
 	@Query("SELECT a FROM AspiranteEntity a " +
 		   "WHERE NOT EXISTS (" +
 		   "  SELECT td FROM TipodocumentoEntity td " +
@@ -81,18 +81,18 @@ public interface AspiranteRepository extends JpaRepository<AspiranteEntity, Inte
 		   "  )" +
 		   ") " +
 		   "AND EXISTS (" +
-		   "  SELECT ce FROM CriterioevaluacionEntity ce " +
-		   "  WHERE ce.idCohorte = a.idCohorte " +
+		   "  SELECT ccCohorte FROM CriteriocohorteEntity ccCohorte " +
+		   "  WHERE ccCohorte.idCohorte = a.idCohorte " +
 		   "    AND NOT EXISTS (" +
-		   "      SELECT cc FROM CalificacioncriterioEntity cc " +
-		   "      WHERE cc.aspirante = a " +
-		   "        AND cc.criterioevaluacion = ce " +
-		   "        AND cc.puntuacion IS NOT NULL" +
+		   "      SELECT cal FROM CalificacioncriterioEntity cal " +
+		   "      WHERE cal.aspirante = a " +
+		   "        AND cal.criteriocohorte = ccCohorte " +
+		   "        AND cal.puntuacion IS NOT NULL" +
 		   "    )" +
 		   ")")
 	List<AspiranteEntity> findPorCalificar();
 
-	// Validados con todos los criterioevaluacion de su cohorte calificados (puntuacion no nula)
+	// Validados con todos los criteriocohorte de su cohorte calificados (puntuacion no nula)
 	@Query("SELECT a FROM AspiranteEntity a " +
 		   "WHERE NOT EXISTS (" +
 		   "  SELECT td FROM TipodocumentoEntity td " +
@@ -104,13 +104,13 @@ public interface AspiranteRepository extends JpaRepository<AspiranteEntity, Inte
 		   "  )" +
 		   ") " +
 		   "AND NOT EXISTS (" +
-		   "  SELECT ce FROM CriterioevaluacionEntity ce " +
-		   "  WHERE ce.idCohorte = a.idCohorte " +
+		   "  SELECT ccCohorte FROM CriteriocohorteEntity ccCohorte " +
+		   "  WHERE ccCohorte.idCohorte = a.idCohorte " +
 		   "    AND NOT EXISTS (" +
-		   "      SELECT cc FROM CalificacioncriterioEntity cc " +
-		   "      WHERE cc.aspirante = a " +
-		   "        AND cc.criterioevaluacion = ce " +
-		   "        AND cc.puntuacion IS NOT NULL" +
+		   "      SELECT cal FROM CalificacioncriterioEntity cal " +
+		   "      WHERE cal.aspirante = a " +
+		   "        AND cal.criteriocohorte = ccCohorte " +
+		   "        AND cal.puntuacion IS NOT NULL" +
 		   "    )" +
 		   ")")
 	List<AspiranteEntity> findCalificados();

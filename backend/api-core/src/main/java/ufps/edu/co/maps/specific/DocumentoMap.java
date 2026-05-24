@@ -28,7 +28,7 @@ public class DocumentoMap extends
                 .idTipodocumento(input.idTipodocumento())
                 .keyfile(input.keyfile())
                 .observaciones(input.observaciones())
-                .idDocumentosrequisitoconcejocohorte(input.idDocumentosrequisitoconcejocohorte())
+                .idDocumentosrequisitoconsejocohorte(input.idDocumentosrequisitoconsejocohorte())
                 .idDocumentosrequisitoprogramacohorte(input.idDocumentosrequisitoprogramacohorte())
                 .build();
     }
@@ -46,7 +46,7 @@ public class DocumentoMap extends
                 .idTipodocumento(input.idTipodocumento())
                 .keyfile(input.keyfile())
                 .observaciones(input.observaciones())
-                .idDocumentosrequisitoconcejocohorte(input.idDocumentosrequisitoconcejocohorte())
+                .idDocumentosrequisitoconsejocohorte(input.idDocumentosrequisitoconsejocohorte())
                 .idDocumentosrequisitoprogramacohorte(input.idDocumentosrequisitoprogramacohorte())
                 .build();
     }
@@ -92,7 +92,7 @@ public class DocumentoMap extends
                 .idTipodocumento(dto.getIdTipodocumento())
                 .keyfile(dto.getKeyfile())
                 .observaciones(dto.getObservaciones())
-                .idDocumentosrequisitoconcejocohorte(dto.getIdDocumentosrequisitoconcejocohorte())
+                .idDocumentosrequisitoconsejocohorte(dto.getIdDocumentosrequisitoconsejocohorte())
                 .idDocumentosrequisitoprogramacohorte(dto.getIdDocumentosrequisitoprogramacohorte())
                 .administrativo(
                         dto.getAdministrativo() != null ? administrativoMap.toOutput(dto.getAdministrativo()) : null)

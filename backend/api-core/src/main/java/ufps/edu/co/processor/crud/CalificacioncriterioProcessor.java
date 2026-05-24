@@ -1,7 +1,6 @@
 package ufps.edu.co.processor.crud;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -17,8 +16,12 @@ import ufps.edu.co.records.output.entity.CalificacionCriterioSimpleOutput;
 import ufps.edu.co.records.output.entity.CalificacioncriterioOutput;
 import ufps.edu.co.rest.dto.AspiranteDTO;
 import ufps.edu.co.rest.dto.CalificacioncriterioDTO;
+import ufps.edu.co.rest.dto.CriteriocohorteDTO;
+import ufps.edu.co.rest.dto.CriterioevaluacionDTO;
 import ufps.edu.co.rest.services.AspiranteService;
 import ufps.edu.co.rest.services.CalificacioncriterioService;
+import ufps.edu.co.rest.services.CriteriocohorteService;
+import ufps.edu.co.rest.services.CriterioevaluacionService;
 import ufps.edu.co.usecase.GlobalUseCase;
 
 @Service
@@ -35,6 +38,12 @@ public class CalificacioncriterioProcessor implements
 
     @Autowired
     private AspiranteService aspiranteService;
+
+    @Autowired
+    private CriteriocohorteService criteriocohorteService;
+
+    @Autowired
+    private CriterioevaluacionService criterioevaluacionService;
 
     @Override
     public CalificacioncriterioOutput create(CALIFICACIONCRITERIO_CREATE input) {
@@ -106,6 +115,22 @@ public class CalificacioncriterioProcessor implements
 
     public CalificacionCriterioSimpleOutput calificarCriterio(Integer idAspirante, Integer idCriterio,
             BigDecimal puntaje) {
+        CriteriocohorteDTO criteriocohorte = criteriocohorteService.findById(idCriterio);
+        if (criteriocohorte == null) {
+            throw new DomainException(CalificacioncriterioErrorCode.CALIFICACIONCRITERIO_NOT_FOUND, idCriterio);
+        }
+        CriterioevaluacionDTO criterioevaluacion = criterioevaluacionService.findById(criteriocohorte.getIdCriterio());
+        BigDecimal peso = criterioevaluacion != null ? criterioevaluacion.getPeso() : null;
+        if (peso == null) {
+            throw new DomainException(CalificacioncriterioErrorCode.CALIFICACIONCRITERIO_NOT_FOUND, idCriterio);
+        }
+        if (puntaje == null || puntaje.remainder(BigDecimal.ONE).compareTo(BigDecimal.ZERO) != 0
+                || puntaje.compareTo(BigDecimal.ONE) < 0) {
+            throw new DomainException(CalificacioncriterioErrorCode.PUNTUACION_INVALIDA, puntaje);
+        }
+        if (puntaje.compareTo(peso) > 0) {
+            throw new DomainException(CalificacioncriterioErrorCode.PUNTAJE_EXCEDE_MAXIMO, peso.stripTrailingZeros().toPlainString());
+        }
         CalificacioncriterioOutput result = service.findByIdAspiranteAndIdCriterio(idAspirante, idCriterio)
                 .map(existing -> {
                     CALIFICACIONCRITERIO_UPDATE updateInput = new CALIFICACIONCRITERIO_UPDATE(
@@ -143,13 +168,11 @@ public class CalificacioncriterioProcessor implements
                 .forEach(this::recalcularPuntuacionAspirante);
     }
 
-    // Recalcula aspirante.puntuacion = sum(puntuacion_i * pesoSnapshot_i / 100)
     private void recalcularPuntuacionAspirante(Integer idAspirante) {
         List<CalificacioncriterioDTO> calificaciones = service.findByIdAspirante(idAspirante);
         BigDecimal total = calificaciones.stream()
                 .filter(c -> c.getPuntuacion() != null)
-                .map(c -> c.getPuntuacion()
-                        .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP))
+                .map(CalificacioncriterioDTO::getPuntuacion)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         AspiranteDTO aspirante = aspiranteService.findById(idAspirante);
         aspirante.setPuntuacion(total);

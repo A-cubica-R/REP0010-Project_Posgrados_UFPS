@@ -18,7 +18,7 @@ public record DocumentoOutput(
         Integer idTipodocumento,
         String keyfile,
         String observaciones,
-        Integer idDocumentosrequisitoconcejocohorte,
+        Integer idDocumentosrequisitoconsejocohorte,
         Integer idDocumentosrequisitoprogramacohorte,
         AdministrativoOutput administrativo,
         AspiranteOutput aspirante,

@@ -39,6 +39,7 @@ import ufps.edu.co.rest.dto.DocumentocohorteDTO;
 import ufps.edu.co.rest.services.DocumentoService;
 import ufps.edu.co.rest.services.DocumentocohorteService;
 import ufps.edu.co.rest.dto.CalificacioncriterioDTO;
+import ufps.edu.co.rest.dto.CriteriocohorteDTO;
 import ufps.edu.co.rest.dto.CriterioevaluacionDTO;
 import ufps.edu.co.rest.dto.EstadoDTO;
 import ufps.edu.co.rest.dto.ModalidadDTO;
@@ -51,6 +52,7 @@ import ufps.edu.co.rest.services.AspiranteService;
 import ufps.edu.co.rest.services.CalificacioncriterioService;
 import ufps.edu.co.rest.services.CohorteService;
 import ufps.edu.co.rest.services.CriterioevaluacionService;
+import ufps.edu.co.rest.services.CriteriocohorteService;
 import ufps.edu.co.rest.services.EstadoService;
 import ufps.edu.co.rest.services.ModalidadService;
 import ufps.edu.co.rest.services.PlazoService;
@@ -73,6 +75,9 @@ public class AspiranteProcessor implements
 
     @Autowired
     private CriterioevaluacionService criterioevaluacionService;
+
+    @Autowired
+    private CriteriocohorteService criteriocohorteService;
 
     @Autowired
     private CalificacioncriterioService calificacioncriterioService;
@@ -216,10 +221,10 @@ public class AspiranteProcessor implements
         try {
             AspiranteDTO aspirante = service.findById(input.id());
 
-            List<CriterioevaluacionDTO> criterios = criterioevaluacionService
+            List<CriteriocohorteDTO> criteriosCohorte = criteriocohorteService
                     .findByIdCohorte(aspirante.getIdCohorte());
 
-            Map<Integer, BigDecimal> puntuacionPorCriterio = calificacioncriterioService
+            Map<Integer, BigDecimal> puntuacionPorCriteriocohorte = calificacioncriterioService
                     .findByIdAspirante(input.id()).stream()
                     .filter(c -> c.getIdCriteriocohorte() != null && c.getPuntuacion() != null)
                     .collect(Collectors.toMap(
@@ -227,13 +232,16 @@ public class AspiranteProcessor implements
                             CalificacioncriterioDTO::getPuntuacion,
                             (a, b) -> a));
 
-            List<CriterioFilaOutput> filas = criterios.stream()
-                    .map(c -> CriterioFilaOutput.builder()
-                            .id(c.getId())
-                            .nombreCriterio(c.getNombre())
-                            .peso(c.getPeso())
-                            .puntajeObtenido(puntuacionPorCriterio.get(c.getId()))
-                            .build())
+            List<CriterioFilaOutput> filas = criteriosCohorte.stream()
+                    .map(cc -> {
+                        CriterioevaluacionDTO ce = criterioevaluacionService.findById(cc.getIdCriterio());
+                        return CriterioFilaOutput.builder()
+                                .id(cc.getId())
+                                .nombreCriterio(ce != null ? ce.getNombre() : null)
+                                .peso(cc.getPesoSnapshot())
+                                .puntajeObtenido(puntuacionPorCriteriocohorte.get(cc.getId()))
+                                .build();
+                    })
                     .toList();
 
             return AspiranteCriteriosOutput.builder()
@@ -252,14 +260,17 @@ public class AspiranteProcessor implements
         }
         boolean activa = cohorte.getEstado() != null
                 && "ABIERTA".equalsIgnoreCase(cohorte.getEstado().getTipo());
-        List<CriteriosCohorteOutput.CriterioInfo> criterios = criterioevaluacionService
-                .findByIdCohorte(cohorte.getId()).stream()
-                .map(c -> CriteriosCohorteOutput.CriterioInfo.builder()
-                        .id(c.getId())
-                        .nombre(c.getNombre())
-                        .descripcion(c.getDescripcion())
-                        .peso(c.getPeso())
-                        .build())
+        List<CriteriosCohorteOutput.CriterioInfo> criterios = criteriocohorteService
+                .findByIdCohorte(cohorteId).stream()
+                .map(cc -> {
+                    CriterioevaluacionDTO ce = criterioevaluacionService.findById(cc.getIdCriterio());
+                    return CriteriosCohorteOutput.CriterioInfo.builder()
+                            .id(cc.getId())
+                            .nombre(ce != null ? ce.getNombre() : null)
+                            .descripcion(ce != null ? ce.getDescripcion() : null)
+                            .peso(cc.getPesoSnapshot())
+                            .build();
+                })
                 .toList();
         return CriteriosCohorteOutput.builder()
                 .cohorteActual(CriteriosCohorteOutput.CohorteInfo.builder()
@@ -340,12 +351,15 @@ public class AspiranteProcessor implements
         boolean activa = cohorte.getEstado() != null
                 && "ABIERTA".equalsIgnoreCase(cohorte.getEstado().getTipo());
 
-        List<CohorteDetalleOutput.CriterioInfo> criterios = criterioevaluacionService
+        List<CohorteDetalleOutput.CriterioInfo> criterios = criteriocohorteService
                 .findByIdCohorte(cohorteId).stream()
-                .map(c -> CohorteDetalleOutput.CriterioInfo.builder()
-                        .nombre(c.getNombre())
-                        .peso(c.getPeso())
-                        .build())
+                .map(cc -> {
+                    CriterioevaluacionDTO ce = criterioevaluacionService.findById(cc.getIdCriterio());
+                    return CohorteDetalleOutput.CriterioInfo.builder()
+                            .nombre(ce != null ? ce.getNombre() : null)
+                            .peso(cc.getPesoSnapshot())
+                            .build();
+                })
                 .toList();
 
         List<AspiranteDTO> aspirantes = service.findByCohorte(cohorteId);

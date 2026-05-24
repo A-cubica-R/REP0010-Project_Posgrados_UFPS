@@ -44,26 +44,26 @@ public class CalificacioncriterioService extends GenericService<Calificacioncrit
         return entityListToDtoList(repository.findByIdAspirante(idAspirante));
     }
 
-    public CalificacioncriterioDTO findByIdCriterio(Integer idAspirante, Integer idCriterio) {
-        return entityToDto(repository.findByIdAspiranteAndIdCriterio(idAspirante, idCriterio));
+    public CalificacioncriterioDTO findByIdCriterio(Integer idAspirante, Integer idCriteriocohorte) {
+        return entityToDto(repository.findByIdAspiranteAndIdCriteriocohorte(idAspirante, idCriteriocohorte));
     }
 
-    public List<CalificacioncriterioDTO> findByIdCriterio(Integer idCriterio) {
-        return entityListToDtoList(repository.findByIdCriterio(idCriterio));
+    public List<CalificacioncriterioDTO> findByIdCriterio(Integer idCriteriocohorte) {
+        return entityListToDtoList(repository.findByIdCriteriocohorte(idCriteriocohorte));
     }
 
 
-    public Boolean existsByAspiranteAndCriterio(Integer idAspirante, Integer idCriterio) {
-        return repository.existsByIdAspiranteAndIdCriterio(idAspirante, idCriterio);
+    public Boolean existsByAspiranteAndCriterio(Integer idAspirante, Integer idCriteriocohorte) {
+        return repository.existsByIdAspiranteAndIdCriteriocohorte(idAspirante, idCriteriocohorte);
     }
 
-    public boolean existsByCriterio(Integer idCriterio) {
-        return repository.existsByIdCriterio(idCriterio);
+    public boolean existsByCriterio(Integer idCriteriocohorte) {
+        return repository.existsByIdCriteriocohorte(idCriteriocohorte);
     }
 
     @Transactional(readOnly = true)
-    public Optional<CalificacioncriterioDTO> findByIdAspiranteAndIdCriterio(Integer idAspirante, Integer idCriterio) {
-        return repository.findByIdAspiranteAndIdCriterio(idAspirante, idCriterio).map(entity -> entityToDto(entity));
+    public Optional<CalificacioncriterioDTO> findByIdAspiranteAndIdCriterio(Integer idAspirante, Integer idCriteriocohorte) {
+        return repository.findByIdAspiranteAndIdCriteriocohorte(idAspirante, idCriteriocohorte).map(entity -> entityToDto(entity));
     }
 
     public CalificacioncriterioDTO create(CalificacioncriterioDTO dto) {

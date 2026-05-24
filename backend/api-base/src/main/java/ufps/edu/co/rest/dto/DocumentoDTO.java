@@ -40,7 +40,7 @@ public class DocumentoDTO implements Serializable {
     private Integer idTipodocumento ;
     private String keyfile ;
     private String observaciones ;
-    private Integer idDocumentosrequisitoconcejocohorte ;
+    private Integer idDocumentosrequisitoconsejocohorte ;
     private Integer idDocumentosrequisitoprogramacohorte ;
     //--- LINKS ( RELATIONSHIPS )
     private List<CambiodocumentoDTO> cambiodocumentoList ; 
@@ -66,7 +66,7 @@ public class DocumentoDTO implements Serializable {
 		sb.append(separator).append("idTipodocumento=").append(idTipodocumento);
 		sb.append(separator).append("keyfile=").append(keyfile);
 		// attribute 'observaciones' (type String) not usable in toString()
-		sb.append(separator).append("idDocumentosrequisitoconcejocohorte=").append(idDocumentosrequisitoconcejocohorte);
+		sb.append(separator).append("idDocumentosrequisitoconsejocohorte=").append(idDocumentosrequisitoconsejocohorte);
 		sb.append(separator).append("idDocumentosrequisitoprogramacohorte=").append(idDocumentosrequisitoprogramacohorte);
 		sb.append("]");
 		return sb.toString();

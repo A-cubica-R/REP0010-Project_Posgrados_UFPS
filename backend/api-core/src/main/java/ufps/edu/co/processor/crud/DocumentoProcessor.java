@@ -174,7 +174,7 @@ public class DocumentoProcessor implements
             }
 
             for (DocumentosrequisitoconcejocohorteDTO requisito : requisitosConsejo) {
-                Optional<DocumentoDTO> doc = service.findByIdAspiranteAndIdDocumentosrequisitoconcejocohorte(
+                Optional<DocumentoDTO> doc = service.findByIdAspiranteAndIdDocumentosrequisitoconsejocohorte(
                         idAspirante, requisito.getId());
                 if (doc.isEmpty() || doc.get().getEstadodocumento() == null
                         || !"APROBADO".equalsIgnoreCase(doc.get().getEstadodocumento().getEstado())) {

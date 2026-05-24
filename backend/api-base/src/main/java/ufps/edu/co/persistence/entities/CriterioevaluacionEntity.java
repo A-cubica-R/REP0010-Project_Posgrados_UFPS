@@ -12,7 +12,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.math.BigDecimal;
-import java.util.List;
 
 
 /**
@@ -42,7 +41,7 @@ public class CriterioevaluacionEntity implements Serializable {
     @Column(name="nombre", nullable=false, length=100)
     private String     nombre ;
 
-    @Column(name="activo", nullable=false)
+    @Column(name="activo")
     private Boolean     activo ;
 
     @Column(name="descripcion", length=65535)
@@ -55,11 +54,8 @@ public class CriterioevaluacionEntity implements Serializable {
     private Integer        idPrograma ;
 
     //--- LINKS ( RELATIONSHIPS )
-    @OneToMany(mappedBy="criterioevaluacion")
-    private List<CalificacioncriterioEntity> calificacioncriterioList ; 
-
     @ManyToOne()
     @JoinColumn(name="id_programa", referencedColumnName="id", insertable=false, updatable=false)
-    private ProgramaEntity    programa ; 
+    private ProgramaEntity    programa ;
 
 }
