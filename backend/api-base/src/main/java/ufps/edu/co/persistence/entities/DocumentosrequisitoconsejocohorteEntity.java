@@ -15,19 +15,19 @@ import java.util.List;
 
 
 /**
- * JPA entity class for "Documentosrequisitoprogramacohorte"
+ * JPA entity class for "Documentosrequisitoconsejocohorte"
  *
  * @author Telosys
  *
  */
 @Entity
-@Table(name = "documentosrequisitoprogramacohorte")
+@Table(name = "documentosrequisitoconsejocohorte")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class DocumentosrequisitoprogramacohorteEntity implements Serializable {
+public class DocumentosrequisitoconsejocohorteEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -45,7 +45,7 @@ public class DocumentosrequisitoprogramacohorteEntity implements Serializable {
     private Integer    idCohorte ;
 
     //--- LINKS ( RELATIONSHIPS )
-    @OneToMany(mappedBy="documentosrequisitoprogramacohorte")
+    @OneToMany(mappedBy="documentosrequisitoconsejocohorte")
     private List<DocumentoEntity> documentoList ; 
 
     @ManyToOne
@@ -54,6 +54,6 @@ public class DocumentosrequisitoprogramacohorteEntity implements Serializable {
 
     @ManyToOne
     @JoinColumn(name="id_docrequisito", referencedColumnName="id", insertable=false, updatable=false)
-    private DocumentosrequisitoprogramaEntity documentosrequisitoprograma ; 
+    private DocumentosrequisitoconsejoEntity documentosrequisitoconsejo ; 
 
 }

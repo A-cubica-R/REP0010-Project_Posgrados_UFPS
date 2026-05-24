@@ -24,7 +24,6 @@ public record DocumentoOutput(
         AspiranteOutput aspirante,
         EstadodocumentoOutput estadodocumento,
         PlazoOutput plazo,
-        TipodocumentoOutput tipodocumento,
         List<CambiodocumentoOutput> cambiodocumentoList,
         List<CambiodocumentoOutput> cambiodocumentoList2
 ) implements OutputResponse {}

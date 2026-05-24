@@ -87,14 +87,14 @@ public abstract class UniversalMapper<O extends OutputResponse, DTO> {
         }
     }
 
-    private int mapInputToDto(Object input, DTO dto) {
+    private Integer mapInputToDto(Object input, DTO dto) {
         if (input.getClass().isRecord()) {
             return mapRecord(input, dto);
         }
         return mapBean(input, dto);
     }
 
-    private int mapRecord(Object input, DTO dto) {
+    private Integer mapRecord(Object input, DTO dto) {
         int mapped = 0;
         RecordComponent[] components = input.getClass().getRecordComponents();
         for (RecordComponent component : components) {
@@ -115,7 +115,7 @@ public abstract class UniversalMapper<O extends OutputResponse, DTO> {
         }
     }
 
-    private int mapBean(Object input, DTO dto) {
+    private Integer mapBean(Object input, DTO dto) {
         int mapped = 0;
         for (Method method : input.getClass().getMethods()) {
             if (method.getParameterCount() != 0) {
@@ -154,7 +154,7 @@ public abstract class UniversalMapper<O extends OutputResponse, DTO> {
         }
     }
 
-    private int applyValue(String propertyName, Object value, DTO dto) {
+    private Integer applyValue(String propertyName, Object value, DTO dto) {
         if (value == null) {
             return 0;
         }
