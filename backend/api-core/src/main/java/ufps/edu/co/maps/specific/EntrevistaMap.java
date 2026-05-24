@@ -73,7 +73,6 @@ public class EntrevistaMap extends
 
         return EntrevistaOutput.builder()
                 .id(dto.getId())
-                .calificacion(dto.getCalificacion())
                 .fecha(dto.getFecha())
                 .tiempo(dto.getTiempo())
                 .motivocambio(dto.getMotivocambio())

@@ -40,8 +40,6 @@ public class EntrevistaEntity implements Serializable {
     private Integer id ;
 
     //--- OTHER DATA FIELDS 
-    @Column(name="calificacion")
-    private BigDecimal calificacion ;
 
     @Column(name="fecha", nullable=false)
     private LocalDate  fecha ;
