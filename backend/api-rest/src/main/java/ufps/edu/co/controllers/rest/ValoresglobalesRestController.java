@@ -19,19 +19,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import ufps.edu.co.processor.crud.CriteriocohorteProcessor;
-import ufps.edu.co.records.input.entity.CriteriocohorteInput.CRITERIOCOHORTE_CREATE;
-import ufps.edu.co.records.input.entity.CriteriocohorteInput.CRITERIOCOHORTE_DELETE;
-import ufps.edu.co.records.input.entity.CriteriocohorteInput.CRITERIOCOHORTE_FIND;
-import ufps.edu.co.records.input.entity.CriteriocohorteInput.CRITERIOCOHORTE_UPDATE;
-import ufps.edu.co.records.output.entity.CriteriocohorteOutput;
+import ufps.edu.co.rest.dto.ValoresglobalesDTO;
+import ufps.edu.co.rest.services.ValoresglobalesService;
 
 @RestController
-@RequestMapping(value = "/api/v1/criteriocohorte", produces = MediaType.APPLICATION_JSON_VALUE)
-public class CriteriocohorteRestController {
+@RequestMapping(value = "/api/v1/valoresglobales", produces = MediaType.APPLICATION_JSON_VALUE)
+public class ValoresglobalesRestController {
 
     @Autowired
-    private CriteriocohorteProcessor processor;
+    private ValoresglobalesService service;
 
     /**
      * Get ALL
@@ -39,8 +35,8 @@ public class CriteriocohorteRestController {
      * @return 200 con lista de DTO
      */
     @GetMapping("")
-    public ResponseEntity<List<CriteriocohorteOutput>> findAll() {
-        List<CriteriocohorteOutput> list = processor.findAll();
+    public ResponseEntity<List<ValoresglobalesDTO>> findAll() {
+        List<ValoresglobalesDTO> list = service.findAll();
         return ResponseEntity.ok(list); // 200 OK
     }
 
@@ -51,15 +47,11 @@ public class CriteriocohorteRestController {
      * @return 200 con DTO o 404 si no existe
      */
     @GetMapping("/{id}")
-    public ResponseEntity<CriteriocohorteOutput> findById(@PathVariable Integer id) {
-        try {
-            CriteriocohorteOutput criteriocohorteOutput = processor.findById(new CRITERIOCOHORTE_FIND(id));
-            if ( criteriocohorteOutput != null ) {
-                return ResponseEntity.ok(criteriocohorteOutput); // 200 OK
-            } else {
-                return ResponseEntity.notFound().build(); // 404 Not found
-            }
-        } catch (RuntimeException e) {
+    public ResponseEntity<ValoresglobalesDTO> findById(@PathVariable Integer id) {
+        ValoresglobalesDTO valoresglobalesDTO = service.findById(id);
+        if ( valoresglobalesDTO != null ) {
+            return ResponseEntity.ok(valoresglobalesDTO); // 200 OK
+        } else {
             return ResponseEntity.notFound().build(); // 404 Not found
         }
     }
@@ -67,12 +59,12 @@ public class CriteriocohorteRestController {
     /**
      * Create
      *
-     * @param criteriocohorteDTO
+     * @param valoresglobalesDTO
      * @return 201 creado o 409 si ya existe
      */
     @PostMapping("")
-    public ResponseEntity<CriteriocohorteOutput> create(@RequestBody CRITERIOCOHORTE_CREATE request) {
-        CriteriocohorteOutput created = processor.create(request);
+    public ResponseEntity<ValoresglobalesDTO> create(@RequestBody ValoresglobalesDTO valoresglobalesDTO) {
+        ValoresglobalesDTO created = service.create(valoresglobalesDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(created); // 201 Created
     }
 
@@ -80,14 +72,13 @@ public class CriteriocohorteRestController {
      * Update if exists
      *
      * @param id
-     * @param criteriocohorteDTO
+     * @param valoresglobalesDTO
      * @return 200 con DTO actualizado o 404 si no existe
      */
     @PutMapping("/{id}")
-    public ResponseEntity<CriteriocohorteOutput> update(@PathVariable Integer id, @RequestBody CRITERIOCOHORTE_UPDATE request) {
+    public ResponseEntity<ValoresglobalesDTO> update(@PathVariable Integer id, @RequestBody ValoresglobalesDTO valoresglobalesDTO) {
         try {
-            CRITERIOCOHORTE_UPDATE input = new CRITERIOCOHORTE_UPDATE(id, request.idCohorte(), request.idCriterio(), request.pesoSnapshot());
-            CriteriocohorteOutput updated = processor.update(input);
+            ValoresglobalesDTO updated = service.update(id, valoresglobalesDTO);
             return ResponseEntity.ok(updated); // 200 OK
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build(); // 404 Not found
@@ -103,7 +94,7 @@ public class CriteriocohorteRestController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable Integer id) {
         try {
-            processor.deleteById(new CRITERIOCOHORTE_DELETE(id));
+            service.deleteById(id);
             return ResponseEntity.noContent().build(); // 204 No content
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build(); // 404 Not found

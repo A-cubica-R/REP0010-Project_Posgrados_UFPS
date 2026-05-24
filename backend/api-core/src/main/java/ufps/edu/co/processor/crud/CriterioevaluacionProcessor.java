@@ -232,7 +232,7 @@ public class CriterioevaluacionProcessor implements
                 .forEach(aspirante -> {
                     Set<Integer> calificadosIds = calificacioncriterioService
                             .findByIdAspirante(aspirante.getId()).stream()
-                            .map(c -> c.getIdCriterio())
+                            .map(c -> c.getIdCriteriocohorte())
                             .filter(Objects::nonNull)
                             .collect(Collectors.toSet());
                     boolean todosCalificados = !criterioIds.isEmpty()
