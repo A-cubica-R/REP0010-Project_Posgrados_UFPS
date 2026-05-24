@@ -43,6 +43,10 @@ public interface DocumentoRepository extends JpaRepository<DocumentoEntity, Inte
 
 	java.util.Optional<DocumentoEntity> findByIdAspiranteAndIdTipodocumento(Integer idAspirante, Integer idTipodocumento);
 
+	java.util.Optional<DocumentoEntity> findByIdAspiranteAndIdDocumentosrequisitoconcejocohorte(Integer idAspirante, Integer idDocumentosrequisitoconcejocohorte);
+
+	java.util.Optional<DocumentoEntity> findByIdAspiranteAndIdDocumentosrequisitoprogramacohorte(Integer idAspirante, Integer idDocumentosrequisitoprogramacohorte);
+
 	// Insert specific finders here
 
 	//List<DocumentoEntity> findByXxx(String xxx);

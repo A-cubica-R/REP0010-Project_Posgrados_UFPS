@@ -1,7 +1,6 @@
 package ufps.edu.co.processor.crud;
 
 import java.util.List;
-import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -126,8 +125,7 @@ public class AdministrativoProcessor implements
         try {
             List<ProgramaOutput> programas = findProgramasFacultad(input);
             return programas.stream()
-                    .map(programa -> cohorteProcessor.findActivaByIdPrograma(programa.id()))
-                    .filter(Objects::nonNull)
+                    .flatMap(programa -> cohorteProcessor.findActivasByIdPrograma(programa.id()).stream())
                     .toList();
         } catch (Exception e) {
             throw new RuntimeException("Error finding active cohorts for facultad: " + e.getMessage(), e);

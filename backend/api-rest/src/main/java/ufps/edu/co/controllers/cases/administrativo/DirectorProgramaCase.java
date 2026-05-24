@@ -32,10 +32,17 @@ import ufps.edu.co.processor.crud.AspiranteProcessor;
 import ufps.edu.co.processor.crud.CalificacioncriterioProcessor;
 import ufps.edu.co.processor.crud.CriterioevaluacionProcessor;
 import ufps.edu.co.processor.crud.DocumentoProcessor;
+import ufps.edu.co.processor.crud.DocumentosrequisitoprogramaProcessor;
+import ufps.edu.co.processor.crud.DocumentosrequisitoprogramacohorteProcessor;
 import ufps.edu.co.processor.crud.EntrevistaProcessor;
 import ufps.edu.co.processor.crud.ListaadmitidosProcessor;
 import ufps.edu.co.processor.crud.PruebaProcessor;
 import ufps.edu.co.records.input.entity.AdministrativoInput.ADMINISTRATIVO_FIND;
+import ufps.edu.co.records.input.entity.DocumentosrequisitoprogramaInput.DOCUMENTOSREQUISITOPROGRAMA_CREATE;
+import ufps.edu.co.records.input.entity.DocumentosrequisitoprogramaInput.DOCUMENTOSREQUISITOPROGRAMA_DELETE;
+import ufps.edu.co.records.input.entity.DocumentosrequisitoprogramaInput.DOCUMENTOSREQUISITOPROGRAMA_UPDATE;
+import ufps.edu.co.records.output.entity.DocumentosrequisitoprogramaOutput;
+import ufps.edu.co.records.output.entity.DocumentosrequisitoprogramacohorteOutput;
 import ufps.edu.co.records.input.entity.AspiranteInput.ASPIRANTE_FIND;
 import ufps.edu.co.records.input.entity.CalificacioncriterioInput.CALIFICACION_PUNTAJE_REQUEST;
 import ufps.edu.co.records.input.entity.CohorteInput.COHORTE_DIRECTOR_CREATE;
@@ -55,12 +62,10 @@ import ufps.edu.co.records.output.entity.DocumentoEstadoOutput;
 import ufps.edu.co.records.output.entity.SuccessOutput;
 import ufps.edu.co.rest.dto.AdministrativoDTO;
 import ufps.edu.co.rest.dto.UsuarioDTO;
-import ufps.edu.co.rest.dto.CohorteDTO;
 import ufps.edu.co.rest.dto.AdmitidoDTO;
 import ufps.edu.co.rest.dto.EstadoDTO;
 import ufps.edu.co.rest.services.AdministrativoService;
 import ufps.edu.co.rest.services.UsuarioService;
-import ufps.edu.co.rest.services.CohorteService;
 import ufps.edu.co.rest.services.ListaadmitidosService;
 import ufps.edu.co.rest.services.AspiranteService;
 import ufps.edu.co.rest.services.EstadoService;
@@ -75,7 +80,6 @@ import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_SCHEDULE_REQU
 import ufps.edu.co.records.input.entity.ListaadmitidosInput.GENERATE_LISTA;
 import ufps.edu.co.records.input.entity.ListaadmitidosInput.ADMITIR_ASPIRANTE;
 import ufps.edu.co.records.input.entity.ListaadmitidosInput.RECHAZAR_ASPIRANTE;
-import ufps.edu.co.records.input.entity.ProgramaInput.PROGRAMA_FIND;
 import ufps.edu.co.records.output.entity.AdministrativoOutput;
 import ufps.edu.co.records.output.entity.CohorteDetalleOutput;
 import ufps.edu.co.records.output.entity.CohorteListadoOutput;
@@ -133,9 +137,6 @@ public class DirectorProgramaCase {
     private ListaadmitidosProcessor listaadmitidosProcessor;
 
     @Autowired
-    private CohorteService cohorteService;
-
-    @Autowired
     private ListaadmitidosService listaadmitidosService;
 
     @Autowired
@@ -152,6 +153,12 @@ public class DirectorProgramaCase {
 
     @Autowired
     private CriterioevaluacionProcessor criterioevaluacionProcessor;
+
+    @Autowired
+    private DocumentosrequisitoprogramaProcessor documentosrequisitoprogramaProcessor;
+
+    @Autowired
+    private DocumentosrequisitoprogramacohorteProcessor documentosrequisitoprogramacohorteProcessor;
 
     @Autowired
     private UsuarioService usuarioService;
@@ -282,10 +289,10 @@ public class DirectorProgramaCase {
         }
     }
 
-    @GetMapping("/programa/{programaId}/cohorte-actual/criterios")
-    public ResponseEntity<CriteriosCohorteOutput> getCriteriosByPrograma(@PathVariable Integer programaId) {
+    @GetMapping("/cohorte/{cohorteId}/criterios")
+    public ResponseEntity<CriteriosCohorteOutput> getCriteriosByCohorte(@PathVariable Integer cohorteId) {
         try {
-            return ResponseEntity.ok(aspiranteProcessor.getCriteriosByPrograma(programaId));
+            return ResponseEntity.ok(aspiranteProcessor.getCriteriosByCohorte(cohorteId));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
@@ -348,20 +355,20 @@ public class DirectorProgramaCase {
         }
     }
 
-    @GetMapping("/programa/{programaId}/admitidos/ranking")
-    public ResponseEntity<RankingAdmitidosOutput> getRankingAdmitidos(@PathVariable Integer programaId) {
+    @GetMapping("/cohorte/{cohorteId}/admitidos/ranking")
+    public ResponseEntity<RankingAdmitidosOutput> getRankingAdmitidos(@PathVariable Integer cohorteId) {
         try {
-            return ResponseEntity.ok(aspiranteProcessor.getRankingAdmitidos(programaId));
+            return ResponseEntity.ok(aspiranteProcessor.getRankingAdmitidos(cohorteId));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
         }
     }
 
-    @PostMapping(value = "/programa/inicio", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ProgramaInicioOutput> getProgramaInicio(@RequestBody PROGRAMA_FIND request) {
+    @GetMapping("/cohorte/{cohorteId}/inicio")
+    public ResponseEntity<ProgramaInicioOutput> getProgramaInicio(@PathVariable Integer cohorteId) {
         try {
-            return ResponseEntity.ok(aspiranteProcessor.getProgramaInicio(request.id()));
+            return ResponseEntity.ok(aspiranteProcessor.getProgramaInicio(cohorteId));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
@@ -493,9 +500,9 @@ public class DirectorProgramaCase {
         }
     }
 
-    @PostMapping(value = "/programa/{programaId}/admitidos/{aspiranteId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/cohorte/{cohorteId}/admitidos/{aspiranteId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String, Object>> admitAspirant(
-            @PathVariable Integer programaId,
+            @PathVariable Integer cohorteId,
             @PathVariable Integer aspiranteId,
             @RequestBody ADMITIR_ASPIRANTE body) {
         try {
@@ -504,12 +511,7 @@ public class DirectorProgramaCase {
                 admitido = Boolean.TRUE;
             }
 
-            CohorteDTO cohorte = cohorteService.findActiveByIdPrograma(programaId);
-            if (cohorte == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-            }
-
-            Integer idCohorte = cohorte.getId();
+            Integer idCohorte = cohorteId;
 
             if (!admitido) {
                 EstadoDTO estadoValidadoCalificado = estadoService.findByTipoAndEntidad("VALIDADO_CALIFICADO", "aspirante");
@@ -800,6 +802,68 @@ public class DirectorProgramaCase {
             return ResponseEntity.ok(update);
         } catch (Exception e) {
             e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    // --- Documentos requisito programa ---
+
+    @PostMapping(value = "/programa/{programaId}/documentosrequisitoprograma", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> createDocumentosrequisitoprograma(
+            @PathVariable Integer programaId,
+            @RequestBody DOCUMENTOSREQUISITOPROGRAMA_CREATE body) {
+        if (body.tamanomaximo() == null || body.tamanomaximo() <= 0) {
+            return ResponseEntity.badRequest().body(Map.of("error", "El tamaño máximo debe ser mayor que 0"));
+        }
+        try {
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(documentosrequisitoprogramaProcessor.create(body));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PutMapping(value = "/documentosrequisitoprograma/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> updateDocumentosrequisitoprograma(
+            @PathVariable Integer id,
+            @RequestBody DOCUMENTOSREQUISITOPROGRAMA_UPDATE body) {
+        if (body.tamanomaximo() != null && body.tamanomaximo() <= 0) {
+            return ResponseEntity.badRequest().body(Map.of("error", "El tamaño máximo debe ser mayor que 0"));
+        }
+        try {
+            DOCUMENTOSREQUISITOPROGRAMA_UPDATE input = new DOCUMENTOSREQUISITOPROGRAMA_UPDATE(id, body.nombre(), body.tamanomaximo());
+            return ResponseEntity.ok(documentosrequisitoprogramaProcessor.update(input));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @DeleteMapping("/documentosrequisitoprograma/{id}")
+    public ResponseEntity<Void> deleteDocumentosrequisitoprograma(@PathVariable Integer id) {
+        try {
+            documentosrequisitoprogramaProcessor.deleteById(new DOCUMENTOSREQUISITOPROGRAMA_DELETE(id));
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @GetMapping("/programa/{programaId}/documentosrequisitoprograma")
+    public ResponseEntity<List<DocumentosrequisitoprogramaOutput>> listDocumentosrequisitoprogramaByPrograma(
+            @PathVariable Integer programaId) {
+        try {
+            return ResponseEntity.ok(documentosrequisitoprogramaProcessor.findByIdPrograma(programaId));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @GetMapping("/cohorte/{cohorteId}/documentosrequisitoprogramacohorte")
+    public ResponseEntity<List<DocumentosrequisitoprogramacohorteOutput>> listDocumentosrequisitoprogramacohorteByCohorte(
+            @PathVariable Integer cohorteId) {
+        try {
+            return ResponseEntity.ok(documentosrequisitoprogramacohorteProcessor.findByIdCohorte(cohorteId));
+        } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
     }

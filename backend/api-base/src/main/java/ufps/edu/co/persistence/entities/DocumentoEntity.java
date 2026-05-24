@@ -66,6 +66,12 @@ public class DocumentoEntity implements Serializable {
     @Column(name="observaciones", length=65535)
     private String     observaciones ;
 
+    @Column(name="id_documentosrequisitoconcejocohorte")
+    private Integer    idDocumentosrequisitoconcejocohorte ;
+
+    @Column(name="id_documentosrequisitoprogramacohorte")
+    private Integer    idDocumentosrequisitoprogramacohorte ;
+
     //--- LINKS ( RELATIONSHIPS )
     @OneToMany(mappedBy = "documento")
     private List<CambiodocumentoEntity> cambiodocumentoList ; 
