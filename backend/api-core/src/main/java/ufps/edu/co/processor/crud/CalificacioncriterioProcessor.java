@@ -3,9 +3,6 @@ package ufps.edu.co.processor.crud;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,12 +17,8 @@ import ufps.edu.co.records.output.entity.CalificacionCriterioSimpleOutput;
 import ufps.edu.co.records.output.entity.CalificacioncriterioOutput;
 import ufps.edu.co.rest.dto.AspiranteDTO;
 import ufps.edu.co.rest.dto.CalificacioncriterioDTO;
-import ufps.edu.co.rest.dto.CriterioevaluacionDTO;
-import ufps.edu.co.rest.dto.EstadoDTO;
 import ufps.edu.co.rest.services.AspiranteService;
 import ufps.edu.co.rest.services.CalificacioncriterioService;
-import ufps.edu.co.rest.services.CriterioevaluacionService;
-import ufps.edu.co.rest.services.EstadoService;
 import ufps.edu.co.usecase.GlobalUseCase;
 
 @Service
@@ -41,13 +34,7 @@ public class CalificacioncriterioProcessor implements
     private CalificacioncriterioMap map;
 
     @Autowired
-    private CriterioevaluacionService criterioaceptacionService;
-
-    @Autowired
     private AspiranteService aspiranteService;
-
-    @Autowired
-    private EstadoService estadoService;
 
     @Override
     public CalificacioncriterioOutput create(CALIFICACIONCRITERIO_CREATE input) {
@@ -57,8 +44,6 @@ public class CalificacioncriterioProcessor implements
         }
         try {
             CalificacioncriterioDTO dto = map.toDto(input);
-            CriterioevaluacionDTO criterio = criterioaceptacionService.findById(input.idCriterio());
-            dto.setPesoSnapshot(criterio.getPeso());
             CalificacioncriterioOutput output = map.toOutput(service.create(dto));
             recalcularPuntuacionAspirante(input.idAspirante());
             actualizarEstadoCalificacion(input.idAspirante());
@@ -74,8 +59,6 @@ public class CalificacioncriterioProcessor implements
     public CalificacioncriterioOutput update(CALIFICACIONCRITERIO_UPDATE input) {
         try {
             CalificacioncriterioDTO dto = map.toDto(input);
-            CriterioevaluacionDTO criterio = criterioaceptacionService.findById(input.idCriterio());
-            dto.setPesoSnapshot(criterio.getPeso());
             CalificacioncriterioOutput output = map.toOutput(service.update(input.id(), dto));
             recalcularPuntuacionAspirante(input.idAspirante());
             actualizarEstadoCalificacion(input.idAspirante());
@@ -121,7 +104,8 @@ public class CalificacioncriterioProcessor implements
         return service.findByIdCriterio(idCriterio).stream().map(map::toOutput).toList();
     }
 
-    public CalificacionCriterioSimpleOutput calificarCriterio(Integer idAspirante, Integer idCriterio, BigDecimal puntaje) {
+    public CalificacionCriterioSimpleOutput calificarCriterio(Integer idAspirante, Integer idCriterio,
+            BigDecimal puntaje) {
         CalificacioncriterioOutput result = service.findByIdAspiranteAndIdCriterio(idAspirante, idCriterio)
                 .map(existing -> {
                     CALIFICACIONCRITERIO_UPDATE updateInput = new CALIFICACIONCRITERIO_UPDATE(
@@ -133,49 +117,23 @@ public class CalificacioncriterioProcessor implements
                             idAspirante, idCriterio, puntaje, null);
                     return create(createInput);
                 });
-        CriterioevaluacionDTO criterio = criterioaceptacionService.findById(idCriterio);
         AspiranteDTO aspirante = aspiranteService.findById(idAspirante);
         return CalificacionCriterioSimpleOutput.builder()
                 .idAspirante(result.idAspirante())
-                .idCriterio(result.idCriterio())
-                .nombreCriterio(criterio.getNombre())
+                .idCriterio(result.idCriteriocohorte())
                 .puntajeObtenido(result.puntuacion())
                 .puntajeTotal(aspirante.getPuntuacion())
                 .build();
     }
 
     private void actualizarEstadoCalificacion(Integer idAspirante) {
-        try {
-            EstadoDTO estadoEnProgreso = estadoService.findByTipoAndEntidad("VALIDADO_EN_PROGRESO", "aspirante");
-            if (estadoEnProgreso != null) {
-                aspiranteService.updateEstado(idAspirante, estadoEnProgreso.getId());
-            }
-            AspiranteDTO aspirante = aspiranteService.findById(idAspirante);
-            List<CriterioevaluacionDTO> criterios = criterioaceptacionService.findByIdCohorte(aspirante.getIdCohorte());
-            Set<Integer> criterioIds = criterios.stream()
-                    .map(CriterioevaluacionDTO::getId)
-                    .collect(Collectors.toSet());
-            Set<Integer> calificadosIds = service.findByIdAspirante(idAspirante).stream()
-                    .map(CalificacioncriterioDTO::getIdCriterio)
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toSet());
-            boolean todosCalificados = !criterioIds.isEmpty()
-                    && criterioIds.stream().allMatch(calificadosIds::contains);
-            if (todosCalificados) {
-                EstadoDTO estadoCalificado = estadoService.findByTipoAndEntidad("VALIDADO_CALIFICADO", "aspirante");
-                if (estadoCalificado != null) {
-                    aspiranteService.updateEstado(idAspirante, estadoCalificado.getId());
-                }
-            }
-        } catch (Exception e) {
-            logger.warn("No se pudo actualizar estado de calificación del aspirante {}: {}", idAspirante, e.getMessage());
-        }
+        // TODO: HAY QUE HACER ESTE MÉTODO DE NUEVO
+        logger.warn("No se pudo actualizar estado de calificación del aspirante {}: {}", idAspirante);
     }
 
     public void actualizarPesoSnapshotYRecalcular(Integer idCriterio, BigDecimal newPeso) {
         List<CalificacioncriterioDTO> calificaciones = service.findByIdCriterio(idCriterio);
         calificaciones.forEach(cal -> {
-            cal.setPesoSnapshot(newPeso);
             service.update(cal.getId(), cal);
         });
         calificaciones.stream()
@@ -189,9 +147,8 @@ public class CalificacioncriterioProcessor implements
     private void recalcularPuntuacionAspirante(Integer idAspirante) {
         List<CalificacioncriterioDTO> calificaciones = service.findByIdAspirante(idAspirante);
         BigDecimal total = calificaciones.stream()
-                .filter(c -> c.getPuntuacion() != null && c.getPesoSnapshot() != null)
+                .filter(c -> c.getPuntuacion() != null)
                 .map(c -> c.getPuntuacion()
-                        .multiply(c.getPesoSnapshot())
                         .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         AspiranteDTO aspirante = aspiranteService.findById(idAspirante);

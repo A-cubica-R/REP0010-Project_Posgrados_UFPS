@@ -221,9 +221,9 @@ public class AspiranteProcessor implements
 
             Map<Integer, BigDecimal> puntuacionPorCriterio = calificacioncriterioService
                     .findByIdAspirante(input.id()).stream()
-                    .filter(c -> c.getIdCriterio() != null && c.getPuntuacion() != null)
+                    .filter(c -> c.getIdCriteriocohorte() != null && c.getPuntuacion() != null)
                     .collect(Collectors.toMap(
-                            CalificacioncriterioDTO::getIdCriterio,
+                            CalificacioncriterioDTO::getIdCriteriocohorte,
                             CalificacioncriterioDTO::getPuntuacion,
                             (a, b) -> a));
 

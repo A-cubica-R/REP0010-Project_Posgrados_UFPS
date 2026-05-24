@@ -51,16 +51,16 @@ public class CriterioevaluacionProcessor implements
 
     @Override
     public CriterioevaluacionOutput create(CRITERIOEVALUACION_CREATE input) {
-        validatePesoSum(input.idCohorte(), input.peso(), null);
+        validatePesoSum(input.idPrograma(), input.peso(), null);
         CriterioevaluacionDTO dto = map.toDto(input);
         CriterioevaluacionOutput output = map.toOutput(service.create(dto));
-        marcarAspirantesEnProgreso(input.idCohorte());
+        marcarAspirantesEnProgreso(input.idPrograma());
         return output;
     }
 
     @Override
     public CriterioevaluacionOutput update(CRITERIOEVALUACION_UPDATE input) {
-        validatePesoSum(input.idCohorte(), input.peso(), input.id());
+        validatePesoSum(input.idPrograma(), input.peso(), input.id());
         try {
             CriterioevaluacionDTO old = service.findById(input.id());
             BigDecimal oldPeso = old != null ? old.getPeso() : null;
@@ -100,7 +100,7 @@ public class CriterioevaluacionProcessor implements
             throw new DomainException(CriterioevaluacionErrorCode.CRITERIO_CON_ASPIRANTES_CALIFICADOS, input.id());
         }
         CriterioevaluacionDTO criterio = service.findById(input.id());
-        Integer idCohorte = criterio != null ? criterio.getIdCohorte() : null;
+        Integer idCohorte = criterio != null ? criterio.getIdprograma() : null;
         try {
             service.deleteById(input.id());
         } catch (Exception e) {
@@ -114,14 +114,29 @@ public class CriterioevaluacionProcessor implements
     public CriterioevaluacionOutput createForCohorte(Integer programaId, Integer cohorteId,
             CRITERIO_CREATE_BODY body) {
         validateCohortePerteneceProg(programaId, cohorteId);
-        return create(new CRITERIOEVALUACION_CREATE(body.nombre(), body.descripcion(), body.peso(), cohorteId));
+        return CriterioevaluacionOutput.builder()
+                .nombre(body.nombre())
+                .activo(body.activo())
+                .descripcion(body.descripcion())
+                .peso(body.peso())
+                .idPrograma(programaId)
+                .build();
     }
 
     public CriterioevaluacionOutput updateForCohorte(Integer programaId, Integer cohorteId,
             Integer criterioId, CRITERIO_UPDATE_BODY body) {
         validateCohortePerteneceProg(programaId, cohorteId);
         validateCriterioPertenece(criterioId, cohorteId);
-        return update(new CRITERIOEVALUACION_UPDATE(criterioId, body.nombre(), body.descripcion(), body.peso(), cohorteId));
+        return update(
+            CRITERIOEVALUACION_UPDATE.builder()
+                .id(criterioId)
+                .nombre(body.nombre())
+                .activo(body.activo())
+                .descripcion(body.descripcion())
+                .peso(body.peso())
+                .idPrograma(programaId)
+                .build()
+        );
     }
 
     public void deleteForCohorte(Integer programaId, Integer cohorteId, Integer criterioId) {
@@ -171,7 +186,7 @@ public class CriterioevaluacionProcessor implements
                     .nombre(item.nombre())
                     .descripcion(item.descripcion())
                     .peso(item.peso())
-                    .idCohorte(cohorteId)
+                    .idprograma(programaId)
                     .build();
             if (item.id() != null) {
                 CriterioevaluacionDTO old = service.findById(item.id());
@@ -198,7 +213,7 @@ public class CriterioevaluacionProcessor implements
 
     private void validateCriterioPertenece(Integer criterioId, Integer cohorteId) {
         CriterioevaluacionDTO criterio = service.findById(criterioId);
-        if (criterio == null || !cohorteId.equals(criterio.getIdCohorte())) {
+        if (criterio == null || !cohorteId.equals(criterio.getIdprograma())) {
             throw new DomainException(CriterioevaluacionErrorCode.CRITERIO_COHORTE_MISMATCH, criterioId);
         }
     }
@@ -217,7 +232,7 @@ public class CriterioevaluacionProcessor implements
                 .forEach(aspirante -> {
                     Set<Integer> calificadosIds = calificacioncriterioService
                             .findByIdAspirante(aspirante.getId()).stream()
-                            .map(c -> c.getIdCriterio())
+                            .map(c -> c.getIdCriteriocohorte())
                             .filter(Objects::nonNull)
                             .collect(Collectors.toSet());
                     boolean todosCalificados = !criterioIds.isEmpty()
