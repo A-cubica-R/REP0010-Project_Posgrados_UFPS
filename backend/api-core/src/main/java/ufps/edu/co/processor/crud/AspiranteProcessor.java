@@ -505,6 +505,7 @@ public class AspiranteProcessor implements
         return List.of(inscripcion, pago, documentos, calificacion, resultado);
     }
 
+    @SuppressWarnings("unused")
     private List<AspiranteDTO> findAspirantesByCohorteActiva(Integer programaId) {
         CohorteDTO cohorte = cohorteService.findActiveByIdPrograma(programaId);
         if (cohorte == null) {
