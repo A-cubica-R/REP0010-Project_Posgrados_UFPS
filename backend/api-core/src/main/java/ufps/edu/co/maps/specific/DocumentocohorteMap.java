@@ -23,5 +23,4 @@ public class DocumentocohorteMap extends UniversalMapper<DocumentocohorteOutput,
                 .idCohorte(dto.getIdCohorte())
                 .build();
     }
-
 }
