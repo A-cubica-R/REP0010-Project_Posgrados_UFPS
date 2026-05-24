@@ -66,4 +66,16 @@ public class DocumentoService extends GenericService<DocumentoEntity, DocumentoD
         return repository.findByIdAspiranteAndIdTipodocumento(idAspirante, idTipodocumento)
                 .map(this::entityToDto);
     }
+
+    @Transactional(readOnly = true)
+    public java.util.Optional<DocumentoDTO> findByIdAspiranteAndIdDocumentosrequisitoconcejocohorte(Integer idAspirante, Integer idDocumentosrequisitoconcejocohorte) {
+        return repository.findByIdAspiranteAndIdDocumentosrequisitoconcejocohorte(idAspirante, idDocumentosrequisitoconcejocohorte)
+                .map(this::entityToDto);
+    }
+
+    @Transactional(readOnly = true)
+    public java.util.Optional<DocumentoDTO> findByIdAspiranteAndIdDocumentosrequisitoprogramacohorte(Integer idAspirante, Integer idDocumentosrequisitoprogramacohorte) {
+        return repository.findByIdAspiranteAndIdDocumentosrequisitoprogramacohorte(idAspirante, idDocumentosrequisitoprogramacohorte)
+                .map(this::entityToDto);
+    }
 }

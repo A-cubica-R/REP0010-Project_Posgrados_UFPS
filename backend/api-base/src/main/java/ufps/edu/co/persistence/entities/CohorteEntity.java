@@ -113,6 +113,12 @@ public class CohorteEntity implements Serializable {
     private List<DocumentocohorteEntity> documentocohorteList ; 
 
     @OneToMany(mappedBy="cohorte")
-    private List<PruebaEntity> pruebaList ; 
+    private List<PruebaEntity> pruebaList ;
+
+    @OneToMany(mappedBy="cohorte")
+    private List<DocumentosrequisitoconcejocohorteEntity> documentosrequisitoconcejocohorteList ;
+
+    @OneToMany(mappedBy="cohorte")
+    private List<DocumentosrequisitoprogramacohorteEntity> documentosrequisitoprogramacohorteList ;
 
 }

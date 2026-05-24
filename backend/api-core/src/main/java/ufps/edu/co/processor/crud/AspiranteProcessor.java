@@ -38,7 +38,6 @@ import ufps.edu.co.rest.dto.DocumentoDTO;
 import ufps.edu.co.rest.dto.DocumentocohorteDTO;
 import ufps.edu.co.rest.services.DocumentoService;
 import ufps.edu.co.rest.services.DocumentocohorteService;
-import ufps.edu.co.rest.services.PagoService;
 import ufps.edu.co.rest.dto.CalificacioncriterioDTO;
 import ufps.edu.co.rest.dto.CriterioevaluacionDTO;
 import ufps.edu.co.rest.dto.EstadoDTO;
@@ -101,9 +100,6 @@ public class AspiranteProcessor implements
 
     @Autowired
     private DocumentoService documentoService;
-
-    @Autowired
-    private PagoService pagoService;
 
     @Autowired
     private DocumentocohorteService documentocohorteService;
@@ -471,14 +467,6 @@ public class AspiranteProcessor implements
                 PasoProcesoOutput.builder().id(4).name("Calificación").status(s4).build(),
                 PasoProcesoOutput.builder().id(5).name("Resultado").status(s5).build()
         );
-    }
-
-    private List<AspiranteDTO> findAspirantesByCohorte(Integer cohorteId) {
-        CohorteDTO cohorte = cohorteService.findById(cohorteId);
-        if (cohorte == null) {
-            throw new RuntimeException("Cohorte no encontrada: " + cohorteId);
-        }
-        return service.findByCohorte(cohorte.getId());
     }
 
     public List<AspiranteCalificacionOutput> findAllValidadosCalificacion(Integer cohorteId) {
