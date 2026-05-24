@@ -13,7 +13,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import java.util.List;
 
 
 /**
@@ -90,8 +89,5 @@ public class PruebaEntity implements Serializable {
     @ManyToOne
     @JoinColumn(name="id_tipoprueba", referencedColumnName="id", insertable=false, updatable=false)
     private TipopruebaEntity tipoprueba;
-
-    @OneToMany(mappedBy="prueba")
-    private List<ResultadopruebaEntity> resultadopruebaList ;
 
 }

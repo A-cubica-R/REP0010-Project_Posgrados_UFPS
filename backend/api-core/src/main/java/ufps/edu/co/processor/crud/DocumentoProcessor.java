@@ -234,15 +234,17 @@ public class DocumentoProcessor implements
                 estadoGeneral = "pendiente";
             }
 
-            List<DocumentoResumenOutput> documentosResumen = docs.stream()
-                    .map(doc -> DocumentoResumenOutput.builder()
-                            .id(doc.getId())
-                            .nombre(doc.getTipodocumento() != null ? doc.getTipodocumento().getDescripcion() : null)
-                            .estado(doc.getEstadodocumento() != null ? doc.getEstadodocumento().getEstado() : "PENDIENTE")
-                            .motivoRechazo(doc.getObservaciones())
-                            .linkArchivo(doc.getEnlaceurl())
-                            .build())
-                    .toList();
+            // TODO: Esta funcion lanza error, habrá que implementarla de nuevo para mapear correctamente los documentos a DocumentoResumenOutput
+            List<DocumentoResumenOutput> documentosResumen = null;
+            // documentosResumen = docs.stream()
+            //         .map(doc -> DocumentoResumenOutput.builder()
+            //                 .id(doc.getId())
+            //                 .nombre(doc.getTipodocumento() != null ? doc.getTipodocumento().getDescripcion() : null)
+            //                 .estado(doc.getEstadodocumento() != null ? doc.getEstadodocumento().getEstado() : "PENDIENTE")
+            //                 .motivoRechazo(doc.getObservaciones())
+            //                 .linkArchivo(doc.getEnlaceurl())
+            //                 .build())
+            //         .toList();
 
             return AspiranteDocumentosOutput.builder()
                     .idAspirante(aspiranteId)
@@ -267,10 +269,11 @@ public class DocumentoProcessor implements
             if ("APROBADO".equalsIgnoreCase(input.estado())) {
                 checkAndUpdateEstadoValidacion(dto.getIdAspirante());
             }
-            String nombreDoc = dto.getTipodocumento() != null ? dto.getTipodocumento().getDescripcion() : null;
+
+            // TODO: Ya no se mapea el nombre del documento, habría que agregarlo al output o eliminarlo si no es necesario
             return DocumentoEstadoOutput.builder()
                     .id(docId)
-                    .nombre(nombreDoc)
+                    // .nombre(nombreDoc)
                     .estado(input.estado())
                     .motivoRechazo(input.motivoRechazo())
                     .build();

@@ -13,26 +13,26 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import ufps.edu.co.processor.crud.TipodocumentoProcessor;
-import ufps.edu.co.records.input.entity.TipodocumentoInput.*;
-import ufps.edu.co.records.output.entity.TipodocumentoOutput;
+import ufps.edu.co.processor.crud.TipodocumentopersonaProcessor;
+import ufps.edu.co.records.input.entity.TipodocumentopersonaInput.*;
+import ufps.edu.co.records.output.entity.TipodocumentopersonaOutput;
 
 @RestController
-@RequestMapping(value = "/tipodocumento", produces = MediaType.APPLICATION_JSON_VALUE)
-public class TipodocumentoRestController {
+@RequestMapping(value = "/tipodocumentopersona", produces = MediaType.APPLICATION_JSON_VALUE)
+public class TipodocumentopersonaRestController {
 
     @Autowired
-    private TipodocumentoProcessor processor;
+    private TipodocumentopersonaProcessor processor;
 
     @GetMapping("/listall")
-    public ResponseEntity<List<TipodocumentoOutput>> findAll() {
-        List<TipodocumentoOutput> list = processor.findAll();
+    public ResponseEntity<List<TipodocumentopersonaOutput>> findAll() {
+        List<TipodocumentopersonaOutput> list = processor.findAll();
         return ResponseEntity.ok(list);
     }
 
     @PostMapping(value = "/list", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<TipodocumentoOutput> findById(@RequestBody TIPODOCUMENTO_FIND request) {
-        TipodocumentoOutput output = processor.findById(request);
+    public ResponseEntity<TipodocumentopersonaOutput> findById(@RequestBody TIPODOCUMENTOPERSONA_FIND request) {
+        TipodocumentopersonaOutput output = processor.findById(request);
         if (output != null) {
             return ResponseEntity.ok(output);
         } else {
@@ -41,15 +41,15 @@ public class TipodocumentoRestController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<TipodocumentoOutput> create(@RequestBody TIPODOCUMENTO_CREATE request) {
-        TipodocumentoOutput output = processor.create(request);
+    public ResponseEntity<TipodocumentopersonaOutput> create(@RequestBody TIPODOCUMENTOPERSONA_CREATE request) {
+        TipodocumentopersonaOutput output = processor.create(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(output);
     }
 
     @PutMapping("/update")
-    public ResponseEntity<TipodocumentoOutput> update(@RequestBody TIPODOCUMENTO_UPDATE request) {
+    public ResponseEntity<TipodocumentopersonaOutput> update(@RequestBody TIPODOCUMENTOPERSONA_UPDATE request) {
         try {
-            TipodocumentoOutput updated = processor.update(request);
+            TipodocumentopersonaOutput updated = processor.update(request);
             return ResponseEntity.ok(updated);
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
@@ -57,7 +57,7 @@ public class TipodocumentoRestController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<Void> deleteById(@RequestBody TIPODOCUMENTO_DELETE request) {
+    public ResponseEntity<Void> deleteById(@RequestBody TIPODOCUMENTOPERSONA_DELETE request) {
         try {
             processor.deleteById(request);
             return ResponseEntity.noContent().build();

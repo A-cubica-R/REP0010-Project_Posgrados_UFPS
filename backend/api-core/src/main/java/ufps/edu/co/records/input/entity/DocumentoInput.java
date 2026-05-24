@@ -20,7 +20,7 @@ public enum DocumentoInput {
         @NotNull Integer idTipodocumento,
         @NotBlank String keyfile,
         String observaciones,
-        Integer idDocumentosrequisitoconcejocohorte,
+        Integer idDocumentosrequisitoconsejocohorte,
         Integer idDocumentosrequisitoprogramacohorte
     ) implements CreateType {}
 
@@ -35,7 +35,7 @@ public enum DocumentoInput {
         @NotBlank String enlaceurl,
         @NotBlank String keyfile,
         String observaciones,
-        Integer idDocumentosrequisitoconcejocohorte,
+        Integer idDocumentosrequisitoconsejocohorte,
         Integer idDocumentosrequisitoprogramacohorte
     ) implements UpdateType {}
 
@@ -50,7 +50,7 @@ public enum DocumentoInput {
         String enlaceurl,
         String keyfile,
         String observaciones,
-        Integer idDocumentosrequisitoconcejocohorte,
+        Integer idDocumentosrequisitoconsejocohorte,
         Integer idDocumentosrequisitoprogramacohorte
     ) implements PatchType {}
 
