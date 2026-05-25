@@ -41,22 +41,6 @@ public class DocumentoService extends GenericService<DocumentoEntity, DocumentoD
         return entityToDto(repository.findById(id));
     }
 
-    public Optional<DocumentoDTO> findByIdAspiranteAndIdDocumentosrequisitoconcejocohorte(Integer idAspirante,
-            Integer idDocumentosrequisitoconcejocohorte) {
-        return repository
-                .findByIdAspiranteAndIdDocumentosrequisitoconcejocohorte(idAspirante,
-                        idDocumentosrequisitoconcejocohorte)
-                .map(this::entityToDto);
-    }
-
-    public Optional<DocumentoDTO> findByIdAspiranteAndIdDocumentosrequisitoprogramacohorte(Integer idAspirante,
-            Integer idDocumentosrequisitoprogramacohorte) {
-        return repository
-                .findByIdAspiranteAndIdDocumentosrequisitoprogramacohorte(idAspirante,
-                        idDocumentosrequisitoprogramacohorte)
-                .map(this::entityToDto);
-    }
-
     public DocumentoDTO create(DocumentoDTO dto) {
         return entityToDto(repository.save(dtoToEntity(dto)));
     }
@@ -74,25 +58,24 @@ public class DocumentoService extends GenericService<DocumentoEntity, DocumentoD
         repository.deleteById(id);
     }
 
+    @Transactional(readOnly = true)
     public List<DocumentoDTO> findByIdAspirante(Integer idAspirante) {
         return entityListToDtoList(repository.findByIdAspirante(idAspirante));
     }
 
     @Transactional(readOnly = true)
-    public java.util.Optional<DocumentoDTO> findByIdAspiranteAndIdTipodocumento(Integer idAspirante, Integer idTipodocumento) {
-        return repository.findByIdAspiranteAndIdTipodocumento(idAspirante, idTipodocumento)
+    public Optional<DocumentoDTO> findByIdAspiranteAndIdDocumentosrequisitoconsejocohorte(Integer idAspirante,
+            Integer idDocumentosrequisitoconsejocohorte) {
+        return repository
+                .findByIdAspiranteAndIdDocumentosrequisitoconsejocohorte(idAspirante, idDocumentosrequisitoconsejocohorte)
                 .map(this::entityToDto);
     }
 
     @Transactional(readOnly = true)
-    public java.util.Optional<DocumentoDTO> findByIdAspiranteAndIdDocumentosrequisitoconsejocohorte(Integer idAspirante, Integer idDocumentosrequisitoconsejocohorte) {
-        return repository.findByIdAspiranteAndIdDocumentosrequisitoconsejocohorte(idAspirante, idDocumentosrequisitoconsejocohorte)
-                .map(this::entityToDto);
-    }
-
-    @Transactional(readOnly = true)
-    public java.util.Optional<DocumentoDTO> findByIdAspiranteAndIdDocumentosrequisitoprogramacohorte(Integer idAspirante, Integer idDocumentosrequisitoprogramacohorte) {
-        return repository.findByIdAspiranteAndIdDocumentosrequisitoprogramacohorte(idAspirante, idDocumentosrequisitoprogramacohorte)
+    public Optional<DocumentoDTO> findByIdAspiranteAndIdDocumentosrequisitoprogramacohorte(Integer idAspirante,
+            Integer idDocumentosrequisitoprogramacohorte) {
+        return repository
+                .findByIdAspiranteAndIdDocumentosrequisitoprogramacohorte(idAspirante, idDocumentosrequisitoprogramacohorte)
                 .map(this::entityToDto);
     }
 }

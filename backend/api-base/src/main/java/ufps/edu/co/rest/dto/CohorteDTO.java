@@ -51,8 +51,7 @@ public class CohorteDTO implements Serializable {
     private PlazoDTO plazo2 ; 
     private PlazoDTO plazo3 ; 
     private ProgramaDTO programa ; 
-    private List<CriterioevaluacionDTO> criterioevaluacionList ; 
-    private List<DocumentocohorteDTO> documentocohorteList ; 
+    private List<CriterioevaluacionDTO> criterioevaluacionList ;
     private List<PruebaDTO> pruebaList ; 
 
     @Override

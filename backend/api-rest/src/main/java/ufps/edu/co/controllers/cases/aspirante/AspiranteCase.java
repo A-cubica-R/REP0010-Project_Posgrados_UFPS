@@ -27,7 +27,9 @@ import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_CANCELAR_REQU
 import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_FIND;
 import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_REQUEST_CHANGE;
 import ufps.edu.co.records.input.entity.PruebaInput.PRUEBA_CANCELAR_REQUEST;
+import ufps.edu.co.records.output.entity.AspiranteCriteriosOutput;
 import ufps.edu.co.records.output.entity.AspiranteDocumentosOutput;
+import ufps.edu.co.records.output.entity.AspiranteIdOutput;
 import ufps.edu.co.records.output.entity.DocumentoAspiranteOutput;
 import ufps.edu.co.records.output.entity.EntrevistaOutput;
 import ufps.edu.co.records.output.entity.EntrevistaResumenOutput;
@@ -83,6 +85,24 @@ public class AspiranteCase {
 
     @Autowired
     private PruebaProcessor pruebaProcessor;
+
+    @GetMapping("/aspirante/{idUsuario}")
+    public ResponseEntity<AspiranteIdOutput> getIdAspiranteByUsuario(@PathVariable Integer idUsuario) {
+        UsuarioDTO usuario = usuarioService.findById(idUsuario);
+        if (usuario == null) {
+            return ResponseEntity.notFound().build();
+        }
+        AspiranteDTO aspirante = aspiranteService.findByIdPersona(usuario.getIdPersona());
+        if (aspirante == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(AspiranteIdOutput.builder().idAspirante(aspirante.getId()).build());
+    }
+
+    @GetMapping("/{idAspirante}/criterios")
+    public ResponseEntity<AspiranteCriteriosOutput> getCriteriosAspirante(@PathVariable Integer idAspirante) {
+        return ResponseEntity.ok(processor.getCriteriosAspirante(idAspirante));
+    }
 
     @GetMapping("/{idAspirante}/estado-proceso")
     public ResponseEntity<List<PasoProcesoOutput>> getEstadoProceso(@PathVariable Integer idAspirante) {

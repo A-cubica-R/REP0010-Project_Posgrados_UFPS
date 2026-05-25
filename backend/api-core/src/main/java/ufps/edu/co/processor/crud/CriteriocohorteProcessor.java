@@ -2,6 +2,7 @@ package ufps.edu.co.processor.crud;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,8 +12,14 @@ import ufps.edu.co.domain.exceptions.errorcodes.CriteriocohorteErrorCode;
 import ufps.edu.co.maps.specific.CriteriocohorteMap;
 import ufps.edu.co.records.input.entity.CriteriocohorteInput.*;
 import ufps.edu.co.records.output.entity.CriteriocohorteOutput;
+import ufps.edu.co.rest.dto.AspiranteDTO;
+import ufps.edu.co.rest.dto.CohorteDTO;
 import ufps.edu.co.rest.dto.CriteriocohorteDTO;
+import ufps.edu.co.rest.dto.CriterioevaluacionDTO;
+import ufps.edu.co.rest.services.AspiranteService;
+import ufps.edu.co.rest.services.CohorteService;
 import ufps.edu.co.rest.services.CriteriocohorteService;
+import ufps.edu.co.rest.services.CriterioevaluacionService;
 import ufps.edu.co.usecase.GlobalUseCase;
 
 @Service
@@ -24,6 +31,18 @@ public class CriteriocohorteProcessor implements
 
     @Autowired
     private CriteriocohorteMap map;
+
+    @Autowired
+    private CriterioevaluacionService criterioevaluacionService;
+
+    @Autowired
+    private CohorteService cohorteService;
+
+    @Autowired
+    private AspiranteService aspiranteService;
+
+    @Autowired
+    private CalificacioncriterioProcessor calificacioncriterioProcessor;
 
     @Override
     public CriteriocohorteOutput create(CRITERIOCOHORTE_CREATE input) {
@@ -82,20 +101,64 @@ public class CriteriocohorteProcessor implements
     }
 
     public CriteriocohorteOutput assign(Integer idCohorte, Integer idCriterio, BigDecimal pesoSnapshot) {
+        CohorteDTO cohorte = cohorteService.findById(idCohorte);
+        if (cohorte == null) {
+            throw new DomainException(CriteriocohorteErrorCode.CRITERIOCOHORTE_NOT_FOUND, idCohorte);
+        }
+
+        CriterioevaluacionDTO criterio = criterioevaluacionService.findById(idCriterio);
+        if (criterio == null) {
+            throw new DomainException(CriteriocohorteErrorCode.CRITERIOCOHORTE_NOT_FOUND, idCriterio);
+        }
+
+        if (!Objects.equals(criterio.getIdprograma(), cohorte.getIdPrograma())) {
+            throw new DomainException(CriteriocohorteErrorCode.CRITERIO_NO_PERTENECE_AL_PROGRAMA, idCriterio);
+        }
+
+        if (Boolean.FALSE.equals(criterio.getActivo())) {
+            throw new DomainException(CriteriocohorteErrorCode.CRITERIO_INACTIVO, idCriterio);
+        }
+
+        boolean yaAsignado = service.findByIdCohorte(idCohorte).stream()
+                .anyMatch(cc -> Objects.equals(cc.getIdCriterio(), idCriterio));
+        if (yaAsignado) {
+            throw new DomainException(CriteriocohorteErrorCode.CRITERIO_YA_ASIGNADO_A_COHORTE, idCriterio);
+        }
+
+        BigDecimal pesoEfectivo = pesoSnapshot != null ? pesoSnapshot : criterio.getPeso();
+        if (pesoEfectivo == null) pesoEfectivo = BigDecimal.ZERO;
+
+        BigDecimal sumaActual = service.findByIdCohorte(idCohorte).stream()
+                .map(CriteriocohorteDTO::getPesoSnapshot)
+                .filter(Objects::nonNull)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        if (sumaActual.add(pesoEfectivo).compareTo(BigDecimal.valueOf(100)) > 0) {
+            throw new DomainException(CriteriocohorteErrorCode.PESO_SNAPSHOT_EXCEDE_LIMITE, idCohorte);
+        }
+
         return create(CRITERIOCOHORTE_CREATE.builder()
                 .idCohorte(idCohorte)
                 .idCriterio(idCriterio)
-                .pesoSnapshot(pesoSnapshot)
+                .pesoSnapshot(pesoEfectivo)
                 .build());
     }
 
     public CriteriocohorteOutput updatePeso(Integer id, BigDecimal pesoSnapshot) {
         CriteriocohorteOutput existing = findById(new CRITERIOCOHORTE_FIND(id));
-        return update(CRITERIOCOHORTE_UPDATE.builder()
+        CriteriocohorteOutput updated = update(CRITERIOCOHORTE_UPDATE.builder()
                 .id(id)
                 .idCohorte(existing.idCohorte())
                 .idCriterio(existing.idCriterio())
                 .pesoSnapshot(pesoSnapshot)
                 .build());
+
+        aspiranteService.findByCohorte(existing.idCohorte())
+                .stream()
+                .map(AspiranteDTO::getId)
+                .filter(Objects::nonNull)
+                .forEach(calificacioncriterioProcessor::recalcularPuntuacionAspirantePublic);
+
+        return updated;
     }
 }

@@ -165,6 +165,15 @@ public class CriterioevaluacionProcessor implements
         deleteById(new CRITERIOEVALUACION_DELETE(criterioId));
     }
 
+    public CriterioevaluacionOutput desactivarCriterio(Integer programaId, Integer criterioId) {
+        CriterioevaluacionDTO criterio = service.findById(criterioId);
+        if (criterio == null || !programaId.equals(criterio.getIdprograma())) {
+            throw new DomainException(CriterioevaluacionErrorCode.CRITERIO_COHORTE_MISMATCH, criterioId);
+        }
+        criterio.setActivo(false);
+        return map.toOutput(service.update(criterioId, criterio));
+    }
+
     public List<CriterioevaluacionOutput> findByIdPrograma(Integer programaId) {
         return service.findByIdPrograma(programaId).stream().map(map::toOutput).toList();
     }

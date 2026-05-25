@@ -32,13 +32,13 @@ public class DocumentoEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    //--- PRIMARY KEY 
+    //--- PRIMARY KEY
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name="id", nullable=false)
     private Integer id ;
 
-    //--- OTHER DATA FIELDS 
+    //--- OTHER DATA FIELDS
     @Column(name="enlaceurl", nullable=false, length=65535)
     private String     enlaceurl ;
 
@@ -55,22 +55,13 @@ public class DocumentoEntity implements Serializable {
     private Integer    idAdministrativo ;
 
     @Column(name="id_aspirante", nullable=false)
-    private Integer        idAspirante ;
+    private Integer    idAspirante ;
 
     @Column(name="id_estadodocumento", nullable=false)
-    private Integer        idEstadodocumento ;
+    private Integer    idEstadodocumento ;
 
     @Column(name="id_plazo", nullable=false)
-    private Integer        idPlazo ;
-
-    @Column(name="id_tipodocumento", nullable=false)
-    private Integer        idTipodocumento ;
-
-    @Column(name="keyfile", nullable=false, length=255)
-    private String     keyfile ;
-
-    @Column(name="observaciones", length=65535)
-    private String     observaciones ;
+    private Integer    idPlazo ;
 
     @Column(name="id_documentosrequisitoconsejocohorte")
     private Integer    idDocumentosrequisitoconsejocohorte ;
@@ -78,38 +69,35 @@ public class DocumentoEntity implements Serializable {
     @Column(name="id_documentosrequisitoprogramacohorte")
     private Integer    idDocumentosrequisitoprogramacohorte ;
 
-    @Column(name="id_documentosrequisitoconsejocohorte")
-    private Integer    idDocumentosrequisitoconsejocohorte ;
-
     //--- LINKS ( RELATIONSHIPS )
-    @OneToMany
-    private List<CambiodocumentoEntity> cambiodocumentoList ; 
+    @OneToMany(mappedBy="documento")
+    private List<CambiodocumentoEntity> cambiodocumentoList ;
 
-    @OneToMany
-    private List<CambiodocumentoEntity> cambiodocumentoList2 ; 
+    @OneToMany(mappedBy="documento2")
+    private List<CambiodocumentoEntity> cambiodocumentoList2 ;
 
     @ManyToOne
     @JoinColumn(name="id_administrativo", referencedColumnName="id", insertable=false, updatable=false)
-    private AdministrativoEntity administrativo ; 
+    private AdministrativoEntity administrativo ;
 
     @ManyToOne
     @JoinColumn(name="id_aspirante", referencedColumnName="id", insertable=false, updatable=false)
-    private AspiranteEntity  aspirante ; 
+    private AspiranteEntity  aspirante ;
 
     @ManyToOne
     @JoinColumn(name="id_estadodocumento", referencedColumnName="id", insertable=false, updatable=false)
-    private EstadodocumentoEntity estadodocumento ; 
+    private EstadodocumentoEntity estadodocumento ;
 
     @ManyToOne
     @JoinColumn(name="id_plazo", referencedColumnName="id", insertable=false, updatable=false)
-    private PlazoEntity      plazo ; 
+    private PlazoEntity      plazo ;
 
     @ManyToOne
     @JoinColumn(name="id_documentosrequisitoconsejocohorte", referencedColumnName="id", insertable=false, updatable=false)
-    private DocumentosrequisitoconsejocohorteEntity documentosrequisitoconsejocohorte ; 
+    private DocumentosrequisitoconsejocohorteEntity documentosrequisitoconsejocohorte ;
 
     @ManyToOne
     @JoinColumn(name="id_documentosrequisitoprogramacohorte", referencedColumnName="id", insertable=false, updatable=false)
-    private DocumentosrequisitoprogramacohorteEntity documentosrequisitoprogramacohorte ; 
+    private DocumentosrequisitoprogramacohorteEntity documentosrequisitoprogramacohorte ;
 
 }

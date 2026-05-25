@@ -13,16 +13,14 @@ public enum CalificacioncriterioInput {
     public record CALIFICACIONCRITERIO_CREATE(
             @NotNull Integer idAspirante,
             @NotNull Integer idCriterio,
-            @NotNull @DecimalMin("0") @DecimalMax("100") BigDecimal puntuacion,
-            String observaciones) implements CreateType {
+            @NotNull @DecimalMin("0") @DecimalMax("100") BigDecimal puntuacion) implements CreateType {
     }
 
     public record CALIFICACIONCRITERIO_UPDATE(
             @NotNull Integer id,
             @NotNull Integer idAspirante,
             @NotNull Integer idCriterio,
-            @NotNull @DecimalMin("0") @DecimalMax("100") BigDecimal puntuacion,
-            String observaciones) implements UpdateType {
+            @NotNull @DecimalMin("0") @DecimalMax("100") BigDecimal puntuacion) implements UpdateType {
     }
 
     public record CALIFICACIONCRITERIO_PATCH(
@@ -30,8 +28,7 @@ public enum CalificacioncriterioInput {
             Integer idAspirante,
             Integer idCriterio,
             @DecimalMin("0") @DecimalMax("100") BigDecimal puntuacion,
-            @DecimalMin(value = "0", inclusive = false) BigDecimal pesoSnapshot,
-            String observaciones) implements PatchType {
+            @DecimalMin(value = "0", inclusive = false) BigDecimal pesoSnapshot) implements PatchType {
     }
 
     public record CALIFICACIONCRITERIO_DELETE(

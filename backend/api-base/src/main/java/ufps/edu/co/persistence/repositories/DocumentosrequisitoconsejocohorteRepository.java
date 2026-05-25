@@ -4,6 +4,7 @@
  */
 package ufps.edu.co.persistence.repositories;
 
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -37,7 +38,9 @@ import ufps.edu.co.persistence.entities.DocumentosrequisitoconsejocohorteEntity;
 @Repository
 public interface DocumentosrequisitoconsejocohorteRepository extends JpaRepository<DocumentosrequisitoconsejocohorteEntity, Integer> {
 
-	// Insert specific finders here 
+	List<DocumentosrequisitoconsejocohorteEntity> findByIdCohorte(Integer idCohorte);
+
+	// Insert specific finders here
 
 	//List<DocumentosrequisitoconsejocohorteEntity> findByXxx(String xxx);
 

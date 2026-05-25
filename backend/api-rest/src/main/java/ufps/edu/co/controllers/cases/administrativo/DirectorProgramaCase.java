@@ -52,7 +52,6 @@ import ufps.edu.co.records.input.entity.CriterioevaluacionInput.CRITERIO_BULK_SA
 import ufps.edu.co.records.input.entity.CriterioevaluacionInput.CRITERIO_CREATE_BODY;
 import ufps.edu.co.records.input.entity.CriterioevaluacionInput.CRITERIO_UPDATE_BODY;
 import ufps.edu.co.records.input.entity.CriteriocohorteInput.CRITERIOCOHORTE_ASSIGN_BODY;
-import ufps.edu.co.records.input.entity.CriteriocohorteInput.CRITERIOCOHORTE_DELETE;
 import ufps.edu.co.records.input.entity.CriteriocohorteInput.CRITERIOCOHORTE_PESO_UPDATE;
 import ufps.edu.co.records.output.entity.CriteriocohorteOutput;
 import ufps.edu.co.records.input.entity.CalificacioncriterioInput.CALIFICACIONCRITERIO_FIND_BY_ASPIRANTE;
@@ -968,13 +967,12 @@ public class DirectorProgramaCase {
         }
     }
 
-    @DeleteMapping("/cohorte/{cohorteId}/criteriocohorte/{id}")
-    public ResponseEntity<SuccessOutput> deleteCriteriocohorte(
-            @PathVariable Integer cohorteId,
-            @PathVariable Integer id) {
+    @PatchMapping("/programa/{programaId}/criterios/{criterioId}/desactivar")
+    public ResponseEntity<CriterioevaluacionOutput> desactivarCriterio(
+            @PathVariable Integer programaId,
+            @PathVariable Integer criterioId) {
         try {
-            criteriocohorteProcessor.deleteById(new CRITERIOCOHORTE_DELETE(id));
-            return ResponseEntity.ok(SuccessOutput.builder().success(true).build());
+            return ResponseEntity.ok(criterioevaluacionProcessor.desactivarCriterio(programaId, criterioId));
         } catch (DomainException e) {
             throw e;
         } catch (Exception e) {

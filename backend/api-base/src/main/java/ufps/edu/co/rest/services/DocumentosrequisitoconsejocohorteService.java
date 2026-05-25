@@ -39,6 +39,11 @@ public class DocumentosrequisitoconsejocohorteService extends GenericService<Doc
         return entityToDto(repository.findById(id));
     }
 
+    @Transactional(readOnly = true)
+    public List<DocumentosrequisitoconsejocohorteDTO> findByIdCohorte(Integer idCohorte) {
+        return entityListToDtoList(repository.findByIdCohorte(idCohorte));
+    }
+
     public DocumentosrequisitoconsejocohorteDTO create(DocumentosrequisitoconsejocohorteDTO dto) {
         return entityToDto(repository.save(dtoToEntity(dto)));
     }
