@@ -1,7 +1,5 @@
 package ufps.edu.co.records.output.entity;
 
-import java.util.List;
-
 import lombok.Builder;
 import ufps.edu.co.records.OutputResponse;
 
@@ -10,6 +8,5 @@ public record TipoentrevistaOutput(
         Integer id,
         String nombre,
         String descripcion,
-        String tipo,
-        List<EntrevistaOutput> entrevistaList
+        String tipo
 ) implements OutputResponse {}

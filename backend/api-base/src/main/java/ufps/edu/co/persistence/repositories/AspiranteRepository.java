@@ -44,6 +44,18 @@ public interface AspiranteRepository extends JpaRepository<AspiranteEntity, Inte
 
 	Optional<AspiranteEntity> findFirstByIdPersona(Integer idPersona);
 
+	@Query("SELECT a.id FROM AspiranteEntity a WHERE a.idPersona = :idPersona")
+	Optional<Integer> findIdByIdPersona(@Param("idPersona") Integer idPersona);
+
+	@Query("SELECT a.estado.tipo FROM AspiranteEntity a WHERE a.id = :id")
+	Optional<String> findEstadoTipoById(@Param("id") Integer id);
+
+	@Query("SELECT a.idCohorte FROM AspiranteEntity a WHERE a.id = :id")
+	Optional<Integer> findIdCohorteById(@Param("id") Integer id);
+
+	@Query("SELECT a.puntuacion FROM AspiranteEntity a WHERE a.id = :id")
+	Optional<java.math.BigDecimal> findPuntuacionById(@Param("id") Integer id);
+
 	List<AspiranteEntity> findByDocumentoListIsNotEmpty();
 
 	List<AspiranteEntity> findByIdCohorte(int idCohorte);

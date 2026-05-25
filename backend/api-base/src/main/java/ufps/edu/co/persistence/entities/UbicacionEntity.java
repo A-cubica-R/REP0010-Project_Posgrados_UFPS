@@ -47,10 +47,8 @@ public class UbicacionEntity implements Serializable {
     private Integer    idMunicipio ;
 
     //--- LINKS ( RELATIONSHIPS )
-    @OneToMany(mappedBy="ubicacion")
-
     @ManyToOne
     @JoinColumn(name="id_municipio", referencedColumnName="id", insertable=false, updatable=false)
-    private MunicipioEntity  municipio ; 
+    private MunicipioEntity  municipio ;
 
 }

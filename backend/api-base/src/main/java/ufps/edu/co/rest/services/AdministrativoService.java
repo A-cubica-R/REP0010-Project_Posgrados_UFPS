@@ -44,6 +44,21 @@ public class AdministrativoService extends GenericService<AdministrativoEntity, 
         return entityToDto(repository.findByIdPersona(idPersona));
     }
 
+    @Transactional(readOnly = true)
+    public Integer findIdByIdPersona(Integer idPersona) {
+        return repository.findIdByIdPersona(idPersona).orElse(null);
+    }
+
+    @Transactional(readOnly = true)
+    public Integer findIdProgramaByIdPersona(Integer idPersona) {
+        return repository.findIdProgramaByIdPersona(idPersona).orElse(null);
+    }
+
+    @Transactional(readOnly = true)
+    public String findCargoNombreByIdPersona(Integer idPersona) {
+        return repository.findCargoNombreByIdPersona(idPersona).orElse(null);
+    }
+
     public AdministrativoDTO create(AdministrativoDTO dto) {
         return entityToDto(repository.save(dtoToEntity(dto)));
     }

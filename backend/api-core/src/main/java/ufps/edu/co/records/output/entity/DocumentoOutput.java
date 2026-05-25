@@ -4,7 +4,6 @@ import lombok.Builder;
 import ufps.edu.co.records.OutputResponse;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Builder
 public record DocumentoOutput(
@@ -22,7 +21,5 @@ public record DocumentoOutput(
         AdministrativoOutput administrativo,
         AspiranteOutput aspirante,
         EstadodocumentoOutput estadodocumento,
-        PlazoOutput plazo,
-        List<CambiodocumentoOutput> cambiodocumentoList,
-        List<CambiodocumentoOutput> cambiodocumentoList2
+        PlazoOutput plazo
 ) implements OutputResponse {}

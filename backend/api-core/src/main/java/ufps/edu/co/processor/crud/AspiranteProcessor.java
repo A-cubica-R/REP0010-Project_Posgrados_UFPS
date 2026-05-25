@@ -209,10 +209,11 @@ public class AspiranteProcessor implements
 
     public AspiranteCriteriosOutput findCriteriosCalificacion(ASPIRANTE_FIND input) {
         try {
-            AspiranteDTO aspirante = service.findById(input.id());
+            Integer idCohorte = service.findIdCohorteById(input.id());
+            java.math.BigDecimal puntuacion = service.findPuntuacionById(input.id());
 
             List<CriteriocohorteDTO> criteriosCohorte = criteriocohorteService
-                    .findByIdCohorte(aspirante.getIdCohorte());
+                    .findByIdCohorte(idCohorte);
 
             Map<Integer, BigDecimal> puntuacionPorCriteriocohorte = calificacioncriterioService
                     .findByIdAspirante(input.id()).stream()
@@ -236,7 +237,7 @@ public class AspiranteProcessor implements
 
             return AspiranteCriteriosOutput.builder()
                     .criterios(filas)
-                    .puntajeTotal(aspirante.getPuntuacion())
+                    .puntajeTotal(puntuacion)
                     .build();
         } catch (Exception e) {
             throw new RuntimeException("Error finding criterios for Aspirante: " + e.getMessage(), e);
@@ -427,8 +428,8 @@ public class AspiranteProcessor implements
     }
 
     public List<PasoProcesoOutput> getPasosProceso(Integer idAspirante) {
-        AspiranteDTO aspirante = service.findById(idAspirante);
-        String estado = aspirante.getEstado() != null ? aspirante.getEstado().getTipo().toUpperCase() : "";
+        String estadoTipo = service.findEstadoTipoById(idAspirante);
+        String estado = estadoTipo != null ? estadoTipo.toUpperCase() : "";
 
         String s1, s2, s3, s4, s5;
         switch (estado) {
@@ -547,7 +548,7 @@ public class AspiranteProcessor implements
             throw new RuntimeException("No hay modalidades configuradas");
         }
 
-        CohorteDTO cohorte = cohorteService.create(CohorteDTO.builder()
+        Integer cohorteId = cohorteService.createAndGetId(CohorteDTO.builder()
                 .nombre(nombre)
                 .cupos(body.cupos())
                 .idEstado(estadoCohorte.getId())
@@ -560,12 +561,12 @@ public class AspiranteProcessor implements
                 .build());
 
         return CohorteListadoOutput.builder()
-                .id(cohorte.getId())
-                .nombre(cohorte.getNombre())
+                .id(cohorteId)
+                .nombre(nombre)
                 .activa(false)
                 .inscritos(0)
                 .admitidos(0)
-                .cupos(cohorte.getCupos())
+                .cupos(body.cupos())
                 .fechaLimiteDocumentos(body.fechaLimiteDocumentos())
                 .fechaLimitePago(body.fechaLimitePago())
                 .fechaInicio(fechaInicio)
@@ -573,24 +574,33 @@ public class AspiranteProcessor implements
     }
 
     public List<CohorteResumenOutput> getCohortesByProgramaResumen(Integer programaId) {
-        return cohorteService.findByIdPrograma(programaId).stream().map(cohorte -> {
-            boolean activa = cohorte.getEstado() != null
-                    && "ABIERTA".equalsIgnoreCase(cohorte.getEstado().getTipo());
-            long inscritos = service.countByCohorte(cohorte.getId());
-            long pazYSalvo = service.countPazYSalvoByCohorte(cohorte.getId());
-            long validados = service.countValidadosByCohorte(cohorte.getId());
-            long calificados = service.countCalificadosByCohorte(cohorte.getId());
-            long admitidos = service.countAdmitidosByCohorte(cohorte.getId());
+        return cohorteService.findResumenDataByIdPrograma(programaId).stream().map(row -> {
+            Integer id         = (Integer)   row[0];
+            String  nombre     = (String)    row[1];
+            Integer cuposRaw   = (Integer)   row[2];
+            String  estadoTipo = (String)    row[3];
+            String  semNombre  = (String)    row[4];
+            LocalDate plazoDocFin  = (LocalDate) row[5];
+            LocalDate plazoInsFin  = (LocalDate) row[6];
+            LocalDate plazoPagoFin = (LocalDate) row[7];
+
+            boolean activa   = "ABIERTA".equalsIgnoreCase(estadoTipo);
+            int cupos        = cuposRaw != null ? cuposRaw : 0;
+            long inscritos   = service.countByCohorte(id);
+            long pazYSalvo   = service.countPazYSalvoByCohorte(id);
+            long validados   = service.countValidadosByCohorte(id);
+            long calificados = service.countCalificadosByCohorte(id);
+            long admitidos   = service.countAdmitidosByCohorte(id);
 
             return CohorteResumenOutput.builder()
-                    .id(cohorte.getId())
-                    .nombre(cohorte.getNombre())
+                    .id(id)
+                    .nombre(nombre)
                     .activa(activa)
-                    .semestre(cohorte.getSemestre() != null ? cohorte.getSemestre().getNombre() : null)
-                    .cupos(cohorte.getCupos())
-                    .fechaLimitePago(cohorte.getPlazo3() != null ? cohorte.getPlazo3().getFechafin() : null)
-                    .fechaLimiteDocs(cohorte.getPlazo() != null ? cohorte.getPlazo().getFechafin() : null)
-                    .fechaLimiteInscripcion(cohorte.getPlazo2() != null ? cohorte.getPlazo2().getFechafin() : null)
+                    .semestre(semNombre)
+                    .cupos(cupos)
+                    .fechaLimitePago(plazoPagoFin)
+                    .fechaLimiteDocs(plazoDocFin)
+                    .fechaLimiteInscripcion(plazoInsFin)
                     .totalInscritos(inscritos)
                     .totalPazysalvo(pazYSalvo)
                     .totalValidados(validados)

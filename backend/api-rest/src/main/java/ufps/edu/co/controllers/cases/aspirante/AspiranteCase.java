@@ -89,14 +89,14 @@ public class AspiranteCase {
     @GetMapping("/aspirante/{idUsuario}")
     public ResponseEntity<AspiranteIdOutput> getIdAspiranteByUsuario(@PathVariable Integer idUsuario) {
         UsuarioDTO usuario = usuarioService.findById(idUsuario);
-        if (usuario == null) {
+        if (usuario == null || usuario.getIdPersona() == null) {
             return ResponseEntity.notFound().build();
         }
-        AspiranteDTO aspirante = aspiranteService.findByIdPersona(usuario.getIdPersona());
-        if (aspirante == null) {
+        Integer idAspirante = aspiranteService.findIdByIdPersona(usuario.getIdPersona());
+        if (idAspirante == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(AspiranteIdOutput.builder().idAspirante(aspirante.getId()).build());
+        return ResponseEntity.ok(AspiranteIdOutput.builder().idAspirante(idAspirante).build());
     }
 
     @GetMapping("/{idAspirante}/criterios")

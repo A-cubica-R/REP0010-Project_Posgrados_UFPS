@@ -31,33 +31,43 @@ public class DocumentosrequisitoconsejocohorteService extends GenericService<Doc
 
     @Transactional(readOnly = true)
     public List<DocumentosrequisitoconsejocohorteDTO> findAll() {
-        return entityListToDtoList(repository.findAll());
+        return repository.findAllScalar().stream().map(this::rowToDto).toList();
     }
 
     @Transactional(readOnly = true)
     public DocumentosrequisitoconsejocohorteDTO findById(Integer id) {
-        return entityToDto(repository.findById(id));
+        return repository.findByIdScalar(id).map(this::rowToDto).orElse(null);
     }
 
     @Transactional(readOnly = true)
     public List<DocumentosrequisitoconsejocohorteDTO> findByIdCohorte(Integer idCohorte) {
-        return entityListToDtoList(repository.findByIdCohorte(idCohorte));
+        return repository.findByIdCohorteScalar(idCohorte).stream().map(this::rowToDto).toList();
     }
 
     public DocumentosrequisitoconsejocohorteDTO create(DocumentosrequisitoconsejocohorteDTO dto) {
-        return entityToDto(repository.save(dtoToEntity(dto)));
+        Integer id = repository.save(dtoToEntity(dto)).getId();
+        return repository.findByIdScalar(id).map(this::rowToDto).orElse(null);
     }
 
     public DocumentosrequisitoconsejocohorteDTO update(Integer id, DocumentosrequisitoconsejocohorteDTO dto) {
         repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Documentosrequisitoconsejocohorte no encontrado con id: " + id));
         dto.setId(id);
-        return entityToDto(repository.save(dtoToEntity(dto)));
+        repository.save(dtoToEntity(dto));
+        return repository.findByIdScalar(id).map(this::rowToDto).orElse(null);
     }
 
     public void deleteById(Integer id) {
         repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Documentosrequisitoconsejocohorte no encontrado con id: " + id));
         repository.deleteById(id);
+    }
+
+    private DocumentosrequisitoconsejocohorteDTO rowToDto(Object[] row) {
+        return DocumentosrequisitoconsejocohorteDTO.builder()
+                .id((Integer) row[0])
+                .idDocrequisito((Integer) row[1])
+                .idCohorte((Integer) row[2])
+                .build();
     }
 }
