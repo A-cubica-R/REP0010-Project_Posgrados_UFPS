@@ -40,15 +40,15 @@ import ufps.edu.co.persistence.entities.CalificacioncriterioEntity;
 @Repository
 public interface CalificacioncriterioRepository extends JpaRepository<CalificacioncriterioEntity, Integer> {
 
-	Optional<CalificacioncriterioEntity> findByIdAspiranteAndIdCriterio(Integer idAspirante, Integer idCriterio);
+	Optional<CalificacioncriterioEntity> findByIdAspiranteAndIdCriteriocohorte(Integer idAspirante, Integer idCriteriocohorte);
 
-	Boolean existsByIdAspiranteAndIdCriterio(Integer idAspirante, Integer idCriterio);
+	Boolean existsByIdAspiranteAndIdCriteriocohorte(Integer idAspirante, Integer idCriteriocohorte);
 
-	boolean existsByIdCriterio(Integer idCriterio);
+	boolean existsByIdCriteriocohorte(Integer idCriteriocohorte);
 
 	List<CalificacioncriterioEntity> findByIdAspirante(Integer idAspirante);
 
-	List<CalificacioncriterioEntity> findByIdCriterio(Integer idCriterio);
+	List<CalificacioncriterioEntity> findByIdCriteriocohorte(Integer idCriteriocohorte);
 	
 	// Insert specific finders here 
 

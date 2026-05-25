@@ -73,7 +73,6 @@ public class ModelMapperConfig {
                   m.skip(CohorteEntity::setPlazo2);
                   m.skip(CohorteEntity::setPlazo3);
                   m.skip(CohorteEntity::setPrograma);
-                  m.skip(CohorteEntity::setCriterioevaluacionList);
                   m.skip(CohorteEntity::setPruebaList);
                     })
                     .implicitMappings();

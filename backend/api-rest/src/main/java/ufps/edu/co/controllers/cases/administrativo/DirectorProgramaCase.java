@@ -31,6 +31,7 @@ import ufps.edu.co.processor.crud.AdministrativoProcessor;
 import ufps.edu.co.processor.crud.AspiranteProcessor;
 import ufps.edu.co.processor.crud.CalificacioncriterioProcessor;
 import ufps.edu.co.processor.crud.CriterioevaluacionProcessor;
+import ufps.edu.co.processor.crud.CriteriocohorteProcessor;
 import ufps.edu.co.processor.crud.DocumentoProcessor;
 import ufps.edu.co.processor.crud.DocumentosrequisitoprogramaProcessor;
 import ufps.edu.co.processor.crud.DocumentosrequisitoprogramacohorteProcessor;
@@ -50,6 +51,9 @@ import ufps.edu.co.records.input.entity.CohorteInput.COHORTE_DIRECTOR_UPDATE;
 import ufps.edu.co.records.input.entity.CriterioevaluacionInput.CRITERIO_BULK_SAVE;
 import ufps.edu.co.records.input.entity.CriterioevaluacionInput.CRITERIO_CREATE_BODY;
 import ufps.edu.co.records.input.entity.CriterioevaluacionInput.CRITERIO_UPDATE_BODY;
+import ufps.edu.co.records.input.entity.CriteriocohorteInput.CRITERIOCOHORTE_ASSIGN_BODY;
+import ufps.edu.co.records.input.entity.CriteriocohorteInput.CRITERIOCOHORTE_PESO_UPDATE;
+import ufps.edu.co.records.output.entity.CriteriocohorteOutput;
 import ufps.edu.co.records.input.entity.CalificacioncriterioInput.CALIFICACIONCRITERIO_FIND_BY_ASPIRANTE;
 import ufps.edu.co.records.input.entity.CalificacioncriterioInput.CALIFICACIONCRITERIO_UPDATE;
 import ufps.edu.co.records.input.entity.DocumentoInput.DOCUMENTO_ESTADO_UPDATE;
@@ -153,6 +157,9 @@ public class DirectorProgramaCase {
 
     @Autowired
     private CriterioevaluacionProcessor criterioevaluacionProcessor;
+
+    @Autowired
+    private CriteriocohorteProcessor criteriocohorteProcessor;
 
     @Autowired
     private DocumentosrequisitoprogramaProcessor documentosrequisitoprogramaProcessor;
@@ -863,6 +870,111 @@ public class DirectorProgramaCase {
             @PathVariable Integer cohorteId) {
         try {
             return ResponseEntity.ok(documentosrequisitoprogramacohorteProcessor.findByIdCohorte(cohorteId));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    // --- Criterios de evaluacion (programa) ---
+
+    @GetMapping("/programa/{programaId}/criterios")
+    public ResponseEntity<List<CriterioevaluacionOutput>> listCriteriosByPrograma(@PathVariable Integer programaId) {
+        try {
+            return ResponseEntity.ok(criterioevaluacionProcessor.findByIdPrograma(programaId));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PostMapping(value = "/programa/{programaId}/criterios", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<CriterioevaluacionOutput> createCriterioForPrograma(
+            @PathVariable Integer programaId,
+            @RequestBody CRITERIO_CREATE_BODY body) {
+        try {
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(criterioevaluacionProcessor.createForPrograma(programaId, body));
+        } catch (DomainException e) {
+            throw e;
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PutMapping(value = "/programa/{programaId}/criterios/{criterioId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<CriterioevaluacionOutput> updateCriterioForPrograma(
+            @PathVariable Integer programaId,
+            @PathVariable Integer criterioId,
+            @RequestBody CRITERIO_UPDATE_BODY body) {
+        try {
+            return ResponseEntity.ok(criterioevaluacionProcessor.updateForPrograma(programaId, criterioId, body));
+        } catch (DomainException e) {
+            throw e;
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @DeleteMapping("/programa/{programaId}/criterios/{criterioId}")
+    public ResponseEntity<SuccessOutput> deleteCriterioForPrograma(
+            @PathVariable Integer programaId,
+            @PathVariable Integer criterioId) {
+        try {
+            criterioevaluacionProcessor.deleteForPrograma(programaId, criterioId);
+            return ResponseEntity.ok(SuccessOutput.builder().success(true).build());
+        } catch (DomainException e) {
+            throw e;
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    // --- Criteriocohorte ---
+
+    @GetMapping("/cohorte/{cohorteId}/criteriocohorte")
+    public ResponseEntity<List<CriteriocohorteOutput>> listCriteriocohorteByCohorte(@PathVariable Integer cohorteId) {
+        try {
+            return ResponseEntity.ok(criteriocohorteProcessor.findByIdCohorte(cohorteId));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PostMapping(value = "/cohorte/{cohorteId}/criteriocohorte", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<CriteriocohorteOutput> assignCriterioToCohorte(
+            @PathVariable Integer cohorteId,
+            @RequestBody CRITERIOCOHORTE_ASSIGN_BODY body) {
+        try {
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(criteriocohorteProcessor.assign(cohorteId, body.idCriterio(), body.pesoSnapshot()));
+        } catch (DomainException e) {
+            throw e;
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PutMapping(value = "/cohorte/{cohorteId}/criteriocohorte/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<CriteriocohorteOutput> updateCriteriocohorte(
+            @PathVariable Integer cohorteId,
+            @PathVariable Integer id,
+            @RequestBody CRITERIOCOHORTE_PESO_UPDATE body) {
+        try {
+            return ResponseEntity.ok(criteriocohorteProcessor.updatePeso(id, body.pesoSnapshot()));
+        } catch (DomainException e) {
+            throw e;
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PatchMapping("/programa/{programaId}/criterios/{criterioId}/desactivar")
+    public ResponseEntity<CriterioevaluacionOutput> desactivarCriterio(
+            @PathVariable Integer programaId,
+            @PathVariable Integer criterioId) {
+        try {
+            return ResponseEntity.ok(criterioevaluacionProcessor.desactivarCriterio(programaId, criterioId));
+        } catch (DomainException e) {
+            throw e;
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }

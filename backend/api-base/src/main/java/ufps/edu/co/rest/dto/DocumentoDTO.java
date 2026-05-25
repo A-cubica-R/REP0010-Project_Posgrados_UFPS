@@ -28,9 +28,9 @@ public class DocumentoDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    //--- PRIMARY KEY 
+    //--- PRIMARY KEY
     private Integer id ;
-    //--- OTHER DATA FIELDS 
+    //--- OTHER DATA FIELDS
     private String enlaceurl ;
     private LocalDate fechacargue ;
     private String keyfile ;
@@ -39,35 +39,33 @@ public class DocumentoDTO implements Serializable {
     private Integer idAspirante ;
     private Integer idEstadodocumento ;
     private Integer idPlazo ;
-    private Integer idDocumentosrequisitoprogramacohorte ;
     private Integer idDocumentosrequisitoconsejocohorte ;
+    private Integer idDocumentosrequisitoprogramacohorte ;
     //--- LINKS ( RELATIONSHIPS )
-    private List<CambiodocumentoDTO> cambiodocumentoList ; 
-    private List<CambiodocumentoDTO> cambiodocumentoList2 ; 
-    private AdministrativoDTO administrativo ; 
-    private AspiranteDTO aspirante ; 
-    private EstadodocumentoDTO estadodocumento ; 
-    private PlazoDTO plazo ; 
-    private DocumentosrequisitoconsejocohorteDTO documentosrequisitoconsejocohorte ; 
-    private DocumentosrequisitoprogramacohorteDTO documentosrequisitoprogramacohorte ; 
+    private List<CambiodocumentoDTO> cambiodocumentoList ;
+    private List<CambiodocumentoDTO> cambiodocumentoList2 ;
+    private AdministrativoDTO administrativo ;
+    private AspiranteDTO aspirante ;
+    private EstadodocumentoDTO estadodocumento ;
+    private PlazoDTO plazo ;
+    private DocumentosrequisitoconsejocohorteDTO documentosrequisitoconsejocohorte ;
+    private DocumentosrequisitoprogramacohorteDTO documentosrequisitoprogramacohorte ;
 
     @Override
-	public String toString() { 
-		String separator = "|";
-		StringBuilder sb = new StringBuilder();
-		sb.append("Documento[");
-		sb.append("id=").append(id);
-		// attribute 'enlaceurl' (type String) not usable in toString() 
-		sb.append(separator).append("fechacargue=").append(fechacargue);
-		sb.append(separator).append("keyfile=").append(keyfile);
-		// attribute 'observaciones' (type String) not usable in toString() 
-		sb.append(separator).append("idAdministrativo=").append(idAdministrativo);
-		sb.append(separator).append("idAspirante=").append(idAspirante);
-		sb.append(separator).append("idEstadodocumento=").append(idEstadodocumento);
-		sb.append(separator).append("idPlazo=").append(idPlazo);
-		sb.append(separator).append("idDocumentosrequisitoprogramacohorte=").append(idDocumentosrequisitoprogramacohorte);
-		sb.append(separator).append("idDocumentosrequisitoconsejocohorte=").append(idDocumentosrequisitoconsejocohorte);
-		sb.append("]");
-		return sb.toString();
-	}
+    public String toString() {
+        String separator = "|";
+        StringBuilder sb = new StringBuilder();
+        sb.append("Documento[");
+        sb.append("id=").append(id);
+        sb.append(separator).append("fechacargue=").append(fechacargue);
+        sb.append(separator).append("keyfile=").append(keyfile);
+        sb.append(separator).append("idAdministrativo=").append(idAdministrativo);
+        sb.append(separator).append("idAspirante=").append(idAspirante);
+        sb.append(separator).append("idEstadodocumento=").append(idEstadodocumento);
+        sb.append(separator).append("idPlazo=").append(idPlazo);
+        sb.append(separator).append("idDocumentosrequisitoconsejocohorte=").append(idDocumentosrequisitoconsejocohorte);
+        sb.append(separator).append("idDocumentosrequisitoprogramacohorte=").append(idDocumentosrequisitoprogramacohorte);
+        sb.append("]");
+        return sb.toString();
+    }
 }

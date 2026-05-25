@@ -7,6 +7,8 @@ package ufps.edu.co.persistence.repositories;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import ufps.edu.co.persistence.entities.DocumentosrequisitoprogramaEntity;
@@ -39,7 +41,11 @@ import ufps.edu.co.persistence.entities.DocumentosrequisitoprogramaEntity;
 @Repository
 public interface DocumentosrequisitoprogramaRepository extends JpaRepository<DocumentosrequisitoprogramaEntity, Integer> {
 
-	List<DocumentosrequisitoprogramaEntity> findByIdPrograma(Integer idPrograma);
+	@Query("SELECT DISTINCT d FROM DocumentosrequisitoprogramaEntity d " +
+	       "JOIN d.documentosrequisitoprogramacohorteList dc " +
+	       "JOIN dc.cohorte c " +
+	       "WHERE c.idPrograma = :idPrograma")
+	List<DocumentosrequisitoprogramaEntity> findByIdPrograma(@Param("idPrograma") Integer idPrograma);
 
 	// Insert specific finders here 
 

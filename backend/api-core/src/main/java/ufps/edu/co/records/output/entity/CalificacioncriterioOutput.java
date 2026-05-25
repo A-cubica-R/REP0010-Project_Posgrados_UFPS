@@ -12,7 +12,6 @@ public record CalificacioncriterioOutput(
         Integer idCriteriocohorte,
         BigDecimal puntuacion,
         BigDecimal pesoSnapshot,
-        String observaciones,
         AspiranteOutput aspirante,
         CriteriocohorteOutput criteriocohorte
 ) implements OutputResponse {}

@@ -37,7 +37,11 @@ import ufps.edu.co.persistence.entities.CriteriocohorteEntity;
 @Repository
 public interface CriteriocohorteRepository extends JpaRepository<CriteriocohorteEntity, Integer> {
 
-	// Insert specific finders here 
+	java.util.List<CriteriocohorteEntity> findByIdCohorte(Integer idCohorte);
+
+	java.util.List<CriteriocohorteEntity> findByIdCriterio(Integer idCriterio);
+
+	// Insert specific finders here
 
 	//List<CriteriocohorteEntity> findByXxx(String xxx);
 

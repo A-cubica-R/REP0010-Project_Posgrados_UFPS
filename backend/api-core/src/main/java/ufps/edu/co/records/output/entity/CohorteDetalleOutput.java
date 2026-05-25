@@ -20,8 +20,7 @@ public record CohorteDetalleOutput(
         LocalDate fechaInicio,
         List<CriterioInfo> criterios,
         List<AspiranteInfo> inscritosData,
-        List<AspiranteInfo> admitidosData,
-        List<DocumentocohorteOutput> documentos
+        List<AspiranteInfo> admitidosData
 ) implements OutputResponse {
 
     @Builder

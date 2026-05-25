@@ -55,4 +55,14 @@ public class CriteriocohorteService extends GenericService<CriteriocohorteEntity
                 .orElseThrow(() -> new RuntimeException("Criteriocohorte no encontrado con id: " + id));
         repository.deleteById(id);
     }
+
+    @Transactional(readOnly = true)
+    public List<CriteriocohorteDTO> findByIdCohorte(Integer idCohorte) {
+        return entityListToDtoList(repository.findByIdCohorte(idCohorte));
+    }
+
+    @Transactional(readOnly = true)
+    public List<CriteriocohorteDTO> findByIdCriterio(Integer idCriterio) {
+        return entityListToDtoList(repository.findByIdCriterio(idCriterio));
+    }
 }

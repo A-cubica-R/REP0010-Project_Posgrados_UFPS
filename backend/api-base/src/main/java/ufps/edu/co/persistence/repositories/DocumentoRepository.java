@@ -50,9 +50,9 @@ public interface DocumentoRepository extends JpaRepository<DocumentoEntity, Inte
 
 	List<DocumentoEntity> findByIdAspirante(Integer idAspirante);
 
-	Optional<DocumentoEntity> findByIdAspiranteAndIdDocumentosrequisitoconcejocohorte(Integer idAspirante, Integer idDocumentosrequisitoconcejocohorte);
+	Optional<DocumentoEntity> findByIdAspiranteAndIdDocumentosrequisitoconsejocohorte(Integer idAspirante, Integer idDocumentosrequisitoconsejocohorte);
 
-	Optional<DocumentoEntity> findByIdAspiranteAndIdDocumentosrequisitoprogramacohorte(Integer idAspirante, Integer idDocumentosrequisitoprogramacohorte);
+	java.util.Optional<DocumentoEntity> findByIdAspiranteAndIdDocumentosrequisitoprogramacohorte(Integer idAspirante, Integer idDocumentosrequisitoprogramacohorte);
 
 	// Insert specific finders here
 

@@ -18,14 +18,14 @@ import ufps.edu.co.records.output.entity.DocumentoOutput;
 import ufps.edu.co.records.output.entity.PersonaOutput;
 import ufps.edu.co.rest.dto.AspiranteDTO;
 import ufps.edu.co.rest.dto.DocumentoDTO;
-import ufps.edu.co.rest.dto.DocumentosrequisitoconcejocohorteDTO;
+import ufps.edu.co.rest.dto.DocumentosrequisitoconsejocohorteDTO;
 import ufps.edu.co.rest.dto.DocumentosrequisitoprogramacohorteDTO;
 import ufps.edu.co.rest.dto.EstadoDTO;
 import ufps.edu.co.rest.dto.EstadodocumentoDTO;
 import ufps.edu.co.rest.dto.PersonaDTO;
 import ufps.edu.co.rest.services.AspiranteService;
 import ufps.edu.co.rest.services.DocumentoService;
-import ufps.edu.co.rest.services.DocumentosrequisitoconcejocohorteService;
+import ufps.edu.co.rest.services.DocumentosrequisitoconsejocohorteService;
 import ufps.edu.co.rest.services.DocumentosrequisitoprogramacohorteService;
 import ufps.edu.co.rest.services.EstadoService;
 import ufps.edu.co.rest.services.EstadodocumentoService;
@@ -56,7 +56,7 @@ public class DocumentoProcessor implements
     private EstadoService estadoService;
 
     @Autowired
-    private DocumentosrequisitoconcejocohorteService documentosrequisitoconcejocohorteService;
+    private DocumentosrequisitoconsejocohorteService documentosrequisitoconsejocohorteService;
 
     @Autowired
     private DocumentosrequisitoprogramacohorteService documentosrequisitoprogramacohorteService;
@@ -163,8 +163,8 @@ public class DocumentoProcessor implements
             }
             Integer idCohorte = aspirante.getIdCohorte();
 
-            List<DocumentosrequisitoconcejocohorteDTO> requisitosConsejo =
-                    documentosrequisitoconcejocohorteService.findByIdCohorte(idCohorte);
+            List<DocumentosrequisitoconsejocohorteDTO> requisitosConsejo =
+                    documentosrequisitoconsejocohorteService.findByIdCohorte(idCohorte);
 
             List<DocumentosrequisitoprogramacohorteDTO> requisitosPrograma =
                     documentosrequisitoprogramacohorteService.findByIdCohorte(idCohorte);
@@ -173,8 +173,8 @@ public class DocumentoProcessor implements
                 throw new RuntimeException("La cohorte con id " + idCohorte + " no tiene documentos requisito configurados.");
             }
 
-            for (DocumentosrequisitoconcejocohorteDTO requisito : requisitosConsejo) {
-                Optional<DocumentoDTO> doc = service.findByIdAspiranteAndIdDocumentosrequisitoconcejocohorte(
+            for (DocumentosrequisitoconsejocohorteDTO requisito : requisitosConsejo) {
+                Optional<DocumentoDTO> doc = service.findByIdAspiranteAndIdDocumentosrequisitoconsejocohorte(
                         idAspirante, requisito.getId());
                 if (doc.isEmpty() || doc.get().getEstadodocumento() == null
                         || !"APROBADO".equalsIgnoreCase(doc.get().getEstadodocumento().getEstado())) {
