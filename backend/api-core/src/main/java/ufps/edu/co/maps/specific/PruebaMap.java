@@ -68,21 +68,18 @@ public class PruebaMap extends
     public PruebaOutput toOutput(PruebaDTO dto) {
         if (dto == null)
             return null;
-
-        AspiranteMap aspiranteMap = new AspiranteMap();
-        CohorteMap cohorteMap = new CohorteMap();
-        UbicacionMap ubicacionMap = new UbicacionMap();
-
         return PruebaOutput.builder()
                 .id(dto.getId())
                 .nombre(dto.getNombre())
                 .descripcion(dto.getDescripcion())
+                .fecha(dto.getFecha())
+                .tiempo(dto.getTiempo())
+                .motivocambio(dto.getMotivocambio())
                 .idAspirante(dto.getIdAspirante())
                 .idCohorte(dto.getIdCohorte())
                 .idUbicacion(dto.getIdUbicacion())
-                .aspirante(dto.getAspirante() != null ? aspiranteMap.toOutput(dto.getAspirante()) : null)
-                .cohorte(dto.getCohorte() != null ? cohorteMap.toOutput(dto.getCohorte()) : null)
-                .ubicacion(dto.getUbicacion() != null ? ubicacionMap.toOutput(dto.getUbicacion()) : null)
+                .idEstado(dto.getIdEstado())
+                .idTipoprueba(dto.getIdTipoprueba())
                 .build();
     }
 
