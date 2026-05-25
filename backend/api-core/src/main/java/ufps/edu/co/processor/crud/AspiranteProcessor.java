@@ -2,7 +2,6 @@ package ufps.edu.co.processor.crud;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -11,13 +10,10 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ufps.edu.co.maps.specific.AspiranteMap;
-import ufps.edu.co.maps.specific.DocumentocohorteMap;
 import ufps.edu.co.maps.specific.EstadoMap;
 import ufps.edu.co.records.input.entity.AspiranteInput.*;
 import ufps.edu.co.records.input.entity.CohorteInput.COHORTE_DIRECTOR_CREATE;
 import ufps.edu.co.records.input.entity.CohorteInput.COHORTE_DIRECTOR_UPDATE;
-import ufps.edu.co.records.input.entity.DocumentocohorteInput.DOCUMENTOCOHORTE_CREATE;
-import ufps.edu.co.records.input.entity.DocumentocohorteInput.DOCUMENTOCOHORTE_UPDATE;
 import ufps.edu.co.records.output.entity.AspiranteCalificacionOutput;
 import ufps.edu.co.records.output.entity.RankingAdmitidosOutput;
 import ufps.edu.co.records.output.entity.AspiranteCohorteOutput;
@@ -28,19 +24,15 @@ import ufps.edu.co.records.output.entity.CohorteListadoOutput;
 import ufps.edu.co.records.output.entity.CohorteResumenOutput;
 import ufps.edu.co.records.output.entity.CriterioFilaOutput;
 import ufps.edu.co.records.output.entity.CriteriosCohorteOutput;
-import ufps.edu.co.records.output.entity.DocumentocohorteOutput;
 import ufps.edu.co.records.output.entity.EstadoOutput;
 import ufps.edu.co.records.output.entity.PasoProcesoOutput;
 import ufps.edu.co.records.output.entity.ProgramaInicioOutput;
 import ufps.edu.co.rest.dto.CohorteDTO;
 import ufps.edu.co.rest.dto.AspiranteDTO;
 import ufps.edu.co.rest.dto.DocumentoDTO;
-import ufps.edu.co.rest.dto.DocumentocohorteDTO;
-import ufps.edu.co.rest.dto.PagoDTO;
 import ufps.edu.co.rest.services.DocumentoService;
-import ufps.edu.co.rest.services.DocumentocohorteService;
-import ufps.edu.co.rest.services.PagoService;
 import ufps.edu.co.rest.dto.CalificacioncriterioDTO;
+import ufps.edu.co.rest.dto.CriteriocohorteDTO;
 import ufps.edu.co.rest.dto.CriterioevaluacionDTO;
 import ufps.edu.co.rest.dto.EstadoDTO;
 import ufps.edu.co.rest.dto.ModalidadDTO;
@@ -53,6 +45,7 @@ import ufps.edu.co.rest.services.AspiranteService;
 import ufps.edu.co.rest.services.CalificacioncriterioService;
 import ufps.edu.co.rest.services.CohorteService;
 import ufps.edu.co.rest.services.CriterioevaluacionService;
+import ufps.edu.co.rest.services.CriteriocohorteService;
 import ufps.edu.co.rest.services.EstadoService;
 import ufps.edu.co.rest.services.ModalidadService;
 import ufps.edu.co.rest.services.PlazoService;
@@ -75,6 +68,9 @@ public class AspiranteProcessor implements
 
     @Autowired
     private CriterioevaluacionService criterioevaluacionService;
+
+    @Autowired
+    private CriteriocohorteService criteriocohorteService;
 
     @Autowired
     private CalificacioncriterioService calificacioncriterioService;
@@ -102,12 +98,6 @@ public class AspiranteProcessor implements
 
     @Autowired
     private DocumentoService documentoService;
-
-    @Autowired
-    private PagoService pagoService;
-
-    @Autowired
-    private DocumentocohorteService documentocohorteService;
 
     @Override
     public AspiranteOutput create(ASPIRANTE_CREATE input) {
@@ -221,24 +211,27 @@ public class AspiranteProcessor implements
         try {
             AspiranteDTO aspirante = service.findById(input.id());
 
-            List<CriterioevaluacionDTO> criterios = criterioevaluacionService
+            List<CriteriocohorteDTO> criteriosCohorte = criteriocohorteService
                     .findByIdCohorte(aspirante.getIdCohorte());
 
-            Map<Integer, BigDecimal> puntuacionPorCriterio = calificacioncriterioService
+            Map<Integer, BigDecimal> puntuacionPorCriteriocohorte = calificacioncriterioService
                     .findByIdAspirante(input.id()).stream()
-                    .filter(c -> c.getIdCriterio() != null && c.getPuntuacion() != null)
+                    .filter(c -> c.getIdCriteriocohorte() != null && c.getPuntuacion() != null)
                     .collect(Collectors.toMap(
-                            CalificacioncriterioDTO::getIdCriterio,
+                            CalificacioncriterioDTO::getIdCriteriocohorte,
                             CalificacioncriterioDTO::getPuntuacion,
                             (a, b) -> a));
 
-            List<CriterioFilaOutput> filas = criterios.stream()
-                    .map(c -> CriterioFilaOutput.builder()
-                            .id(c.getId())
-                            .nombreCriterio(c.getNombre())
-                            .peso(c.getPeso())
-                            .puntajeObtenido(puntuacionPorCriterio.get(c.getId()))
-                            .build())
+            List<CriterioFilaOutput> filas = criteriosCohorte.stream()
+                    .map(cc -> {
+                        CriterioevaluacionDTO ce = criterioevaluacionService.findById(cc.getIdCriterio());
+                        return CriterioFilaOutput.builder()
+                                .id(cc.getId())
+                                .nombreCriterio(ce != null ? ce.getNombre() : null)
+                                .peso(cc.getPesoSnapshot())
+                                .puntajeObtenido(puntuacionPorCriteriocohorte.get(cc.getId()))
+                                .build();
+                    })
                     .toList();
 
             return AspiranteCriteriosOutput.builder()
@@ -250,21 +243,24 @@ public class AspiranteProcessor implements
         }
     }
 
-    public CriteriosCohorteOutput getCriteriosByPrograma(Integer programaId) {
-        CohorteDTO cohorte = cohorteService.findActiveByIdPrograma(programaId);
+    public CriteriosCohorteOutput getCriteriosByCohorte(Integer cohorteId) {
+        CohorteDTO cohorte = cohorteService.findById(cohorteId);
         if (cohorte == null) {
-            throw new RuntimeException("No hay cohorte activa para el programa: " + programaId);
+            throw new RuntimeException("Cohorte no encontrada: " + cohorteId);
         }
         boolean activa = cohorte.getEstado() != null
                 && "ABIERTA".equalsIgnoreCase(cohorte.getEstado().getTipo());
-        List<CriteriosCohorteOutput.CriterioInfo> criterios = criterioevaluacionService
-                .findByIdCohorte(cohorte.getId()).stream()
-                .map(c -> CriteriosCohorteOutput.CriterioInfo.builder()
-                        .id(c.getId())
-                        .nombre(c.getNombre())
-                        .descripcion(c.getDescripcion())
-                        .peso(c.getPeso())
-                        .build())
+        List<CriteriosCohorteOutput.CriterioInfo> criterios = criteriocohorteService
+                .findByIdCohorte(cohorteId).stream()
+                .map(cc -> {
+                    CriterioevaluacionDTO ce = criterioevaluacionService.findById(cc.getIdCriterio());
+                    return CriteriosCohorteOutput.CriterioInfo.builder()
+                            .id(cc.getId())
+                            .nombre(ce != null ? ce.getNombre() : null)
+                            .descripcion(ce != null ? ce.getDescripcion() : null)
+                            .peso(cc.getPesoSnapshot())
+                            .build();
+                })
                 .toList();
         return CriteriosCohorteOutput.builder()
                 .cohorteActual(CriteriosCohorteOutput.CohorteInfo.builder()
@@ -296,10 +292,10 @@ public class AspiranteProcessor implements
         }).toList();
     }
 
-    public ProgramaInicioOutput getProgramaInicio(Integer programaId) {
-        CohorteDTO cohorte = cohorteService.findActiveByIdPrograma(programaId);
+    public ProgramaInicioOutput getProgramaInicio(Integer cohorteId) {
+        CohorteDTO cohorte = cohorteService.findById(cohorteId);
         if (cohorte == null) {
-            throw new RuntimeException("No hay cohorte activa para el programa: " + programaId);
+            throw new RuntimeException("Cohorte no encontrada: " + cohorteId);
         }
 
         long totalInscritos = service.countByCohorte(cohorte.getId());
@@ -345,12 +341,15 @@ public class AspiranteProcessor implements
         boolean activa = cohorte.getEstado() != null
                 && "ABIERTA".equalsIgnoreCase(cohorte.getEstado().getTipo());
 
-        List<CohorteDetalleOutput.CriterioInfo> criterios = criterioevaluacionService
+        List<CohorteDetalleOutput.CriterioInfo> criterios = criteriocohorteService
                 .findByIdCohorte(cohorteId).stream()
-                .map(c -> CohorteDetalleOutput.CriterioInfo.builder()
-                        .nombre(c.getNombre())
-                        .peso(c.getPeso())
-                        .build())
+                .map(cc -> {
+                    CriterioevaluacionDTO ce = criterioevaluacionService.findById(cc.getIdCriterio());
+                    return CohorteDetalleOutput.CriterioInfo.builder()
+                            .nombre(ce != null ? ce.getNombre() : null)
+                            .peso(cc.getPesoSnapshot())
+                            .build();
+                })
                 .toList();
 
         List<AspiranteDTO> aspirantes = service.findByCohorte(cohorteId);
@@ -373,14 +372,6 @@ public class AspiranteProcessor implements
                             .correo(p != null ? p.getCorreo() : null)
                             .build();
                 }).toList();
-
-        List<DocumentocohorteOutput> listDocumentosCohorte = documentocohorteService.findByIdCohorte(cohorteId).stream()
-                .map(d -> DocumentocohorteOutput.builder()
-                        .id(d.getId())
-                        .nombre(d.getNombre())
-                        .obligatorio(d.getObligatorio())
-                        .build())
-                .toList();
 
         List<CohorteDetalleOutput.AspiranteInfo> admitidosData = admitidoService
                 .findByCohorte(cohorteId).stream()
@@ -420,7 +411,6 @@ public class AspiranteProcessor implements
                 .criterios(criterios)
                 .inscritosData(inscritosData)
                 .admitidosData(admitidosData)
-                .documentos(listDocumentosCohorte)
                 .build();
     }
 
@@ -438,79 +428,40 @@ public class AspiranteProcessor implements
 
     public List<PasoProcesoOutput> getPasosProceso(Integer idAspirante) {
         AspiranteDTO aspirante = service.findById(idAspirante);
-        String estadoTipo = aspirante.getEstado() != null ? aspirante.getEstado().getTipo() : "";
+        String estado = aspirante.getEstado() != null ? aspirante.getEstado().getTipo().toUpperCase() : "";
 
-        // Paso 1 - Inscripción: siempre completado si el aspirante existe
-        PasoProcesoOutput inscripcion = PasoProcesoOutput.builder()
-                .id(1).name("Inscripción").status("completado").build();
-
-        // Paso 2 - Pago
-        List<PagoDTO> pagos = pagoService.findByIdAspirante(idAspirante);
-        String statusPago;
-        boolean pagoAprobado = pagos.stream()
-                .anyMatch(p -> p.getEstado() != null && "APROBADO".equalsIgnoreCase(p.getEstado().getTipo()));
-        if (pagoAprobado) {
-            statusPago = "completado";
-        } else if (!pagos.isEmpty()) {
-            statusPago = "En revisión";
-        } else {
-            statusPago = "Pendiente";
-        }
-        PasoProcesoOutput pago = PasoProcesoOutput.builder()
-                .id(2).name("Pago").status(statusPago).build();
-
-        // Paso 3 - Documentos
-        String statusDocs;
-        boolean estadoValidado = List.of("VALIDADO_POR_CALIFICAR", "VALIDADO_EN_PROGRESO", "VALIDADO_CALIFICADO")
-                .contains(estadoTipo);
-        if (estadoValidado) {
-            statusDocs = "completado";
-        } else {
-            List<DocumentoDTO> docs = documentoService.findByIdAspirante(idAspirante);
-            long aprobados = docs.stream()
-                    .filter(d -> d.getEstadodocumento() != null
-                            && "APROBADO".equalsIgnoreCase(d.getEstadodocumento().getEstado()))
-                    .count();
-            if (aprobados > 0) {
-                statusDocs = "En revisión";
-            } else if (!docs.isEmpty()) {
-                statusDocs = "En revisión";
-            } else {
-                statusDocs = "Pendiente";
+        String s1, s2, s3, s4, s5;
+        switch (estado) {
+            case "INSCRITO" -> {
+                s1 = "completado"; s2 = "en progreso"; s3 = "pendiente"; s4 = "pendiente"; s5 = "pendiente";
+            }
+            case "PAZ Y SALVO" -> {
+                s1 = "completado"; s2 = "completado"; s3 = "en progreso"; s4 = "pendiente"; s5 = "pendiente";
+            }
+            case "VALIDADO_POR_CALIFICAR" -> {
+                s1 = "completado"; s2 = "completado"; s3 = "completado"; s4 = "pendiente"; s5 = "pendiente";
+            }
+            case "VALIDADO_EN_PROGRESO" -> {
+                s1 = "completado"; s2 = "completado"; s3 = "completado"; s4 = "en progreso"; s5 = "pendiente";
+            }
+            case "VALIDADO_CALIFICADO" -> {
+                s1 = "completado"; s2 = "completado"; s3 = "completado"; s4 = "completado"; s5 = "en progreso";
+            }
+            case "ADMITIDO" -> {
+                s1 = "completado"; s2 = "completado"; s3 = "completado"; s4 = "completado"; s5 = "completado";
+            }
+            default -> {
+                s1 = "completado"; s2 = "pendiente"; s3 = "pendiente"; s4 = "pendiente"; s5 = "pendiente";
             }
         }
-        PasoProcesoOutput documentos = PasoProcesoOutput.builder()
-                .id(3).name("Documentos").status(statusDocs).build();
 
-        // Paso 4 - Calificación
-        String statusCalificacion;
-        if ("VALIDADO_CALIFICADO".equalsIgnoreCase(estadoTipo)) {
-            statusCalificacion = "completado";
-        } else if ("VALIDADO_EN_PROGRESO".equalsIgnoreCase(estadoTipo)) {
-            statusCalificacion = "En progreso";
-        } else if ("VALIDADO_POR_CALIFICAR".equalsIgnoreCase(estadoTipo)) {
-            statusCalificacion = "Pendiente";
-        } else {
-            statusCalificacion = "Pendiente";
-        }
-        PasoProcesoOutput calificacion = PasoProcesoOutput.builder()
-                .id(4).name("Calificación").status(statusCalificacion).build();
-
-        // Paso 5 - Resultado
-        boolean admitido = admitidoService.findByCohorte(aspirante.getIdCohorte()).stream()
-                .anyMatch(a -> idAspirante.equals(a.getIdAspirante()));
-        PasoProcesoOutput resultado = PasoProcesoOutput.builder()
-                .id(5).name("Resultado").status(admitido ? "completado" : "Pendiente").build();
-
-        return List.of(inscripcion, pago, documentos, calificacion, resultado);
-    }
-
-    private List<AspiranteDTO> findAspirantesByCohorteActiva(Integer programaId) {
-        CohorteDTO cohorte = cohorteService.findActiveByIdPrograma(programaId);
-        if (cohorte == null) {
-            throw new RuntimeException("No hay cohorte activa para el programa: " + programaId);
-        }
-        return service.findByCohorte(cohorte.getId());
+        return List.of(
+                PasoProcesoOutput.builder().id(1).name("Inscripción").status(s1).build(),
+                PasoProcesoOutput.builder().id(2).name("Pago").status(s2).build(),
+                PasoProcesoOutput.builder().id(3).name("Documentos").status(s3).build(),
+                PasoProcesoOutput.builder().id(4).name("Calificación").status(s4).build(),
+                PasoProcesoOutput.builder().id(5).name("Resultado").status(s5).build()
+        );
     }
 
     public List<AspiranteCalificacionOutput> findAllValidadosCalificacion(Integer cohorteId) {
@@ -610,21 +561,6 @@ public class AspiranteProcessor implements
                 .idPrograma(programaId)
                 .build());
 
-        List<DocumentocohorteOutput> documentosCohorte = new ArrayList<>();
-
-        DocumentocohorteMap mapDocCohorte = new DocumentocohorteMap();
-
-        for (DOCUMENTOCOHORTE_CREATE documento : body.documentos()) {
-            documentosCohorte.add(
-                    mapDocCohorte.toOutput(
-                            documentocohorteService.create(
-                                    DocumentocohorteDTO.builder()
-                                            .nombre(documento.nombre())
-                                            .obligatorio(documento.obligatorio())
-                                            .idCohorte(cohorte.getId())
-                                            .build())));
-        }
-
         return CohorteListadoOutput.builder()
                 .id(cohorte.getId())
                 .nombre(cohorte.getNombre())
@@ -635,7 +571,6 @@ public class AspiranteProcessor implements
                 .fechaLimiteDocumentos(body.fechaLimiteDocumentos())
                 .fechaLimitePago(body.fechaLimitePago())
                 .fechaInicio(fechaInicio)
-                .documentos(documentosCohorte)
                 .build();
     }
 
@@ -648,15 +583,6 @@ public class AspiranteProcessor implements
             long validados = service.countValidadosByCohorte(cohorte.getId());
             long calificados = service.countCalificadosByCohorte(cohorte.getId());
             long admitidos = service.countAdmitidosByCohorte(cohorte.getId());
-
-            DocumentocohorteService documentocohorteService = this.documentocohorteService;
-            List<DocumentocohorteOutput> documentos = documentocohorteService.findByIdCohorte(cohorte.getId()).stream()
-                    .map(d -> DocumentocohorteOutput.builder()
-                            .id(d.getId())
-                            .nombre(d.getNombre())
-                            .obligatorio(d.getObligatorio())
-                            .build())
-                    .toList();
 
             return CohorteResumenOutput.builder()
                     .id(cohorte.getId())
@@ -672,7 +598,6 @@ public class AspiranteProcessor implements
                     .totalValidados(validados)
                     .totalCalificados(calificados)
                     .totalAdmitidos(admitidos)
-                    .documentos(documentos)
                     .build();
         }).toList();
     }
@@ -708,10 +633,10 @@ public class AspiranteProcessor implements
         }).toList();
     }
 
-    public RankingAdmitidosOutput getRankingAdmitidos(Integer programaId) {
-        CohorteDTO cohorte = cohorteService.findActiveByIdPrograma(programaId);
+    public RankingAdmitidosOutput getRankingAdmitidos(Integer cohorteId) {
+        CohorteDTO cohorte = cohorteService.findById(cohorteId);
         if (cohorte == null) {
-            throw new RuntimeException("No hay cohorte activa para el programa: " + programaId);
+            throw new RuntimeException("Cohorte no encontrada: " + cohorteId);
         }
         boolean activa = cohorte.getEstado() != null
                 && "ABIERTA".equalsIgnoreCase(cohorte.getEstado().getTipo());
@@ -835,50 +760,6 @@ public class AspiranteProcessor implements
             cohorteService.update(cohorteId, cohorte);
         }
 
-        DocumentocohorteMap mapDocCohorte = new DocumentocohorteMap();
-        List<DocumentocohorteOutput> documentosCohorte;
-
-        if (body.documentos() != null) {
-            List<DocumentocohorteDTO> existentes = documentocohorteService.findByIdCohorte(cohorteId);
-            Set<Integer> idsEntrantes = body.documentos().stream()
-                .map(DOCUMENTOCOHORTE_UPDATE::id)
-                .filter(id -> id != null)
-                .collect(Collectors.toSet());
-
-            for (DocumentocohorteDTO existente : existentes) {
-                Integer id = existente.getId();
-                if (id != null && !idsEntrantes.contains(id)) {
-                    documentocohorteService.deleteById(id);
-                }
-            }
-
-            documentosCohorte = new ArrayList<>();
-            for (DOCUMENTOCOHORTE_UPDATE doc : body.documentos()) {
-                if (doc.id() != null) {
-                    DocumentocohorteDTO dto = DocumentocohorteDTO.builder()
-                            .id(doc.id())
-                            .nombre(doc.nombre())
-                            .obligatorio(doc.obligatorio())
-                            .idCohorte(cohorteId)
-                            .build();
-                    documentosCohorte.add(mapDocCohorte
-                            .toOutput(documentocohorteService.update(dto.getId(), dto)));
-                } else {
-                    DocumentocohorteDTO dto = DocumentocohorteDTO.builder()
-                            .nombre(doc.nombre())
-                            .obligatorio(doc.obligatorio())
-                            .idCohorte(cohorteId)
-                            .build();
-                    documentosCohorte.add(mapDocCohorte
-                            .toOutput(documentocohorteService.create(dto)));
-                }
-            }
-        } else {
-            documentosCohorte = documentocohorteService.findByIdCohorte(cohorteId).stream()
-                .map(mapDocCohorte::toOutput)
-                .toList();
-        }
-
         boolean activa = cohorte.getEstado() != null && "ABIERTA".equalsIgnoreCase(cohorte.getEstado().getTipo());
 
         return CohorteListadoOutput.builder()
@@ -891,7 +772,10 @@ public class AspiranteProcessor implements
                 .fechaLimiteDocumentos(fechaLimiteDocumentos)
                 .fechaLimitePago(fechaLimitePago)
                 .fechaInicio(fechaInicio)
-                .documentos(documentosCohorte)
                 .build();
+    }
+
+    public AspiranteCriteriosOutput getCriteriosAspirante(Integer idAspirante) {
+        return findCriteriosCalificacion(new ASPIRANTE_FIND(idAspirante));
     }
 }

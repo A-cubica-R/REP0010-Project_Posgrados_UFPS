@@ -116,9 +116,8 @@ public class EntrevistaService extends GenericService<EntrevistaEntity, Entrevis
     }
 
     public EntrevistaDTO rateInterview(Integer id, BigDecimal calificacion) {
-        EntrevistaEntity entity = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Entrevista no encontrada con id: " + id));
-        entity.setCalificacion(calificacion);
+        EntrevistaEntity entity = repository.findById(id).orElseThrow(() -> new RuntimeException("Entrevista no encontrada con id: " + id));
+        // TODO: HAY QUE ASIGNAR LA CALIFICACION DE LA ENTREVISTA. ACTUALMENTE NO SE HACE
         return entityToDto(repository.save(entity));
     }
 

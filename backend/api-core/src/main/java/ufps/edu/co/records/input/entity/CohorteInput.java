@@ -1,11 +1,9 @@
 package ufps.edu.co.records.input.entity;
 
 import java.time.LocalDate;
-import java.util.List;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import ufps.edu.co.records.contracts.*;
-import ufps.edu.co.records.input.entity.DocumentocohorteInput.*;
 
 public enum CohorteInput {
         ;
@@ -65,8 +63,7 @@ public enum CohorteInput {
                         @NotNull Integer cupos,
                         @NotNull LocalDate fechaInicio,
                         @NotNull LocalDate fechaLimiteDocumentos,
-                        @NotNull LocalDate fechaLimitePago,
-                        List<DOCUMENTOCOHORTE_CREATE> documentos) implements CreateType {
+                        @NotNull LocalDate fechaLimitePago) implements CreateType {
         }
 
         public record COHORTE_DIRECTOR_UPDATE(
@@ -74,8 +71,7 @@ public enum CohorteInput {
                         @NotNull Integer cupos,
                         LocalDate fechaInicio,
                         LocalDate fechaLimiteDocumentos,
-                        LocalDate fechaLimitePago,
-                        List<DOCUMENTOCOHORTE_UPDATE> documentos) implements UpdateType {
+                        LocalDate fechaLimitePago) implements UpdateType {
         }
 
         public record COHORTE_WITHPLAZO_CREATE(

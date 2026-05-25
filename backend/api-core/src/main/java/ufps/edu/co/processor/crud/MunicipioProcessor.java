@@ -29,10 +29,8 @@ public class MunicipioProcessor implements
             try {
                 return map.toOutput(service.create(dto));
             } catch (Exception e) {
-                // TODO: handle exception
             }
         } catch (Exception e) {
-            // TODO: handle exception
         }
         return null;
     }
@@ -44,10 +42,8 @@ public class MunicipioProcessor implements
             try {
                 return map.toOutput(service.update(input.id(), dto));
             } catch (Exception e) {
-                // TODO: handle exception
             }
         } catch (Exception e) {
-            // TODO: handle exception
         }
         return null;
     }
@@ -62,7 +58,6 @@ public class MunicipioProcessor implements
         try {
             return map.toOutput(service.findById(id.id()));
         } catch (Exception e) {
-            // TODO: handle exception
         }
         return null;
     }
@@ -72,7 +67,6 @@ public class MunicipioProcessor implements
         try {
             return service.findAll().stream().map(map::toOutput).toList();
         } catch (Exception e) {
-            // TODO: handle exception
         }
         return null;
     }
@@ -82,7 +76,6 @@ public class MunicipioProcessor implements
         try {
             service.deleteById(id.id());
         } catch (Exception e) {
-            // TODO: handle exception
         }
     }
 

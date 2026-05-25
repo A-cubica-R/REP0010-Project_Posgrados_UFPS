@@ -25,9 +25,10 @@ public class DocumentoMap extends
                 .idAspirante(input.idAspirante())
                 .idEstadodocumento(input.idEstadodocumento())
                 .idPlazo(input.idPlazo())
-                .idTipodocumento(input.idTipodocumento())
                 .keyfile(input.keyfile())
                 .observaciones(input.observaciones())
+                .idDocumentosrequisitoconsejocohorte(input.idDocumentosrequisitoconsejocohorte())
+                .idDocumentosrequisitoprogramacohorte(input.idDocumentosrequisitoprogramacohorte())
                 .build();
     }
 
@@ -41,9 +42,10 @@ public class DocumentoMap extends
                 .idAspirante(input.idAspirante())
                 .idEstadodocumento(input.idEstadodocumento())
                 .idPlazo(input.idPlazo())
-                .idTipodocumento(input.idTipodocumento())
                 .keyfile(input.keyfile())
                 .observaciones(input.observaciones())
+                .idDocumentosrequisitoconsejocohorte(input.idDocumentosrequisitoconsejocohorte())
+                .idDocumentosrequisitoprogramacohorte(input.idDocumentosrequisitoprogramacohorte())
                 .build();
     }
 
@@ -75,7 +77,6 @@ public class DocumentoMap extends
         AspiranteMap aspiranteMap = new AspiranteMap();
         EstadodocumentoMap estadodocumentoMap = new EstadodocumentoMap();
         PlazoMap plazoMap = new PlazoMap();
-        TipodocumentoMap tipodocumentoMap = new TipodocumentoMap();
 
         return DocumentoOutput.builder()
                 .id(dto.getId())
@@ -85,18 +86,18 @@ public class DocumentoMap extends
                 .idAspirante(dto.getIdAspirante())
                 .idEstadodocumento(dto.getIdEstadodocumento())
                 .idPlazo(dto.getIdPlazo())
-                .idTipodocumento(dto.getIdTipodocumento())
                 .keyfile(dto.getKeyfile())
                 .observaciones(dto.getObservaciones())
+                .idDocumentosrequisitoconsejocohorte(dto.getIdDocumentosrequisitoconsejocohorte())
+                .idDocumentosrequisitoprogramacohorte(dto.getIdDocumentosrequisitoprogramacohorte())
                 .administrativo(
                         dto.getAdministrativo() != null ? administrativoMap.toOutput(dto.getAdministrativo()) : null)
                 .aspirante(dto.getAspirante() != null ? aspiranteMap.toOutput(dto.getAspirante()) : null)
                 .estadodocumento(
                         dto.getEstadodocumento() != null ? estadodocumentoMap.toOutput(dto.getEstadodocumento()) : null)
                 .plazo(dto.getPlazo() != null ? plazoMap.toOutput(dto.getPlazo()) : null)
-                .tipodocumento(
-                        dto.getTipodocumento() != null ? tipodocumentoMap.toOutput(dto.getTipodocumento()) : null)
                 .build();
+                // TODO: de momento no existe forma de determinar a donde se suben los documentos. Faltan las FK faltantes
     }
 
     public List<DocumentoOutput> toOutputList(List<DocumentoDTO> dtoList) {
