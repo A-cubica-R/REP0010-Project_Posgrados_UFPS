@@ -10,7 +10,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -32,7 +31,6 @@ public class EntrevistaDTO implements Serializable {
     //--- PRIMARY KEY 
     private Integer id ;
     //--- OTHER DATA FIELDS
-    private BigDecimal calificacion ;
     private LocalDate fecha ;
     private String motivocambio ;
     private Integer idAspirante ;
@@ -52,7 +50,6 @@ public class EntrevistaDTO implements Serializable {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Entrevista[");
 		sb.append("id=").append(id);
-		sb.append(separator).append("calificacion=").append(calificacion);
 		sb.append(separator).append("fecha=").append(fecha);
 		sb.append(separator).append("idAspirante=").append(idAspirante);
 		sb.append(separator).append("idEstado=").append(idEstado);

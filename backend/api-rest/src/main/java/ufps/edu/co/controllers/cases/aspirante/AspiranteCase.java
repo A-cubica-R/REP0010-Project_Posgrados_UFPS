@@ -2,9 +2,6 @@ package ufps.edu.co.controllers.cases.aspirante;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,7 +27,9 @@ import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_CANCELAR_REQU
 import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_FIND;
 import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_REQUEST_CHANGE;
 import ufps.edu.co.records.input.entity.PruebaInput.PRUEBA_CANCELAR_REQUEST;
+import ufps.edu.co.records.output.entity.AspiranteCriteriosOutput;
 import ufps.edu.co.records.output.entity.AspiranteDocumentosOutput;
+import ufps.edu.co.records.output.entity.AspiranteIdOutput;
 import ufps.edu.co.records.output.entity.DocumentoAspiranteOutput;
 import ufps.edu.co.records.output.entity.EntrevistaOutput;
 import ufps.edu.co.records.output.entity.EntrevistaResumenOutput;
@@ -42,13 +41,11 @@ import ufps.edu.co.rest.dto.AspiranteDTO;
 import ufps.edu.co.rest.dto.CohorteDTO;
 import ufps.edu.co.rest.dto.DocumentoDTO;
 import ufps.edu.co.rest.dto.EstadodocumentoDTO;
-import ufps.edu.co.rest.dto.TipodocumentoDTO;
 import ufps.edu.co.rest.dto.UsuarioDTO;
 import ufps.edu.co.rest.services.AspiranteService;
 import ufps.edu.co.rest.services.CohorteService;
 import ufps.edu.co.rest.services.DocumentoService;
 import ufps.edu.co.rest.services.EstadodocumentoService;
-import ufps.edu.co.rest.services.TipodocumentoService;
 import ufps.edu.co.rest.services.UsuarioService;
 import ufps.edu.co.services.S3Service;
 
@@ -68,8 +65,8 @@ public class AspiranteCase {
     @Autowired
     private UsuarioService usuarioService;
 
-    @Autowired
-    private TipodocumentoService tipodocumentoService;
+    // @Autowired
+    // private TipodocumentoService tipodocumentoService;
 
     @Autowired
     private DocumentoService documentoService;
@@ -88,6 +85,24 @@ public class AspiranteCase {
 
     @Autowired
     private PruebaProcessor pruebaProcessor;
+
+    @GetMapping("/aspirante/{idUsuario}")
+    public ResponseEntity<AspiranteIdOutput> getIdAspiranteByUsuario(@PathVariable Integer idUsuario) {
+        UsuarioDTO usuario = usuarioService.findById(idUsuario);
+        if (usuario == null || usuario.getIdPersona() == null) {
+            return ResponseEntity.notFound().build();
+        }
+        Integer idAspirante = aspiranteService.findIdByIdPersona(usuario.getIdPersona());
+        if (idAspirante == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(AspiranteIdOutput.builder().idAspirante(idAspirante).build());
+    }
+
+    @GetMapping("/{idAspirante}/criterios")
+    public ResponseEntity<AspiranteCriteriosOutput> getCriteriosAspirante(@PathVariable Integer idAspirante) {
+        return ResponseEntity.ok(processor.getCriteriosAspirante(idAspirante));
+    }
 
     @GetMapping("/{idAspirante}/estado-proceso")
     public ResponseEntity<List<PasoProcesoOutput>> getEstadoProceso(@PathVariable Integer idAspirante) {
@@ -113,9 +128,12 @@ public class AspiranteCase {
             @RequestParam("idRequisito") Integer idRequisito,
             @RequestParam("file") MultipartFile file) {
 
-        boolean isNew = documentoService
-                .findByIdAspiranteAndIdTipodocumento(idAspirante, idRequisito)
-                .isEmpty();
+        // TODO:Hay que conciderar hacer la logica de los documentos desde 0, ya no hay
+        // compatibilidad con el modelo anterior
+        boolean isNew = false;
+        // documentoService
+        // .findByIdAspiranteAndIdTipodocumento(idAspirante, idRequisito)
+        // .isEmpty();
 
         S3Service.UploadResult upload = s3Service.uploadFile(file);
 
@@ -129,15 +147,15 @@ public class AspiranteCase {
                     .keyfile(upload.keyfile())
                     .fechacargue(LocalDate.now())
                     .idAspirante(idAspirante)
-                    .idTipodocumento(idRequisito)
                     .idEstadodocumento(estadoPendiente.getId())
                     .idPlazo(cohorte.getIdPlazodocumentacion())
                     .build();
             documentoService.create(nuevo);
         } else {
-            DocumentoDTO doc = documentoService
-                    .findByIdAspiranteAndIdTipodocumento(idAspirante, idRequisito)
-                    .orElseThrow();
+            DocumentoDTO doc = null;
+            // doc = documentoService
+            // .findByIdAspiranteAndIdTipodocumento(idAspirante, idRequisito)
+            // .orElseThrow();
             doc.setEnlaceurl(upload.enlaceurl());
             doc.setKeyfile(upload.keyfile());
             doc.setFechacargue(LocalDate.now());
@@ -147,13 +165,15 @@ public class AspiranteCase {
             documentoService.update(doc.getId(), doc);
         }
 
-        TipodocumentoDTO tipo = tipodocumentoService.findById(idRequisito);
-        DocumentoDTO saved = documentoService
-                .findByIdAspiranteAndIdTipodocumento(idAspirante, idRequisito)
-                .orElseThrow();
+        // TipodocumentoDTO tipo = null;
+        // TipodocumentoDTO tipo = tipodocumentoService.findById(idRequisito);
+        DocumentoDTO saved = null;
+        // saved =documentoService
+        //         .findByIdAspiranteAndIdTipodocumento(idAspirante, idRequisito)
+        //         .orElseThrow();
 
         return ResponseEntity.status(isNew ? HttpStatus.CREATED : HttpStatus.OK)
-                .body(toDocumentoOutput(saved, tipo));
+                .body(toDocumentoOutput(saved));
     }
 
     private AspiranteDTO resolveAspirante() {
@@ -163,33 +183,35 @@ public class AspiranteCase {
     }
 
     private List<DocumentoAspiranteOutput> buildDocumentosResponse(Integer idAspirante) {
-        List<TipodocumentoDTO> tipos = tipodocumentoService.findAll();
-        Map<Integer, DocumentoDTO> docsPorTipo = documentoService.findByIdAspirante(idAspirante)
-                .stream()
-                .filter(d -> d.getIdTipodocumento() != null)
-                .collect(Collectors.toMap(DocumentoDTO::getIdTipodocumento, Function.identity(), (a, b) -> a));
+        // List<TipodocumentoDTO> tipos = tipodocumentoService.findAll();
+        // Map<Integer, DocumentoDTO> docsPorTipo = documentoService.findByIdAspirante(idAspirante)
+        //         .stream()
+        //         .filter(d -> d.getIdTipodocumento() != null)
+        //         .collect(Collectors.toMap(DocumentoDTO::getIdTipodocumento, Function.identity(), (a, b) -> a));
 
-        return tipos.stream().map(tipo -> {
-            DocumentoDTO doc = docsPorTipo.get(tipo.getId());
-            if (doc == null) {
-                return DocumentoAspiranteOutput.builder()
-                        .idDocumento(null)
-                        .idRequisito(tipo.getId())
-                        .nombre(tipo.getDescripcion())
-                        .status("pending")
-                        .nombreArchivo(null)
-                        .rejectionReason(null)
-                        .build();
-            }
-            return toDocumentoOutput(doc, tipo);
-        }).toList();
+        // return tipos.stream().map(tipo -> {
+        //     DocumentoDTO doc = docsPorTipo.get(tipo.getId());
+        //     if (doc == null) {
+        //         return DocumentoAspiranteOutput.builder()
+        //                 .idDocumento(null)
+        //                 .idRequisito(tipo.getId())
+        //                 .nombre(tipo.getDescripcion())
+        //                 .status("pending")
+        //                 .nombreArchivo(null)
+        //                 .rejectionReason(null)
+        //                 .build();
+        //     }
+        //     return toDocumentoOutput(doc, tipo);
+        // }).toList();
+        // TODO Este método ya no es funcional con el nuevo modelo, debe ser reescrito
+        throw new UnsupportedOperationException("No se ha implementado la lógica de documentos para el nuevo modelo");
     }
 
-    private DocumentoAspiranteOutput toDocumentoOutput(DocumentoDTO doc, TipodocumentoDTO tipo) {
+    private DocumentoAspiranteOutput toDocumentoOutput(DocumentoDTO doc) {
         return DocumentoAspiranteOutput.builder()
                 .idDocumento(doc.getId())
-                .idRequisito(tipo.getId())
-                .nombre(tipo.getDescripcion())
+                // .idRequisito(tipo.getId())
+                // .nombre(tipo.getDescripcion())
                 .status(mapStatus(doc))
                 .nombreArchivo(extractNombre(doc.getKeyfile()))
                 .rejectionReason(doc.getObservaciones())
@@ -197,7 +219,8 @@ public class AspiranteCase {
     }
 
     private String mapStatus(DocumentoDTO doc) {
-        if (doc.getEstadodocumento() == null) return "pending";
+        if (doc.getEstadodocumento() == null)
+            return "pending";
         return switch (doc.getEstadodocumento().getEstado().toUpperCase()) {
             case "APROBADO" -> "approved";
             case "RECHAZADO" -> "rejected";
@@ -206,7 +229,8 @@ public class AspiranteCase {
     }
 
     private String extractNombre(String keyfile) {
-        if (keyfile == null) return null;
+        if (keyfile == null)
+            return null;
         int idx = keyfile.indexOf('-');
         return idx >= 0 && idx < keyfile.length() - 1 ? keyfile.substring(idx + 1) : keyfile;
     }

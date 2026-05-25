@@ -46,8 +46,7 @@ public class AspiranteDTO implements Serializable {
     private List<DocumentoDTO> documentoList ; 
     private List<EntrevistaDTO> entrevistaList ; 
     private List<PagoDTO> pagoList ; 
-    private List<PruebaDTO> pruebaList ; 
-    private List<ResultadopruebaDTO> resultadopruebaList ; 
+    private List<PruebaDTO> pruebaList ;
 
     @Override
 	public String toString() { 

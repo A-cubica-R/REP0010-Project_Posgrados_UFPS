@@ -44,6 +44,18 @@ public interface AspiranteRepository extends JpaRepository<AspiranteEntity, Inte
 
 	Optional<AspiranteEntity> findFirstByIdPersona(Integer idPersona);
 
+	@Query("SELECT a.id FROM AspiranteEntity a WHERE a.idPersona = :idPersona")
+	Optional<Integer> findIdByIdPersona(@Param("idPersona") Integer idPersona);
+
+	@Query("SELECT a.estado.tipo FROM AspiranteEntity a WHERE a.id = :id")
+	Optional<String> findEstadoTipoById(@Param("id") Integer id);
+
+	@Query("SELECT a.idCohorte FROM AspiranteEntity a WHERE a.id = :id")
+	Optional<Integer> findIdCohorteById(@Param("id") Integer id);
+
+	@Query("SELECT a.puntuacion FROM AspiranteEntity a WHERE a.id = :id")
+	Optional<java.math.BigDecimal> findPuntuacionById(@Param("id") Integer id);
+
 	List<AspiranteEntity> findByDocumentoListIsNotEmpty();
 
 	List<AspiranteEntity> findByIdCohorte(int idCohorte);
@@ -53,64 +65,97 @@ public interface AspiranteRepository extends JpaRepository<AspiranteEntity, Inte
 	@Query("SELECT COUNT(a) FROM AspiranteEntity a WHERE a.idCohorte = :cohorteId AND a.estado.tipo IN :tipos")
 	long countByIdCohorteAndEstadoTipoIn(@Param("cohorteId") Integer cohorteId, @Param("tipos") List<String> tipos);
 
-	// Aspirantes que tienen al menos un documento APROBADO por cada tipodocumento existente
+	// Aspirantes con todos los documentos requeridos por su cohorte en estado APROBADO
 	@Query("SELECT a FROM AspiranteEntity a " +
 		   "WHERE NOT EXISTS (" +
-		   "  SELECT td FROM TipodocumentoEntity td " +
-		   "  WHERE NOT EXISTS (" +
-		   "    SELECT d FROM DocumentoEntity d " +
-		   "    WHERE d.aspirante = a " +
-		   "      AND d.tipodocumento = td " +
-		   "      AND d.estadodocumento.estado = 'APROBADO'" +
-		   "  )" +
+		   "  SELECT drcc FROM DocumentosrequisitoconsejocohorteEntity drcc " +
+		   "  WHERE drcc.idCohorte = a.idCohorte " +
+		   "    AND NOT EXISTS (" +
+		   "      SELECT d FROM DocumentoEntity d " +
+		   "      WHERE d.aspirante = a " +
+		   "        AND d.documentosrequisitoconsejocohorte = drcc " +
+		   "        AND d.estadodocumento.estado = 'APROBADO'" +
+		   "    )" +
+		   ") " +
+		   "AND NOT EXISTS (" +
+		   "  SELECT drpc FROM DocumentosrequisitoprogramacohorteEntity drpc " +
+		   "  WHERE drpc.idCohorte = a.idCohorte " +
+		   "    AND NOT EXISTS (" +
+		   "      SELECT d FROM DocumentoEntity d " +
+		   "      WHERE d.aspirante = a " +
+		   "        AND d.documentosrequisitoprogramacohorte = drpc " +
+		   "        AND d.estadodocumento.estado = 'APROBADO'" +
+		   "    )" +
 		   ")")
 	List<AspiranteEntity> findValidados();
 
 	@Query("SELECT COUNT(a) FROM AspiranteEntity a WHERE a.estado.tipo IN :tipos")
 	long countByEstadoTipoIn(@Param("tipos") List<String> tipos);
 
-	// Validados a los que les falta al menos un criterioevaluacion de su cohorte calificado
+	// Validados a los que les falta al menos un criteriocohorte de su cohorte calificado
 	@Query("SELECT a FROM AspiranteEntity a " +
 		   "WHERE NOT EXISTS (" +
-		   "  SELECT td FROM TipodocumentoEntity td " +
-		   "  WHERE NOT EXISTS (" +
-		   "    SELECT d FROM DocumentoEntity d " +
-		   "    WHERE d.aspirante = a " +
-		   "      AND d.tipodocumento = td " +
-		   "      AND d.estadodocumento.estado = 'APROBADO'" +
-		   "  )" +
+		   "  SELECT drcc FROM DocumentosrequisitoconsejocohorteEntity drcc " +
+		   "  WHERE drcc.idCohorte = a.idCohorte " +
+		   "    AND NOT EXISTS (" +
+		   "      SELECT d FROM DocumentoEntity d " +
+		   "      WHERE d.aspirante = a " +
+		   "        AND d.documentosrequisitoconsejocohorte = drcc " +
+		   "        AND d.estadodocumento.estado = 'APROBADO'" +
+		   "    )" +
+		   ") " +
+		   "AND NOT EXISTS (" +
+		   "  SELECT drpc FROM DocumentosrequisitoprogramacohorteEntity drpc " +
+		   "  WHERE drpc.idCohorte = a.idCohorte " +
+		   "    AND NOT EXISTS (" +
+		   "      SELECT d FROM DocumentoEntity d " +
+		   "      WHERE d.aspirante = a " +
+		   "        AND d.documentosrequisitoprogramacohorte = drpc " +
+		   "        AND d.estadodocumento.estado = 'APROBADO'" +
+		   "    )" +
 		   ") " +
 		   "AND EXISTS (" +
-		   "  SELECT ce FROM CriterioevaluacionEntity ce " +
-		   "  WHERE ce.idCohorte = a.idCohorte " +
+		   "  SELECT ccCohorte FROM CriteriocohorteEntity ccCohorte " +
+		   "  WHERE ccCohorte.idCohorte = a.idCohorte " +
 		   "    AND NOT EXISTS (" +
-		   "      SELECT cc FROM CalificacioncriterioEntity cc " +
-		   "      WHERE cc.aspirante = a " +
-		   "        AND cc.criterioevaluacion = ce " +
-		   "        AND cc.puntuacion IS NOT NULL" +
+		   "      SELECT cal FROM CalificacioncriterioEntity cal " +
+		   "      WHERE cal.aspirante = a " +
+		   "        AND cal.criteriocohorte = ccCohorte " +
+		   "        AND cal.puntuacion IS NOT NULL" +
 		   "    )" +
 		   ")")
 	List<AspiranteEntity> findPorCalificar();
 
-	// Validados con todos los criterioevaluacion de su cohorte calificados (puntuacion no nula)
+	// Validados con todos los criteriocohorte de su cohorte calificados (puntuacion no nula)
 	@Query("SELECT a FROM AspiranteEntity a " +
 		   "WHERE NOT EXISTS (" +
-		   "  SELECT td FROM TipodocumentoEntity td " +
-		   "  WHERE NOT EXISTS (" +
-		   "    SELECT d FROM DocumentoEntity d " +
-		   "    WHERE d.aspirante = a " +
-		   "      AND d.tipodocumento = td " +
-		   "      AND d.estadodocumento.estado = 'APROBADO'" +
-		   "  )" +
+		   "  SELECT drcc FROM DocumentosrequisitoconsejocohorteEntity drcc " +
+		   "  WHERE drcc.idCohorte = a.idCohorte " +
+		   "    AND NOT EXISTS (" +
+		   "      SELECT d FROM DocumentoEntity d " +
+		   "      WHERE d.aspirante = a " +
+		   "        AND d.documentosrequisitoconsejocohorte = drcc " +
+		   "        AND d.estadodocumento.estado = 'APROBADO'" +
+		   "    )" +
 		   ") " +
 		   "AND NOT EXISTS (" +
-		   "  SELECT ce FROM CriterioevaluacionEntity ce " +
-		   "  WHERE ce.idCohorte = a.idCohorte " +
+		   "  SELECT drpc FROM DocumentosrequisitoprogramacohorteEntity drpc " +
+		   "  WHERE drpc.idCohorte = a.idCohorte " +
 		   "    AND NOT EXISTS (" +
-		   "      SELECT cc FROM CalificacioncriterioEntity cc " +
-		   "      WHERE cc.aspirante = a " +
-		   "        AND cc.criterioevaluacion = ce " +
-		   "        AND cc.puntuacion IS NOT NULL" +
+		   "      SELECT d FROM DocumentoEntity d " +
+		   "      WHERE d.aspirante = a " +
+		   "        AND d.documentosrequisitoprogramacohorte = drpc " +
+		   "        AND d.estadodocumento.estado = 'APROBADO'" +
+		   "    )" +
+		   ") " +
+		   "AND NOT EXISTS (" +
+		   "  SELECT ccCohorte FROM CriteriocohorteEntity ccCohorte " +
+		   "  WHERE ccCohorte.idCohorte = a.idCohorte " +
+		   "    AND NOT EXISTS (" +
+		   "      SELECT cal FROM CalificacioncriterioEntity cal " +
+		   "      WHERE cal.aspirante = a " +
+		   "        AND cal.criteriocohorte = ccCohorte " +
+		   "        AND cal.puntuacion IS NOT NULL" +
 		   "    )" +
 		   ")")
 	List<AspiranteEntity> findCalificados();

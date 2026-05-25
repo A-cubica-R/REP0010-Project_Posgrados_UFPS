@@ -4,7 +4,12 @@
  */
 package ufps.edu.co.persistence.repositories;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import ufps.edu.co.persistence.entities.SemestreEntity;
@@ -37,7 +42,13 @@ import ufps.edu.co.persistence.entities.SemestreEntity;
 @Repository
 public interface SemestreRepository extends JpaRepository<SemestreEntity, Integer> {
 
-	// Insert specific finders here 
+	@Query("SELECT s.id, s.nombre, s.fechaInicio, s.fechaFin, s.idEstado, s.estado.id, s.estado.entidad, s.estado.tipo FROM SemestreEntity s")
+	List<Object[]> findAllScalar();
+
+	@Query("SELECT s.id, s.nombre, s.fechaInicio, s.fechaFin, s.idEstado, s.estado.id, s.estado.entidad, s.estado.tipo FROM SemestreEntity s WHERE s.id = :id")
+	Optional<Object[]> findByIdScalar(@Param("id") Integer id);
+
+	// Insert specific finders here
 
 	//List<SemestreEntity> findByXxx(String xxx);
 

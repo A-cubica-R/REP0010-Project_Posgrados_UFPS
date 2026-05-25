@@ -44,12 +44,6 @@ public class CohorteEntity implements Serializable {
     @Column(name="cupos", nullable=false)
     private Integer        cupos ;
 
-    @Column(name="requiereentrevista", nullable=false)
-    private boolean    requiereentrevista ;
-
-    @Column(name="requiereprueba", nullable=false)
-    private boolean    requiereprueba ;
-
     @Column(name="id_estado", nullable=false)
     private Integer        idEstado ;
 
@@ -107,12 +101,12 @@ public class CohorteEntity implements Serializable {
     private ProgramaEntity   programa ; 
 
     @OneToMany(mappedBy="cohorte")
-    private List<CriterioevaluacionEntity> criterioevaluacionList ; 
+    private List<PruebaEntity> pruebaList ;
 
     @OneToMany(mappedBy="cohorte")
-    private List<DocumentocohorteEntity> documentocohorteList ; 
+    private List<DocumentosrequisitoconcejocohorteEntity> documentosrequisitoconcejocohorteList ;
 
     @OneToMany(mappedBy="cohorte")
-    private List<PruebaEntity> pruebaList ; 
+    private List<DocumentosrequisitoprogramacohorteEntity> documentosrequisitoprogramacohorteList ;
 
 }

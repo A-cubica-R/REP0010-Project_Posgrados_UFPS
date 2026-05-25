@@ -12,7 +12,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-import java.util.List;
 
 /**
  * DTO class for "Prueba"
@@ -48,7 +47,6 @@ public class PruebaDTO implements Serializable {
     private CohorteDTO cohorte ;
     private EstadoDTO estado;
     private TipopruebaDTO tipoprueba;
-    private List<ResultadopruebaDTO> resultadopruebaList ; 
 
     @Override
 	public String toString() { 

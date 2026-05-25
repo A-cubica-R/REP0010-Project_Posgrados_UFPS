@@ -31,12 +31,24 @@ public class TipoplazoService extends GenericService<TipoplazoEntity, TipoplazoD
 
     @Transactional(readOnly = true)
     public List<TipoplazoDTO> findAll() {
-        return entityListToDtoList(repository.findAll());
+        return repository.findAllScalar().stream()
+                .map(row -> TipoplazoDTO.builder()
+                        .id((Integer) row[0])
+                        .tipo((String) row[1])
+                        .descripcion((String) row[2])
+                        .build())
+                .toList();
     }
 
     @Transactional(readOnly = true)
     public TipoplazoDTO findById(Integer id) {
-        return entityToDto(repository.findById(id));
+        return repository.findByIdScalar(id)
+                .map(row -> TipoplazoDTO.builder()
+                        .id((Integer) row[0])
+                        .tipo((String) row[1])
+                        .descripcion((String) row[2])
+                        .build())
+                .orElse(null);
     }
 
     public TipoplazoDTO create(TipoplazoDTO dto) {
@@ -47,7 +59,14 @@ public class TipoplazoService extends GenericService<TipoplazoEntity, TipoplazoD
         repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Tipoplazo no encontrado con id: " + id));
         dto.setId(id);
-        return entityToDto(repository.save(dtoToEntity(dto)));
+        repository.save(dtoToEntity(dto));
+        return repository.findByIdScalar(id)
+                .map(row -> TipoplazoDTO.builder()
+                        .id((Integer) row[0])
+                        .tipo((String) row[1])
+                        .descripcion((String) row[2])
+                        .build())
+                .orElse(null);
     }
 
     public void deleteById(Integer id) {

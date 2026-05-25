@@ -31,35 +31,51 @@ public class OtrosvaloresService extends GenericService<OtrosvaloresEntity, Otro
 
     @Transactional(readOnly = true)
     public List<OtrosvaloresDTO> findAll() {
-        return entityListToDtoList(repository.findAll());
+        return repository.findAllScalar().stream().map(this::rowToDto).toList();
     }
 
     @Transactional(readOnly = true)
     public OtrosvaloresDTO findById(Integer id) {
-        return entityToDto(repository.findById(id));
+        return repository.findByIdScalar(id).map(this::rowToDto).orElse(null);
     }
 
     @Transactional(readOnly = true)
     public OtrosvaloresDTO findByValores(boolean carnet, boolean estampilla, boolean seguro) {
         return repository.findFirstByCarnetAndEstampillaAndSeguro(carnet, estampilla, seguro)
-                .map(this::entityToDto)
+                .map(e -> OtrosvaloresDTO.builder()
+                        .id(e.getId())
+                        .carnet(e.getCarnet())
+                        .estampilla(e.getEstampilla())
+                        .seguro(e.getSeguro())
+                        .build())
                 .orElse(null);
     }
 
     public OtrosvaloresDTO create(OtrosvaloresDTO dto) {
-        return entityToDto(repository.save(dtoToEntity(dto)));
+        Integer id = repository.save(dtoToEntity(dto)).getId();
+        return repository.findByIdScalar(id).map(this::rowToDto).orElse(null);
     }
 
     public OtrosvaloresDTO update(Integer id, OtrosvaloresDTO dto) {
         repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Otrosvalores no encontrado con id: " + id));
         dto.setId(id);
-        return entityToDto(repository.save(dtoToEntity(dto)));
+        repository.save(dtoToEntity(dto));
+        return repository.findByIdScalar(id).map(this::rowToDto).orElse(null);
     }
 
     public void deleteById(Integer id) {
         repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Otrosvalores no encontrado con id: " + id));
         repository.deleteById(id);
+    }
+
+    private OtrosvaloresDTO rowToDto(Object[] row) {
+        return OtrosvaloresDTO.builder()
+                .id((Integer) row[0])
+                .carnet((Boolean) row[1])
+                .estampilla((Boolean) row[2])
+                .seguro((Boolean) row[3])
+                .build();
     }
 }

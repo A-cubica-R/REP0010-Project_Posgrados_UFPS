@@ -31,28 +31,37 @@ public class ModalidadService extends GenericService<ModalidadEntity, ModalidadD
 
     @Transactional(readOnly = true)
     public List<ModalidadDTO> findAll() {
-        return entityListToDtoList(repository.findAll());
+        return repository.findAllScalar().stream().map(this::rowToDto).toList();
     }
 
     @Transactional(readOnly = true)
     public ModalidadDTO findById(Integer id) {
-        return entityToDto(repository.findById(id));
+        return repository.findByIdScalar(id).map(this::rowToDto).orElse(null);
     }
 
     public ModalidadDTO create(ModalidadDTO dto) {
-        return entityToDto(repository.save(dtoToEntity(dto)));
+        Integer id = repository.save(dtoToEntity(dto)).getId();
+        return repository.findByIdScalar(id).map(this::rowToDto).orElse(null);
     }
 
     public ModalidadDTO update(Integer id, ModalidadDTO dto) {
         repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Modalidad no encontrado con id: " + id));
         dto.setId(id);
-        return entityToDto(repository.save(dtoToEntity(dto)));
+        repository.save(dtoToEntity(dto));
+        return repository.findByIdScalar(id).map(this::rowToDto).orElse(null);
     }
 
     public void deleteById(Integer id) {
         repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Modalidad no encontrado con id: " + id));
         repository.deleteById(id);
+    }
+
+    private ModalidadDTO rowToDto(Object[] row) {
+        return ModalidadDTO.builder()
+                .id((Integer) row[0])
+                .nombre((String) row[1])
+                .build();
     }
 }

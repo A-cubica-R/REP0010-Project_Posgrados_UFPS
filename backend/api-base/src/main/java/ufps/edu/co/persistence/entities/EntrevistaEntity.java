@@ -11,7 +11,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -40,8 +39,6 @@ public class EntrevistaEntity implements Serializable {
     private Integer id ;
 
     //--- OTHER DATA FIELDS 
-    @Column(name="calificacion")
-    private BigDecimal calificacion ;
 
     @Column(name="fecha", nullable=false)
     private LocalDate  fecha ;

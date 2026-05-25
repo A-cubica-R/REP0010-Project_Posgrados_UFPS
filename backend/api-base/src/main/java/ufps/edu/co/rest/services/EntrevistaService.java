@@ -15,6 +15,9 @@ import ufps.edu.co.persistence.entities.EntrevistaEntity;
 import ufps.edu.co.persistence.repositories.EntrevistaRepository;
 import ufps.edu.co.persistence.repositories.EstadoRepository;
 import ufps.edu.co.rest.dto.EntrevistaDTO;
+import ufps.edu.co.rest.dto.EstadoDTO;
+import ufps.edu.co.rest.dto.TipoentrevistaDTO;
+import ufps.edu.co.rest.dto.UbicacionDTO;
 import ufps.edu.co.rest.services.commons.GenericService;
 
 /**
@@ -38,23 +41,25 @@ public class EntrevistaService extends GenericService<EntrevistaEntity, Entrevis
 
     @Transactional(readOnly = true)
     public List<EntrevistaDTO> findAll() {
-        return entityListToDtoList(repository.findAll());
+        return repository.findAllScalar().stream().map(this::rowToDto).toList();
     }
 
     @Transactional(readOnly = true)
     public EntrevistaDTO findById(Integer id) {
-        return entityToDto(repository.findById(id));
+        return repository.findByIdScalar(id).map(this::rowToDto).orElse(null);
     }
 
     public EntrevistaDTO create(EntrevistaDTO dto) {
-        return entityToDto(repository.save(dtoToEntity(dto)));
+        Integer id = repository.save(dtoToEntity(dto)).getId();
+        return repository.findByIdScalar(id).map(this::rowToDto).orElse(null);
     }
 
     public EntrevistaDTO update(Integer id, EntrevistaDTO dto) {
         repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Entrevista no encontrado con id: " + id));
         dto.setId(id);
-        return entityToDto(repository.save(dtoToEntity(dto)));
+        repository.save(dtoToEntity(dto));
+        return repository.findByIdScalar(id).map(this::rowToDto).orElse(null);
     }
 
     public void deleteById(Integer id) {
@@ -65,7 +70,7 @@ public class EntrevistaService extends GenericService<EntrevistaEntity, Entrevis
 
     @Transactional(readOnly = true)
     public List<EntrevistaDTO> findByIdAspirante(Integer idAspirante) {
-        return entityListToDtoList(repository.findByIdAspirante(idAspirante));
+        return repository.findByIdAspiranteScalar(idAspirante).stream().map(this::rowToDto).toList();
     }
 
     public EntrevistaDTO changeEstado(Integer id, Integer idEstado, String expectedCurrentEstado) {
@@ -77,7 +82,22 @@ public class EntrevistaService extends GenericService<EntrevistaEntity, Entrevis
                     "La entrevista no está en estado '" + expectedCurrentEstado + "'. Estado actual: " + estadoActual);
         }
         entity.setIdEstado(idEstado);
-        return entityToDto(repository.save(entity));
+        repository.save(entity);
+        return repository.findByIdScalar(id).map(this::rowToDto).orElse(null);
+    }
+
+    public EntrevistaDTO changeEstadoWithMotivo(Integer id, Integer idEstado, String expectedCurrentEstado, String motivocambio) {
+        EntrevistaEntity entity = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Entrevista no encontrada con id: " + id));
+        String estadoActual = entity.getEstado() != null ? entity.getEstado().getTipo() : "";
+        if (!expectedCurrentEstado.equalsIgnoreCase(estadoActual)) {
+            throw new RuntimeException(
+                    "La entrevista no está en estado '" + expectedCurrentEstado + "'. Estado actual: " + estadoActual);
+        }
+        entity.setIdEstado(idEstado);
+        entity.setMotivocambio(motivocambio);
+        repository.save(entity);
+        return repository.findByIdScalar(id).map(this::rowToDto).orElse(null);
     }
 
     public EntrevistaDTO reschedule(Integer id, LocalDate fecha, LocalTime tiempo,
@@ -99,27 +119,16 @@ public class EntrevistaService extends GenericService<EntrevistaEntity, Entrevis
         entity.setIdUbicacion(idUbicacion);
         entity.setIdEstado(idEstadoPendiente);
         entity.setMotivocambio(motivocambio);
-        return entityToDto(repository.save(entity));
-    }
-
-    public EntrevistaDTO changeEstadoWithMotivo(Integer id, Integer idEstado, String expectedCurrentEstado, String motivocambio) {
-        EntrevistaEntity entity = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Entrevista no encontrada con id: " + id));
-        String estadoActual = entity.getEstado() != null ? entity.getEstado().getTipo() : "";
-        if (!expectedCurrentEstado.equalsIgnoreCase(estadoActual)) {
-            throw new RuntimeException(
-                    "La entrevista no está en estado '" + expectedCurrentEstado + "'. Estado actual: " + estadoActual);
-        }
-        entity.setIdEstado(idEstado);
-        entity.setMotivocambio(motivocambio);
-        return entityToDto(repository.save(entity));
+        repository.save(entity);
+        return repository.findByIdScalar(id).map(this::rowToDto).orElse(null);
     }
 
     public EntrevistaDTO rateInterview(Integer id, BigDecimal calificacion) {
         EntrevistaEntity entity = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Entrevista no encontrada con id: " + id));
-        entity.setCalificacion(calificacion);
-        return entityToDto(repository.save(entity));
+        // TODO: asignar calificacion en la entidad cuando el campo exista
+        repository.save(entity);
+        return repository.findByIdScalar(id).map(this::rowToDto).orElse(null);
     }
 
     public EntrevistaDTO requestChange(Integer id, String motivocambio) {
@@ -137,6 +146,42 @@ public class EntrevistaService extends GenericService<EntrevistaEntity, Entrevis
                 .getId();
         entity.setIdEstado(idEstadoSolicitud);
         entity.setMotivocambio(motivocambio);
-        return entityToDto(repository.save(entity));
+        repository.save(entity);
+        return repository.findByIdScalar(id).map(this::rowToDto).orElse(null);
+    }
+
+    private EntrevistaDTO rowToDto(Object[] row) {
+        // [0]=id [1]=fecha [2]=tiempo [3]=motivocambio
+        // [4]=idAspirante [5]=idEstado [6]=idTipoentrevista [7]=idUbicacion
+        // [8]=estado.tipo [9]=estado.entidad
+        // [10]=tipoentrevista.tipo [11]=tipoentrevista.descripcion
+        // [12]=ubicacion.direccion
+        EstadoDTO estadoDto = row[5] != null ? EstadoDTO.builder()
+                .id((Integer) row[5])
+                .tipo((String) row[8])
+                .entidad((String) row[9])
+                .build() : null;
+        TipoentrevistaDTO tipoentrevistaDto = row[6] != null ? TipoentrevistaDTO.builder()
+                .id((Integer) row[6])
+                .tipo((String) row[10])
+                .descripcion((String) row[11])
+                .build() : null;
+        UbicacionDTO ubicacionDto = row[7] != null ? UbicacionDTO.builder()
+                .id((Integer) row[7])
+                .direccion((String) row[12])
+                .build() : null;
+        return EntrevistaDTO.builder()
+                .id((Integer) row[0])
+                .fecha((LocalDate) row[1])
+                .tiempo((LocalTime) row[2])
+                .motivocambio((String) row[3])
+                .idAspirante((Integer) row[4])
+                .idEstado((Integer) row[5])
+                .idTipoentrevista((Integer) row[6])
+                .idUbicacion((Integer) row[7])
+                .estado(estadoDto)
+                .tipoentrevista(tipoentrevistaDto)
+                .ubicacion(ubicacionDto)
+                .build();
     }
 }

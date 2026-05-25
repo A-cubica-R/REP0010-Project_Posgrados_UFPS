@@ -63,6 +63,7 @@ public class SedeMap
         return SedeOutput.builder()
                 .id(dto.getId())
                 .nombre(dto.getNombre())
+                .idUbicacion(dto.getIdUbicacion())
                 .ubicacion(dto.getUbicacion() != null ? ubicacionMap.toOutput(dto.getUbicacion()) : null)
                 .build();
     }

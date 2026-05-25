@@ -7,6 +7,9 @@ import org.springframework.stereotype.Component;
 import ufps.edu.co.maps.GlobalMapper;
 import ufps.edu.co.records.input.entity.EntrevistaInput.*;
 import ufps.edu.co.records.output.entity.EntrevistaOutput;
+import ufps.edu.co.records.output.entity.EstadoOutput;
+import ufps.edu.co.records.output.entity.TipoentrevistaOutput;
+import ufps.edu.co.records.output.entity.UbicacionOutput;
 import ufps.edu.co.rest.dto.EntrevistaDTO;
 
 @Component
@@ -66,14 +69,25 @@ public class EntrevistaMap extends
         if (dto == null)
             return null;
 
-            AspiranteMap aspiranteMap = new AspiranteMap();
-            EstadoMap estadoMap = new EstadoMap();
-            TipoentrevistaMap tipoentrevistaMap = new TipoentrevistaMap();
-            UbicacionMap ubicacionMap = new UbicacionMap();
+        EstadoOutput estadoOutput = dto.getEstado() != null ? EstadoOutput.builder()
+                .id(dto.getEstado().getId())
+                .tipo(dto.getEstado().getTipo())
+                .entidad(dto.getEstado().getEntidad())
+                .build() : null;
+
+        TipoentrevistaOutput tipoentrevistaOutput = dto.getTipoentrevista() != null ? TipoentrevistaOutput.builder()
+                .id(dto.getTipoentrevista().getId())
+                .tipo(dto.getTipoentrevista().getTipo())
+                .descripcion(dto.getTipoentrevista().getDescripcion())
+                .build() : null;
+
+        UbicacionOutput ubicacionOutput = dto.getUbicacion() != null ? UbicacionOutput.builder()
+                .id(dto.getUbicacion().getId())
+                .direccion(dto.getUbicacion().getDireccion())
+                .build() : null;
 
         return EntrevistaOutput.builder()
                 .id(dto.getId())
-                .calificacion(dto.getCalificacion())
                 .fecha(dto.getFecha())
                 .tiempo(dto.getTiempo())
                 .motivocambio(dto.getMotivocambio())
@@ -81,11 +95,9 @@ public class EntrevistaMap extends
                 .idEstado(dto.getIdEstado())
                 .idTipoentrevista(dto.getIdTipoentrevista())
                 .idUbicacion(dto.getIdUbicacion())
-                .aspirante(dto.getAspirante() != null ? aspiranteMap.toOutput(dto.getAspirante()) : null)
-                .estado(dto.getEstado() != null ? estadoMap.toOutput(dto.getEstado()) : null)
-                .tipoentrevista(
-                        dto.getTipoentrevista() != null ? tipoentrevistaMap.toOutput(dto.getTipoentrevista()) : null)
-                .ubicacion(dto.getUbicacion() != null ? ubicacionMap.toOutput(dto.getUbicacion()) : null)
+                .estado(estadoOutput)
+                .tipoentrevista(tipoentrevistaOutput)
+                .ubicacion(ubicacionOutput)
                 .build();
     }
 

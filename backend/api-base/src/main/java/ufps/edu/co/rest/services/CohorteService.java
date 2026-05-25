@@ -43,6 +43,15 @@ public class CohorteService extends GenericService<CohorteEntity, CohorteDTO> {
         return entityToDto(repository.save(dtoToEntity(dto)));
     }
 
+    public Integer createAndGetId(CohorteDTO dto) {
+        return repository.save(dtoToEntity(dto)).getId();
+    }
+
+    @Transactional(readOnly = true)
+    public List<Object[]> findResumenDataByIdPrograma(Integer programaId) {
+        return repository.findResumenDataByIdPrograma(programaId);
+    }
+
     public CohorteDTO update(Integer id, CohorteDTO dto) {
         repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Cohorte no encontrado con id: " + id));
@@ -67,19 +76,8 @@ public class CohorteService extends GenericService<CohorteEntity, CohorteDTO> {
     }
 
     @Transactional(readOnly = true)
-    public CohorteDTO findActiveByIdPrograma(Integer programaId) {
-        return repository.findActiveByIdPrograma(programaId)
-                .map(this::entityToDto)
-                .orElse(null);
-    }
-
-    @Transactional(readOnly = true)
-    public CohorteDTO findActivaByIdPrograma(Integer idPrograma) {
-        return repository.findActivasByIdPrograma(idPrograma)
-                .stream()
-                .findFirst()
-                .map(this::entityToDto)
-                .orElse(null);
+    public List<CohorteDTO> findActivasByIdPrograma(Integer idPrograma) {
+        return entityListToDtoList(repository.findActivasByIdPrograma(idPrograma));
     }
 
     @Transactional(readOnly = true)

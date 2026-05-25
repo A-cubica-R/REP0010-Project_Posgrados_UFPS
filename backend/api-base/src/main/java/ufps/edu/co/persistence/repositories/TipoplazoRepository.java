@@ -4,7 +4,12 @@
  */
 package ufps.edu.co.persistence.repositories;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import ufps.edu.co.persistence.entities.TipoplazoEntity;
@@ -37,7 +42,13 @@ import ufps.edu.co.persistence.entities.TipoplazoEntity;
 @Repository
 public interface TipoplazoRepository extends JpaRepository<TipoplazoEntity, Integer> {
 
-	// Insert specific finders here 
+	@Query("SELECT t.id, t.tipo, t.descripcion FROM TipoplazoEntity t")
+	List<Object[]> findAllScalar();
+
+	@Query("SELECT t.id, t.tipo, t.descripcion FROM TipoplazoEntity t WHERE t.id = :id")
+	Optional<Object[]> findByIdScalar(@Param("id") Integer id);
+
+	// Insert specific finders here
 
 	//List<TipoplazoEntity> findByXxx(String xxx);
 
