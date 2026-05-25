@@ -322,8 +322,7 @@ public class DirectorProgramaCase {
     @GetMapping(value = "/programa/{programaId}/cohortes")
     public ResponseEntity<List<CohorteResumenOutput>> listCohorteResumen(@PathVariable Integer programaId) {
         try {
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(aspiranteProcessor.getCohortesByProgramaResumen(programaId));
+            return ResponseEntity.ok(aspiranteProcessor.getCohortesByProgramaResumen(programaId));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
@@ -521,6 +520,7 @@ public class DirectorProgramaCase {
             Integer idCohorte = cohorteId;
 
             if (!admitido) {
+                        
                 EstadoDTO estadoValidadoCalificado = estadoService.findByTipoAndEntidad("VALIDADO_CALIFICADO", "aspirante");
                 if (estadoValidadoCalificado == null) {
                     return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -528,13 +528,16 @@ public class DirectorProgramaCase {
 
                 aspiranteService.updateEstado(aspiranteId, estadoValidadoCalificado.getId());
 
+                // 
                 // Si el aspirante estaba previamente en la lista de admitidos, eliminar ese registro
                 try {
                     if (listaadmitidosService.existsByIdCohorteAndIdAspirante(idCohorte, aspiranteId)) {
                         listaadmitidosService.deleteByIdCohorteAndIdAspirante(idCohorte, aspiranteId);
                     }
                 } catch (Exception ex) {
+                    // 
                     // No detener el flujo por errores al limpiar la lista de admitidos, solo loguear
+                            
                     logger.error("Error eliminando registro de lista de admitidos para cohorte {} aspirante {}", idCohorte, aspiranteId, ex);
                 }
 
@@ -838,6 +841,7 @@ public class DirectorProgramaCase {
             return ResponseEntity.badRequest().body(Map.of("error", "El tamaño máximo debe ser mayor que 0"));
         }
         try {
+                    
             DOCUMENTOSREQUISITOPROGRAMA_UPDATE input = new DOCUMENTOSREQUISITOPROGRAMA_UPDATE(id, body.nombre(), body.tamanomaximo());
             return ResponseEntity.ok(documentosrequisitoprogramaProcessor.update(input));
         } catch (Exception e) {
