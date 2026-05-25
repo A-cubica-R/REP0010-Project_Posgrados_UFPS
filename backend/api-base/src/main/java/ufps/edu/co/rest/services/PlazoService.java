@@ -4,6 +4,7 @@
  */
 package ufps.edu.co.rest.services;
 
+import java.time.LocalDate;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ufps.edu.co.persistence.entities.PlazoEntity;
 import ufps.edu.co.persistence.repositories.PlazoRepository;
 import ufps.edu.co.rest.dto.PlazoDTO;
+import ufps.edu.co.rest.dto.TipoplazoDTO;
 import ufps.edu.co.rest.services.commons.GenericService;
 
 /**
@@ -31,28 +33,45 @@ public class PlazoService extends GenericService<PlazoEntity, PlazoDTO> {
 
     @Transactional(readOnly = true)
     public List<PlazoDTO> findAll() {
-        return entityListToDtoList(repository.findAll());
+        return repository.findAllScalar().stream().map(this::rowToDto).toList();
     }
 
     @Transactional(readOnly = true)
     public PlazoDTO findById(Integer id) {
-        return entityToDto(repository.findById(id));
+        return repository.findByIdScalar(id).map(this::rowToDto).orElse(null);
     }
 
     public PlazoDTO create(PlazoDTO dto) {
-        return entityToDto(repository.save(dtoToEntity(dto)));
+        Integer id = repository.save(dtoToEntity(dto)).getId();
+        return repository.findByIdScalar(id).map(this::rowToDto).orElse(null);
     }
 
     public PlazoDTO update(Integer id, PlazoDTO dto) {
         repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Plazo no encontrado con id: " + id));
         dto.setId(id);
-        return entityToDto(repository.save(dtoToEntity(dto)));
+        repository.save(dtoToEntity(dto));
+        return repository.findByIdScalar(id).map(this::rowToDto).orElse(null);
     }
 
     public void deleteById(Integer id) {
         repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Plazo no encontrado con id: " + id));
         repository.deleteById(id);
+    }
+
+    private PlazoDTO rowToDto(Object[] row) {
+        TipoplazoDTO tipoplazoDto = row[3] != null ? TipoplazoDTO.builder()
+                .id((Integer) row[3])
+                .tipo((String) row[4])
+                .descripcion((String) row[5])
+                .build() : null;
+        return PlazoDTO.builder()
+                .id((Integer) row[0])
+                .fechainicio((LocalDate) row[1])
+                .fechafin((LocalDate) row[2])
+                .idTipoplazo((Integer) row[3])
+                .tipoplazo(tipoplazoDto)
+                .build();
     }
 }

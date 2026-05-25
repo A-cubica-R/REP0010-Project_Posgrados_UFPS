@@ -5,51 +5,44 @@
 package ufps.edu.co.persistence.repositories;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import ufps.edu.co.persistence.entities.ProgramaEntity;
 
-/**
- * Spring Data JPA repository for the ProgramaEntity entity.
- *
- * This interface extends {@link JpaRepository}, so it automatically inherits
- * standard persistence operations, including:
- * <ul>
- *   <li> Create/update entities: {@link JpaRepository#save(Object)} and {@link JpaRepository#saveAll(Iterable)}</li>
- *   <li> Basic queries: {@link JpaRepository#findById(Object)}, {@link JpaRepository#findAll()}, and {@link JpaRepository#getReferenceById(Object)}</li>
- *   <li> Validation and counting: {@link JpaRepository#existsById(Object)} and {@link JpaRepository#count()}</li>
- *   <li> Deletion: {@link JpaRepository#deleteById(Object)}, {@link JpaRepository#delete(Object)}, and {@link JpaRepository#deleteAll()}</li>
- *   <li> Paging and sorting: {@link org.springframework.data.repository.PagingAndSortingRepository#findAll(org.springframework.data.domain.Pageable)}
- *     and {@link org.springframework.data.repository.PagingAndSortingRepository#findAll(org.springframework.data.domain.Sort)}</li>
- * </ul>
- *
- * It can also be extended with derived query methods (findBy...),
- * following Spring Data JPA conventions.
- *
- * @category Repository
- * @version 1.0.0
- * @see JpaRepository
- * @see org.springframework.data.repository.CrudRepository
- * @see org.springframework.data.repository.PagingAndSortingRepository
- * @author a-cubica-r
- *
- */
 @Repository
 public interface ProgramaRepository extends JpaRepository<ProgramaEntity, Integer> {
 
-	List<ProgramaEntity> findByIdFacultad(Integer idFacultad);
-	
-	// Insert specific finders here 
+	@Query("SELECT p.id, p.codigo, p.nombre, p.duracion, p.correo, p.registrosnies, " +
+		   "p.nivelformacion, p.titulo, p.rcmineducacion, p.creditos, p.periodicidad, " +
+		   "p.valormatricula, p.idFacultad, p.idOtros, p.idSede, p.idTiporegistro, " +
+		   "f.nombre, f.correo, s.nombre, s.idUbicacion, s.ubicacion.direccion, " +
+		   "o.carnet, o.estampilla, o.seguro, t.tipo " +
+		   "FROM ProgramaEntity p " +
+		   "LEFT JOIN p.facultad f LEFT JOIN p.sede s LEFT JOIN p.otrosvalores o LEFT JOIN p.tiporegistro t")
+	List<Object[]> findAllScalar();
 
-	//List<ProgramaEntity> findByXxx(String xxx);
+	@Query("SELECT p.id, p.codigo, p.nombre, p.duracion, p.correo, p.registrosnies, " +
+		   "p.nivelformacion, p.titulo, p.rcmineducacion, p.creditos, p.periodicidad, " +
+		   "p.valormatricula, p.idFacultad, p.idOtros, p.idSede, p.idTiporegistro, " +
+		   "f.nombre, f.correo, s.nombre, s.idUbicacion, s.ubicacion.direccion, " +
+		   "o.carnet, o.estampilla, o.seguro, t.tipo " +
+		   "FROM ProgramaEntity p " +
+		   "LEFT JOIN p.facultad f LEFT JOIN p.sede s LEFT JOIN p.otrosvalores o LEFT JOIN p.tiporegistro t " +
+		   "WHERE p.id = :id")
+	Optional<Object[]> findByIdScalar(@Param("id") Integer id);
 
-	//List<ProgramaEntity> findByXxxStartingWith(String xxx);
-
-	//List<ProgramaEntity> findByXxxContaining(String xxx);
-
-	//List<ProgramaEntity> findByYyy(BigDecimal yyy);
-
-	//List<ProgramaEntity> findByXxxContainingAndYyy(String xxx, BigDecimal yyy);
+	@Query("SELECT p.id, p.codigo, p.nombre, p.duracion, p.correo, p.registrosnies, " +
+		   "p.nivelformacion, p.titulo, p.rcmineducacion, p.creditos, p.periodicidad, " +
+		   "p.valormatricula, p.idFacultad, p.idOtros, p.idSede, p.idTiporegistro, " +
+		   "f.nombre, f.correo, s.nombre, s.idUbicacion, s.ubicacion.direccion, " +
+		   "o.carnet, o.estampilla, o.seguro, t.tipo " +
+		   "FROM ProgramaEntity p " +
+		   "LEFT JOIN p.facultad f LEFT JOIN p.sede s LEFT JOIN p.otrosvalores o LEFT JOIN p.tiporegistro t " +
+		   "WHERE p.idFacultad = :idFacultad")
+	List<Object[]> findByIdFacultadScalar(@Param("idFacultad") Integer idFacultad);
 }
