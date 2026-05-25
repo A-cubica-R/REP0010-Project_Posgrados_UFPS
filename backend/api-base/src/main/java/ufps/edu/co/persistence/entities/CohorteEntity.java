@@ -44,12 +44,6 @@ public class CohorteEntity implements Serializable {
     @Column(name="cupos", nullable=false)
     private Integer        cupos ;
 
-    @Column(name="requiereentrevista", nullable=false)
-    private boolean    requiereentrevista ;
-
-    @Column(name="requiereprueba", nullable=false)
-    private boolean    requiereprueba ;
-
     @Column(name="id_estado", nullable=false)
     private Integer        idEstado ;
 
