@@ -10,7 +10,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-import java.util.List;
 
 /**
  * DTO class for "Documentosrequisitoconsejocohorte"
@@ -32,10 +31,6 @@ public class DocumentosrequisitoconsejocohorteDTO implements Serializable {
     //--- OTHER DATA FIELDS 
     private Integer idDocrequisito ;
     private Integer idCohorte ;
-    //--- LINKS ( RELATIONSHIPS )
-    private List<DocumentoDTO> documentoList ; 
-    private CohorteDTO cohorte ; 
-    private DocumentosrequisitoconsejoDTO documentosrequisitoconsejo ; 
 
     @Override
 	public String toString() { 

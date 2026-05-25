@@ -12,7 +12,13 @@ import ufps.edu.co.usecase.GlobalUseCase;
 
 @Service
 public class DocumentosrequisitoprogramaProcessor implements
-        GlobalUseCase<DOCUMENTOSREQUISITOPROGRAMA_CREATE, DOCUMENTOSREQUISITOPROGRAMA_UPDATE, DOCUMENTOSREQUISITOPROGRAMA_DELETE, DOCUMENTOSREQUISITOPROGRAMA_PATCH, DOCUMENTOSREQUISITOPROGRAMA_FIND, DocumentosrequisitoprogramaOutput> {
+        GlobalUseCase<
+            DOCUMENTOSREQUISITOPROGRAMA_CREATE, 
+            DOCUMENTOSREQUISITOPROGRAMA_UPDATE, 
+            DOCUMENTOSREQUISITOPROGRAMA_DELETE, 
+            DOCUMENTOSREQUISITOPROGRAMA_PATCH, 
+            DOCUMENTOSREQUISITOPROGRAMA_FIND, 
+            DocumentosrequisitoprogramaOutput> {
 
     @Autowired
     private DocumentosrequisitoprogramaService service;
