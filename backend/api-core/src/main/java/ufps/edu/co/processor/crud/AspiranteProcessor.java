@@ -550,8 +550,6 @@ public class AspiranteProcessor implements
         CohorteDTO cohorte = cohorteService.create(CohorteDTO.builder()
                 .nombre(nombre)
                 .cupos(body.cupos())
-                .requiereentrevista(false)
-                .requiereprueba(false)
                 .idEstado(estadoCohorte.getId())
                 .idSemestre(semestre.getId())
                 .idModalidad(modalidades.get(0).getId())

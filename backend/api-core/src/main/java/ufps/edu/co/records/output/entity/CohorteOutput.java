@@ -10,8 +10,6 @@ public record CohorteOutput(
     Integer id,
     String nombre,
     Integer cupos,
-    Boolean requiereentrevista,
-    Boolean requiereprueba,
     Integer idEstado,
     Integer idSemestre,
     Integer idModalidad,
