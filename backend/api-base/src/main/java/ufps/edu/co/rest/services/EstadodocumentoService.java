@@ -31,34 +31,44 @@ public class EstadodocumentoService extends GenericService<EstadodocumentoEntity
 
     @Transactional(readOnly = true)
     public List<EstadodocumentoDTO> findAll() {
-        return entityListToDtoList(repository.findAll());
+        return repository.findAllScalar().stream().map(this::rowToDto).toList();
     }
 
     @Transactional(readOnly = true)
     public EstadodocumentoDTO findById(Integer id) {
-        return entityToDto(repository.findById(id));
+        return repository.findByIdScalar(id).map(this::rowToDto).orElse(null);
     }
 
     @Transactional(readOnly = true)
     public EstadodocumentoDTO findByEstado(String estado) {
-        return entityToDto(repository.findByEstado(estado)
-                .orElseThrow(() -> new RuntimeException("Estado de documento no encontrado: " + estado)));
+        return repository.findByEstadoScalar(estado)
+                .map(this::rowToDto)
+                .orElseThrow(() -> new RuntimeException("Estado de documento no encontrado: " + estado));
     }
 
     public EstadodocumentoDTO create(EstadodocumentoDTO dto) {
-        return entityToDto(repository.save(dtoToEntity(dto)));
+        Integer id = repository.save(dtoToEntity(dto)).getId();
+        return repository.findByIdScalar(id).map(this::rowToDto).orElse(null);
     }
 
     public EstadodocumentoDTO update(Integer id, EstadodocumentoDTO dto) {
         repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Estadodocumento no encontrado con id: " + id));
         dto.setId(id);
-        return entityToDto(repository.save(dtoToEntity(dto)));
+        repository.save(dtoToEntity(dto));
+        return repository.findByIdScalar(id).map(this::rowToDto).orElse(null);
     }
 
     public void deleteById(Integer id) {
         repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Estadodocumento no encontrado con id: " + id));
         repository.deleteById(id);
+    }
+
+    private EstadodocumentoDTO rowToDto(Object[] row) {
+        return EstadodocumentoDTO.builder()
+                .id((Integer) row[0])
+                .estado((String) row[1])
+                .build();
     }
 }

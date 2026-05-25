@@ -31,28 +31,38 @@ public class DocumentosrequisitoconsejoService extends GenericService<Documentos
 
     @Transactional(readOnly = true)
     public List<DocumentosrequisitoconsejoDTO> findAll() {
-        return entityListToDtoList(repository.findAll());
+        return repository.findAllScalar().stream().map(this::rowToDto).toList();
     }
 
     @Transactional(readOnly = true)
     public DocumentosrequisitoconsejoDTO findById(Integer id) {
-        return entityToDto(repository.findById(id));
+        return repository.findByIdScalar(id).map(this::rowToDto).orElse(null);
     }
 
     public DocumentosrequisitoconsejoDTO create(DocumentosrequisitoconsejoDTO dto) {
-        return entityToDto(repository.save(dtoToEntity(dto)));
+        Integer id = repository.save(dtoToEntity(dto)).getId();
+        return repository.findByIdScalar(id).map(this::rowToDto).orElse(null);
     }
 
     public DocumentosrequisitoconsejoDTO update(Integer id, DocumentosrequisitoconsejoDTO dto) {
         repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Documentosrequisitoconsejo no encontrado con id: " + id));
         dto.setId(id);
-        return entityToDto(repository.save(dtoToEntity(dto)));
+        repository.save(dtoToEntity(dto));
+        return repository.findByIdScalar(id).map(this::rowToDto).orElse(null);
     }
 
     public void deleteById(Integer id) {
         repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Documentosrequisitoconsejo no encontrado con id: " + id));
         repository.deleteById(id);
+    }
+
+    private DocumentosrequisitoconsejoDTO rowToDto(Object[] row) {
+        return DocumentosrequisitoconsejoDTO.builder()
+                .id((Integer) row[0])
+                .nombre((String) row[1])
+                .tamanomaximo((Integer) row[2])
+                .build();
     }
 }

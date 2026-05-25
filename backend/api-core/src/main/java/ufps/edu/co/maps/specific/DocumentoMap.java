@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import ufps.edu.co.maps.GlobalMapper;
 import ufps.edu.co.records.input.entity.DocumentoInput.*;
 import ufps.edu.co.records.output.entity.DocumentoOutput;
+import ufps.edu.co.records.output.entity.EstadodocumentoOutput;
 import ufps.edu.co.rest.dto.DocumentoDTO;
 
 @Component
@@ -73,10 +74,12 @@ public class DocumentoMap extends
         if (dto == null)
             return null;
 
-        AdministrativoMap administrativoMap = new AdministrativoMap();
-        AspiranteMap aspiranteMap = new AspiranteMap();
-        EstadodocumentoMap estadodocumentoMap = new EstadodocumentoMap();
-        PlazoMap plazoMap = new PlazoMap();
+        EstadodocumentoOutput estadodocumentoOutput = dto.getEstadodocumento() != null
+                ? EstadodocumentoOutput.builder()
+                        .id(dto.getEstadodocumento().getId())
+                        .estado(dto.getEstadodocumento().getEstado())
+                        .build()
+                : null;
 
         return DocumentoOutput.builder()
                 .id(dto.getId())
@@ -90,14 +93,8 @@ public class DocumentoMap extends
                 .observaciones(dto.getObservaciones())
                 .idDocumentosrequisitoconsejocohorte(dto.getIdDocumentosrequisitoconsejocohorte())
                 .idDocumentosrequisitoprogramacohorte(dto.getIdDocumentosrequisitoprogramacohorte())
-                .administrativo(
-                        dto.getAdministrativo() != null ? administrativoMap.toOutput(dto.getAdministrativo()) : null)
-                .aspirante(dto.getAspirante() != null ? aspiranteMap.toOutput(dto.getAspirante()) : null)
-                .estadodocumento(
-                        dto.getEstadodocumento() != null ? estadodocumentoMap.toOutput(dto.getEstadodocumento()) : null)
-                .plazo(dto.getPlazo() != null ? plazoMap.toOutput(dto.getPlazo()) : null)
+                .estadodocumento(estadodocumentoOutput)
                 .build();
-                // TODO: de momento no existe forma de determinar a donde se suben los documentos. Faltan las FK faltantes
     }
 
     public List<DocumentoOutput> toOutputList(List<DocumentoDTO> dtoList) {

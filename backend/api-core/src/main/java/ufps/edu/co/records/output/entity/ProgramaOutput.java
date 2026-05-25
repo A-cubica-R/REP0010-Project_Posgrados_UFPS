@@ -1,7 +1,6 @@
 package ufps.edu.co.records.output.entity;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 import lombok.Builder;
 import ufps.edu.co.records.OutputResponse;
@@ -11,7 +10,6 @@ public record ProgramaOutput(
                 Integer id,
                 Integer codigo,
                 String nombre,
-                Integer semestres,
                 Integer duracion,
                 String correo,
                 String registrosnies,
@@ -26,10 +24,7 @@ public record ProgramaOutput(
                 Integer idSede,
                 Integer idTiporegistro,
                 SedeOutput sede,
-                AdministrativoOutput administrativo,
                 FacultadOutput facultad,
                 OtrosvaloresOutput otrosvalores,
-                TiporegistroOutput tiporegistro,
-                List<CargoOutput> cargoList,
-                List<CohorteOutput> cohorteList) implements OutputResponse {
+                TiporegistroOutput tiporegistro) implements OutputResponse {
 }
