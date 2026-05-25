@@ -43,6 +43,15 @@ public class CohorteService extends GenericService<CohorteEntity, CohorteDTO> {
         return entityToDto(repository.save(dtoToEntity(dto)));
     }
 
+    public Integer createAndGetId(CohorteDTO dto) {
+        return repository.save(dtoToEntity(dto)).getId();
+    }
+
+    @Transactional(readOnly = true)
+    public List<Object[]> findResumenDataByIdPrograma(Integer programaId) {
+        return repository.findResumenDataByIdPrograma(programaId);
+    }
+
     public CohorteDTO update(Integer id, CohorteDTO dto) {
         repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Cohorte no encontrado con id: " + id));
