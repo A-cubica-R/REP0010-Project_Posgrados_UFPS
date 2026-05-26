@@ -210,8 +210,15 @@ public class AspiranteCase {
 
     private AspiranteDTO resolveAspirante() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        UsuarioDTO usuario = usuarioService.findByNombreusuario(username);
-        return aspiranteService.findByIdPersona(usuario.getIdPersona());
+        Integer idPersona = usuarioService.findIdPersonaByNombreusuario(username);
+        if (idPersona == null) {
+            throw new RuntimeException("No se pudo derivar el aspirante desde el usuario autenticado");
+        }
+        Integer idAspirante = aspiranteService.findIdByIdPersona(idPersona);
+        if (idAspirante == null) {
+            throw new RuntimeException("El usuario autenticado no tiene un aspirante asignado");
+        }
+        return aspiranteService.findById(idAspirante);
     }
 
     private List<DocumentoAspiranteOutput> buildDocumentosResponse(Integer idAspirante) {

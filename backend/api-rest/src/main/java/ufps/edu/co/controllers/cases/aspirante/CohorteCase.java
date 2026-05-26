@@ -46,14 +46,14 @@ public class CohorteCase {
 
     private Integer resolvePrograma() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        UsuarioDTO usuario = usuarioService.findByNombreusuario(username);
-        if (usuario == null || usuario.getIdPersona() == null) {
+        Integer idPersona = usuarioService.findIdPersonaByNombreusuario(username);
+        if (idPersona == null) {
             throw new RuntimeException("No se pudo derivar el administrativo desde el usuario autenticado");
         }
-        AdministrativoDTO admin = administrativoService.findByIdPersona(usuario.getIdPersona());
-        if (admin == null || admin.getCargo() == null || admin.getCargo().getIdPrograma() == null) {
+        Integer idPrograma = administrativoService.findIdProgramaByIdPersona(idPersona);
+        if (idPrograma == null) {
             throw new RuntimeException("El usuario autenticado no tiene un programa asignado");
         }
-        return admin.getCargo().getIdPrograma();
+        return idPrograma;
     }
 }
