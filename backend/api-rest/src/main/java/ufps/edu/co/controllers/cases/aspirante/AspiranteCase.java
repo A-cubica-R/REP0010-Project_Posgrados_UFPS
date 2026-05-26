@@ -449,13 +449,13 @@ public class AspiranteCase {
         }
 
         private Integer resolveTipovinculacionId(InscripcionRequest body) {
-        String tipo = body.datosAcademicos().tipoVinculacion();
-        if (tipo != null && !tipo.isBlank()) {
-            return tipovinculacionService.findAll().stream()
-                .filter(t -> t.getTipo() != null && t.getTipo().equalsIgnoreCase(tipo))
-                .map(TipovinculacionDTO::getId)
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("No se encontró tipovinculacion para: " + tipo));
+        Integer id = body.datosAcademicos().idTipovinculacion();
+        if (id != null) {
+            TipovinculacionDTO t = tipovinculacionService.findById(id);
+            if (t == null) {
+                throw new IllegalArgumentException("No se encontró tipovinculacion con id: " + id);
+            }
+            return t.getId();
         }
         return tipovinculacionService.findAll().stream()
             .findFirst()
@@ -540,7 +540,7 @@ public class AspiranteCase {
         }
 
         public static record DatosAcademicos(
-            String tipoVinculacion,
+            Integer idTipovinculacion,
             String tituloPregrado,
             Double promedioPonderadoAcumulado,
             String titulosPostgrado,
