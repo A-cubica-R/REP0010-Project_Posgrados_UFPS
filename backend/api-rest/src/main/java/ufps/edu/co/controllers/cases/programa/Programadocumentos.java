@@ -75,21 +75,31 @@ public class Programadocumentos {
         return ResponseEntity.badRequest().build();
     }
 
-    @PutMapping(value = "/documento/{documentoId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/documento/{documentoId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Object> updateDocumentosrequisitoprograma(
             @PathVariable Integer documentoId,
-            @RequestBody DOCUMENTOSREQUISITOPROGRAMA_UPDATE body) {
+            @Parameter(required = true, content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = DOCUMENTOSREQUISITOPROGRAMA_CREATE.class))) @RequestPart("body") String body,
+            @Parameter(required = false, content = @Content(mediaType = MediaType.APPLICATION_OCTET_STREAM_VALUE)) @RequestPart(value = "file", required = false) MultipartFile file) {
+        try {
+            DOCUMENTOSREQUISITOPROGRAMA_CREATE requestBody = objectMapper.readValue(
+                    body, DOCUMENTOSREQUISITOPROGRAMA_CREATE.class);
 
-        if (documentoId != null) {
-            try {
-
-                return ResponseEntity.status(HttpStatus.CREATED).body(processor.update(body));
-
-            } catch (Exception e) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            String urlformato = null;
+            if (file != null && !file.isEmpty()) {
+                urlformato = s3Service.uploadFile(file).enlaceurl();
             }
+
+            DOCUMENTOSREQUISITOPROGRAMA_CREATEDOCUMENT bodyConUrlUpdate = DOCUMENTOSREQUISITOPROGRAMA_CREATEDOCUMENT
+                    .builder()
+                    .nombre(requestBody.nombre())
+                    .tamanomaximo(5)
+                    .urlformato(urlformato)
+                    .build();
+
+            return ResponseEntity.ok(processor.update(bodyConUrlUpdate, documentoId, requestBody.idPrograma()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
-        return ResponseEntity.badRequest().build();
     }
 
     @DeleteMapping("/documento/{documentoId}")
