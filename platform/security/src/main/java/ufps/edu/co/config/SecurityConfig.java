@@ -34,7 +34,6 @@ public class SecurityConfig {
          * los controllers del paquete CASE ussan la ruta : /api/application/case/
          */
         private static final String[] DIRECTOR_POSGRADOS_PATHS = {
-                        "/api/application/case/director-programa/**",
                         "/api/application/case/cohortes/**",
                         "/api/application/case/documentos/**",
                         "/api/dev/endpoint/tipoentrevista/listall",
@@ -49,6 +48,10 @@ public class SecurityConfig {
                         "/api/application/case/documentos/**",
                         "/api/dev/endpoint/tipoentrevista/listall",
                         "/api/dev/endpoint/estado/listall"
+        };
+
+        private static final String[] DIRECTOR_PROGRAMA_SHARED_PATHS = {
+                        "/api/application/case/director-programa/programa/**"
         };
 
         private static final String[] ASPIRANTE_PATHS = {
@@ -73,6 +76,10 @@ public class SecurityConfig {
                                                 // Rutas públicas sin autenticación
                                                 .requestMatchers(PUBLIC_PATHS)
                                                 .permitAll()
+
+                                                // Rutas específicas por rol (antes del catch-all)
+                                                .requestMatchers(DIRECTOR_PROGRAMA_SHARED_PATHS)
+                                                .hasAnyRole("DIRECTOR_DE_PROGRAMA", "DIRECTOR_DE_POSGRADOS", "SUPER_ADMINISTRADOR")
 
                                                 // Rutas específicas por rol (antes del catch-all)
                                                 .requestMatchers(DIRECTOR_POSGRADOS_PATHS)
