@@ -49,13 +49,13 @@ public class PlazoEntity implements Serializable {
     private int        idTipoplazo ;
 
     //--- LINKS ( RELATIONSHIPS )
-    @OneToMany
+    @OneToMany(mappedBy="plazo")
     private List<CohorteEntity> cohorteList ; 
 
-    @OneToMany
+    @OneToMany(mappedBy="plazo2")
     private List<CohorteEntity> cohorteList2 ; 
 
-    @OneToMany
+    @OneToMany(mappedBy="plazo3")
     private List<CohorteEntity> cohorteList3 ; 
 
     @OneToMany(mappedBy="plazo")
