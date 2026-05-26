@@ -1,6 +1,7 @@
 package ufps.edu.co.controllers.cases.programa;
 
 import ufps.edu.co.records.input.entity.DocumentosrequisitoprogramaInput.*;
+import ufps.edu.co.records.output.cases.Listdocumentosprogramaconsejo;
 import ufps.edu.co.records.output.entity.DocumentosrequisitoprogramaOutput;
 import ufps.edu.co.processor.cases.DocumentosrequisitoprogramaPE;
 
@@ -84,14 +85,18 @@ public class Programadocumentos {
     // ###################### CASES ######################
 
     @GetMapping("/{idprograma}/documentos/requeridos")
-    public ResponseEntity<List<DocumentosrequisitoprogramaOutput>> getDocsfromProgramaAndConsejo(
+    public ResponseEntity<Listdocumentosprogramaconsejo> getDocsfromProgramaAndConsejo(
             @PathVariable Integer idprograma) {
 
         if (idprograma != null) {
             try {
                 return ResponseEntity.ok(processor.findByIdProgramaAndConsejo(idprograma));
             } catch (Exception e) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(List.of());
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(Listdocumentosprogramaconsejo.builder()
+                                .documentosConsejo(List.of())
+                                .documentosPrograma(List.of())
+                                .build());
             }
         }
         return ResponseEntity.badRequest().build();
