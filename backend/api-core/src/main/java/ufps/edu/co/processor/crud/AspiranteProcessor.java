@@ -325,12 +325,26 @@ public class AspiranteProcessor implements
     public List<ProgramaInicioOutput> getProgramaInicioByPrograma(Integer programaId) {
         try {
             return cohorteService.findResumenDataByIdPrograma(programaId).stream()
+<<<<<<< HEAD
                     .filter(row -> row[3] != null && "ABIERTA".equalsIgnoreCase(row[3].toString()))
                     .map(row -> {
                         Integer cohorteId = (Integer) row[0];
                         String nombre = (String) row[1];
                         LocalDate fechaLimiteDocumentos = (LocalDate) row[5];
                         LocalDate fechaLimitePago = (LocalDate) row[7];
+=======
+                    .filter(cohorte -> cohorte.getEstado() != null
+                            && "ABIERTA".equalsIgnoreCase(cohorte.getEstado().getTipo()))
+                    .map(cohorte -> {
+                        Integer cohorteId = cohorte.getId();
+                        String nombre = cohorte.getNombre();
+                        LocalDate fechaLimiteDocumentos = cohorte.getPlazo() != null
+                                ? cohorte.getPlazo().getFechafin()
+                                : null;
+                        LocalDate fechaLimitePago = cohorte.getPlazo3() != null
+                                ? cohorte.getPlazo3().getFechafin()
+                                : null;
+>>>>>>> af7b98e221a7a641b3d5eaa1537a69ad6a6e4154
 
                         long totalInscritos = service.countByCohorte(cohorteId);
                         long validados = service.countValidadosByCohorte(cohorteId);
