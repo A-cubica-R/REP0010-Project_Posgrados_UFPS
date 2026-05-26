@@ -536,9 +536,7 @@ public class AspiranteProcessor implements
     }
 
     public List<AspiranteCalificacionOutput> findAllValidadosCalificacion(Integer cohorteId) {
-        List<String> estados = List.of("VALIDADO_POR_CALIFICAR", "VALIDADO_EN_PROGRESO", "VALIDADO_CALIFICADO");
-        return service.findByCohorte(cohorteId).stream()
-                .filter(a -> a.getEstado() != null && estados.contains(a.getEstado().getTipo()))
+        return service.findValidadosByCohorte(cohorteId).stream()
                 .map(aspirante -> {
                     PersonaDTO persona = aspirante.getPersona();
                     String nombreCompleto = persona != null
