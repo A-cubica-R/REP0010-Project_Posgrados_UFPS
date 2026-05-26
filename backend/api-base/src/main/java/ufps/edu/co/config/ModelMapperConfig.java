@@ -9,6 +9,8 @@ import ufps.edu.co.persistence.entities.AspiranteEntity;
 import ufps.edu.co.persistence.entities.CohorteEntity;
 import ufps.edu.co.persistence.entities.EstadoEntity;
 import ufps.edu.co.persistence.entities.PersonaEntity;
+import ufps.edu.co.persistence.entities.PruebaEntity;
+import ufps.edu.co.persistence.entities.ResultadopruebaEntity;
 import ufps.edu.co.persistence.entities.SemestreEntity;
 import ufps.edu.co.persistence.entities.UbicacionEntity;
 import ufps.edu.co.rest.dto.AdministrativoDTO;
@@ -16,6 +18,8 @@ import ufps.edu.co.rest.dto.AspiranteDTO;
 import ufps.edu.co.rest.dto.CohorteDTO;
 import ufps.edu.co.rest.dto.EstadoDTO;
 import ufps.edu.co.rest.dto.PersonaDTO;
+import ufps.edu.co.rest.dto.PruebaDTO;
+import ufps.edu.co.rest.dto.ResultadopruebaDTO;
 import ufps.edu.co.rest.dto.SemestreDTO;
 import ufps.edu.co.rest.dto.UbicacionDTO;
 
@@ -73,6 +77,7 @@ public class ModelMapperConfig {
                   m.skip(CohorteEntity::setPlazo2);
                   m.skip(CohorteEntity::setPlazo3);
                   m.skip(CohorteEntity::setPrograma);
+                  m.skip(CohorteEntity::setCriterioevaluacionList);
                   m.skip(CohorteEntity::setPruebaList);
                     })
                     .implicitMappings();
@@ -96,6 +101,7 @@ public class ModelMapperConfig {
                   m.skip(AspiranteDTO::setEntrevistaList);
                   m.skip(AspiranteDTO::setAdmitidoList);
                   m.skip(AspiranteDTO::setPagoList);
+                  m.skip(AspiranteDTO::setResultadopruebaList);
               });
 
         // Administrativo ↔ Documento
@@ -127,6 +133,13 @@ public class ModelMapperConfig {
                   m.skip(SemestreEntity::setCohorteList);
                   m.skip(SemestreEntity::setEstado);
               })
+              .implicitMappings();
+
+        // Prueba ↔ Resultadoprueba
+        mapper.createTypeMap(PruebaEntity.class, PruebaDTO.class)
+              .addMappings(m -> m.skip(PruebaDTO::setResultadopruebaList));
+        mapper.emptyTypeMap(ResultadopruebaEntity.class, ResultadopruebaDTO.class)
+              .addMappings(m -> m.skip(ResultadopruebaDTO::setPrueba))
               .implicitMappings();
 
         return mapper;

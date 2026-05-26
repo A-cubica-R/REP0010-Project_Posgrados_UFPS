@@ -5,38 +5,50 @@
 package ufps.edu.co.persistence.repositories;
 
 import java.util.List;
-import java.util.Optional;
-
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import ufps.edu.co.persistence.entities.EntrevistaEntity;
 
+/**
+ * Spring Data JPA repository for the EntrevistaEntity entity.
+ *
+ * This interface extends {@link JpaRepository}, so it automatically inherits
+ * standard persistence operations, including:
+ * <ul>
+ *   <li> Create/update entities: {@link JpaRepository#save(Object)} and {@link JpaRepository#saveAll(Iterable)}</li>
+ *   <li> Basic queries: {@link JpaRepository#findById(Object)}, {@link JpaRepository#findAll()}, and {@link JpaRepository#getReferenceById(Object)}</li>
+ *   <li> Validation and counting: {@link JpaRepository#existsById(Object)} and {@link JpaRepository#count()}</li>
+ *   <li> Deletion: {@link JpaRepository#deleteById(Object)}, {@link JpaRepository#delete(Object)}, and {@link JpaRepository#deleteAll()}</li>
+ *   <li> Paging and sorting: {@link org.springframework.data.repository.PagingAndSortingRepository#findAll(org.springframework.data.domain.Pageable)}
+ *     and {@link org.springframework.data.repository.PagingAndSortingRepository#findAll(org.springframework.data.domain.Sort)}</li>
+ * </ul>
+ *
+ * It can also be extended with derived query methods (findBy...),
+ * following Spring Data JPA conventions.
+ *
+ * @category Repository
+ * @version 1.0.0
+ * @see JpaRepository
+ * @see org.springframework.data.repository.CrudRepository
+ * @see org.springframework.data.repository.PagingAndSortingRepository
+ * @author a-cubica-r
+ *
+ */
 @Repository
 public interface EntrevistaRepository extends JpaRepository<EntrevistaEntity, Integer> {
 
-	@Query("SELECT e.id, e.fecha, e.tiempo, e.motivocambio, " +
-		   "e.idAspirante, e.idEstado, e.idTipoentrevista, e.idUbicacion, " +
-		   "est.tipo, est.entidad, t.tipo, t.descripcion, u.direccion " +
-		   "FROM EntrevistaEntity e " +
-		   "LEFT JOIN e.estado est LEFT JOIN e.tipoentrevista t LEFT JOIN e.ubicacion u")
-	List<Object[]> findAllScalar();
+	List<EntrevistaEntity> findByIdAspirante(Integer idAspirante);
 
-	@Query("SELECT e.id, e.fecha, e.tiempo, e.motivocambio, " +
-		   "e.idAspirante, e.idEstado, e.idTipoentrevista, e.idUbicacion, " +
-		   "est.tipo, est.entidad, t.tipo, t.descripcion, u.direccion " +
-		   "FROM EntrevistaEntity e " +
-		   "LEFT JOIN e.estado est LEFT JOIN e.tipoentrevista t LEFT JOIN e.ubicacion u " +
-		   "WHERE e.id = :id")
-	Optional<Object[]> findByIdScalar(@Param("id") Integer id);
+	// Insert specific finders here
 
-	@Query("SELECT e.id, e.fecha, e.tiempo, e.motivocambio, " +
-		   "e.idAspirante, e.idEstado, e.idTipoentrevista, e.idUbicacion, " +
-		   "est.tipo, est.entidad, t.tipo, t.descripcion, u.direccion " +
-		   "FROM EntrevistaEntity e " +
-		   "LEFT JOIN e.estado est LEFT JOIN e.tipoentrevista t LEFT JOIN e.ubicacion u " +
-		   "WHERE e.idAspirante = :idAspirante")
-	List<Object[]> findByIdAspiranteScalar(@Param("idAspirante") Integer idAspirante);
+	//List<EntrevistaEntity> findByXxx(String xxx);
+
+	//List<EntrevistaEntity> findByXxxStartingWith(String xxx);
+
+	//List<EntrevistaEntity> findByXxxContaining(String xxx);
+
+	//List<EntrevistaEntity> findByYyy(BigDecimal yyy);
+
+	//List<EntrevistaEntity> findByXxxContainingAndYyy(String xxx, BigDecimal yyy);
 }

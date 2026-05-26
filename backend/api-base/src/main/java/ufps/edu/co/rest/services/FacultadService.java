@@ -31,38 +31,28 @@ public class FacultadService extends GenericService<FacultadEntity, FacultadDTO>
 
     @Transactional(readOnly = true)
     public List<FacultadDTO> findAll() {
-        return repository.findAllScalar().stream().map(this::rowToDto).toList();
+        return entityListToDtoList(repository.findAll());
     }
 
     @Transactional(readOnly = true)
     public FacultadDTO findById(Integer id) {
-        return repository.findByIdScalar(id).map(this::rowToDto).orElse(null);
+        return entityToDto(repository.findById(id));
     }
 
     public FacultadDTO create(FacultadDTO dto) {
-        Integer id = repository.save(dtoToEntity(dto)).getId();
-        return repository.findByIdScalar(id).map(this::rowToDto).orElse(null);
+        return entityToDto(repository.save(dtoToEntity(dto)));
     }
 
     public FacultadDTO update(Integer id, FacultadDTO dto) {
         repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Facultad no encontrado con id: " + id));
         dto.setId(id);
-        repository.save(dtoToEntity(dto));
-        return repository.findByIdScalar(id).map(this::rowToDto).orElse(null);
+        return entityToDto(repository.save(dtoToEntity(dto)));
     }
 
     public void deleteById(Integer id) {
         repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Facultad no encontrado con id: " + id));
         repository.deleteById(id);
-    }
-
-    private FacultadDTO rowToDto(Object[] row) {
-        return FacultadDTO.builder()
-                .id((Integer) row[0])
-                .nombre((String) row[1])
-                .correo((String) row[2])
-                .build();
     }
 }

@@ -13,10 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ufps.edu.co.persistence.entities.PruebaEntity;
 import ufps.edu.co.persistence.repositories.EstadoRepository;
 import ufps.edu.co.persistence.repositories.PruebaRepository;
-import ufps.edu.co.rest.dto.EstadoDTO;
 import ufps.edu.co.rest.dto.PruebaDTO;
-import ufps.edu.co.rest.dto.TipopruebaDTO;
-import ufps.edu.co.rest.dto.UbicacionDTO;
 import ufps.edu.co.rest.services.commons.GenericService;
 
 /**
@@ -40,25 +37,23 @@ public class PruebaService extends GenericService<PruebaEntity, PruebaDTO> {
 
     @Transactional(readOnly = true)
     public List<PruebaDTO> findAll() {
-        return repository.findAllScalar().stream().map(this::rowToDto).toList();
+        return entityListToDtoList(repository.findAllWithRelations());
     }
 
     @Transactional(readOnly = true)
     public PruebaDTO findById(Integer id) {
-        return repository.findByIdScalar(id).map(this::rowToDto).orElse(null);
+        return entityToDto(repository.findById(id));
     }
 
     public PruebaDTO create(PruebaDTO dto) {
-        Integer id = repository.save(dtoToEntity(dto)).getId();
-        return repository.findByIdScalar(id).map(this::rowToDto).orElse(null);
+        return entityToDto(repository.save(dtoToEntity(dto)));
     }
 
     public PruebaDTO update(Integer id, PruebaDTO dto) {
         repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Prueba no encontrado con id: " + id));
         dto.setId(id);
-        repository.save(dtoToEntity(dto));
-        return repository.findByIdScalar(id).map(this::rowToDto).orElse(null);
+        return entityToDto(repository.save(dtoToEntity(dto)));
     }
 
     public void deleteById(Integer id) {
@@ -69,7 +64,7 @@ public class PruebaService extends GenericService<PruebaEntity, PruebaDTO> {
 
     @Transactional(readOnly = true)
     public List<PruebaDTO> findByIdAspirante(Integer idAspirante) {
-        return repository.findByIdAspiranteScalar(idAspirante).stream().map(this::rowToDto).toList();
+        return entityListToDtoList(repository.findByIdAspirante(idAspirante));
     }
 
     public PruebaDTO changeEstado(Integer id, Integer idEstado, String expectedCurrentEstado) {
@@ -81,8 +76,7 @@ public class PruebaService extends GenericService<PruebaEntity, PruebaDTO> {
                     "La prueba no está en estado '" + expectedCurrentEstado + "'. Estado actual: " + estadoActual);
         }
         entity.setIdEstado(idEstado);
-        repository.save(entity);
-        return repository.findByIdScalar(id).map(this::rowToDto).orElse(null);
+        return entityToDto(repository.save(entity));
     }
 
     public PruebaDTO changeEstadoWithMotivo(Integer id, Integer idEstado, String expectedCurrentEstado, String motivocambio) {
@@ -95,8 +89,7 @@ public class PruebaService extends GenericService<PruebaEntity, PruebaDTO> {
         }
         entity.setIdEstado(idEstado);
         entity.setMotivocambio(motivocambio);
-        repository.save(entity);
-        return repository.findByIdScalar(id).map(this::rowToDto).orElse(null);
+        return entityToDto(repository.save(entity));
     }
 
     public PruebaDTO reschedule(Integer id, LocalDate fecha, LocalTime tiempo,
@@ -118,38 +111,6 @@ public class PruebaService extends GenericService<PruebaEntity, PruebaDTO> {
         entity.setIdUbicacion(idUbicacion);
         entity.setIdEstado(idEstadoPendiente);
         entity.setMotivocambio(null);
-        repository.save(entity);
-        return repository.findByIdScalar(id).map(this::rowToDto).orElse(null);
-    }
-
-    private PruebaDTO rowToDto(Object[] row) {
-        UbicacionDTO ubicacionDto = UbicacionDTO.builder()
-                .id((Integer) row[8])
-                .direccion((String) row[11])
-                .build();
-        EstadoDTO estadoDto = row[9] != null ? EstadoDTO.builder()
-                .id((Integer) row[9])
-                .tipo((String) row[12])
-                .build() : null;
-        TipopruebaDTO tipopruebaDto = row[10] != null ? TipopruebaDTO.builder()
-                .id((Integer) row[10])
-                .tipo((String) row[13])
-                .build() : null;
-        return PruebaDTO.builder()
-                .id((Integer) row[0])
-                .nombre((String) row[1])
-                .descripcion((String) row[2])
-                .fecha((LocalDate) row[3])
-                .tiempo((LocalTime) row[4])
-                .motivocambio((String) row[5])
-                .idAspirante((Integer) row[6])
-                .idCohorte((Integer) row[7])
-                .idUbicacion((Integer) row[8])
-                .idEstado((Integer) row[9])
-                .idTipoprueba((Integer) row[10])
-                .ubicacion(ubicacionDto)
-                .estado(estadoDto)
-                .tipoprueba(tipopruebaDto)
-                .build();
+        return entityToDto(repository.save(entity));
     }
 }

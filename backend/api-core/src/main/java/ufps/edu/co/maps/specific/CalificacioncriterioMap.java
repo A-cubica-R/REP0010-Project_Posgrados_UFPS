@@ -23,8 +23,9 @@ public class CalificacioncriterioMap extends
     protected CalificacioncriterioDTO toDtoCreate(CALIFICACIONCRITERIO_CREATE input) {
         return CalificacioncriterioDTO.builder()
                 .idAspirante(input.idAspirante())
-                .idCriteriocohorte(input.idCriterio())
+                .idCriterio(input.idCriterio())
                 .puntuacion(input.puntuacion())
+                .observaciones(input.observaciones())
                 .build();
     }
 
@@ -33,8 +34,9 @@ public class CalificacioncriterioMap extends
         return CalificacioncriterioDTO.builder()
                 .id(input.id())
                 .idAspirante(input.idAspirante())
-                .idCriteriocohorte(input.idCriterio())
+                .idCriterio(input.idCriterio())
                 .puntuacion(input.puntuacion())
+                .observaciones(input.observaciones())
                 .build();
     }
 
@@ -53,9 +55,13 @@ public class CalificacioncriterioMap extends
         if (input.idAspirante() != null)
             builder.idAspirante(input.idAspirante());
         if (input.idCriterio() != null)
-            builder.idCriteriocohorte(input.idCriterio());
+            builder.idCriterio(input.idCriterio());
         if (input.puntuacion() != null)
             builder.puntuacion(input.puntuacion());
+        if (input.pesoSnapshot() != null)
+            builder.pesoSnapshot(input.pesoSnapshot());
+        if (input.observaciones() != null)
+            builder.observaciones(input.observaciones());
 
         return builder.build();
     }
@@ -73,16 +79,18 @@ public class CalificacioncriterioMap extends
             return null;
 
         AspiranteMap aspiranteMap = new AspiranteMap();
-        CriteriocohorteMap criterioevaluacionMap = new CriteriocohorteMap();
+        CriterioevaluacionMap criterioevaluacionMap = new CriterioevaluacionMap();
 
         return CalificacioncriterioOutput.builder()
                 .id(dto.getId())
                 .idAspirante(dto.getIdAspirante())
-                .idCriteriocohorte(dto.getIdCriteriocohorte())
+                .idCriterio(dto.getIdCriterio())
                 .puntuacion(dto.getPuntuacion())
+                .pesoSnapshot(dto.getPesoSnapshot())
+                .observaciones(dto.getObservaciones())
                 .aspirante(dto.getAspirante() != null ? aspiranteMap.toOutput(dto.getAspirante()) : null)
-                .criteriocohorte(dto.getCriteriocohorte() != null
-                        ? criterioevaluacionMap.toOutput(dto.getCriteriocohorte())
+                .criterioevaluacion(dto.getCriterioevaluacion() != null
+                        ? criterioevaluacionMap.toOutput(dto.getCriterioevaluacion())
                         : null)
                 .build();
     }

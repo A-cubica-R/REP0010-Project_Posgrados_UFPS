@@ -24,9 +24,6 @@ public class SedeProcessor
     @Autowired
     private SedeMap map;
 
-    @Autowired
-    private UbicacionProcessor ubicacionProcessor;
-
     @Override
     public SedeOutput create(SEDE_CREATE input) {
         try {
@@ -39,8 +36,10 @@ public class SedeProcessor
 
     public SedeOutput createWithUbicacion(SEDE_CREATE_WITH_UBICACION input) {
         try {
+
             UBICACION_CREATE ubiCreate = new UBICACION_CREATE(input.ubicacion());
-            UbicacionOutput ubicacionOutput = ubicacionProcessor.create(ubiCreate);
+            UbicacionProcessor processorUbi = new UbicacionProcessor();
+            UbicacionOutput ubicacionOutput = processorUbi.create(ubiCreate);
             SedeDTO dto = map.toDto(new SEDE_CREATE(input.nombre(), ubicacionOutput.id()));
             return map.toOutput(service.create(dto));
         } catch (Exception e) {

@@ -32,6 +32,8 @@ public class CohorteDTO implements Serializable {
     //--- OTHER DATA FIELDS 
     private String nombre ;
     private Integer cupos ;
+    private boolean requiereentrevista ;
+    private boolean requiereprueba ;
     private Integer idEstado ;
     private Integer idSemestre ;
     private Integer idModalidad ;
@@ -49,7 +51,8 @@ public class CohorteDTO implements Serializable {
     private PlazoDTO plazo2 ; 
     private PlazoDTO plazo3 ; 
     private ProgramaDTO programa ; 
-    private List<CriterioevaluacionDTO> criterioevaluacionList ;
+    private List<CriterioevaluacionDTO> criterioevaluacionList ; 
+    private List<DocumentocohorteDTO> documentocohorteList ; 
     private List<PruebaDTO> pruebaList ; 
 
     @Override
@@ -60,6 +63,8 @@ public class CohorteDTO implements Serializable {
 		sb.append("id=").append(id);
 		sb.append(separator).append("nombre=").append(nombre);
 		sb.append(separator).append("cupos=").append(cupos);
+		sb.append(separator).append("requiereentrevista=").append(requiereentrevista);
+		sb.append(separator).append("requiereprueba=").append(requiereprueba);
 		sb.append(separator).append("idEstado=").append(idEstado);
 		sb.append(separator).append("idSemestre=").append(idSemestre);
 		sb.append(separator).append("idModalidad=").append(idModalidad);

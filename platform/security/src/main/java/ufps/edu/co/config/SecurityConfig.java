@@ -33,13 +33,9 @@ public class SecurityConfig {
          * los controllers del paquete CRUD ussan la ruta : /api/dev/endpoint/
          * los controllers del paquete CASE ussan la ruta : /api/application/case/
          */
-        private static final String[] DIRECTOR_POSGRADOS_PATHS = {
-                        "/api/application/case/cohortes/**",
-                        "/api/application/case/documentos/**",
-                        "/api/dev/endpoint/tipoentrevista/listall",
-                        "/api/dev/endpoint/estado/listall",
-                        "/api/application/case/director-posgrados/**"
-
+        private static final String[] DIRECTOR_FACULTAD_PATHS = {
+                        "/api/dev/endpoint/programa/**",
+                        "/api/application/case/Directorfacultad/**"
         };
 
         private static final String[] DIRECTOR_PROGRAMA_PATHS = {
@@ -48,10 +44,6 @@ public class SecurityConfig {
                         "/api/application/case/documentos/**",
                         "/api/dev/endpoint/tipoentrevista/listall",
                         "/api/dev/endpoint/estado/listall"
-        };
-
-        private static final String[] DIRECTOR_PROGRAMA_SHARED_PATHS = {
-                        "/api/application/case/director-programa/programa/**"
         };
 
         private static final String[] ASPIRANTE_PATHS = {
@@ -78,12 +70,8 @@ public class SecurityConfig {
                                                 .permitAll()
 
                                                 // Rutas específicas por rol (antes del catch-all)
-                                                .requestMatchers(DIRECTOR_PROGRAMA_SHARED_PATHS)
-                                                .hasAnyRole("DIRECTOR_DE_PROGRAMA", "DIRECTOR_DE_POSGRADOS", "SUPER_ADMINISTRADOR")
-
-                                                // Rutas específicas por rol (antes del catch-all)
-                                                .requestMatchers(DIRECTOR_POSGRADOS_PATHS)
-                                                .hasAnyRole("DIRECTOR_DE_POSGRADOS", "SUPER_ADMINISTRADOR")
+                                                .requestMatchers(DIRECTOR_FACULTAD_PATHS)
+                                                .hasAnyRole("DIRECTOR_DE_FACULTAD", "SUPER_ADMINISTRADOR")
 
                                                 // Rutas específicas por rol (antes del catch-all)
                                                 .requestMatchers(DIRECTOR_PROGRAMA_PATHS)

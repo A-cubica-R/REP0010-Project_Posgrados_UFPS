@@ -4,19 +4,13 @@
  */
 package ufps.edu.co.rest.services;
 
-import java.math.BigDecimal;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ufps.edu.co.persistence.entities.ProgramaEntity;
 import ufps.edu.co.persistence.repositories.ProgramaRepository;
-import ufps.edu.co.rest.dto.FacultadDTO;
-import ufps.edu.co.rest.dto.OtrosvaloresDTO;
 import ufps.edu.co.rest.dto.ProgramaDTO;
-import ufps.edu.co.rest.dto.SedeDTO;
-import ufps.edu.co.rest.dto.TiporegistroDTO;
-import ufps.edu.co.rest.dto.UbicacionDTO;
 import ufps.edu.co.rest.services.commons.GenericService;
 
 /**
@@ -37,91 +31,32 @@ public class ProgramaService extends GenericService<ProgramaEntity, ProgramaDTO>
 
     @Transactional(readOnly = true)
     public List<ProgramaDTO> findAll() {
-        return repository.findAllScalar().stream().map(this::rowToDto).toList();
+        return entityListToDtoList(repository.findAll());
     }
 
     @Transactional(readOnly = true)
     public ProgramaDTO findById(Integer id) {
-        return repository.findByIdScalar(id).map(this::rowToDto).orElse(null);
+        return entityToDto(repository.findById(id));
     }
 
-    @Transactional(readOnly = true)
     public List<ProgramaDTO> findByIdFacultad(Integer idFacultad) {
-        return repository.findByIdFacultadScalar(idFacultad).stream().map(this::rowToDto).toList();
+        return entityListToDtoList(repository.findByIdFacultad(idFacultad));
     }
-
+    
     public ProgramaDTO create(ProgramaDTO dto) {
-        Integer id = repository.save(dtoToEntity(dto)).getId();
-        return repository.findByIdScalar(id).map(this::rowToDto).orElse(null);
+        return entityToDto(repository.save(dtoToEntity(dto)));
     }
 
     public ProgramaDTO update(Integer id, ProgramaDTO dto) {
         repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Programa no encontrado con id: " + id));
         dto.setId(id);
-        repository.save(dtoToEntity(dto));
-        return repository.findByIdScalar(id).map(this::rowToDto).orElse(null);
+        return entityToDto(repository.save(dtoToEntity(dto)));
     }
 
     public void deleteById(Integer id) {
         repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Programa no encontrado con id: " + id));
         repository.deleteById(id);
-    }
-
-    private ProgramaDTO rowToDto(Object[] row) {
-        // [0]=id [1]=codigo [2]=nombre [3]=duracion [4]=correo [5]=registrosnies
-        // [6]=nivelformacion [7]=titulo [8]=rcmineducacion [9]=creditos [10]=periodicidad
-        // [11]=valormatricula [12]=idFacultad [13]=idOtros [14]=idSede [15]=idTiporegistro
-        // [16]=facultad.nombre [17]=facultad.correo
-        // [18]=sede.nombre [19]=sede.idUbicacion [20]=sede.ubicacion.direccion
-        // [21]=otrosvalores.carnet [22]=otrosvalores.estampilla [23]=otrosvalores.seguro
-        // [24]=tiporegistro.tipo
-        FacultadDTO facultadDto = row[12] != null ? FacultadDTO.builder()
-                .id((Integer) row[12])
-                .nombre((String) row[16])
-                .correo((String) row[17])
-                .build() : null;
-        SedeDTO sedeDto = row[14] != null ? SedeDTO.builder()
-                .id((Integer) row[14])
-                .nombre((String) row[18])
-                .idUbicacion((Integer) row[19])
-                .ubicacion(row[19] != null ? UbicacionDTO.builder()
-                        .id((Integer) row[19])
-                        .direccion((String) row[20])
-                        .build() : null)
-                .build() : null;
-        OtrosvaloresDTO otrosDto = row[13] != null ? OtrosvaloresDTO.builder()
-                .id((Integer) row[13])
-                .carnet((Boolean) row[21])
-                .estampilla((Boolean) row[22])
-                .seguro((Boolean) row[23])
-                .build() : null;
-        TiporegistroDTO tiporegistroDto = row[15] != null ? TiporegistroDTO.builder()
-                .id((Integer) row[15])
-                .tipo((String) row[24])
-                .build() : null;
-        return ProgramaDTO.builder()
-                .id((Integer) row[0])
-                .codigo((Integer) row[1])
-                .nombre((String) row[2])
-                .duracion((Integer) row[3])
-                .correo((String) row[4])
-                .registrosnies((String) row[5])
-                .nivelformacion((String) row[6])
-                .titulo((String) row[7])
-                .rcmineducacion((String) row[8])
-                .creditos((Integer) row[9])
-                .periodicidad((String) row[10])
-                .valormatricula((BigDecimal) row[11])
-                .idFacultad((Integer) row[12])
-                .idOtros((Integer) row[13])
-                .idSede((Integer) row[14])
-                .idTiporegistro((Integer) row[15])
-                .facultad(facultadDto)
-                .sede(sedeDto)
-                .otrosvalores(otrosDto)
-                .tiporegistro(tiporegistroDto)
-                .build();
     }
 }

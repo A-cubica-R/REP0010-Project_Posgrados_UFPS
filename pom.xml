@@ -17,7 +17,6 @@
 		<!-- BACKEND -->
 		<module>backend/api-base</module>
 		<module>backend/api-core</module>
-		<module>backend/api-test</module>
 		<module>backend/api-rest</module>
 		<module>backend/api-auth</module>
 		<module>backend/s3-storage</module>

@@ -4,12 +4,7 @@
  */
 package ufps.edu.co.persistence.repositories;
 
-import java.util.List;
-import java.util.Optional;
-
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import ufps.edu.co.persistence.entities.SedeEntity;
@@ -42,18 +37,9 @@ import ufps.edu.co.persistence.entities.SedeEntity;
 @Repository
 public interface SedeRepository extends JpaRepository<SedeEntity, Integer> {
 
-	@Query("SELECT s.id, s.nombre, s.idUbicacion, s.ubicacion.direccion, s.ubicacion.idMunicipio FROM SedeEntity s")
-	List<Object[]> findAllScalar();
+	java.util.Optional<SedeEntity> findFirstByNombre(String nombre);
 
-	@Query("SELECT s.id, s.nombre, s.idUbicacion, s.ubicacion.direccion, s.ubicacion.idMunicipio FROM SedeEntity s WHERE s.id = :id")
-	Optional<Object[]> findByIdScalar(@Param("id") Integer id);
-
-	@Query("SELECT s.id, s.nombre, s.idUbicacion, s.ubicacion.direccion, s.ubicacion.idMunicipio FROM SedeEntity s WHERE s.nombre = :nombre")
-	Optional<Object[]> findFirstByNombreScalar(@Param("nombre") String nombre);
-
-	Optional<SedeEntity> findFirstByNombre(String nombre);
-
-	// Insert specific finders here
+	// Insert specific finders here 
 
 	//List<SedeEntity> findByXxx(String xxx);
 

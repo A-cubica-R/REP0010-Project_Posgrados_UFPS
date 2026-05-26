@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import ufps.edu.co.persistence.entities.AdministrativoEntity;
@@ -46,16 +44,7 @@ public interface AdministrativoRepository extends JpaRepository<AdministrativoEn
 
 	Optional<AdministrativoEntity> findByIdPersona(Integer idPersona);
 
-	@Query("SELECT a.id FROM AdministrativoEntity a WHERE a.idPersona = :idPersona")
-	Optional<Integer> findIdByIdPersona(@Param("idPersona") Integer idPersona);
-
-	@Query("SELECT a.cargo.idPrograma FROM AdministrativoEntity a WHERE a.idPersona = :idPersona")
-	Optional<Integer> findIdProgramaByIdPersona(@Param("idPersona") Integer idPersona);
-
-	@Query("SELECT a.cargo.nombre FROM AdministrativoEntity a WHERE a.idPersona = :idPersona")
-	Optional<String> findCargoNombreByIdPersona(@Param("idPersona") Integer idPersona);
-
-	// Insert specific finders here
+	// Insert specific finders here 
 
 	//List<AdministrativoEntity> findByXxx(String xxx);
 

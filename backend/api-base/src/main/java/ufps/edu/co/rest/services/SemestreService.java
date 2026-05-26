@@ -4,14 +4,12 @@
  */
 package ufps.edu.co.rest.services;
 
-import java.time.LocalDate;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ufps.edu.co.persistence.entities.SemestreEntity;
 import ufps.edu.co.persistence.repositories.SemestreRepository;
-import ufps.edu.co.rest.dto.EstadoDTO;
 import ufps.edu.co.rest.dto.SemestreDTO;
 import ufps.edu.co.rest.services.commons.GenericService;
 
@@ -33,16 +31,12 @@ public class SemestreService extends GenericService<SemestreEntity, SemestreDTO>
 
     @Transactional(readOnly = true)
     public List<SemestreDTO> findAll() {
-        return repository.findAllScalar().stream()
-                .map(this::rowToDto)
-                .toList();
+        return entityListToDtoList(repository.findAll());
     }
 
     @Transactional(readOnly = true)
     public SemestreDTO findById(Integer id) {
-        return repository.findByIdScalar(id)
-                .map(this::rowToDto)
-                .orElse(null);
+        return entityToDto(repository.findById(id));
     }
 
     public SemestreDTO create(SemestreDTO dto) {
@@ -53,31 +47,12 @@ public class SemestreService extends GenericService<SemestreEntity, SemestreDTO>
         repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Semestre no encontrado con id: " + id));
         dto.setId(id);
-        repository.save(dtoToEntity(dto));
-        return repository.findByIdScalar(id)
-                .map(this::rowToDto)
-                .orElse(null);
+        return entityToDto(repository.save(dtoToEntity(dto)));
     }
 
     public void deleteById(Integer id) {
         repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Semestre no encontrado con id: " + id));
         repository.deleteById(id);
-    }
-
-    private SemestreDTO rowToDto(Object[] row) {
-        EstadoDTO estadoDto = EstadoDTO.builder()
-                .id((Integer) row[5])
-                .entidad((String) row[6])
-                .tipo((String) row[7])
-                .build();
-        return SemestreDTO.builder()
-                .id((Integer) row[0])
-                .nombre((String) row[1])
-                .fechaInicio((LocalDate) row[2])
-                .fechaFin((LocalDate) row[3])
-                .idEstado((Integer) row[4])
-                .estado(estadoDto)
-                .build();
     }
 }
