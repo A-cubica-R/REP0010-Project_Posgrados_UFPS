@@ -170,6 +170,11 @@ public class AspiranteService extends GenericService<AspiranteEntity, AspiranteD
     }
 
     @Transactional(readOnly = true)
+    public Integer findIdPersonaById(Integer idAspirante) {
+        return repository.findIdPersonaById(idAspirante).orElse(null);
+    }
+
+    @Transactional(readOnly = true)
     public Integer findIdByIdPersona(Integer idPersona) {
         return repository.findIdByIdPersona(idPersona).orElse(null);
     }
