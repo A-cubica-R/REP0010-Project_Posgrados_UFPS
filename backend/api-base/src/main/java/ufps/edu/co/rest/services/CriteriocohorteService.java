@@ -4,14 +4,15 @@
  */
 package ufps.edu.co.rest.services;
 
-import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import ufps.edu.co.persistence.entities.CriteriocohorteEntity;
-import ufps.edu.co.persistence.repositories.CriteriocohorteRepository;
-import ufps.edu.co.rest.dto.CriteriocohorteDTO;
-import ufps.edu.co.rest.services.commons.GenericService;
+import java.util.*;
+import org.springframework.beans.factory.annotation.*;
+import org.springframework.stereotype.*;
+import org.springframework.transaction.annotation.*;
+import ufps.edu.co.persistence.entities.*;
+import ufps.edu.co.persistence.projections.*;
+import ufps.edu.co.persistence.repositories.*;
+import ufps.edu.co.rest.dto.*;
+import ufps.edu.co.rest.services.commons.*;
 
 /**
  * REST service for entity "Criteriocohorte" <br>
@@ -74,5 +75,10 @@ public class CriteriocohorteService extends GenericService<CriteriocohorteEntity
     @Transactional(readOnly = true)
     public List<CriteriocohorteDTO> findByIdCriterio(Integer idCriterio) {
         return entityListToDtoList(repository.findByIdCriterio(idCriterio));
+    }
+
+    @Transactional(readOnly = true)
+    public List<CriterioCalificacionView> findCriteriosConCalificacion(Integer idCohorte, Integer idAspirante) {
+        return repository.findCriteriosConCalificacion(idCohorte, idAspirante);
     }
 }

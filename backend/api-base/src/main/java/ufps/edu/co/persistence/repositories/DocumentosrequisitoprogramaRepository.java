@@ -16,6 +16,6 @@ import ufps.edu.co.persistence.entities.DocumentosrequisitoprogramaEntity;
 @Repository
 public interface DocumentosrequisitoprogramaRepository extends JpaRepository<DocumentosrequisitoprogramaEntity, Integer> {
 
-	@Query("SELECT DISTINCT d FROM DocumentosrequisitoprogramaEntity d JOIN d.documentosrequisitoprogramacohorteList dc JOIN dc.cohorte c WHERE c.idPrograma = :idPrograma")
+	@Query("SELECT d FROM DocumentosrequisitoprogramaEntity d WHERE d.idPrograma = :idPrograma")
 	List<DocumentosrequisitoprogramaEntity> findByIdPrograma(@Param("idPrograma") Integer idPrograma);
 }
