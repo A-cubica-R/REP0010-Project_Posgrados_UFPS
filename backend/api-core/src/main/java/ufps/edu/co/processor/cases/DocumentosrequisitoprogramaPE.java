@@ -1,13 +1,13 @@
 package ufps.edu.co.processor.cases;
 
 import java.util.List;
-import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import ufps.edu.co.maps.specific.DocumentosrequisitoprogramaMap;
 import ufps.edu.co.processor.crud.DocumentosrequisitoprogramaProcessor;
+import ufps.edu.co.records.output.cases.Listdocumentosprogramaconsejo;
 import ufps.edu.co.records.output.entity.DocumentosrequisitoprogramaOutput;
 import ufps.edu.co.rest.dto.DocumentosrequisitoconsejoDTO;
 import ufps.edu.co.rest.services.DocumentosrequisitoprogramaService;
@@ -33,15 +33,18 @@ public class DocumentosrequisitoprogramaPE extends DocumentosrequisitoprogramaPr
         }
     }
     
-    public List<DocumentosrequisitoprogramaOutput> findByIdProgramaAndConsejo(Integer idPrograma) {
+    public Listdocumentosprogramaconsejo findByIdProgramaAndConsejo(Integer idPrograma) {
         try {
-            List<DocumentosrequisitoprogramaOutput> programaDocs = findByIdPrograma(idPrograma);
-            List<DocumentosrequisitoprogramaOutput> consejoDocs = consejoService.findByIdPrograma(idPrograma)
+            List<DocumentosrequisitoprogramaOutput> documentosPrograma = findByIdPrograma(idPrograma);
+            List<DocumentosrequisitoprogramaOutput> documentosConsejo = consejoService.findByIdPrograma(idPrograma)
                     .stream()
                     .map(doc -> toProgramaOutput(doc, idPrograma))
                     .toList();
 
-            return Stream.concat(programaDocs.stream(), consejoDocs.stream()).toList();
+            return Listdocumentosprogramaconsejo.builder()
+                    .documentosConsejo(documentosConsejo)
+                    .documentosPrograma(documentosPrograma)
+                    .build();
         } catch (Exception e) {
             throw new RuntimeException("Error finding Documentosrequisitoprograma by programa y consejo: " + e.getMessage(), e);
         }
