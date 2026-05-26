@@ -12,4 +12,19 @@ import ufps.edu.co.persistence.entities.DocumentosrequisitoconsejoEntity;
 @Repository
 public interface DocumentosrequisitoconsejoRepository extends JpaRepository<DocumentosrequisitoconsejoEntity, Integer> {
 
+<<<<<<< HEAD
+=======
+	@Query("SELECT d.id, d.nombre, d.tamanomaximo FROM DocumentosrequisitoconsejoEntity d")
+	List<Object[]> findAllScalar();
+
+	@Query("SELECT d.id, d.nombre, d.tamanomaximo FROM DocumentosrequisitoconsejoEntity d WHERE d.id = :id")
+	Optional<Object[]> findByIdScalar(@Param("id") Integer id);
+
+	@Query("SELECT DISTINCT d.id, d.nombre, d.tamanomaximo, d.urlformato " +
+	       "FROM DocumentosrequisitoconsejoEntity d " +
+	       "JOIN d.documentosrequisitoconsejocohorteList dc " +
+	       "JOIN dc.cohorte c " +
+	       "WHERE c.idPrograma = :idPrograma")
+	List<Object[]> findByIdProgramaScalar(@Param("idPrograma") Integer idPrograma);
+>>>>>>> e469ee19457517db18126f686397be758bbac7a7
 }

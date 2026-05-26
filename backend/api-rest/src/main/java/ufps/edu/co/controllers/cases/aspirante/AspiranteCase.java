@@ -152,16 +152,14 @@ public class AspiranteCase {
                     .build();
             documentoService.create(nuevo);
         } else {
-            DocumentoDTO doc = null;
-            // doc = documentoService
-            // .findByIdAspiranteAndIdTipodocumento(idAspirante, idRequisito)
-            // .orElseThrow();
-            doc.setEnlaceurl(upload.enlaceurl());
-            doc.setKeyfile(upload.keyfile());
-            doc.setFechacargue(LocalDate.now());
-            doc.setIdEstadodocumento(estadoPendiente.getId());
-            doc.setEstadodocumento(estadoPendiente);
-            doc.setObservaciones(null);
+            DocumentoDTO doc = DocumentoDTO.builder()
+                    .enlaceurl(upload.enlaceurl())
+                    .keyfile(upload.keyfile())
+                    .fechacargue(LocalDate.now())
+                    .idAspirante(idAspirante)
+                    .idEstadodocumento(estadoPendiente.getId())
+                    .estadodocumento(estadoPendiente)
+                    .build();
             documentoService.update(doc.getId(), doc);
         }
 

@@ -2,6 +2,7 @@ package ufps.edu.co.processor.crud;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import ufps.edu.co.maps.specific.DocumentosrequisitoprogramaMap;
 import ufps.edu.co.records.input.entity.DocumentosrequisitoprogramaInput.*;
@@ -11,8 +12,15 @@ import ufps.edu.co.rest.services.DocumentosrequisitoprogramaService;
 import ufps.edu.co.usecase.GlobalUseCase;
 
 @Service
+@Primary
 public class DocumentosrequisitoprogramaProcessor implements
-        GlobalUseCase<DOCUMENTOSREQUISITOPROGRAMA_CREATE, DOCUMENTOSREQUISITOPROGRAMA_UPDATE, DOCUMENTOSREQUISITOPROGRAMA_DELETE, DOCUMENTOSREQUISITOPROGRAMA_PATCH, DOCUMENTOSREQUISITOPROGRAMA_FIND, DocumentosrequisitoprogramaOutput> {
+        GlobalUseCase<
+            DOCUMENTOSREQUISITOPROGRAMA_CREATE, 
+            DOCUMENTOSREQUISITOPROGRAMA_UPDATE, 
+            DOCUMENTOSREQUISITOPROGRAMA_DELETE, 
+            DOCUMENTOSREQUISITOPROGRAMA_PATCH, 
+            DOCUMENTOSREQUISITOPROGRAMA_FIND, 
+            DocumentosrequisitoprogramaOutput> {
 
     @Autowired
     private DocumentosrequisitoprogramaService service;
@@ -24,6 +32,16 @@ public class DocumentosrequisitoprogramaProcessor implements
     public DocumentosrequisitoprogramaOutput create(DOCUMENTOSREQUISITOPROGRAMA_CREATE input) {
         try {
             DocumentosrequisitoprogramaDTO dto = map.toDto(input);
+            return map.toOutput(service.create(dto));
+        } catch (Exception e) {
+            throw new RuntimeException("Error creating Documentosrequisitoprograma: " + e.getMessage(), e);
+        }
+    }
+
+    public DocumentosrequisitoprogramaOutput create(DOCUMENTOSREQUISITOPROGRAMA_CREATE input, Integer idPrograma) {
+        try {
+            DocumentosrequisitoprogramaDTO dto = map.toDto(input);
+            dto.setId_programa(idPrograma);
             return map.toOutput(service.create(dto));
         } catch (Exception e) {
             throw new RuntimeException("Error creating Documentosrequisitoprograma: " + e.getMessage(), e);
@@ -69,14 +87,6 @@ public class DocumentosrequisitoprogramaProcessor implements
             service.deleteById(input.id());
         } catch (Exception e) {
             throw new RuntimeException("Error deleting Documentosrequisitoprograma by ID: " + e.getMessage(), e);
-        }
-    }
-
-    public List<DocumentosrequisitoprogramaOutput> findByIdPrograma(Integer idPrograma) {
-        try {
-            return service.findByIdPrograma(idPrograma).stream().map(map::toOutput).toList();
-        } catch (Exception e) {
-            throw new RuntimeException("Error finding Documentosrequisitoprograma by programa: " + e.getMessage(), e);
         }
     }
 }
