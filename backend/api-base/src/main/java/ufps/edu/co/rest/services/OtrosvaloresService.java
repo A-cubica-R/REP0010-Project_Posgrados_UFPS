@@ -29,53 +29,47 @@ public class OtrosvaloresService extends GenericService<OtrosvaloresEntity, Otro
         super(OtrosvaloresEntity.class, OtrosvaloresDTO.class);
     }
 
+    @Override
+    protected OtrosvaloresDTO entityToDto(OtrosvaloresEntity e) {
+        return OtrosvaloresDTO.builder()
+                .id(e.getId())
+                .carnet(e.isCarnet())
+                .estampilla(e.isEstampilla())
+                .seguro(e.isSeguro())
+                .build();
+    }
+
     @Transactional(readOnly = true)
     public List<OtrosvaloresDTO> findAll() {
-        return repository.findAllScalar().stream().map(this::rowToDto).toList();
+        return entityListToDtoList(repository.findAll());
     }
 
     @Transactional(readOnly = true)
     public OtrosvaloresDTO findById(Integer id) {
-        return repository.findByIdScalar(id).map(this::rowToDto).orElse(null);
+        return entityToDto(repository.findById(id));
     }
 
     @Transactional(readOnly = true)
     public OtrosvaloresDTO findByValores(boolean carnet, boolean estampilla, boolean seguro) {
         return repository.findFirstByCarnetAndEstampillaAndSeguro(carnet, estampilla, seguro)
-                .map(e -> OtrosvaloresDTO.builder()
-                        .id(e.getId())
-                        .carnet(e.isCarnet())
-                        .estampilla(e.isEstampilla())
-                        .seguro(e.isSeguro())
-                        .build())
+                .map(this::entityToDto)
                 .orElse(null);
     }
 
     public OtrosvaloresDTO create(OtrosvaloresDTO dto) {
-        Integer id = repository.save(dtoToEntity(dto)).getId();
-        return repository.findByIdScalar(id).map(this::rowToDto).orElse(null);
+        return entityToDto(repository.save(dtoToEntity(dto)));
     }
 
     public OtrosvaloresDTO update(Integer id, OtrosvaloresDTO dto) {
         repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Otrosvalores no encontrado con id: " + id));
         dto.setId(id);
-        repository.save(dtoToEntity(dto));
-        return repository.findByIdScalar(id).map(this::rowToDto).orElse(null);
+        return entityToDto(repository.save(dtoToEntity(dto)));
     }
 
     public void deleteById(Integer id) {
         repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Otrosvalores no encontrado con id: " + id));
         repository.deleteById(id);
-    }
-
-    private OtrosvaloresDTO rowToDto(Object[] row) {
-        return OtrosvaloresDTO.builder()
-                .id((Integer) row[0])
-                .carnet((Boolean) row[1])
-                .estampilla((Boolean) row[2])
-                .seguro((Boolean) row[3])
-                .build();
     }
 }

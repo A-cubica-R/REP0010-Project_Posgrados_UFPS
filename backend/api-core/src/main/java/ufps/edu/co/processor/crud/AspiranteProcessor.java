@@ -575,14 +575,14 @@ public class AspiranteProcessor implements
 
     public List<CohorteResumenOutput> getCohortesByProgramaResumen(Integer programaId) {
         return cohorteService.findResumenDataByIdPrograma(programaId).stream().map(row -> {
-            Integer id         = (Integer)   row[0];
-            String  nombre     = (String)    row[1];
-            Integer cuposRaw   = (Integer)   row[2];
-            String  estadoTipo = (String)    row[3];
-            String  semNombre  = (String)    row[4];
-            LocalDate plazoDocFin  = (LocalDate) row[5];
-            LocalDate plazoInsFin  = (LocalDate) row[6];
-            LocalDate plazoPagoFin = (LocalDate) row[7];
+            Integer id         = row.getId();
+            String  nombre     = row.getNombre();
+            Integer cuposRaw   = row.getCupos();
+            String  estadoTipo = row.getEstado() != null ? row.getEstado().getTipo() : null;
+            String  semNombre  = row.getSemestre() != null ? row.getSemestre().getNombre() : null;
+            LocalDate plazoDocFin  = row.getPlazo()  != null ? row.getPlazo().getFechafin()  : null;
+            LocalDate plazoInsFin  = row.getPlazo2() != null ? row.getPlazo2().getFechafin() : null;
+            LocalDate plazoPagoFin = row.getPlazo3() != null ? row.getPlazo3().getFechafin() : null;
 
             boolean activa   = "ABIERTA".equalsIgnoreCase(estadoTipo);
             int cupos        = cuposRaw != null ? cuposRaw : 0;

@@ -5,11 +5,8 @@
 package ufps.edu.co.persistence.repositories;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import ufps.edu.co.persistence.entities.DocumentosrequisitoconsejocohorteEntity;
@@ -17,12 +14,5 @@ import ufps.edu.co.persistence.entities.DocumentosrequisitoconsejocohorteEntity;
 @Repository
 public interface DocumentosrequisitoconsejocohorteRepository extends JpaRepository<DocumentosrequisitoconsejocohorteEntity, Integer> {
 
-	@Query("SELECT d.id, d.idDocrequisito, d.idCohorte FROM DocumentosrequisitoconsejocohorteEntity d")
-	List<Object[]> findAllScalar();
-
-	@Query("SELECT d.id, d.idDocrequisito, d.idCohorte FROM DocumentosrequisitoconsejocohorteEntity d WHERE d.id = :id")
-	Optional<Object[]> findByIdScalar(@Param("id") Integer id);
-
-	@Query("SELECT d.id, d.idDocrequisito, d.idCohorte FROM DocumentosrequisitoconsejocohorteEntity d WHERE d.idCohorte = :idCohorte")
-	List<Object[]> findByIdCohorteScalar(@Param("idCohorte") Integer idCohorte);
+	List<DocumentosrequisitoconsejocohorteEntity> findByIdCohorte(Integer idCohorte);
 }

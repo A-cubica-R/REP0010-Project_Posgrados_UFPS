@@ -29,46 +29,45 @@ public class EstadodocumentoService extends GenericService<EstadodocumentoEntity
         super(EstadodocumentoEntity.class, EstadodocumentoDTO.class);
     }
 
+    @Override
+    protected EstadodocumentoDTO entityToDto(EstadodocumentoEntity e) {
+        return EstadodocumentoDTO.builder()
+                .id(e.getId())
+                .estado(e.getEstado())
+                .build();
+    }
+
     @Transactional(readOnly = true)
     public List<EstadodocumentoDTO> findAll() {
-        return repository.findAllScalar().stream().map(this::rowToDto).toList();
+        return entityListToDtoList(repository.findAll());
     }
 
     @Transactional(readOnly = true)
     public EstadodocumentoDTO findById(Integer id) {
-        return repository.findByIdScalar(id).map(this::rowToDto).orElse(null);
+        return entityToDto(repository.findById(id));
     }
 
     @Transactional(readOnly = true)
     public EstadodocumentoDTO findByEstado(String estado) {
-        return repository.findByEstadoScalar(estado)
-                .map(this::rowToDto)
+        return repository.findByEstado(estado)
+                .map(this::entityToDto)
                 .orElseThrow(() -> new RuntimeException("Estado de documento no encontrado: " + estado));
     }
 
     public EstadodocumentoDTO create(EstadodocumentoDTO dto) {
-        Integer id = repository.save(dtoToEntity(dto)).getId();
-        return repository.findByIdScalar(id).map(this::rowToDto).orElse(null);
+        return entityToDto(repository.save(dtoToEntity(dto)));
     }
 
     public EstadodocumentoDTO update(Integer id, EstadodocumentoDTO dto) {
         repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Estadodocumento no encontrado con id: " + id));
         dto.setId(id);
-        repository.save(dtoToEntity(dto));
-        return repository.findByIdScalar(id).map(this::rowToDto).orElse(null);
+        return entityToDto(repository.save(dtoToEntity(dto)));
     }
 
     public void deleteById(Integer id) {
         repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Estadodocumento no encontrado con id: " + id));
         repository.deleteById(id);
-    }
-
-    private EstadodocumentoDTO rowToDto(Object[] row) {
-        return EstadodocumentoDTO.builder()
-                .id((Integer) row[0])
-                .estado((String) row[1])
-                .build();
     }
 }
