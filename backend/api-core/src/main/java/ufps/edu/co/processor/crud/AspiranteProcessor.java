@@ -322,6 +322,49 @@ public class AspiranteProcessor implements
                 .build();
     }
 
+    public List<ProgramaInicioOutput> getProgramaInicioByPrograma(Integer programaId) {
+        try {
+            return cohorteService.findResumenDataByIdPrograma(programaId).stream()
+                    .filter(cohorte -> cohorte.getEstado() != null
+                            && "ABIERTA".equalsIgnoreCase(cohorte.getEstado().getTipo()))
+                    .map(cohorte -> {
+                        Integer cohorteId = cohorte.getId();
+                        String nombre = cohorte.getNombre();
+                        LocalDate fechaLimiteDocumentos = cohorte.getPlazo() != null
+                                ? cohorte.getPlazo().getFechafin()
+                                : null;
+                        LocalDate fechaLimitePago = cohorte.getPlazo3() != null
+                                ? cohorte.getPlazo3().getFechafin()
+                                : null;
+
+                        long totalInscritos = service.countByCohorte(cohorteId);
+                        long validados = service.countValidadosByCohorte(cohorteId);
+                        long calificados = service.countCalificadosByCohorte(cohorteId);
+
+                        return ProgramaInicioOutput.builder()
+                                .cohorteActual(ProgramaInicioOutput.CohorteResumen.builder()
+                                        .id(cohorteId)
+                                        .nombre(nombre)
+                                        .activa(true)
+                                        .fechaLimiteDocumentos(fechaLimiteDocumentos)
+                                        .fechaLimitePago(fechaLimitePago)
+                                        .build())
+                                .validacion(ProgramaInicioOutput.ValidacionResumen.builder()
+                                        .totalInscritos(totalInscritos)
+                                        .aspirantesValidados(validados)
+                                        .build())
+                                .calificacion(ProgramaInicioOutput.CalificacionResumen.builder()
+                                        .totalValidados(validados)
+                                        .aspirantesCalificados(calificados)
+                                        .build())
+                                .build();
+                    })
+                    .toList();
+        } catch (Exception e) {
+            throw new RuntimeException("Error finding programa inicio for programa: " + e.getMessage(), e);
+        }
+    }
+
     public EstadoOutput findEstadoById(ASPIRANTE_FIND input) {
         try {
             AspiranteDTO dto = service.findById(input.id());
@@ -434,25 +477,53 @@ public class AspiranteProcessor implements
         String s1, s2, s3, s4, s5;
         switch (estado) {
             case "INSCRITO" -> {
-                s1 = "completado"; s2 = "en progreso"; s3 = "pendiente"; s4 = "pendiente"; s5 = "pendiente";
+                s1 = "completado";
+                s2 = "en progreso";
+                s3 = "pendiente";
+                s4 = "pendiente";
+                s5 = "pendiente";
             }
             case "PAZ Y SALVO" -> {
-                s1 = "completado"; s2 = "completado"; s3 = "en progreso"; s4 = "pendiente"; s5 = "pendiente";
+                s1 = "completado";
+                s2 = "completado";
+                s3 = "en progreso";
+                s4 = "pendiente";
+                s5 = "pendiente";
             }
             case "VALIDADO_POR_CALIFICAR" -> {
-                s1 = "completado"; s2 = "completado"; s3 = "completado"; s4 = "pendiente"; s5 = "pendiente";
+                s1 = "completado";
+                s2 = "completado";
+                s3 = "completado";
+                s4 = "pendiente";
+                s5 = "pendiente";
             }
             case "VALIDADO_EN_PROGRESO" -> {
-                s1 = "completado"; s2 = "completado"; s3 = "completado"; s4 = "en progreso"; s5 = "pendiente";
+                s1 = "completado";
+                s2 = "completado";
+                s3 = "completado";
+                s4 = "en progreso";
+                s5 = "pendiente";
             }
             case "VALIDADO_CALIFICADO" -> {
-                s1 = "completado"; s2 = "completado"; s3 = "completado"; s4 = "completado"; s5 = "en progreso";
+                s1 = "completado";
+                s2 = "completado";
+                s3 = "completado";
+                s4 = "completado";
+                s5 = "en progreso";
             }
             case "ADMITIDO" -> {
-                s1 = "completado"; s2 = "completado"; s3 = "completado"; s4 = "completado"; s5 = "completado";
+                s1 = "completado";
+                s2 = "completado";
+                s3 = "completado";
+                s4 = "completado";
+                s5 = "completado";
             }
             default -> {
-                s1 = "completado"; s2 = "pendiente"; s3 = "pendiente"; s4 = "pendiente"; s5 = "pendiente";
+                s1 = "completado";
+                s2 = "pendiente";
+                s3 = "pendiente";
+                s4 = "pendiente";
+                s5 = "pendiente";
             }
         }
 
@@ -461,8 +532,7 @@ public class AspiranteProcessor implements
                 PasoProcesoOutput.builder().id(2).name("Pago").status(s2).build(),
                 PasoProcesoOutput.builder().id(3).name("Documentos").status(s3).build(),
                 PasoProcesoOutput.builder().id(4).name("Calificación").status(s4).build(),
-                PasoProcesoOutput.builder().id(5).name("Resultado").status(s5).build()
-        );
+                PasoProcesoOutput.builder().id(5).name("Resultado").status(s5).build());
     }
 
     public List<AspiranteCalificacionOutput> findAllValidadosCalificacion(Integer cohorteId) {
@@ -575,22 +645,22 @@ public class AspiranteProcessor implements
 
     public List<CohorteResumenOutput> getCohortesByProgramaResumen(Integer programaId) {
         return cohorteService.findResumenDataByIdPrograma(programaId).stream().map(row -> {
-            Integer id         = row.getId();
-            String  nombre     = row.getNombre();
-            Integer cuposRaw   = row.getCupos();
-            String  estadoTipo = row.getEstado() != null ? row.getEstado().getTipo() : null;
-            String  semNombre  = row.getSemestre() != null ? row.getSemestre().getNombre() : null;
-            LocalDate plazoDocFin  = row.getPlazo()  != null ? row.getPlazo().getFechafin()  : null;
-            LocalDate plazoInsFin  = row.getPlazo2() != null ? row.getPlazo2().getFechafin() : null;
+            Integer id = row.getId();
+            String nombre = row.getNombre();
+            Integer cuposRaw = row.getCupos();
+            String estadoTipo = row.getEstado() != null ? row.getEstado().getTipo() : null;
+            String semNombre = row.getSemestre() != null ? row.getSemestre().getNombre() : null;
+            LocalDate plazoDocFin = row.getPlazo() != null ? row.getPlazo().getFechafin() : null;
+            LocalDate plazoInsFin = row.getPlazo2() != null ? row.getPlazo2().getFechafin() : null;
             LocalDate plazoPagoFin = row.getPlazo3() != null ? row.getPlazo3().getFechafin() : null;
 
-            boolean activa   = "ABIERTA".equalsIgnoreCase(estadoTipo);
-            int cupos        = cuposRaw != null ? cuposRaw : 0;
-            long inscritos   = service.countByCohorte(id);
-            long pazYSalvo   = service.countPazYSalvoByCohorte(id);
-            long validados   = service.countValidadosByCohorte(id);
+            boolean activa = "ABIERTA".equalsIgnoreCase(estadoTipo);
+            int cupos = cuposRaw != null ? cuposRaw : 0;
+            long inscritos = service.countByCohorte(id);
+            long pazYSalvo = service.countPazYSalvoByCohorte(id);
+            long validados = service.countValidadosByCohorte(id);
             long calificados = service.countCalificadosByCohorte(id);
-            long admitidos   = service.countAdmitidosByCohorte(id);
+            long admitidos = service.countAdmitidosByCohorte(id);
 
             return CohorteResumenOutput.builder()
                     .id(id)
@@ -658,11 +728,12 @@ public class AspiranteProcessor implements
         int cuposDisponibles = Math.max(0, cohorte.getCupos() - (int) totalAdmitidos);
 
         List<RankingAdmitidosOutput.AspiranteResumen> aspirantesResumen = service.findByCohorte(cohorte.getId())
-            .stream()
-            .filter(a -> a.getEstado() != null && "VALIDADO_CALIFICADO".equalsIgnoreCase(a.getEstado().getTipo()) || "ADMITIDO".equalsIgnoreCase(a.getEstado().getTipo()))
-            .sorted(Comparator.comparing(AspiranteDTO::getPuntuacion,
-                Comparator.nullsLast(Comparator.reverseOrder())))
-            .map(a -> {
+                .stream()
+                .filter(a -> a.getEstado() != null && "VALIDADO_CALIFICADO".equalsIgnoreCase(a.getEstado().getTipo())
+                        || "ADMITIDO".equalsIgnoreCase(a.getEstado().getTipo()))
+                .sorted(Comparator.comparing(AspiranteDTO::getPuntuacion,
+                        Comparator.nullsLast(Comparator.reverseOrder())))
+                .map(a -> {
                     PersonaDTO persona = a.getPersona();
                     String nombre = persona != null
                             ? ((persona.getNombres() != null ? persona.getNombres() : "") + " "

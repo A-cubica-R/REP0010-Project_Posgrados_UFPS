@@ -363,10 +363,10 @@ public class DirectorProgramaCase {
         }
     }
 
-    @GetMapping("/cohorte/{cohorteId}/inicio")
-    public ResponseEntity<ProgramaInicioOutput> getProgramaInicio(@PathVariable Integer cohorteId) {
+    @GetMapping("/programa/{programaId}/inicio")
+    public ResponseEntity<List<ProgramaInicioOutput>> getProgramaInicio(@PathVariable Integer programaId) {
         try {
-            return ResponseEntity.ok(aspiranteProcessor.getProgramaInicio(cohorteId));
+            return ResponseEntity.ok(aspiranteProcessor.getProgramaInicioByPrograma(programaId));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
