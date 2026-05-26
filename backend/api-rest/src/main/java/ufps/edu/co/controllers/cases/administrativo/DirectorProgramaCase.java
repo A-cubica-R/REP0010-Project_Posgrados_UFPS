@@ -31,11 +31,14 @@ import ufps.edu.co.processor.crud.AdministrativoProcessor;
 import ufps.edu.co.processor.crud.AspiranteProcessor;
 import ufps.edu.co.processor.crud.CalificacioncriterioProcessor;
 import ufps.edu.co.processor.crud.CriterioevaluacionProcessor;
+import ufps.edu.co.processor.crud.CriteriocohorteProcessor;
 import ufps.edu.co.processor.crud.DocumentoProcessor;
+import ufps.edu.co.processor.crud.DocumentosrequisitoprogramacohorteProcessor;
 import ufps.edu.co.processor.crud.EntrevistaProcessor;
 import ufps.edu.co.processor.crud.ListaadmitidosProcessor;
 import ufps.edu.co.processor.crud.PruebaProcessor;
 import ufps.edu.co.records.input.entity.AdministrativoInput.ADMINISTRATIVO_FIND;
+import ufps.edu.co.records.output.entity.DocumentosrequisitoprogramacohorteOutput;
 import ufps.edu.co.records.input.entity.AspiranteInput.ASPIRANTE_FIND;
 import ufps.edu.co.records.input.entity.CalificacioncriterioInput.CALIFICACION_PUNTAJE_REQUEST;
 import ufps.edu.co.records.input.entity.CohorteInput.COHORTE_DIRECTOR_CREATE;
@@ -43,6 +46,9 @@ import ufps.edu.co.records.input.entity.CohorteInput.COHORTE_DIRECTOR_UPDATE;
 import ufps.edu.co.records.input.entity.CriterioevaluacionInput.CRITERIO_BULK_SAVE;
 import ufps.edu.co.records.input.entity.CriterioevaluacionInput.CRITERIO_CREATE_BODY;
 import ufps.edu.co.records.input.entity.CriterioevaluacionInput.CRITERIO_UPDATE_BODY;
+import ufps.edu.co.records.input.entity.CriteriocohorteInput.CRITERIOCOHORTE_ASSIGN_BODY;
+import ufps.edu.co.records.input.entity.CriteriocohorteInput.CRITERIOCOHORTE_PESO_UPDATE;
+import ufps.edu.co.records.output.entity.CriteriocohorteOutput;
 import ufps.edu.co.records.input.entity.CalificacioncriterioInput.CALIFICACIONCRITERIO_FIND_BY_ASPIRANTE;
 import ufps.edu.co.records.input.entity.CalificacioncriterioInput.CALIFICACIONCRITERIO_UPDATE;
 import ufps.edu.co.records.input.entity.DocumentoInput.DOCUMENTO_ESTADO_UPDATE;
@@ -55,12 +61,10 @@ import ufps.edu.co.records.output.entity.DocumentoEstadoOutput;
 import ufps.edu.co.records.output.entity.SuccessOutput;
 import ufps.edu.co.rest.dto.AdministrativoDTO;
 import ufps.edu.co.rest.dto.UsuarioDTO;
-import ufps.edu.co.rest.dto.CohorteDTO;
 import ufps.edu.co.rest.dto.AdmitidoDTO;
 import ufps.edu.co.rest.dto.EstadoDTO;
 import ufps.edu.co.rest.services.AdministrativoService;
 import ufps.edu.co.rest.services.UsuarioService;
-import ufps.edu.co.rest.services.CohorteService;
 import ufps.edu.co.rest.services.ListaadmitidosService;
 import ufps.edu.co.rest.services.AspiranteService;
 import ufps.edu.co.rest.services.EstadoService;
@@ -75,7 +79,6 @@ import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_SCHEDULE_REQU
 import ufps.edu.co.records.input.entity.ListaadmitidosInput.GENERATE_LISTA;
 import ufps.edu.co.records.input.entity.ListaadmitidosInput.ADMITIR_ASPIRANTE;
 import ufps.edu.co.records.input.entity.ListaadmitidosInput.RECHAZAR_ASPIRANTE;
-import ufps.edu.co.records.input.entity.ProgramaInput.PROGRAMA_FIND;
 import ufps.edu.co.records.output.entity.AdministrativoOutput;
 import ufps.edu.co.records.output.entity.CohorteDetalleOutput;
 import ufps.edu.co.records.output.entity.CohorteListadoOutput;
@@ -133,9 +136,6 @@ public class DirectorProgramaCase {
     private ListaadmitidosProcessor listaadmitidosProcessor;
 
     @Autowired
-    private CohorteService cohorteService;
-
-    @Autowired
     private ListaadmitidosService listaadmitidosService;
 
     @Autowired
@@ -152,6 +152,12 @@ public class DirectorProgramaCase {
 
     @Autowired
     private CriterioevaluacionProcessor criterioevaluacionProcessor;
+
+    @Autowired
+    private CriteriocohorteProcessor criteriocohorteProcessor;
+
+    @Autowired
+    private DocumentosrequisitoprogramacohorteProcessor documentosrequisitoprogramacohorteProcessor;
 
     @Autowired
     private UsuarioService usuarioService;
@@ -282,10 +288,10 @@ public class DirectorProgramaCase {
         }
     }
 
-    @GetMapping("/programa/{programaId}/cohorte-actual/criterios")
-    public ResponseEntity<CriteriosCohorteOutput> getCriteriosByPrograma(@PathVariable Integer programaId) {
+    @GetMapping("/cohorte/{cohorteId}/criterios")
+    public ResponseEntity<CriteriosCohorteOutput> getCriteriosByCohorte(@PathVariable Integer cohorteId) {
         try {
-            return ResponseEntity.ok(aspiranteProcessor.getCriteriosByPrograma(programaId));
+            return ResponseEntity.ok(aspiranteProcessor.getCriteriosByCohorte(cohorteId));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
@@ -308,8 +314,7 @@ public class DirectorProgramaCase {
     @GetMapping(value = "/programa/{programaId}/cohortes")
     public ResponseEntity<List<CohorteResumenOutput>> listCohorteResumen(@PathVariable Integer programaId) {
         try {
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(aspiranteProcessor.getCohortesByProgramaResumen(programaId));
+            return ResponseEntity.ok(aspiranteProcessor.getCohortesByProgramaResumen(programaId));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
@@ -348,20 +353,20 @@ public class DirectorProgramaCase {
         }
     }
 
-    @GetMapping("/programa/{programaId}/admitidos/ranking")
-    public ResponseEntity<RankingAdmitidosOutput> getRankingAdmitidos(@PathVariable Integer programaId) {
+    @GetMapping("/cohorte/{cohorteId}/admitidos/ranking")
+    public ResponseEntity<RankingAdmitidosOutput> getRankingAdmitidos(@PathVariable Integer cohorteId) {
         try {
-            return ResponseEntity.ok(aspiranteProcessor.getRankingAdmitidos(programaId));
+            return ResponseEntity.ok(aspiranteProcessor.getRankingAdmitidos(cohorteId));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
         }
     }
 
-    @PostMapping(value = "/programa/inicio", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ProgramaInicioOutput> getProgramaInicio(@RequestBody PROGRAMA_FIND request) {
+    @GetMapping("/cohorte/{cohorteId}/inicio")
+    public ResponseEntity<ProgramaInicioOutput> getProgramaInicio(@PathVariable Integer cohorteId) {
         try {
-            return ResponseEntity.ok(aspiranteProcessor.getProgramaInicio(request.id()));
+            return ResponseEntity.ok(aspiranteProcessor.getProgramaInicio(cohorteId));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
@@ -493,9 +498,9 @@ public class DirectorProgramaCase {
         }
     }
 
-    @PostMapping(value = "/programa/{programaId}/admitidos/{aspiranteId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/cohorte/{cohorteId}/admitidos/{aspiranteId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String, Object>> admitAspirant(
-            @PathVariable Integer programaId,
+            @PathVariable Integer cohorteId,
             @PathVariable Integer aspiranteId,
             @RequestBody ADMITIR_ASPIRANTE body) {
         try {
@@ -504,14 +509,10 @@ public class DirectorProgramaCase {
                 admitido = Boolean.TRUE;
             }
 
-            CohorteDTO cohorte = cohorteService.findActiveByIdPrograma(programaId);
-            if (cohorte == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-            }
-
-            Integer idCohorte = cohorte.getId();
+            Integer idCohorte = cohorteId;
 
             if (!admitido) {
+                        
                 EstadoDTO estadoValidadoCalificado = estadoService.findByTipoAndEntidad("VALIDADO_CALIFICADO", "aspirante");
                 if (estadoValidadoCalificado == null) {
                     return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -519,13 +520,16 @@ public class DirectorProgramaCase {
 
                 aspiranteService.updateEstado(aspiranteId, estadoValidadoCalificado.getId());
 
+                // 
                 // Si el aspirante estaba previamente en la lista de admitidos, eliminar ese registro
                 try {
                     if (listaadmitidosService.existsByIdCohorteAndIdAspirante(idCohorte, aspiranteId)) {
                         listaadmitidosService.deleteByIdCohorteAndIdAspirante(idCohorte, aspiranteId);
                     }
                 } catch (Exception ex) {
+                    // 
                     // No detener el flujo por errores al limpiar la lista de admitidos, solo loguear
+                            
                     logger.error("Error eliminando registro de lista de admitidos para cohorte {} aspirante {}", idCohorte, aspiranteId, ex);
                 }
 
@@ -800,6 +804,121 @@ public class DirectorProgramaCase {
             return ResponseEntity.ok(update);
         } catch (Exception e) {
             e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @GetMapping("/cohorte/{cohorteId}/documentosrequisitoprogramacohorte")
+    public ResponseEntity<List<DocumentosrequisitoprogramacohorteOutput>> listDocumentosrequisitoprogramacohorteByCohorte(
+            @PathVariable Integer cohorteId) {
+        try {
+            return ResponseEntity.ok(documentosrequisitoprogramacohorteProcessor.findByIdCohorte(cohorteId));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    // --- Criterios de evaluacion (programa) ---
+
+    @GetMapping("/programa/{programaId}/criterios")
+    public ResponseEntity<List<CriterioevaluacionOutput>> listCriteriosByPrograma(@PathVariable Integer programaId) {
+        try {
+            return ResponseEntity.ok(criterioevaluacionProcessor.findByIdPrograma(programaId));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PostMapping(value = "/programa/{programaId}/criterios", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<CriterioevaluacionOutput> createCriterioForPrograma(
+            @PathVariable Integer programaId,
+            @RequestBody CRITERIO_CREATE_BODY body) {
+        try {
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(criterioevaluacionProcessor.createForPrograma(programaId, body));
+        } catch (DomainException e) {
+            throw e;
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PutMapping(value = "/programa/{programaId}/criterios/{criterioId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<CriterioevaluacionOutput> updateCriterioForPrograma(
+            @PathVariable Integer programaId,
+            @PathVariable Integer criterioId,
+            @RequestBody CRITERIO_UPDATE_BODY body) {
+        try {
+            return ResponseEntity.ok(criterioevaluacionProcessor.updateForPrograma(programaId, criterioId, body));
+        } catch (DomainException e) {
+            throw e;
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @DeleteMapping("/programa/{programaId}/criterios/{criterioId}")
+    public ResponseEntity<SuccessOutput> deleteCriterioForPrograma(
+            @PathVariable Integer programaId,
+            @PathVariable Integer criterioId) {
+        try {
+            criterioevaluacionProcessor.deleteForPrograma(programaId, criterioId);
+            return ResponseEntity.ok(SuccessOutput.builder().success(true).build());
+        } catch (DomainException e) {
+            throw e;
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    // --- Criteriocohorte ---
+
+    @GetMapping("/cohorte/{cohorteId}/criteriocohorte")
+    public ResponseEntity<List<CriteriocohorteOutput>> listCriteriocohorteByCohorte(@PathVariable Integer cohorteId) {
+        try {
+            return ResponseEntity.ok(criteriocohorteProcessor.findByIdCohorte(cohorteId));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PostMapping(value = "/cohorte/{cohorteId}/criteriocohorte", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<CriteriocohorteOutput> assignCriterioToCohorte(
+            @PathVariable Integer cohorteId,
+            @RequestBody CRITERIOCOHORTE_ASSIGN_BODY body) {
+        try {
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(criteriocohorteProcessor.assign(cohorteId, body.idCriterio(), body.pesoSnapshot()));
+        } catch (DomainException e) {
+            throw e;
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PutMapping(value = "/cohorte/{cohorteId}/criteriocohorte/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<CriteriocohorteOutput> updateCriteriocohorte(
+            @PathVariable Integer cohorteId,
+            @PathVariable Integer id,
+            @RequestBody CRITERIOCOHORTE_PESO_UPDATE body) {
+        try {
+            return ResponseEntity.ok(criteriocohorteProcessor.updatePeso(id, body.pesoSnapshot()));
+        } catch (DomainException e) {
+            throw e;
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PatchMapping("/programa/{programaId}/criterios/{criterioId}/desactivar")
+    public ResponseEntity<CriterioevaluacionOutput> desactivarCriterio(
+            @PathVariable Integer programaId,
+            @PathVariable Integer criterioId) {
+        try {
+            return ResponseEntity.ok(criterioevaluacionProcessor.desactivarCriterio(programaId, criterioId));
+        } catch (DomainException e) {
+            throw e;
+        } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
     }

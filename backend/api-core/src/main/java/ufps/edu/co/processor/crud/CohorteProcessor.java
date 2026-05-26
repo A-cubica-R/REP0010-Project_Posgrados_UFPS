@@ -90,9 +90,11 @@ public class CohorteProcessor implements GlobalUseCase<COHORTE_CREATE, COHORTE_U
         }
     }
 
-    public CohorteOutput findActivaByIdPrograma(Integer idPrograma) {
+    public List<CohorteOutput> findActivasByIdPrograma(Integer idPrograma) {
         try {
-            return map.toOutput(service.findActivaByIdPrograma(idPrograma));
+            return service.findActivasByIdPrograma(idPrograma).stream()
+                    .map(map::toOutput)
+                    .collect(Collectors.toList());
         } catch (Exception e) {
             throw new DomainException(CohorteErrorCode.COHORTE_NOT_FOUND, idPrograma);
         }

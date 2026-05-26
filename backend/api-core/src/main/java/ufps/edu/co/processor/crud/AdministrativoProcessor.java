@@ -1,7 +1,6 @@
 package ufps.edu.co.processor.crud;
 
 import java.util.List;
-import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -126,8 +125,7 @@ public class AdministrativoProcessor implements
         try {
             List<ProgramaOutput> programas = findProgramasFacultad(input);
             return programas.stream()
-                    .map(programa -> cohorteProcessor.findActivaByIdPrograma(programa.id()))
-                    .filter(Objects::nonNull)
+                    .flatMap(programa -> cohorteProcessor.findActivasByIdPrograma(programa.id()).stream())
                     .toList();
         } catch (Exception e) {
             throw new RuntimeException("Error finding active cohorts for facultad: " + e.getMessage(), e);
@@ -178,19 +176,20 @@ public class AdministrativoProcessor implements
                 throw new RuntimeException("No existe un usuario asociado al id enviado");
             }
 
-            AdministrativoDTO admin = service.findByIdPersona(usuario.getIdPersona());
-            if (admin == null || admin.getId() == null) {
+            Integer adminId = service.findIdByIdPersona(usuario.getIdPersona());
+            if (adminId == null) {
                 throw new RuntimeException("El usuario no pertenece a un administrativo");
             }
-            if (admin.getCargo() == null || admin.getCargo().getIdPrograma() == null) {
+            Integer idPrograma = service.findIdProgramaByIdPersona(usuario.getIdPersona());
+            if (idPrograma == null) {
                 throw new RuntimeException("El administrativo no tiene cargo de programa asignado");
             }
-            if (admin.getCargo().getNombre() == null
-                    || !"DIRECTOR DE PROGRAMA".equalsIgnoreCase(admin.getCargo().getNombre().trim())) {
+            String cargoNombre = service.findCargoNombreByIdPersona(usuario.getIdPersona());
+            if (cargoNombre == null || !"DIRECTOR DE PROGRAMA".equalsIgnoreCase(cargoNombre.trim())) {
                 throw new RuntimeException("El usuario no pertenece a un director de programa");
             }
 
-            return admin.getCargo().getIdPrograma();
+            return idPrograma;
         } catch (Exception e) {
             throw new RuntimeException("Error finding programa director by usuario id: " + e.getMessage(), e);
         }

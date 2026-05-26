@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import ufps.edu.co.maps.GlobalMapper;
 import ufps.edu.co.records.input.entity.DocumentoInput.*;
 import ufps.edu.co.records.output.entity.DocumentoOutput;
+import ufps.edu.co.records.output.entity.EstadodocumentoOutput;
 import ufps.edu.co.rest.dto.DocumentoDTO;
 
 @Component
@@ -25,9 +26,10 @@ public class DocumentoMap extends
                 .idAspirante(input.idAspirante())
                 .idEstadodocumento(input.idEstadodocumento())
                 .idPlazo(input.idPlazo())
-                .idTipodocumento(input.idTipodocumento())
                 .keyfile(input.keyfile())
                 .observaciones(input.observaciones())
+                .idDocumentosrequisitoconsejocohorte(input.idDocumentosrequisitoconsejocohorte())
+                .idDocumentosrequisitoprogramacohorte(input.idDocumentosrequisitoprogramacohorte())
                 .build();
     }
 
@@ -41,9 +43,10 @@ public class DocumentoMap extends
                 .idAspirante(input.idAspirante())
                 .idEstadodocumento(input.idEstadodocumento())
                 .idPlazo(input.idPlazo())
-                .idTipodocumento(input.idTipodocumento())
                 .keyfile(input.keyfile())
                 .observaciones(input.observaciones())
+                .idDocumentosrequisitoconsejocohorte(input.idDocumentosrequisitoconsejocohorte())
+                .idDocumentosrequisitoprogramacohorte(input.idDocumentosrequisitoprogramacohorte())
                 .build();
     }
 
@@ -71,11 +74,12 @@ public class DocumentoMap extends
         if (dto == null)
             return null;
 
-        AdministrativoMap administrativoMap = new AdministrativoMap();
-        AspiranteMap aspiranteMap = new AspiranteMap();
-        EstadodocumentoMap estadodocumentoMap = new EstadodocumentoMap();
-        PlazoMap plazoMap = new PlazoMap();
-        TipodocumentoMap tipodocumentoMap = new TipodocumentoMap();
+        EstadodocumentoOutput estadodocumentoOutput = dto.getEstadodocumento() != null
+                ? EstadodocumentoOutput.builder()
+                        .id(dto.getEstadodocumento().getId())
+                        .estado(dto.getEstadodocumento().getEstado())
+                        .build()
+                : null;
 
         return DocumentoOutput.builder()
                 .id(dto.getId())
@@ -85,17 +89,11 @@ public class DocumentoMap extends
                 .idAspirante(dto.getIdAspirante())
                 .idEstadodocumento(dto.getIdEstadodocumento())
                 .idPlazo(dto.getIdPlazo())
-                .idTipodocumento(dto.getIdTipodocumento())
                 .keyfile(dto.getKeyfile())
                 .observaciones(dto.getObservaciones())
-                .administrativo(
-                        dto.getAdministrativo() != null ? administrativoMap.toOutput(dto.getAdministrativo()) : null)
-                .aspirante(dto.getAspirante() != null ? aspiranteMap.toOutput(dto.getAspirante()) : null)
-                .estadodocumento(
-                        dto.getEstadodocumento() != null ? estadodocumentoMap.toOutput(dto.getEstadodocumento()) : null)
-                .plazo(dto.getPlazo() != null ? plazoMap.toOutput(dto.getPlazo()) : null)
-                .tipodocumento(
-                        dto.getTipodocumento() != null ? tipodocumentoMap.toOutput(dto.getTipodocumento()) : null)
+                .idDocumentosrequisitoconsejocohorte(dto.getIdDocumentosrequisitoconsejocohorte())
+                .idDocumentosrequisitoprogramacohorte(dto.getIdDocumentosrequisitoprogramacohorte())
+                .estadodocumento(estadodocumentoOutput)
                 .build();
     }
 

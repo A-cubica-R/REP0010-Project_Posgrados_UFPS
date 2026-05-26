@@ -32,12 +32,13 @@ public class CriterioevaluacionDTO implements Serializable {
     private Integer id ;
     //--- OTHER DATA FIELDS 
     private String nombre ;
+    private Boolean activo ;
     private String descripcion ;
     private BigDecimal peso ;
-    private Integer idCohorte ;
+    private Integer idprograma ;
     //--- LINKS ( RELATIONSHIPS )
     private List<CalificacioncriterioDTO> calificacioncriterioList ; 
-    private CohorteDTO cohorte ; 
+    private ProgramaDTO programa ; 
 
     @Override
 	public String toString() { 
@@ -46,9 +47,10 @@ public class CriterioevaluacionDTO implements Serializable {
 		sb.append("Criterioevaluacion[");
 		sb.append("id=").append(id);
 		sb.append(separator).append("nombre=").append(nombre);
+		sb.append(separator).append("activo=").append(activo);
 		// attribute 'descripcion' (type String) not usable in toString() 
 		sb.append(separator).append("peso=").append(peso);
-		sb.append(separator).append("idCohorte=").append(idCohorte);
+		sb.append(separator).append("idPrograma=").append(idprograma);
 		sb.append("]");
 		return sb.toString();
 	}
