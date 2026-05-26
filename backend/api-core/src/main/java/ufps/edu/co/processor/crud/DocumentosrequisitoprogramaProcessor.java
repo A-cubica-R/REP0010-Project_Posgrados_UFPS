@@ -53,6 +53,22 @@ public class DocumentosrequisitoprogramaProcessor implements
         }
     }
 
+    public DocumentosrequisitoprogramaOutput update(DOCUMENTOSREQUISITOPROGRAMA_CREATEDOCUMENT input, Integer idDocumento,
+            Integer idPrograma) {
+        try {
+            DocumentosrequisitoprogramaDTO dto = DocumentosrequisitoprogramaDTO.builder()
+                    .nombre(input.nombre())
+                    .tamanomaximo(input.tamanomaximo())
+                    .urlformato(input.urlformato())
+                    .id_programa(idPrograma)
+                    .build();
+            dto.setId(idDocumento);
+            return map.toOutput(service.update(idDocumento, dto));
+        } catch (Exception e) {
+            throw new RuntimeException("Error updating Documentosrequisitoprograma: " + e.getMessage(), e);
+        }
+    }
+
     @Override
     public DocumentosrequisitoprogramaOutput update(DOCUMENTOSREQUISITOPROGRAMA_UPDATE input) {
         try {
