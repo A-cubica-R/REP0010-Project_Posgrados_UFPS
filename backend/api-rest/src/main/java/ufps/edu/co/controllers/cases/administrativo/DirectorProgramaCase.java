@@ -33,16 +33,11 @@ import ufps.edu.co.processor.crud.CalificacioncriterioProcessor;
 import ufps.edu.co.processor.crud.CriterioevaluacionProcessor;
 import ufps.edu.co.processor.crud.CriteriocohorteProcessor;
 import ufps.edu.co.processor.crud.DocumentoProcessor;
-import ufps.edu.co.processor.crud.DocumentosrequisitoprogramaProcessor;
 import ufps.edu.co.processor.crud.DocumentosrequisitoprogramacohorteProcessor;
 import ufps.edu.co.processor.crud.EntrevistaProcessor;
 import ufps.edu.co.processor.crud.ListaadmitidosProcessor;
 import ufps.edu.co.processor.crud.PruebaProcessor;
 import ufps.edu.co.records.input.entity.AdministrativoInput.ADMINISTRATIVO_FIND;
-import ufps.edu.co.records.input.entity.DocumentosrequisitoprogramaInput.DOCUMENTOSREQUISITOPROGRAMA_CREATE;
-import ufps.edu.co.records.input.entity.DocumentosrequisitoprogramaInput.DOCUMENTOSREQUISITOPROGRAMA_DELETE;
-import ufps.edu.co.records.input.entity.DocumentosrequisitoprogramaInput.DOCUMENTOSREQUISITOPROGRAMA_UPDATE;
-import ufps.edu.co.records.output.entity.DocumentosrequisitoprogramaOutput;
 import ufps.edu.co.records.output.entity.DocumentosrequisitoprogramacohorteOutput;
 import ufps.edu.co.records.input.entity.AspiranteInput.ASPIRANTE_FIND;
 import ufps.edu.co.records.input.entity.CalificacioncriterioInput.CALIFICACION_PUNTAJE_REQUEST;
@@ -160,9 +155,6 @@ public class DirectorProgramaCase {
 
     @Autowired
     private CriteriocohorteProcessor criteriocohorteProcessor;
-
-    @Autowired
-    private DocumentosrequisitoprogramaProcessor documentosrequisitoprogramaProcessor;
 
     @Autowired
     private DocumentosrequisitoprogramacohorteProcessor documentosrequisitoprogramacohorteProcessor;
@@ -812,59 +804,6 @@ public class DirectorProgramaCase {
             return ResponseEntity.ok(update);
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.internalServerError().build();
-        }
-    }
-
-    // --- Documentos requisito programa ---
-
-    @PostMapping(value = "/programa/{programaId}/documentosrequisitoprograma", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> createDocumentosrequisitoprograma(
-            @PathVariable Integer programaId,
-            @RequestBody DOCUMENTOSREQUISITOPROGRAMA_CREATE body) {
-        if (body.tamanomaximo() == null || body.tamanomaximo() <= 0) {
-            return ResponseEntity.badRequest().body(Map.of("error", "El tamaño máximo debe ser mayor que 0"));
-        }
-        try {
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(documentosrequisitoprogramaProcessor.create(body));
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
-        }
-    }
-
-    @PutMapping(value = "/documentosrequisitoprograma/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> updateDocumentosrequisitoprograma(
-            @PathVariable Integer id,
-            @RequestBody DOCUMENTOSREQUISITOPROGRAMA_UPDATE body) {
-        if (body.tamanomaximo() != null && body.tamanomaximo() <= 0) {
-            return ResponseEntity.badRequest().body(Map.of("error", "El tamaño máximo debe ser mayor que 0"));
-        }
-        try {
-                    
-            DOCUMENTOSREQUISITOPROGRAMA_UPDATE input = new DOCUMENTOSREQUISITOPROGRAMA_UPDATE(id, body.nombre(), body.tamanomaximo());
-            return ResponseEntity.ok(documentosrequisitoprogramaProcessor.update(input));
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
-        }
-    }
-
-    @DeleteMapping("/documentosrequisitoprograma/{id}")
-    public ResponseEntity<Void> deleteDocumentosrequisitoprograma(@PathVariable Integer id) {
-        try {
-            documentosrequisitoprogramaProcessor.deleteById(new DOCUMENTOSREQUISITOPROGRAMA_DELETE(id));
-            return ResponseEntity.noContent().build();
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
-        }
-    }
-
-    @GetMapping("/programa/{programaId}/documentosrequisitoprograma")
-    public ResponseEntity<List<DocumentosrequisitoprogramaOutput>> listDocumentosrequisitoprogramaByPrograma(
-            @PathVariable Integer programaId) {
-        try {
-            return ResponseEntity.ok(documentosrequisitoprogramaProcessor.findByIdPrograma(programaId));
-        } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
     }

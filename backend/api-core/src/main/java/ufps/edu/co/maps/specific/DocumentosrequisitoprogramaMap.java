@@ -22,6 +22,8 @@ public class DocumentosrequisitoprogramaMap extends UniversalMapper<Documentosre
                 .id(dto.getId())
                 .nombre(dto.getNombre())
                 .tamanomaximo(dto.getTamanomaximo())
+                .urlformato(dto.getUrlformato())
+                .id_programa(dto.getId_programa())
                 .build();
     }
 }
