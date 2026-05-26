@@ -102,14 +102,16 @@ public class PruebaService extends GenericService<PruebaEntity, PruebaDTO> {
         return entityListToDtoList(repository.findByIdAspirante(idAspirante));
     }
 
-    public PruebaDTO edit(Integer id, LocalDate fecha, LocalTime tiempo,
+    public PruebaDTO edit(Integer id, String nombre, String descripcion, LocalDate fecha, LocalTime tiempo,
             Integer idTipoprueba, Integer idUbicacion) {
         PruebaEntity entity = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Prueba no encontrada con id: " + id));
-        entity.setFecha(fecha);
-        entity.setTiempo(tiempo);
-        entity.setIdTipoprueba(idTipoprueba);
-        entity.setIdUbicacion(idUbicacion);
+        if (nombre != null) entity.setNombre(nombre);
+        if (descripcion != null) entity.setDescripcion(descripcion);
+        if (fecha != null) entity.setFecha(fecha);
+        if (tiempo != null) entity.setTiempo(tiempo);
+        if (idTipoprueba != null) entity.setIdTipoprueba(idTipoprueba);
+        if (idUbicacion != null) entity.setIdUbicacion(idUbicacion);
         repository.save(entity);
         return repository.findById(id).map(this::entityToDto)
                 .orElseThrow(() -> new RuntimeException("Prueba no encontrada con id: " + id));
