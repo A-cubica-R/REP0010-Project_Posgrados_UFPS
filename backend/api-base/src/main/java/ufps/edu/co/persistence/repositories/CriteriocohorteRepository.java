@@ -4,10 +4,12 @@
  */
 package ufps.edu.co.persistence.repositories;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.*;
+import org.springframework.data.repository.query.*;
+import org.springframework.stereotype.*;
 
-import ufps.edu.co.persistence.entities.CriteriocohorteEntity;
+import ufps.edu.co.persistence.entities.*;
+import ufps.edu.co.persistence.projections.*;
 
 /**
  * Spring Data JPA repository for the CriteriocohorteEntity entity.
@@ -40,6 +42,15 @@ public interface CriteriocohorteRepository extends JpaRepository<Criteriocohorte
 	java.util.List<CriteriocohorteEntity> findByIdCohorte(Integer idCohorte);
 
 	java.util.List<CriteriocohorteEntity> findByIdCriterio(Integer idCriterio);
+
+	@Query("SELECT cc.id AS id, cc.pesoSnapshot AS pesoSnapshot, ce.nombre AS nombreCriterio, cal.puntuacion AS puntajeObtenido " +
+		   "FROM CriteriocohorteEntity cc " +
+		   "LEFT JOIN cc.criterioevaluacion ce " +
+		   "LEFT JOIN cc.calificacioncriterioList cal ON cal.idAspirante = :idAspirante " +
+		   "WHERE cc.idCohorte = :idCohorte")
+	java.util.List<CriterioCalificacionView> findCriteriosConCalificacion(
+		@Param("idCohorte") Integer idCohorte,
+		@Param("idAspirante") Integer idAspirante);
 
 	// Insert specific finders here
 
