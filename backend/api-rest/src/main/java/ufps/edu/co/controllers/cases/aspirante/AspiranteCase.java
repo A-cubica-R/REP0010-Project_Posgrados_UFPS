@@ -39,14 +39,27 @@ import ufps.edu.co.records.output.entity.PruebaResumenOutput;
 import ufps.edu.co.records.output.entity.PruebaSimpleOutput;
 import ufps.edu.co.rest.dto.AspiranteDTO;
 import ufps.edu.co.rest.dto.CohorteDTO;
+import ufps.edu.co.rest.dto.DocumentopersonaDTO;
+import ufps.edu.co.rest.dto.EstadoDTO;
+import ufps.edu.co.rest.dto.GeneroDTO;
+import ufps.edu.co.rest.dto.PersonaDTO;
+import ufps.edu.co.rest.dto.TipovinculacionDTO;
+import ufps.edu.co.rest.dto.UbicacionDTO;
 import ufps.edu.co.rest.dto.DocumentoDTO;
 import ufps.edu.co.rest.dto.EstadodocumentoDTO;
 import ufps.edu.co.rest.dto.UsuarioDTO;
 import ufps.edu.co.rest.services.AspiranteService;
 import ufps.edu.co.rest.services.CohorteService;
+import ufps.edu.co.rest.services.CapacidadexepcionalService;
+import ufps.edu.co.rest.services.DocumentopersonaService;
 import ufps.edu.co.rest.services.DocumentoService;
+import ufps.edu.co.rest.services.EstadoService;
 import ufps.edu.co.rest.services.EstadodocumentoService;
+import ufps.edu.co.rest.services.GeneroService;
+import ufps.edu.co.rest.services.PersonaService;
+import ufps.edu.co.rest.services.TipovinculacionService;
 import ufps.edu.co.rest.services.UsuarioService;
+import ufps.edu.co.rest.services.UbicacionService;
 import ufps.edu.co.services.S3Service;
 
 @RestController
@@ -79,6 +92,27 @@ public class AspiranteCase {
 
     @Autowired
     private S3Service s3Service;
+
+    @Autowired
+    private PersonaService personaService;
+
+    @Autowired
+    private UbicacionService ubicacionService;
+
+    @Autowired
+    private DocumentopersonaService documentopersonaService;
+
+    @Autowired
+    private EstadoService estadoService;
+
+    @Autowired
+    private GeneroService generoService;
+
+    @Autowired
+    private TipovinculacionService tipovinculacionService;
+
+    @Autowired
+    private CapacidadexepcionalService capacidadexepcionalService;
 
     @Autowired
     private EntrevistaProcessor entrevistaProcessor;
@@ -299,10 +333,222 @@ public class AspiranteCase {
         return ResponseEntity.ok(pruebaProcessor.solicitarCambioPrueba(idPrueba, body.motivocambio()));
     }
 
-    @PatchMapping(value = "/pruebas/{idPrueba}/cancelar", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PruebaSimpleOutput> cancelarPrueba(
+        @PatchMapping(value = "/pruebas/{idPrueba}/cancelar", consumes = MediaType.APPLICATION_JSON_VALUE)
+        public ResponseEntity<PruebaSimpleOutput> cancelarPrueba(
             @PathVariable Integer idPrueba,
             @RequestBody PRUEBA_CANCELAR_REQUEST body) {
         return ResponseEntity.ok(pruebaProcessor.cancelarPrueba(idPrueba, body.motivocambio()));
+        }
+
+        @PostMapping(value = "/inscripciones", consumes = MediaType.APPLICATION_JSON_VALUE)
+        public ResponseEntity<AspiranteDTO> registrarFormularioCompleto(@RequestBody InscripcionRequest body) {
+        if (body == null || body.datosPersonales() == null || body.contactoResidencia() == null
+            || body.poblacionEspecial() == null || body.datosLaborales() == null || body.datosAcademicos() == null) {
+            throw new IllegalArgumentException("La inscripción completa requiere todos los bloques del formulario.");
+        }
+
+        Integer idVivienda = crearUbicacion(body.contactoResidencia().direccionResidencia(),
+            body.contactoResidencia().idMunicipioResidencia(),
+            body.contactoResidencia().zonaResidencia());
+        Integer idTrabajo = crearUbicacion(body.datosLaborales().direccionTrabajo(),
+            body.datosLaborales().idMunicipioTrabajo(),
+            null);
+        Integer idNacimiento = crearUbicacion("SIN DIRECCION DE NACIMIENTO",
+            body.datosPersonales().idMunicipioNacimiento(),
+            null);
+        Integer idExpedicion = crearUbicacion("SIN DIRECCION DE EXPEDICION",
+            body.datosPersonales().idMunicipioExpedicionDoc(),
+            null);
+
+        DocumentopersonaDTO documentopersona = DocumentopersonaDTO.builder()
+            .numerodocumento(parseNumeroDocumento(body.datosPersonales().numeroDocumento()))
+            .idTipodocumento(body.datosPersonales().idTipoDoc())
+            .idLugarexpedicion(idExpedicion)
+            .build();
+        Integer idDocumentopersona = documentopersonaService.create(documentopersona).getId();
+
+        Integer idGenero = resolveGeneroId(body.datosPersonales().sexoBiologico());
+        Integer idTipovinculacion = resolveTipovinculacionId(body);
+        Integer idCohorte = body.idCohorte() != null ? body.idCohorte() : resolveDefaultCohorteId();
+        EstadoDTO estadoInscrito = estadoService.findByTipoAndEntidad("INSCRITO", "aspirante");
+        if (estadoInscrito == null) {
+            throw new IllegalStateException("No se encontró el estado INSCRITO para aspirante.");
+        }
+
+        PersonaDTO persona = PersonaDTO.builder()
+            .nombres(body.datosPersonales().nombres())
+            .apellidos(body.datosPersonales().apellidos())
+            .correo(body.contactoResidencia().email())
+            .fechanacimiento(LocalDate.parse(body.datosPersonales().fechaNacimiento()))
+            .celular(body.contactoResidencia().telefonoContacto())
+            .telefono(body.contactoResidencia().telefonoContacto())
+            .egresadoufps(Boolean.TRUE.equals(body.datosAcademicos().egresadoUfpsCucuta()))
+            .empresa(body.datosLaborales().empresa())
+            .experiencialaboral(body.datosLaborales().experienciaLaboral() != null
+                ? body.datosLaborales().experienciaLaboral().stream()
+                    .map(ExperienciaLaboral::experiencia)
+                    .reduce((a, b) -> a + "; " + b)
+                    .orElse(null)
+                : null)
+            .promediopregrado(body.datosAcademicos().promedioPonderadoAcumulado() != null
+                ? java.math.BigDecimal.valueOf(body.datosAcademicos().promedioPonderadoAcumulado())
+                : null)
+            .titulopregrado(body.datosAcademicos().tituloPregrado())
+            .titulosposgrados(body.datosAcademicos().titulosPostgrado())
+            .idUbicacionvivienda(idVivienda)
+            .idUbicacionnacimiento(idNacimiento)
+            .idUbicaciontrabajo(idTrabajo)
+            .idGenero(idGenero)
+            .idEstadocivil(body.datosPersonales().idEstadoCivil())
+            .idGrupoetnico(body.poblacionEspecial().idGrupoEtnico())
+            .idPoblacionindigena(body.poblacionEspecial().idPuebloIndigena())
+            .idDiscapacidad(body.poblacionEspecial().idTipoDiscapacidad())
+                .idCapacidadexepcional(resolveCapacidadExcepcionalId(body.poblacionEspecial().capacidadExcepcional()))
+            .idDocumentopersona(idDocumentopersona)
+            .build();
+
+        PersonaDTO savedPersona = personaService.create(persona);
+
+        AspiranteDTO aspirante = AspiranteDTO.builder()
+            .idPersona(savedPersona.getId())
+            .idCohorte(idCohorte)
+            .idEstado(estadoInscrito.getId())
+            .idTipovinculacion(idTipovinculacion)
+            .puntuacion(java.math.BigDecimal.ZERO)
+            .build();
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(aspiranteService.create(aspirante));
+        }
+
+        private Integer crearUbicacion(String direccion, Integer idMunicipio, String zonaResidencia) {
+        UbicacionDTO ubicacion = UbicacionDTO.builder()
+            .direccion(direccion != null && !direccion.isBlank() ? direccion : "SIN DIRECCION")
+            .idMunicipio(idMunicipio)
+            .zonaurbana(zonaResidencia == null ? null : "urbana".equalsIgnoreCase(zonaResidencia))
+            .build();
+        return ubicacionService.create(ubicacion).getId();
+        }
+
+        private Integer parseNumeroDocumento(String numeroDocumento) {
+        try {
+            return Integer.valueOf(numeroDocumento);
+        } catch (NumberFormatException ex) {
+            throw new IllegalArgumentException("El numeroDocumento debe ser numérico para documentopersona.", ex);
+        }
+        }
+
+        private Integer resolveGeneroId(String sexoBiologico) {
+        if (sexoBiologico == null || sexoBiologico.isBlank()) {
+            throw new IllegalArgumentException("sexoBiologico es obligatorio.");
+        }
+        String normalized = sexoBiologico.trim().toUpperCase();
+        return generoService.findAll().stream()
+            .filter(g -> g.getNombre() != null && (
+                g.getNombre().trim().equalsIgnoreCase(normalized)
+                    || (normalized.equals("M") && g.getNombre().toLowerCase().contains("mas"))
+                    || (normalized.equals("F") && g.getNombre().toLowerCase().contains("fem"))))
+            .map(GeneroDTO::getId)
+            .findFirst()
+            .orElseThrow(() -> new IllegalArgumentException("No se encontró un género que corresponda a: " + sexoBiologico));
+        }
+
+        private Integer resolveTipovinculacionId(InscripcionRequest body) {
+        String tipo = body.datosAcademicos().tipoVinculacion();
+        if (tipo != null && !tipo.isBlank()) {
+            return tipovinculacionService.findAll().stream()
+                .filter(t -> t.getTipo() != null && t.getTipo().equalsIgnoreCase(tipo))
+                .map(TipovinculacionDTO::getId)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("No se encontró tipovinculacion para: " + tipo));
+        }
+        return tipovinculacionService.findAll().stream()
+            .findFirst()
+            .map(TipovinculacionDTO::getId)
+            .orElseThrow(() -> new IllegalStateException("No hay tipovinculaciones registradas."));
+        }
+
+        private Integer resolveCapacidadExcepcionalId(String capacidadExcepcional) {
+        if (capacidadExcepcional != null && !capacidadExcepcional.isBlank()) {
+            return capacidadexepcionalService.findAll().stream()
+                .filter(c -> c.getTipocapacidad() != null && c.getTipocapacidad().equalsIgnoreCase(capacidadExcepcional))
+                .map(ufps.edu.co.rest.dto.CapacidadexepcionalDTO::getId)
+                .findFirst()
+                .orElseGet(() -> capacidadexepcionalService.findAll().stream()
+                    .findFirst()
+                    .map(ufps.edu.co.rest.dto.CapacidadexepcionalDTO::getId)
+                    .orElseThrow(() -> new IllegalStateException("No hay capacidades excepcionales registradas.")));
+        }
+        return capacidadexepcionalService.findAll().stream()
+            .findFirst()
+            .map(ufps.edu.co.rest.dto.CapacidadexepcionalDTO::getId)
+            .orElseThrow(() -> new IllegalStateException("No hay capacidades excepcionales registradas."));
+        }
+
+        private Integer resolveDefaultCohorteId() {
+        return cohorteService.findAll().stream()
+            .findFirst()
+            .map(CohorteDTO::getId)
+            .orElseThrow(() -> new IllegalStateException("No hay cohortes registradas para asignar al aspirante."));
+        }
+
+        public static record InscripcionRequest(
+            DatosPersonales datosPersonales,
+            ContactoResidencia contactoResidencia,
+            PoblacionEspecial poblacionEspecial,
+            DatosLaborales datosLaborales,
+            DatosAcademicos datosAcademicos,
+            Integer idCohorte) {
+        }
+
+        public static record DatosPersonales(
+            String nombres,
+            String apellidos,
+            Integer idTipoDoc,
+            String numeroDocumento,
+            Integer idEstadoCivil,
+            String sexoBiologico,
+            String fechaNacimiento,
+            Integer idDeptoNacimiento,
+            Integer idMunicipioNacimiento,
+            String fechaExpedicionDocumento,
+            Integer idDeptoExpedicionDoc,
+            Integer idMunicipioExpedicionDoc) {
+        }
+
+        public static record ContactoResidencia(
+            String zonaResidencia,
+            Integer idDeptoResidencia,
+            Integer idMunicipioResidencia,
+            String direccionResidencia,
+            String email,
+            String telefonoContacto) {
+        }
+
+        public static record PoblacionEspecial(
+            Integer idGrupoEtnico,
+            Integer idPuebloIndigena,
+            Boolean tieneDiscapacidad,
+            Integer idTipoDiscapacidad,
+            String capacidadExcepcional) {
+        }
+
+        public static record DatosLaborales(
+            String empresa,
+            Integer idDptoTrabajo,
+            Integer idMunicipioTrabajo,
+            String direccionTrabajo,
+            List<ExperienciaLaboral> experienciaLaboral) {
+        }
+
+        public static record ExperienciaLaboral(String experiencia) {
+        }
+
+        public static record DatosAcademicos(
+            String tipoVinculacion,
+            String tituloPregrado,
+            Double promedioPonderadoAcumulado,
+            String titulosPostgrado,
+            Boolean egresadoUfpsCucuta) {
+        }
+
     }
-}
