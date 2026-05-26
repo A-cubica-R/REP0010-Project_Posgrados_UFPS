@@ -55,6 +55,16 @@ public class UsuarioService extends GenericService<UsuarioEntity, UsuarioDTO> {
         return entityToDto(repository.findByNombreusuario(nombreusuario));
     }
 
+    @Transactional(readOnly = true)
+    public Integer findIdPersonaByNombreusuario(String nombreusuario) {
+        return repository.findIdPersonaByNombreusuario(nombreusuario).orElse(null);
+    }
+
+    @Transactional(readOnly = true)
+    public Integer findIdPersonaById(Integer id) {
+        return repository.findIdPersonaById(id).orElse(null);
+    }
+
     public UsuarioDTO create(UsuarioDTO dto) {
         return entityToDto(repository.save(dtoToEntity(dto)));
     }
