@@ -29,45 +29,45 @@ public class DocumentosrequisitoprogramaService extends GenericService<Documento
         super(DocumentosrequisitoprogramaEntity.class, DocumentosrequisitoprogramaDTO.class);
     }
 
+    @Override
+    protected DocumentosrequisitoprogramaDTO entityToDto(DocumentosrequisitoprogramaEntity e) {
+        return DocumentosrequisitoprogramaDTO.builder()
+                .id(e.getId())
+                .nombre(e.getNombre())
+                .tamanomaximo(e.getTamanomaximo())
+                .urlformato(e.getUrlformato())
+                .build();
+    }
+
     @Transactional(readOnly = true)
     public List<DocumentosrequisitoprogramaDTO> findAll() {
-        return repository.findAllScalar().stream().map(this::rowToDto).toList();
+        return entityListToDtoList(repository.findAll());
     }
 
     @Transactional(readOnly = true)
     public DocumentosrequisitoprogramaDTO findById(Integer id) {
-        return repository.findByIdScalar(id).map(this::rowToDto).orElse(null);
+        return entityToDto(repository.findById(id));
     }
 
     @Transactional(readOnly = true)
     public List<DocumentosrequisitoprogramaDTO> findByIdPrograma(Integer idPrograma) {
-        return repository.findByIdProgramaScalar(idPrograma).stream().map(this::rowToDto).toList();
+        return entityListToDtoList(repository.findByIdPrograma(idPrograma));
     }
 
     public DocumentosrequisitoprogramaDTO create(DocumentosrequisitoprogramaDTO dto) {
-        Integer id = repository.save(dtoToEntity(dto)).getId();
-        return repository.findByIdScalar(id).map(this::rowToDto).orElse(null);
+        return entityToDto(repository.save(dtoToEntity(dto)));
     }
 
     public DocumentosrequisitoprogramaDTO update(Integer id, DocumentosrequisitoprogramaDTO dto) {
         repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Documentosrequisitoprograma no encontrado con id: " + id));
         dto.setId(id);
-        repository.save(dtoToEntity(dto));
-        return repository.findByIdScalar(id).map(this::rowToDto).orElse(null);
+        return entityToDto(repository.save(dtoToEntity(dto)));
     }
 
     public void deleteById(Integer id) {
         repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Documentosrequisitoprograma no encontrado con id: " + id));
         repository.deleteById(id);
-    }
-
-    private DocumentosrequisitoprogramaDTO rowToDto(Object[] row) {
-        return DocumentosrequisitoprogramaDTO.builder()
-                .id((Integer) row[0])
-                .nombre((String) row[1])
-                .tamanomaximo((Integer) row[2])
-                .build();
     }
 }

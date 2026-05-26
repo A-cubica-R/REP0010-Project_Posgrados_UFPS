@@ -4,7 +4,6 @@
  */
 package ufps.edu.co.rest.services;
 
-import java.time.LocalDate;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,18 +30,31 @@ public class SemestreService extends GenericService<SemestreEntity, SemestreDTO>
         super(SemestreEntity.class, SemestreDTO.class);
     }
 
+    @Override
+    protected SemestreDTO entityToDto(SemestreEntity e) {
+        EstadoDTO estadoDto = e.getEstado() != null ? EstadoDTO.builder()
+                .id(e.getEstado().getId())
+                .entidad(e.getEstado().getEntidad())
+                .tipo(e.getEstado().getTipo())
+                .build() : null;
+        return SemestreDTO.builder()
+                .id(e.getId())
+                .nombre(e.getNombre())
+                .fechaInicio(e.getFechaInicio())
+                .fechaFin(e.getFechaFin())
+                .idEstado(e.getIdEstado())
+                .estado(estadoDto)
+                .build();
+    }
+
     @Transactional(readOnly = true)
     public List<SemestreDTO> findAll() {
-        return repository.findAllScalar().stream()
-                .map(this::rowToDto)
-                .toList();
+        return entityListToDtoList(repository.findAll());
     }
 
     @Transactional(readOnly = true)
     public SemestreDTO findById(Integer id) {
-        return repository.findByIdScalar(id)
-                .map(this::rowToDto)
-                .orElse(null);
+        return entityToDto(repository.findById(id));
     }
 
     public SemestreDTO create(SemestreDTO dto) {
@@ -53,31 +65,12 @@ public class SemestreService extends GenericService<SemestreEntity, SemestreDTO>
         repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Semestre no encontrado con id: " + id));
         dto.setId(id);
-        repository.save(dtoToEntity(dto));
-        return repository.findByIdScalar(id)
-                .map(this::rowToDto)
-                .orElse(null);
+        return entityToDto(repository.save(dtoToEntity(dto)));
     }
 
     public void deleteById(Integer id) {
         repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Semestre no encontrado con id: " + id));
         repository.deleteById(id);
-    }
-
-    private SemestreDTO rowToDto(Object[] row) {
-        EstadoDTO estadoDto = EstadoDTO.builder()
-                .id((Integer) row[5])
-                .entidad((String) row[6])
-                .tipo((String) row[7])
-                .build();
-        return SemestreDTO.builder()
-                .id((Integer) row[0])
-                .nombre((String) row[1])
-                .fechaInicio((LocalDate) row[2])
-                .fechaFin((LocalDate) row[3])
-                .idEstado((Integer) row[4])
-                .estado(estadoDto)
-                .build();
     }
 }

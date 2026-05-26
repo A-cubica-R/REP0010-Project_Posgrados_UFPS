@@ -4,12 +4,7 @@
  */
 package ufps.edu.co.persistence.repositories;
 
-import java.util.List;
-import java.util.Optional;
-
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import ufps.edu.co.persistence.entities.DocumentosrequisitoconsejoEntity;
@@ -17,9 +12,4 @@ import ufps.edu.co.persistence.entities.DocumentosrequisitoconsejoEntity;
 @Repository
 public interface DocumentosrequisitoconsejoRepository extends JpaRepository<DocumentosrequisitoconsejoEntity, Integer> {
 
-	@Query("SELECT d.id, d.nombre, d.tamanomaximo FROM DocumentosrequisitoconsejoEntity d")
-	List<Object[]> findAllScalar();
-
-	@Query("SELECT d.id, d.nombre, d.tamanomaximo FROM DocumentosrequisitoconsejoEntity d WHERE d.id = :id")
-	Optional<Object[]> findByIdScalar(@Param("id") Integer id);
 }

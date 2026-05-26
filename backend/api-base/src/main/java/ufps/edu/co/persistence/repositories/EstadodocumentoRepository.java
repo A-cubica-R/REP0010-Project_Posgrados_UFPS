@@ -4,12 +4,9 @@
  */
 package ufps.edu.co.persistence.repositories;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import ufps.edu.co.persistence.entities.EstadodocumentoEntity;
@@ -17,12 +14,5 @@ import ufps.edu.co.persistence.entities.EstadodocumentoEntity;
 @Repository
 public interface EstadodocumentoRepository extends JpaRepository<EstadodocumentoEntity, Integer> {
 
-	@Query("SELECT e.id, e.estado FROM EstadodocumentoEntity e")
-	List<Object[]> findAllScalar();
-
-	@Query("SELECT e.id, e.estado FROM EstadodocumentoEntity e WHERE e.id = :id")
-	Optional<Object[]> findByIdScalar(@Param("id") Integer id);
-
-	@Query("SELECT e.id, e.estado FROM EstadodocumentoEntity e WHERE e.estado = :estado")
-	Optional<Object[]> findByEstadoScalar(@Param("estado") String estado);
+	Optional<EstadodocumentoEntity> findByEstado(String estado);
 }

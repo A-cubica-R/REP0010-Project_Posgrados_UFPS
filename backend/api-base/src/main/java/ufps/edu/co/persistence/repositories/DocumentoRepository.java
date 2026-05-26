@@ -17,44 +17,16 @@ import ufps.edu.co.persistence.entities.DocumentoEntity;
 @Repository
 public interface DocumentoRepository extends JpaRepository<DocumentoEntity, Integer> {
 
-	@Query("SELECT d.id, d.enlaceurl, d.fechacargue, d.keyfile, d.observaciones, " +
-		   "d.idAdministrativo, d.idAspirante, d.idEstadodocumento, d.idPlazo, " +
-		   "d.idDocumentosrequisitoconsejocohorte, d.idDocumentosrequisitoprogramacohorte, " +
-		   "ed.estado " +
-		   "FROM DocumentoEntity d LEFT JOIN d.estadodocumento ed")
-	List<Object[]> findAllScalar();
+	@Query("SELECT d FROM DocumentoEntity d LEFT JOIN FETCH d.estadodocumento WHERE d.idAspirante = :idAspirante")
+	List<DocumentoEntity> findByIdAspirante(@Param("idAspirante") Integer idAspirante);
 
-	@Query("SELECT d.id, d.enlaceurl, d.fechacargue, d.keyfile, d.observaciones, " +
-		   "d.idAdministrativo, d.idAspirante, d.idEstadodocumento, d.idPlazo, " +
-		   "d.idDocumentosrequisitoconsejocohorte, d.idDocumentosrequisitoprogramacohorte, " +
-		   "ed.estado " +
-		   "FROM DocumentoEntity d LEFT JOIN d.estadodocumento ed WHERE d.id = :id")
-	Optional<Object[]> findByIdScalar(@Param("id") Integer id);
-
-	@Query("SELECT d.id, d.enlaceurl, d.fechacargue, d.keyfile, d.observaciones, " +
-		   "d.idAdministrativo, d.idAspirante, d.idEstadodocumento, d.idPlazo, " +
-		   "d.idDocumentosrequisitoconsejocohorte, d.idDocumentosrequisitoprogramacohorte, " +
-		   "ed.estado " +
-		   "FROM DocumentoEntity d LEFT JOIN d.estadodocumento ed WHERE d.idAspirante = :idAspirante")
-	List<Object[]> findByIdAspiranteScalar(@Param("idAspirante") Integer idAspirante);
-
-	@Query("SELECT d.id, d.enlaceurl, d.fechacargue, d.keyfile, d.observaciones, " +
-		   "d.idAdministrativo, d.idAspirante, d.idEstadodocumento, d.idPlazo, " +
-		   "d.idDocumentosrequisitoconsejocohorte, d.idDocumentosrequisitoprogramacohorte, " +
-		   "ed.estado " +
-		   "FROM DocumentoEntity d LEFT JOIN d.estadodocumento ed " +
-		   "WHERE d.idAspirante = :idAspirante AND d.idDocumentosrequisitoconsejocohorte = :idDocReqConsejoCohorte")
-	Optional<Object[]> findByIdAspiranteAndIdDocumentosrequisitoconsejocohorteScalar(
+	@Query("SELECT d FROM DocumentoEntity d LEFT JOIN FETCH d.estadodocumento WHERE d.idAspirante = :idAspirante AND d.idDocumentosrequisitoconsejocohorte = :idDocReqConsejoCohorte")
+	Optional<DocumentoEntity> findByIdAspiranteAndIdDocumentosrequisitoconsejocohorte(
 		@Param("idAspirante") Integer idAspirante,
 		@Param("idDocReqConsejoCohorte") Integer idDocumentosrequisitoconsejocohorte);
 
-	@Query("SELECT d.id, d.enlaceurl, d.fechacargue, d.keyfile, d.observaciones, " +
-		   "d.idAdministrativo, d.idAspirante, d.idEstadodocumento, d.idPlazo, " +
-		   "d.idDocumentosrequisitoconsejocohorte, d.idDocumentosrequisitoprogramacohorte, " +
-		   "ed.estado " +
-		   "FROM DocumentoEntity d LEFT JOIN d.estadodocumento ed " +
-		   "WHERE d.idAspirante = :idAspirante AND d.idDocumentosrequisitoprogramacohorte = :idDocReqProgramaCohorte")
-	Optional<Object[]> findByIdAspiranteAndIdDocumentosrequisitoprogramacohorteScalar(
+	@Query("SELECT d FROM DocumentoEntity d LEFT JOIN FETCH d.estadodocumento WHERE d.idAspirante = :idAspirante AND d.idDocumentosrequisitoprogramacohorte = :idDocReqProgramaCohorte")
+	Optional<DocumentoEntity> findByIdAspiranteAndIdDocumentosrequisitoprogramacohorte(
 		@Param("idAspirante") Integer idAspirante,
 		@Param("idDocReqProgramaCohorte") Integer idDocumentosrequisitoprogramacohorte);
 }
