@@ -9,9 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ufps.edu.co.persistence.entities.AspiranteEntity;
+import ufps.edu.co.persistence.entities.DocumentopersonaEntity;
+import ufps.edu.co.persistence.entities.PersonaEntity;
 import ufps.edu.co.persistence.repositories.AspiranteRepository;
 import ufps.edu.co.rest.dto.AspiranteDTO;
+import ufps.edu.co.rest.dto.DocumentopersonaDTO;
 import ufps.edu.co.rest.dto.EstadoDTO;
+import ufps.edu.co.rest.dto.PersonaDTO;
 import ufps.edu.co.rest.services.commons.GenericService;
 
 /**
@@ -37,6 +41,24 @@ public class AspiranteService extends GenericService<AspiranteEntity, AspiranteD
                 .entidad(e.getEstado().getEntidad())
                 .tipo(e.getEstado().getTipo())
                 .build() : null;
+
+        PersonaDTO personaDto = null;
+        PersonaEntity pe = e.getPersona();
+        if (pe != null) {
+            DocumentopersonaEntity dp = pe.getDocumentopersona();
+            DocumentopersonaDTO dpDto = dp != null ? DocumentopersonaDTO.builder()
+                    .id(dp.getId())
+                    .numerodocumento(dp.getNumerodocumento())
+                    .build() : null;
+            personaDto = PersonaDTO.builder()
+                    .id(pe.getId())
+                    .nombres(pe.getNombres())
+                    .apellidos(pe.getApellidos())
+                    .correo(pe.getCorreo())
+                    .documentopersona(dpDto)
+                    .build();
+        }
+
         return AspiranteDTO.builder()
                 .id(e.getId())
                 .puntuacion(e.getPuntuacion())
@@ -45,6 +67,7 @@ public class AspiranteService extends GenericService<AspiranteEntity, AspiranteD
                 .idPersona(e.getIdPersona())
                 .idTipovinculacion(e.getIdTipovinculacion())
                 .estado(estadoDto)
+                .persona(personaDto)
                 .build();
     }
 
@@ -93,6 +116,12 @@ public class AspiranteService extends GenericService<AspiranteEntity, AspiranteD
     @Transactional(readOnly = true)
     public List<AspiranteDTO> findByCohorte(int idCohorte) {
         return entityListToDtoList(repository.findByIdCohorte(idCohorte));
+    }
+
+    @Transactional(readOnly = true)
+    public List<AspiranteDTO> findValidadosByCohorte(int cohorteId) {
+        List<String> tipos = List.of("VALIDADO_POR_CALIFICAR", "VALIDADO_EN_PROGRESO", "VALIDADO_CALIFICADO");
+        return entityListToDtoList(repository.findByIdCohorteAndEstadoTipoIn(cohorteId, tipos));
     }
 
     public long countValidados() {

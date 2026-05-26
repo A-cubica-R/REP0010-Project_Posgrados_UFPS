@@ -278,10 +278,17 @@ public class DirectorProgramaCase {
     }
 
     @GetMapping("/programa/director/{idUsuario}")
-    public ResponseEntity<Integer> findProgramaByUsuarioDirector(@PathVariable Integer idUsuario) {
+    public ResponseEntity<Map<String, Integer>> findProgramaByUsuarioDirector(@PathVariable Integer idUsuario) {
         try {
-            Integer idPrograma = administrativoProcessor.findProgramaDirectorByUsuarioId(idUsuario);
-            return ResponseEntity.ok(idPrograma);
+            UsuarioDTO usuario = usuarioService.findById(idUsuario);
+            if (usuario == null || usuario.getIdPersona() == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+            AdministrativoDTO admin = administrativoService.findByIdPersona(usuario.getIdPersona());
+            if (admin == null || admin.getCargo() == null || admin.getCargo().getIdPrograma() == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+            return ResponseEntity.ok(Map.of("idPrograma", admin.getCargo().getIdPrograma()));
         } catch (Exception e) {
             logger.error("Error obteniendo el id del programa del director para el usuario {}", idUsuario, e);
             return ResponseEntity.internalServerError().build();

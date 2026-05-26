@@ -60,6 +60,9 @@ public interface AspiranteRepository extends JpaRepository<AspiranteEntity, Inte
 
 	List<AspiranteEntity> findByIdCohorte(int idCohorte);
 
+	@Query("SELECT a FROM AspiranteEntity a WHERE a.idCohorte = :cohorteId AND a.estado.tipo IN :tipos")
+	List<AspiranteEntity> findByIdCohorteAndEstadoTipoIn(@Param("cohorteId") int cohorteId, @Param("tipos") List<String> tipos);
+
 	long countByIdCohorte(Integer idCohorte);
 
 	@Query("SELECT COUNT(a) FROM AspiranteEntity a WHERE a.idCohorte = :cohorteId AND a.estado.tipo IN :tipos")
