@@ -33,9 +33,9 @@ public class OtrosvaloresService extends GenericService<OtrosvaloresEntity, Otro
     protected OtrosvaloresDTO entityToDto(OtrosvaloresEntity e) {
         return OtrosvaloresDTO.builder()
                 .id(e.getId())
-                .carnet(e.getCarnet())
-                .estampilla(e.getEstampilla())
-                .seguro(e.getSeguro())
+                .carnet(e.isCarnet())
+                .estampilla(e.isEstampilla())
+                .seguro(e.isSeguro())
                 .build();
     }
 

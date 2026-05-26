@@ -51,7 +51,7 @@ public class DocumentosrequisitoconsejoService extends GenericService<Documentos
 
     @Transactional(readOnly = true)
     public List<DocumentosrequisitoconsejoDTO> findByIdPrograma(Integer idPrograma) {
-        return repository.findByIdProgramaScalar(idPrograma).stream().map(this::rowToDto).toList();
+        return entityListToDtoList(repository.findByIdPrograma(idPrograma));
     }
 
     public DocumentosrequisitoconsejoDTO create(DocumentosrequisitoconsejoDTO dto) {
