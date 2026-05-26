@@ -367,7 +367,7 @@ public class AspiranteCase {
             .build();
         Integer idDocumentopersona = documentopersonaService.create(documentopersona).getId();
 
-        Integer idGenero = resolveGeneroId(body.datosPersonales().sexoBiologico());
+        Integer idGenero = resolveGeneroId(body.datosPersonales().idGenero());
         Integer idTipovinculacion = resolveTipovinculacionId(body);
         Integer idCohorte = body.idCohorte() != null ? body.idCohorte() : resolveDefaultCohorteId();
         EstadoDTO estadoInscrito = estadoService.findByTipoAndEntidad("INSCRITO", "aspirante");
@@ -437,19 +437,15 @@ public class AspiranteCase {
         }
         }
 
-        private Integer resolveGeneroId(String sexoBiologico) {
-        if (sexoBiologico == null || sexoBiologico.isBlank()) {
-            throw new IllegalArgumentException("sexoBiologico es obligatorio.");
-        }
-        String normalized = sexoBiologico.trim().toUpperCase();
-        return generoService.findAll().stream()
-            .filter(g -> g.getNombre() != null && (
-                g.getNombre().trim().equalsIgnoreCase(normalized)
-                    || (normalized.equals("M") && g.getNombre().toLowerCase().contains("mas"))
-                    || (normalized.equals("F") && g.getNombre().toLowerCase().contains("fem"))))
-            .map(GeneroDTO::getId)
-            .findFirst()
-            .orElseThrow(() -> new IllegalArgumentException("No se encontró un género que corresponda a: " + sexoBiologico));
+        private Integer resolveGeneroId(Integer idGenero) {
+            if (idGenero == null) {
+                throw new IllegalArgumentException("idGenero es obligatorio.");
+            }
+            GeneroDTO genero = generoService.findById(idGenero);
+            if (genero == null) {
+                throw new IllegalArgumentException("No se encontró un género con id: " + idGenero);
+            }
+            return genero.getId();
         }
 
         private Integer resolveTipovinculacionId(InscripcionRequest body) {
@@ -506,7 +502,7 @@ public class AspiranteCase {
             Integer idTipoDoc,
             String numeroDocumento,
             Integer idEstadoCivil,
-            String sexoBiologico,
+            Integer idGenero,
             String fechaNacimiento,
             Integer idDeptoNacimiento,
             Integer idMunicipioNacimiento,
