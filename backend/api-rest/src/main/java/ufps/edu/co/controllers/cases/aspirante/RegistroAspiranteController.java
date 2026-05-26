@@ -15,7 +15,7 @@ import ufps.edu.co.rest.services.ClaveService;
 import ufps.edu.co.rest.services.UsuarioService;
 
 @RestController
-@RequestMapping(path = "/api/application/case", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = "/registroAspirante", produces = MediaType.APPLICATION_JSON_VALUE)
 public class RegistroAspiranteController {
 
     @Autowired

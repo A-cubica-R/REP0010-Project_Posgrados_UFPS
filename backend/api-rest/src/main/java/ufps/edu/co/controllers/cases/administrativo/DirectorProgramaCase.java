@@ -60,8 +60,6 @@ import ufps.edu.co.records.output.entity.AspiranteDocumentosOutput;
 import ufps.edu.co.records.output.entity.CriterioevaluacionOutput;
 import ufps.edu.co.records.output.entity.DocumentoEstadoOutput;
 import ufps.edu.co.records.output.entity.SuccessOutput;
-import ufps.edu.co.rest.dto.AdministrativoDTO;
-import ufps.edu.co.rest.dto.UsuarioDTO;
 import ufps.edu.co.rest.dto.AdmitidoDTO;
 import ufps.edu.co.rest.dto.EstadoDTO;
 import ufps.edu.co.rest.services.AdministrativoService;
