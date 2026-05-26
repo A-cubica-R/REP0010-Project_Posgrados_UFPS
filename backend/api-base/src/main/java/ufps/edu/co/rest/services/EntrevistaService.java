@@ -164,6 +164,19 @@ public class EntrevistaService extends GenericService<EntrevistaEntity, Entrevis
                 .orElseThrow(() -> new RuntimeException("Entrevista no encontrada con id: " + id));
     }
 
+    public EntrevistaDTO edit(Integer id, LocalDate fecha, LocalTime tiempo,
+            Integer idTipoentrevista, Integer idUbicacion) {
+        EntrevistaEntity entity = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Entrevista no encontrada con id: " + id));
+        entity.setFecha(fecha);
+        entity.setTiempo(tiempo);
+        entity.setIdTipoentrevista(idTipoentrevista);
+        entity.setIdUbicacion(idUbicacion);
+        repository.save(entity);
+        return repository.findById(id).map(this::entityToDto)
+                .orElseThrow(() -> new RuntimeException("Entrevista no encontrada con id: " + id));
+    }
+
     public EntrevistaDTO requestChange(Integer id, String motivocambio) {
         EntrevistaEntity entity = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Entrevista no encontrada con id: " + id));

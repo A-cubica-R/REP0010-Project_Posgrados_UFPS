@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import jakarta.validation.Valid;
 
 import ufps.edu.co.domain.exceptions.DomainException;
 import ufps.edu.co.domain.exceptions.DuplicateAdmisionException;
@@ -187,7 +188,7 @@ public class DirectorProgramaCase {
     @GetMapping(value = "/aspirantes/{idAspirante}/documentos")
     public ResponseEntity<AspiranteDocumentosOutput> getDocumentosDeAspirante(@PathVariable Integer idAspirante) {
         try {
-            return ResponseEntity.ok(documentoProcessor.getDocumentosDeAspirante(idAspirante));
+            return ResponseEntity.ok(documentoProcessor.getDocumentosDeAspiranteParaDirector(idAspirante));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
@@ -653,7 +654,7 @@ public class DirectorProgramaCase {
     @PostMapping(value = "/aspirantes/{idAspirante}/entrevistas/agendar", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<EntrevistaResumenOutput> scheduleInterview(
             @PathVariable Integer idAspirante,
-            @RequestBody ENTREVISTA_SCHEDULE_REQUEST request) {
+            @Valid @RequestBody ENTREVISTA_SCHEDULE_REQUEST request) {
         try {
             ENTREVISTA_CREATE create = new ENTREVISTA_CREATE(
                     request.fecha(), request.tiempo(), request.idTipoentrevista(),
@@ -676,6 +677,18 @@ public class DirectorProgramaCase {
             return ResponseEntity.ok(toResumen(entrevistaProcessor.reschedule(reschedule)));
         } catch (IllegalStateException e) {
             return ResponseEntity.badRequest().build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PatchMapping(value = "/entrevistas/{idEntrevista}/editar", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<EntrevistaResumenOutput> editarEntrevista(
+            @PathVariable Integer idEntrevista,
+            @Valid @RequestBody ENTREVISTA_REAGENDAR_REQUEST request) {
+        try {
+            return ResponseEntity.ok(toResumen(entrevistaProcessor.editEntrevista(idEntrevista, request)));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
@@ -740,11 +753,23 @@ public class DirectorProgramaCase {
     @PatchMapping(value = "/pruebas/{idPrueba}/reagendar", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PruebaResumenOutput> reagendarPrueba(
             @PathVariable Integer idPrueba,
-            @RequestBody PRUEBA_REAGENDAR_REQUEST request) {
+            @Valid @RequestBody PRUEBA_REAGENDAR_REQUEST request) {
         try {
             return ResponseEntity.ok(pruebaProcessor.reagendarPrueba(idPrueba, request));
         } catch (IllegalStateException e) {
             return ResponseEntity.badRequest().build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PatchMapping(value = "/pruebas/{idPrueba}/editar", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<PruebaResumenOutput> editarPrueba(
+            @PathVariable Integer idPrueba,
+            @Valid @RequestBody PRUEBA_REAGENDAR_REQUEST request) {
+        try {
+            return ResponseEntity.ok(pruebaProcessor.editPrueba(idPrueba, request));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();

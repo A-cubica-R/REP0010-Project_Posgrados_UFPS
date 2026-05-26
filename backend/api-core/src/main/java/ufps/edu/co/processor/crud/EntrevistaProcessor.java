@@ -228,6 +228,22 @@ public class EntrevistaProcessor implements
         }
     }
 
+    public EntrevistaOutput editEntrevista(Integer idEntrevista, ENTREVISTA_REAGENDAR_REQUEST request) {
+        try {
+            TipoentrevistaDTO tipoentrevista = tipoentrevistaService.findById(request.idTipoentrevista());
+            if (tipoentrevista == null) {
+                throw new RuntimeException("Modalidad no encontrada: " + request.idTipoentrevista());
+            }
+            UbicacionDTO ubicacion = ubicacionService.create(
+                    UbicacionDTO.builder().direccion(request.ubicacion()).zonaurbana(true).build());
+            EntrevistaDTO updated = service.edit(idEntrevista, request.fecha(), request.tiempo(),
+                    tipoentrevista.getId(), ubicacion.getId());
+            return map.toOutput(updated);
+        } catch (Exception e) {
+            throw new RuntimeException("Error editing Entrevista: " + e.getMessage(), e);
+        }
+    }
+
     public EntrevistaOutput rateInterview(ENTREVISTA_RATE input) {
         try {
             // TODO: Actualmente el método rateInterview no asigna la calificación a la entrevista. Habría que modificar el servicio para que lo haga, y luego este método funcionaría correctamente.
