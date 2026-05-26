@@ -4,24 +4,15 @@
  */
 package ufps.edu.co.persistence.repositories;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import ufps.edu.co.persistence.entities.OtrosvaloresEntity;
 
 @Repository
 public interface OtrosvaloresRepository extends JpaRepository<OtrosvaloresEntity, Integer> {
-
-	@Query("SELECT o.id, o.carnet, o.estampilla, o.seguro FROM OtrosvaloresEntity o")
-	List<Object[]> findAllScalar();
-
-	@Query("SELECT o.id, o.carnet, o.estampilla, o.seguro FROM OtrosvaloresEntity o WHERE o.id = :id")
-	Optional<Object[]> findByIdScalar(@Param("id") Integer id);
 
 	Optional<OtrosvaloresEntity> findFirstByCarnetAndEstampillaAndSeguro(
 			boolean carnet, boolean estampilla, boolean seguro);

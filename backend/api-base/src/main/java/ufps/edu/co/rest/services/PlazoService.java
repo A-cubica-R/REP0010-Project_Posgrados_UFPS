@@ -4,7 +4,6 @@
  */
 package ufps.edu.co.rest.services;
 
-import java.time.LocalDate;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,47 +30,46 @@ public class PlazoService extends GenericService<PlazoEntity, PlazoDTO> {
         super(PlazoEntity.class, PlazoDTO.class);
     }
 
+    @Override
+    protected PlazoDTO entityToDto(PlazoEntity e) {
+        TipoplazoDTO tipoplazoDto = e.getTipoplazo() != null ? TipoplazoDTO.builder()
+                .id(e.getTipoplazo().getId())
+                .tipo(e.getTipoplazo().getTipo())
+                .descripcion(e.getTipoplazo().getDescripcion())
+                .build() : null;
+        return PlazoDTO.builder()
+                .id(e.getId())
+                .fechainicio(e.getFechainicio())
+                .fechafin(e.getFechafin())
+                .idTipoplazo(e.getIdTipoplazo())
+                .tipoplazo(tipoplazoDto)
+                .build();
+    }
+
     @Transactional(readOnly = true)
     public List<PlazoDTO> findAll() {
-        return repository.findAllScalar().stream().map(this::rowToDto).toList();
+        return entityListToDtoList(repository.findAll());
     }
 
     @Transactional(readOnly = true)
     public PlazoDTO findById(Integer id) {
-        return repository.findByIdScalar(id).map(this::rowToDto).orElse(null);
+        return entityToDto(repository.findById(id));
     }
 
     public PlazoDTO create(PlazoDTO dto) {
-        Integer id = repository.save(dtoToEntity(dto)).getId();
-        return repository.findByIdScalar(id).map(this::rowToDto).orElse(null);
+        return entityToDto(repository.save(dtoToEntity(dto)));
     }
 
     public PlazoDTO update(Integer id, PlazoDTO dto) {
         repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Plazo no encontrado con id: " + id));
         dto.setId(id);
-        repository.save(dtoToEntity(dto));
-        return repository.findByIdScalar(id).map(this::rowToDto).orElse(null);
+        return entityToDto(repository.save(dtoToEntity(dto)));
     }
 
     public void deleteById(Integer id) {
         repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Plazo no encontrado con id: " + id));
         repository.deleteById(id);
-    }
-
-    private PlazoDTO rowToDto(Object[] row) {
-        TipoplazoDTO tipoplazoDto = row[3] != null ? TipoplazoDTO.builder()
-                .id((Integer) row[3])
-                .tipo((String) row[4])
-                .descripcion((String) row[5])
-                .build() : null;
-        return PlazoDTO.builder()
-                .id((Integer) row[0])
-                .fechainicio((LocalDate) row[1])
-                .fechafin((LocalDate) row[2])
-                .idTipoplazo((Integer) row[3])
-                .tipoplazo(tipoplazoDto)
-                .build();
     }
 }

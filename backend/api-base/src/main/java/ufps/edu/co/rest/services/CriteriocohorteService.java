@@ -29,6 +29,16 @@ public class CriteriocohorteService extends GenericService<CriteriocohorteEntity
         super(CriteriocohorteEntity.class, CriteriocohorteDTO.class);
     }
 
+    @Override
+    protected CriteriocohorteDTO entityToDto(CriteriocohorteEntity e) {
+        return CriteriocohorteDTO.builder()
+                .id(e.getId())
+                .pesoSnapshot(e.getPesoSnapshot())
+                .idCohorte(e.getIdCohorte())
+                .idCriterio(e.getIdCriterio())
+                .build();
+    }
+
     @Transactional(readOnly = true)
     public List<CriteriocohorteDTO> findAll() {
         return entityListToDtoList(repository.findAll());

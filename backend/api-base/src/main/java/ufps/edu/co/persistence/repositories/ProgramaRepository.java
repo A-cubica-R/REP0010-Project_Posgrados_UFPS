@@ -5,7 +5,6 @@
 package ufps.edu.co.persistence.repositories;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -17,32 +16,6 @@ import ufps.edu.co.persistence.entities.ProgramaEntity;
 @Repository
 public interface ProgramaRepository extends JpaRepository<ProgramaEntity, Integer> {
 
-	@Query("SELECT p.id, p.codigo, p.nombre, p.duracion, p.correo, p.registrosnies, " +
-		   "p.nivelformacion, p.titulo, p.rcmineducacion, p.creditos, p.periodicidad, " +
-		   "p.valormatricula, p.idFacultad, p.idOtros, p.idSede, p.idTiporegistro, " +
-		   "f.nombre, f.correo, s.nombre, s.idUbicacion, s.ubicacion.direccion, " +
-		   "o.carnet, o.estampilla, o.seguro, t.tipo " +
-		   "FROM ProgramaEntity p " +
-		   "LEFT JOIN p.facultad f LEFT JOIN p.sede s LEFT JOIN p.otrosvalores o LEFT JOIN p.tiporegistro t")
-	List<Object[]> findAllScalar();
-
-	@Query("SELECT p.id, p.codigo, p.nombre, p.duracion, p.correo, p.registrosnies, " +
-		   "p.nivelformacion, p.titulo, p.rcmineducacion, p.creditos, p.periodicidad, " +
-		   "p.valormatricula, p.idFacultad, p.idOtros, p.idSede, p.idTiporegistro, " +
-		   "f.nombre, f.correo, s.nombre, s.idUbicacion, s.ubicacion.direccion, " +
-		   "o.carnet, o.estampilla, o.seguro, t.tipo " +
-		   "FROM ProgramaEntity p " +
-		   "LEFT JOIN p.facultad f LEFT JOIN p.sede s LEFT JOIN p.otrosvalores o LEFT JOIN p.tiporegistro t " +
-		   "WHERE p.id = :id")
-	Optional<Object[]> findByIdScalar(@Param("id") Integer id);
-
-	@Query("SELECT p.id, p.codigo, p.nombre, p.duracion, p.correo, p.registrosnies, " +
-		   "p.nivelformacion, p.titulo, p.rcmineducacion, p.creditos, p.periodicidad, " +
-		   "p.valormatricula, p.idFacultad, p.idOtros, p.idSede, p.idTiporegistro, " +
-		   "f.nombre, f.correo, s.nombre, s.idUbicacion, s.ubicacion.direccion, " +
-		   "o.carnet, o.estampilla, o.seguro, t.tipo " +
-		   "FROM ProgramaEntity p " +
-		   "LEFT JOIN p.facultad f LEFT JOIN p.sede s LEFT JOIN p.otrosvalores o LEFT JOIN p.tiporegistro t " +
-		   "WHERE p.idFacultad = :idFacultad")
-	List<Object[]> findByIdFacultadScalar(@Param("idFacultad") Integer idFacultad);
+	@Query("SELECT p FROM ProgramaEntity p LEFT JOIN FETCH p.facultad LEFT JOIN FETCH p.sede sede LEFT JOIN FETCH sede.ubicacion LEFT JOIN FETCH p.otrosvalores LEFT JOIN FETCH p.tiporegistro WHERE p.idFacultad = :idFacultad")
+	List<ProgramaEntity> findByIdFacultad(@Param("idFacultad") Integer idFacultad);
 }

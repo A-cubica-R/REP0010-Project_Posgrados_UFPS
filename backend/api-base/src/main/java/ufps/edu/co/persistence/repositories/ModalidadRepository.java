@@ -4,12 +4,7 @@
  */
 package ufps.edu.co.persistence.repositories;
 
-import java.util.List;
-import java.util.Optional;
-
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import ufps.edu.co.persistence.entities.ModalidadEntity;
@@ -17,9 +12,4 @@ import ufps.edu.co.persistence.entities.ModalidadEntity;
 @Repository
 public interface ModalidadRepository extends JpaRepository<ModalidadEntity, Integer> {
 
-	@Query("SELECT m.id, m.nombre FROM ModalidadEntity m")
-	List<Object[]> findAllScalar();
-
-	@Query("SELECT m.id, m.nombre FROM ModalidadEntity m WHERE m.id = :id")
-	Optional<Object[]> findByIdScalar(@Param("id") Integer id);
 }

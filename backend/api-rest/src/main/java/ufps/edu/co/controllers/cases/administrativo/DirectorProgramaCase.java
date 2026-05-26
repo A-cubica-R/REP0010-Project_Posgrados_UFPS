@@ -512,25 +512,29 @@ public class DirectorProgramaCase {
             Integer idCohorte = cohorteId;
 
             if (!admitido) {
-                        
-                EstadoDTO estadoValidadoCalificado = estadoService.findByTipoAndEntidad("VALIDADO_CALIFICADO", "aspirante");
+
+                EstadoDTO estadoValidadoCalificado = estadoService.findByTipoAndEntidad("VALIDADO_CALIFICADO",
+                        "aspirante");
                 if (estadoValidadoCalificado == null) {
                     return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
                 }
 
                 aspiranteService.updateEstado(aspiranteId, estadoValidadoCalificado.getId());
 
-                // 
-                // Si el aspirante estaba previamente en la lista de admitidos, eliminar ese registro
+                //
+                // Si el aspirante estaba previamente en la lista de admitidos, eliminar ese
+                // registro
                 try {
                     if (listaadmitidosService.existsByIdCohorteAndIdAspirante(idCohorte, aspiranteId)) {
                         listaadmitidosService.deleteByIdCohorteAndIdAspirante(idCohorte, aspiranteId);
                     }
                 } catch (Exception ex) {
-                    // 
-                    // No detener el flujo por errores al limpiar la lista de admitidos, solo loguear
-                            
-                    logger.error("Error eliminando registro de lista de admitidos para cohorte {} aspirante {}", idCohorte, aspiranteId, ex);
+                    //
+                    // No detener el flujo por errores al limpiar la lista de admitidos, solo
+                    // loguear
+
+                    logger.error("Error eliminando registro de lista de admitidos para cohorte {} aspirante {}",
+                            idCohorte, aspiranteId, ex);
                 }
 
                 Map<String, Object> resp = Map.of(

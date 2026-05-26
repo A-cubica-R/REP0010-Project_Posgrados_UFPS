@@ -5,7 +5,6 @@
 package ufps.edu.co.persistence.repositories;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -17,17 +16,6 @@ import ufps.edu.co.persistence.entities.DocumentosrequisitoprogramaEntity;
 @Repository
 public interface DocumentosrequisitoprogramaRepository extends JpaRepository<DocumentosrequisitoprogramaEntity, Integer> {
 
-	@Query("SELECT d.id, d.nombre, d.tamanomaximo FROM DocumentosrequisitoprogramaEntity d")
-	List<Object[]> findAllScalar();
-
-	@Query("SELECT d.id, d.nombre, d.tamanomaximo, d.urlformato FROM DocumentosrequisitoprogramaEntity d WHERE d.id = :id")
-	Optional<Object[]> findByIdScalar(@Param("id") Integer id);
-
-	@Query("SELECT DISTINCT d.id, d.nombre, d.tamanomaximo, d.urlformato FROM DocumentosrequisitoprogramaEntity d " +
-	       "JOIN d.documentosrequisitoprogramacohorteList dc " +
-	       "JOIN dc.cohorte c " +
-	       "WHERE c.idPrograma = :idPrograma")
-	List<Object[]> findByIdProgramaScalar(@Param("idPrograma") Integer idPrograma);
-
-	List<DocumentosrequisitoprogramaEntity> findByIdPrograma(Integer idPrograma);
+	@Query("SELECT DISTINCT d FROM DocumentosrequisitoprogramaEntity d JOIN d.documentosrequisitoprogramacohorteList dc JOIN dc.cohorte c WHERE c.idPrograma = :idPrograma")
+	List<DocumentosrequisitoprogramaEntity> findByIdPrograma(@Param("idPrograma") Integer idPrograma);
 }
