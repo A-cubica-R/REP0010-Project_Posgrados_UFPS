@@ -121,26 +121,6 @@ public class AspiranteService extends GenericService<AspiranteEntity, AspiranteD
         return entityToDto(repository.findFirstByIdPersona(idPersona));
     }
 
-    @Transactional(readOnly = true)
-    public Integer findIdByIdPersona(Integer idPersona) {
-        return repository.findIdByIdPersona(idPersona).orElse(null);
-    }
-
-    @Transactional(readOnly = true)
-    public String findEstadoTipoById(Integer id) {
-        return repository.findEstadoTipoById(id).orElse(null);
-    }
-
-    @Transactional(readOnly = true)
-    public Integer findIdCohorteById(Integer id) {
-        return repository.findIdCohorteById(id).orElse(null);
-    }
-
-    @Transactional(readOnly = true)
-    public java.math.BigDecimal findPuntuacionById(Integer id) {
-        return repository.findPuntuacionById(id).orElse(null);
-    }
-
     public AspiranteDTO updateEstado(Integer idAspirante, Integer idEstado) {
         AspiranteEntity entity = repository.findById(idAspirante)
                 .orElseThrow(() -> new RuntimeException("Aspirante no encontrado con id: " + idAspirante));

@@ -20,4 +20,6 @@ public record AspiranteOutput(
         List<CalificacioncriterioOutput> calificacioncriterioList,
         List<DocumentoOutput> documentoList,
         List<EntrevistaOutput> entrevistaList,
-        List<PagoOutput> pagoList) implements OutputResponse {}
+        List<PagoOutput> pagoList,
+        List<ResultadopruebaOutput> resultadopruebaList
+) implements OutputResponse {}

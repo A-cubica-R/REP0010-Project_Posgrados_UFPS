@@ -5,6 +5,7 @@
 package ufps.edu.co.persistence.repositories;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -63,17 +64,10 @@ public interface CohorteRepository extends JpaRepository<CohorteEntity, Integer>
 		""", nativeQuery = true)
 	long countAspirantesEnProcesoEnCohorteAbierta(@Param("cohorteId") Integer cohorteId);
 
-	List<CohorteEntity> findByIdPrograma(Integer idPrograma);
+	@Query("SELECT c FROM CohorteEntity c WHERE c.idPrograma = :programaId AND c.estado.tipo = 'ABIERTA'")
+	Optional<CohorteEntity> findActiveByIdPrograma(@Param("programaId") Integer programaId);
 
-	@Query("SELECT c.id, c.nombre, c.cupos, e.tipo, s.nombre, p1.fechafin, p2.fechafin, p3.fechafin " +
-	       "FROM CohorteEntity c " +
-	       "LEFT JOIN c.estado e " +
-	       "LEFT JOIN c.semestre s " +
-	       "LEFT JOIN c.plazo p1 " +
-	       "LEFT JOIN c.plazo2 p2 " +
-	       "LEFT JOIN c.plazo3 p3 " +
-	       "WHERE c.idPrograma = :idPrograma")
-	List<Object[]> findResumenDataByIdPrograma(@Param("idPrograma") Integer idPrograma);
+	List<CohorteEntity> findByIdPrograma(Integer idPrograma);
 
 	@Query("SELECT c FROM CohorteEntity c WHERE c.idPrograma = :idPrograma AND c.estado.entidad = 'cohorte' AND c.estado.tipo = 'ABIERTA'")
 	List<CohorteEntity> findActivasByIdPrograma(@Param("idPrograma") Integer idPrograma);

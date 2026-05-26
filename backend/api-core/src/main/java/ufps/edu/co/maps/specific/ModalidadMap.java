@@ -51,11 +51,24 @@ public class ModalidadMap extends UniversalMapper<ModalidadOutput, ModalidadDTO>
 
     @Override
     public ModalidadOutput toOutput(ModalidadDTO dto) {
-        if (dto == null) return null;
-        return ModalidadOutput.builder()
+        if (dto != null) {
+            // Se declara aquí para evitar la inyección circular entre ModalidadMap y
+            // CohorteMap
+            CohorteMap cohorteMap = new CohorteMap();
+            return ModalidadOutput.builder()
                 .id(dto.getId())
                 .nombre(dto.getNombre())
+                .cohorteList(
+                    dto.getCohorteList() != null ? (dto.getCohorteList().stream()
+                        .map(
+                            cohorteDto -> {
+                                cohorteDto.setModalidad(null);
+                                return cohorteMap.toOutput(cohorteDto);
+                            }).toList()
+                        ) : null)
                 .build();
+        }
+        return null;
     }
 
     public List<ModalidadOutput> toOutputList(List<ModalidadDTO> dtoList) {

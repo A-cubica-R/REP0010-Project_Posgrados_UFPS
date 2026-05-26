@@ -1,7 +1,6 @@
 package ufps.edu.co.records.output.entity;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.util.List;
 
 import lombok.Builder;
 import ufps.edu.co.records.OutputResponse;
@@ -11,11 +10,11 @@ public record PruebaOutput(
         Integer id,
         String nombre,
         String descripcion,
-        LocalDate fecha,
-        LocalTime tiempo,
-        String motivocambio,
         Integer idAspirante,
         Integer idCohorte,
         Integer idUbicacion,
-        Integer idEstado,
-        Integer idTipoprueba) implements OutputResponse {}
+        AspiranteOutput aspirante,
+        UbicacionOutput ubicacion,
+        CohorteOutput cohorte,
+        List<ResultadopruebaOutput> resultadopruebaList
+) implements OutputResponse {}

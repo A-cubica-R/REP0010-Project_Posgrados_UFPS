@@ -1,7 +1,6 @@
 package ufps.edu.co.processor.crud;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,15 +17,11 @@ import ufps.edu.co.records.output.entity.DocumentoOutput;
 import ufps.edu.co.records.output.entity.PersonaOutput;
 import ufps.edu.co.rest.dto.AspiranteDTO;
 import ufps.edu.co.rest.dto.DocumentoDTO;
-import ufps.edu.co.rest.dto.DocumentosrequisitoconsejocohorteDTO;
-import ufps.edu.co.rest.dto.DocumentosrequisitoprogramacohorteDTO;
 import ufps.edu.co.rest.dto.EstadoDTO;
 import ufps.edu.co.rest.dto.EstadodocumentoDTO;
 import ufps.edu.co.rest.dto.PersonaDTO;
 import ufps.edu.co.rest.services.AspiranteService;
 import ufps.edu.co.rest.services.DocumentoService;
-import ufps.edu.co.rest.services.DocumentosrequisitoconsejocohorteService;
-import ufps.edu.co.rest.services.DocumentosrequisitoprogramacohorteService;
 import ufps.edu.co.rest.services.EstadoService;
 import ufps.edu.co.rest.services.EstadodocumentoService;
 import ufps.edu.co.usecase.GlobalUseCase;
@@ -54,12 +49,6 @@ public class DocumentoProcessor implements
 
     @Autowired
     private EstadoService estadoService;
-
-    @Autowired
-    private DocumentosrequisitoconsejocohorteService documentosrequisitoconsejocohorteService;
-
-    @Autowired
-    private DocumentosrequisitoprogramacohorteService documentosrequisitoprogramacohorteService;
 
     @Override
     public DocumentoOutput create(DOCUMENTO_CREATE input) {
@@ -157,43 +146,19 @@ public class DocumentoProcessor implements
 
     private void checkAndUpdateEstadoValidacion(Integer idAspirante) {
         try {
-            AspiranteDTO aspirante = aspiranteService.findById(idAspirante);
-            if (aspirante == null || aspirante.getIdCohorte() == null) {
+            List<DocumentoDTO> docsAspirante = service.findByIdAspirante(idAspirante);
+            if (docsAspirante.isEmpty()) {
                 return;
             }
-            Integer idCohorte = aspirante.getIdCohorte();
 
-            List<DocumentosrequisitoconsejocohorteDTO> requisitosConsejo =
-                    documentosrequisitoconsejocohorteService.findByIdCohorte(idCohorte);
+            boolean todosAprobados = docsAspirante.stream().allMatch(d -> d.getEstadodocumento() != null
+                    && "APROBADO".equalsIgnoreCase(d.getEstadodocumento().getEstado()));
 
-            List<DocumentosrequisitoprogramacohorteDTO> requisitosPrograma =
-                    documentosrequisitoprogramacohorteService.findByIdCohorte(idCohorte);
-
-            if (requisitosConsejo.isEmpty() && requisitosPrograma.isEmpty()) {
-                throw new RuntimeException("La cohorte con id " + idCohorte + " no tiene documentos requisito configurados.");
-            }
-
-            for (DocumentosrequisitoconsejocohorteDTO requisito : requisitosConsejo) {
-                Optional<DocumentoDTO> doc = service.findByIdAspiranteAndIdDocumentosrequisitoconsejocohorte(
-                        idAspirante, requisito.getId());
-                if (doc.isEmpty() || doc.get().getEstadodocumento() == null
-                        || !"APROBADO".equalsIgnoreCase(doc.get().getEstadodocumento().getEstado())) {
-                    return;
+            if (todosAprobados) {
+                EstadoDTO estadoValidado = estadoService.findByTipoAndEntidad("VALIDADO_POR_CALIFICAR", "aspirante");
+                if (estadoValidado != null) {
+                    aspiranteService.updateEstado(idAspirante, estadoValidado.getId());
                 }
-            }
-
-            for (DocumentosrequisitoprogramacohorteDTO requisito : requisitosPrograma) {
-                Optional<DocumentoDTO> doc = service.findByIdAspiranteAndIdDocumentosrequisitoprogramacohorte(
-                        idAspirante, requisito.getId());
-                if (doc.isEmpty() || doc.get().getEstadodocumento() == null
-                        || !"APROBADO".equalsIgnoreCase(doc.get().getEstadodocumento().getEstado())) {
-                    return;
-                }
-            }
-
-            EstadoDTO estadoValidado = estadoService.findByTipoAndEntidad("VALIDADO_POR_CALIFICAR", "aspirante");
-            if (estadoValidado != null) {
-                aspiranteService.updateEstado(idAspirante, estadoValidado.getId());
             }
         } catch (Exception e) {
             logger.warn("No se pudo actualizar estado de validación del aspirante {}: {}", idAspirante, e.getMessage());
@@ -234,17 +199,15 @@ public class DocumentoProcessor implements
                 estadoGeneral = "pendiente";
             }
 
-            // TODO: Esta funcion lanza error, habrá que implementarla de nuevo para mapear correctamente los documentos a DocumentoResumenOutput
-            List<DocumentoResumenOutput> documentosResumen = null;
-            // documentosResumen = docs.stream()
-            //         .map(doc -> DocumentoResumenOutput.builder()
-            //                 .id(doc.getId())
-            //                 .nombre(doc.getTipodocumento() != null ? doc.getTipodocumento().getDescripcion() : null)
-            //                 .estado(doc.getEstadodocumento() != null ? doc.getEstadodocumento().getEstado() : "PENDIENTE")
-            //                 .motivoRechazo(doc.getObservaciones())
-            //                 .linkArchivo(doc.getEnlaceurl())
-            //                 .build())
-            //         .toList();
+            List<DocumentoResumenOutput> documentosResumen = docs.stream()
+                    .map(doc -> DocumentoResumenOutput.builder()
+                            .id(doc.getId())
+                            .nombre(doc.getTipodocumento() != null ? doc.getTipodocumento().getDescripcion() : null)
+                            .estado(doc.getEstadodocumento() != null ? doc.getEstadodocumento().getEstado() : "PENDIENTE")
+                            .motivoRechazo(doc.getObservaciones())
+                            .linkArchivo(doc.getEnlaceurl())
+                            .build())
+                    .toList();
 
             return AspiranteDocumentosOutput.builder()
                     .idAspirante(aspiranteId)
@@ -269,11 +232,10 @@ public class DocumentoProcessor implements
             if ("APROBADO".equalsIgnoreCase(input.estado())) {
                 checkAndUpdateEstadoValidacion(dto.getIdAspirante());
             }
-
-            // TODO: Ya no se mapea el nombre del documento, habría que agregarlo al output o eliminarlo si no es necesario
+            String nombreDoc = dto.getTipodocumento() != null ? dto.getTipodocumento().getDescripcion() : null;
             return DocumentoEstadoOutput.builder()
                     .id(docId)
-                    // .nombre(nombreDoc)
+                    .nombre(nombreDoc)
                     .estado(input.estado())
                     .motivoRechazo(input.motivoRechazo())
                     .build();

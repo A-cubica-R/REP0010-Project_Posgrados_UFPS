@@ -1,5 +1,7 @@
 package ufps.edu.co.records.output.entity;
 
+import java.util.List;
+
 import lombok.Builder;
 import ufps.edu.co.records.OutputResponse;
 
@@ -8,6 +10,7 @@ public record SedeOutput(
         Integer id,
         String nombre,
         Integer idUbicacion,
-        UbicacionOutput ubicacion
+        UbicacionOutput ubicacion,
+        List<ProgramaOutput> programaList
 ) implements OutputResponse {
 }

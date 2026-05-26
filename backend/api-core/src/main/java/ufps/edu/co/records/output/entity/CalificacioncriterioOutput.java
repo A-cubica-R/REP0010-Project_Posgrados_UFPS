@@ -9,9 +9,10 @@ import ufps.edu.co.records.OutputResponse;
 public record CalificacioncriterioOutput(
         Integer id,
         Integer idAspirante,
-        Integer idCriteriocohorte,
+        Integer idCriterio,
         BigDecimal puntuacion,
         BigDecimal pesoSnapshot,
+        String observaciones,
         AspiranteOutput aspirante,
-        CriteriocohorteOutput criteriocohorte
+        CriterioevaluacionOutput criterioevaluacion
 ) implements OutputResponse {}

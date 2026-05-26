@@ -17,38 +17,35 @@ public enum DocumentoInput {
         @NotNull Integer idAspirante,
         @NotNull Integer idEstadodocumento,
         @NotNull Integer idPlazo,
+        @NotNull Integer idTipodocumento,
         @NotBlank String keyfile,
-        String observaciones,
-        Integer idDocumentosrequisitoconsejocohorte,
-        Integer idDocumentosrequisitoprogramacohorte
+        String observaciones
     ) implements CreateType {}
 
     public record DOCUMENTO_UPDATE(
         @NotNull Integer id,
         @NotNull LocalDate fechacargue,
         @NotNull Integer idEstadodocumento,
+        @NotNull Integer idTipodocumento,
         @NotNull Integer idAdministrativo,
         @NotNull Integer idPlazo,
         @NotNull Integer idAspirante,
         @NotBlank String enlaceurl,
         @NotBlank String keyfile,
-        String observaciones,
-        Integer idDocumentosrequisitoconsejocohorte,
-        Integer idDocumentosrequisitoprogramacohorte
+        String observaciones
     ) implements UpdateType {}
 
     public record DOCUMENTO_PATCH(
         @NotNull Integer id,
         LocalDate fechacargue,
         Integer idEstadodocumento,
+        Integer idTipodocumento,
         Integer idAdministrativo,
         Integer idPlazo,
         Integer idAspirante,
         String enlaceurl,
         String keyfile,
-        String observaciones,
-        Integer idDocumentosrequisitoconsejocohorte,
-        Integer idDocumentosrequisitoprogramacohorte
+        String observaciones
     ) implements PatchType {}
 
     public record DOCUMENTO_DELETE(@NotNull Integer id) implements DeleteType {}
