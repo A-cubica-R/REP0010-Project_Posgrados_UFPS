@@ -22,4 +22,11 @@ public interface DocumentosrequisitoconsejoRepository extends JpaRepository<Docu
 
 	@Query("SELECT d.id, d.nombre, d.tamanomaximo FROM DocumentosrequisitoconsejoEntity d WHERE d.id = :id")
 	Optional<Object[]> findByIdScalar(@Param("id") Integer id);
+
+	@Query("SELECT DISTINCT d.id, d.nombre, d.tamanomaximo, d.urlformato " +
+	       "FROM DocumentosrequisitoconsejoEntity d " +
+	       "JOIN d.documentosrequisitoconsejocohorteList dc " +
+	       "JOIN dc.cohorte c " +
+	       "WHERE c.idPrograma = :idPrograma")
+	List<Object[]> findByIdProgramaScalar(@Param("idPrograma") Integer idPrograma);
 }
