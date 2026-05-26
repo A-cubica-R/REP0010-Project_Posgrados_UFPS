@@ -277,18 +277,19 @@ public class DirectorProgramaCase {
         }
     }
 
+    
     @GetMapping("/programa/director/{idUsuario}")
     public ResponseEntity<Map<String, Integer>> findProgramaByUsuarioDirector(@PathVariable Integer idUsuario) {
         try {
-            UsuarioDTO usuario = usuarioService.findById(idUsuario);
-            if (usuario == null || usuario.getIdPersona() == null) {
+            Integer idPersona = usuarioService.findIdPersonaById(idUsuario);
+            if (idPersona == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
             }
-            AdministrativoDTO admin = administrativoService.findByIdPersona(usuario.getIdPersona());
-            if (admin == null || admin.getCargo() == null || admin.getCargo().getIdPrograma() == null) {
+            Integer idPrograma = administrativoService.findIdProgramaByIdPersona(idPersona);
+            if (idPrograma == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
             }
-            return ResponseEntity.ok(Map.of("idPrograma", admin.getCargo().getIdPrograma()));
+            return ResponseEntity.ok(Map.of("idPrograma", idPrograma));
         } catch (Exception e) {
             logger.error("Error obteniendo el id del programa del director para el usuario {}", idUsuario, e);
             return ResponseEntity.internalServerError().build();
@@ -797,15 +798,15 @@ public class DirectorProgramaCase {
 
     private Integer resolvePrograma() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        UsuarioDTO usuario = usuarioService.findByNombreusuario(username);
-        if (usuario == null || usuario.getIdPersona() == null) {
+        Integer idPersona = usuarioService.findIdPersonaByNombreusuario(username);
+        if (idPersona == null) {
             throw new RuntimeException("No se pudo derivar el administrativo desde el usuario autenticado");
         }
-        AdministrativoDTO admin = administrativoService.findByIdPersona(usuario.getIdPersona());
-        if (admin == null || admin.getCargo() == null || admin.getCargo().getIdPrograma() == null) {
+        Integer idPrograma = administrativoService.findIdProgramaByIdPersona(idPersona);
+        if (idPrograma == null) {
             throw new RuntimeException("El usuario autenticado no tiene un programa asignado");
         }
-        return admin.getCargo().getIdPrograma();
+        return idPrograma;
     }
 
     @PutMapping("/interview/rate")

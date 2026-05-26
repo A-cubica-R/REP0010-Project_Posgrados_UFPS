@@ -7,6 +7,8 @@ package ufps.edu.co.persistence.repositories;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import ufps.edu.co.persistence.entities.UsuarioEntity;
@@ -40,6 +42,12 @@ import ufps.edu.co.persistence.entities.UsuarioEntity;
 public interface UsuarioRepository extends JpaRepository<UsuarioEntity, Integer> {
 
 	Optional<UsuarioEntity> findByNombreusuario(String nombreusuario);
+
+	@Query("SELECT u.idPersona FROM UsuarioEntity u WHERE u.nombreusuario = :nombreusuario")
+	Optional<Integer> findIdPersonaByNombreusuario(@Param("nombreusuario") String nombreusuario);
+
+	@Query("SELECT u.idPersona FROM UsuarioEntity u WHERE u.id = :id")
+	Optional<Integer> findIdPersonaById(@Param("id") Integer id);
 
 	// Insert specific finders here 
 
