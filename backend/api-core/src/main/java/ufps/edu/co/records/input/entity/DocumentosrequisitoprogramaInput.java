@@ -12,8 +12,6 @@ public class DocumentosrequisitoprogramaInput {
         
         public record DOCUMENTOSREQUISITOPROGRAMA_CREATE(
                         String nombre,
-                        Integer tamanomaximo,
-                        String urlformato,
                         Integer idPrograma) implements CreateType {
         }
 

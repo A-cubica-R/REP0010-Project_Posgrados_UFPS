@@ -34,9 +34,11 @@ public class Programadocumentos {
             if (file != null && !file.isEmpty()) {
                 urlformato = s3Service.uploadFile(file).enlaceurl();
             }
-            DOCUMENTOSREQUISITOPROGRAMA_CREATE bodyConUrl = new DOCUMENTOSREQUISITOPROGRAMA_CREATE(
-                    body.nombre(), body.tamanomaximo(), urlformato, body.idPrograma());
-            return ResponseEntity.status(HttpStatus.CREATED).body(processor.create(bodyConUrl, body.idPrograma()));
+            // DOCUMENTOSREQUISITOPROGRAMA_CREATE bodyConUrl = new DOCUMENTOSREQUISITOPROGRAMA_CREATE(
+            //         body.nombre(), body.tamanomaximo(), body.idPrograma());
+            DOCUMENTOSREQUISITOPROGRAMA_UPDATE bodyConUrlUpdate = new DOCUMENTOSREQUISITOPROGRAMA_UPDATE(
+                    null, body.nombre(), 5, urlformato);
+            return ResponseEntity.status(HttpStatus.CREATED).body(processor.create(bodyConUrlUpdate, body.idPrograma()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
