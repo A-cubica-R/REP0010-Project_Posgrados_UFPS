@@ -21,8 +21,6 @@ public class DocumentorequisitoprogramaMap_test {
 		DocumentosrequisitoprogramaMap mapper = new DocumentosrequisitoprogramaMap();
 		DOCUMENTOSREQUISITOPROGRAMA_CREATE input = new DOCUMENTOSREQUISITOPROGRAMA_CREATE(
 				"Documento A",
-				512,
-				"https://example.com/formato-a.pdf",
 				1);
 
 		DocumentosrequisitoprogramaDTO dto = mapper.toDto(input);
