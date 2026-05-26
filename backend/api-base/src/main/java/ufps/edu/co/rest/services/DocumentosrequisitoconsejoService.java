@@ -39,6 +39,11 @@ public class DocumentosrequisitoconsejoService extends GenericService<Documentos
         return repository.findByIdScalar(id).map(this::rowToDto).orElse(null);
     }
 
+    @Transactional(readOnly = true)
+    public List<DocumentosrequisitoconsejoDTO> findByIdPrograma(Integer idPrograma) {
+        return repository.findByIdProgramaScalar(idPrograma).stream().map(this::rowToDto).toList();
+    }
+
     public DocumentosrequisitoconsejoDTO create(DocumentosrequisitoconsejoDTO dto) {
         Integer id = repository.save(dtoToEntity(dto)).getId();
         return repository.findByIdScalar(id).map(this::rowToDto).orElse(null);
@@ -63,6 +68,7 @@ public class DocumentosrequisitoconsejoService extends GenericService<Documentos
                 .id((Integer) row[0])
                 .nombre((String) row[1])
                 .tamanomaximo((Integer) row[2])
+                .urlformato((String) row[3])
                 .build();
     }
 }

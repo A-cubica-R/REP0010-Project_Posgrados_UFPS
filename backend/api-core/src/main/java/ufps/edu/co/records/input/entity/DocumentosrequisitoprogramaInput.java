@@ -8,6 +8,8 @@ import ufps.edu.co.records.contracts.PatchType;
 import ufps.edu.co.records.contracts.UpdateType;
 
 public class DocumentosrequisitoprogramaInput {
+
+        
         public record DOCUMENTOSREQUISITOPROGRAMA_CREATE(
                         String nombre,
                         Integer tamanomaximo,

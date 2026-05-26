@@ -20,12 +20,14 @@ public interface DocumentosrequisitoprogramaRepository extends JpaRepository<Doc
 	@Query("SELECT d.id, d.nombre, d.tamanomaximo FROM DocumentosrequisitoprogramaEntity d")
 	List<Object[]> findAllScalar();
 
-	@Query("SELECT d.id, d.nombre, d.tamanomaximo FROM DocumentosrequisitoprogramaEntity d WHERE d.id = :id")
+	@Query("SELECT d.id, d.nombre, d.tamanomaximo, d.urlformato FROM DocumentosrequisitoprogramaEntity d WHERE d.id = :id")
 	Optional<Object[]> findByIdScalar(@Param("id") Integer id);
 
-	@Query("SELECT DISTINCT d.id, d.nombre, d.tamanomaximo FROM DocumentosrequisitoprogramaEntity d " +
+	@Query("SELECT DISTINCT d.id, d.nombre, d.tamanomaximo, d.urlformato FROM DocumentosrequisitoprogramaEntity d " +
 	       "JOIN d.documentosrequisitoprogramacohorteList dc " +
 	       "JOIN dc.cohorte c " +
 	       "WHERE c.idPrograma = :idPrograma")
 	List<Object[]> findByIdProgramaScalar(@Param("idPrograma") Integer idPrograma);
+
+	List<DocumentosrequisitoprogramaEntity> findByIdPrograma(Integer idPrograma);
 }

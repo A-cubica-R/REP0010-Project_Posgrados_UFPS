@@ -2,7 +2,7 @@ package ufps.edu.co.controllers.cases.programa;
 
 import ufps.edu.co.records.input.entity.DocumentosrequisitoprogramaInput.*;
 import ufps.edu.co.records.output.entity.DocumentosrequisitoprogramaOutput;
-import ufps.edu.co.processor.crud.DocumentosrequisitoprogramaProcessor;
+import ufps.edu.co.processor.cases.DocumentosrequisitoprogramaPE;
 
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,39 +14,39 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/director-programa/programa", produces = MediaType.APPLICATION_JSON_VALUE)
-public class programadocumentos {
+public class Programadocumentos {
 
     @Autowired
-    private DocumentosrequisitoprogramaProcessor processor;
+    private DocumentosrequisitoprogramaPE processor;
 
-    @PostMapping(value = "/{programaId}/documentos", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/{idPrograma}/documentos", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> createDocumentosrequisitoprograma(
-            @PathVariable Integer programaId,
-            @RequestBody DOCUMENTOSREQUISITOPROGRAMA_CREATE body) {
+            @RequestBody DOCUMENTOSREQUISITOPROGRAMA_CREATE body,
+            @PathVariable Integer idPrograma) {
 
-        if (programaId != null) {
+        if (body != null) {
             try {
 
-                return ResponseEntity.status(HttpStatus.CREATED).body(processor.create(body));
+                return ResponseEntity.status(HttpStatus.CREATED).body(processor.create(body, idPrograma));
 
             } catch (Exception e) {
-                return ResponseEntity.internalServerError().build();
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
             }
         }
         return ResponseEntity.badRequest().build();
     }
 
-    @GetMapping("{programaId}/documentos")
+    @GetMapping("/{idprograma}/documentos")
     public ResponseEntity<List<DocumentosrequisitoprogramaOutput>> listDocumentosrequisitoprogramaByPrograma(
-            @PathVariable Integer programaId) {
+            @PathVariable Integer idprograma) {
 
-        if (programaId != null) {
+        if (idprograma != null) {
             try {
 
-                return ResponseEntity.ok(processor.findByIdPrograma(programaId));
+                return ResponseEntity.ok(processor.findByIdPrograma(idprograma));
 
             } catch (Exception e) {
-                return ResponseEntity.internalServerError().build();
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(List.of());
             }
         }
         return ResponseEntity.badRequest().build();
@@ -63,17 +63,17 @@ public class programadocumentos {
                 return ResponseEntity.status(HttpStatus.CREATED).body(processor.update(body));
 
             } catch (Exception e) {
-                return ResponseEntity.internalServerError().build();
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
             }
         }
         return ResponseEntity.badRequest().build();
     }
 
     @DeleteMapping("/documento/{documentoId}")
-    public ResponseEntity<Void> deleteDocumentosrequisitoprograma(@PathVariable Integer id) {
+    public ResponseEntity<Void> deleteDocumentosrequisitoprograma(@PathVariable Integer documentoId) {
         try {
 
-            processor.deleteById(new DOCUMENTOSREQUISITOPROGRAMA_DELETE(id));
+            processor.deleteById(new DOCUMENTOSREQUISITOPROGRAMA_DELETE(documentoId));
             return ResponseEntity.noContent().build();
 
         } catch (Exception e) {
@@ -83,12 +83,16 @@ public class programadocumentos {
 
     // ###################### CASES ######################
 
-    @GetMapping("documentos/requeridos")
-    public ResponseEntity<List<DocumentosrequisitoprogramaOutput>> lalalolo(
-            @PathVariable Integer documentoId) {
+    @GetMapping("/{idprograma}/documentos/requeridos")
+    public ResponseEntity<List<DocumentosrequisitoprogramaOutput>> getDocsfromProgramaAndConsejo(
+            @PathVariable Integer idprograma) {
 
-        if (documentoId != null) {
-            throw new UnsupportedOperationException("Not implemented yet");
+        if (idprograma != null) {
+            try {
+                return ResponseEntity.ok(processor.findByIdProgramaAndConsejo(idprograma));
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(List.of());
+            }
         }
         return ResponseEntity.badRequest().build();
     }

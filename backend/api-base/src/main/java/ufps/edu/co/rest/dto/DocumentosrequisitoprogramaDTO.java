@@ -32,7 +32,8 @@ public class DocumentosrequisitoprogramaDTO implements Serializable {
     private String nombre ;
     private Integer tamanomaximo ;
     private String urlformato ;
-
+	private Integer id_programa ;
+	
     @Override
 	public String toString() { 
 		String separator = "|";

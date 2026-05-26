@@ -7,5 +7,7 @@ import ufps.edu.co.records.OutputResponse;
 public record DocumentosrequisitoprogramaOutput(
         Integer id,
         String nombre,
-        Integer tamanomaximo) implements OutputResponse {
+        Integer tamanomaximo,
+        String urlformato,
+        Integer id_programa) implements OutputResponse {
 }
