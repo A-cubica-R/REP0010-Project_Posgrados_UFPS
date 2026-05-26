@@ -22,8 +22,7 @@ public class DocumentorequisitoprogramaMap_test {
 		DOCUMENTOSREQUISITOPROGRAMA_CREATE input = new DOCUMENTOSREQUISITOPROGRAMA_CREATE(
 				"Documento A",
 				512,
-				"https://example.com/formato-a.pdf",
-				16);
+				"https://example.com/formato-a.pdf");
 
 		DocumentosrequisitoprogramaDTO dto = mapper.toDto(input);
 
@@ -32,7 +31,6 @@ public class DocumentorequisitoprogramaMap_test {
 		assertEquals("Documento A", dto.getNombre());
 		assertEquals(Integer.valueOf(512), dto.getTamanomaximo());
 		assertEquals("https://example.com/formato-a.pdf", dto.getUrlformato());
-		assertEquals(Integer.valueOf(16), dto.getId_programa());
 	}
 
 	@Test
@@ -107,7 +105,6 @@ public class DocumentorequisitoprogramaMap_test {
 				.nombre("Documento D")
 				.tamanomaximo(4096)
 				.urlformato("https://example.com/formato-d.pdf")
-				.id_programa(16)
 				.build();
 
 		var output = mapper.toOutput(dto);
@@ -117,6 +114,5 @@ public class DocumentorequisitoprogramaMap_test {
 		assertEquals("Documento D", output.nombre());
 		assertEquals(Integer.valueOf(4096), output.tamanomaximo());
 		assertEquals("https://example.com/formato-d.pdf", output.urlformato());
-		assertEquals(Integer.valueOf(16), output.id_programa());
 	}
 }
