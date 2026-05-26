@@ -44,6 +44,9 @@ public interface AspiranteRepository extends JpaRepository<AspiranteEntity, Inte
 
 	Optional<AspiranteEntity> findFirstByIdPersona(Integer idPersona);
 
+	@Query("SELECT a.idPersona FROM AspiranteEntity a WHERE a.id = :idAspirante")
+	Optional<Integer> findIdPersonaById(@Param("idAspirante") Integer idAspirante);
+
 	@Query("SELECT a.id FROM AspiranteEntity a WHERE a.idPersona = :idPersona")
 	Optional<Integer> findIdByIdPersona(@Param("idPersona") Integer idPersona);
 

@@ -16,11 +16,13 @@ import ufps.edu.co.records.output.entity.EntrevistaResumenOutput;
 import ufps.edu.co.rest.dto.AspiranteDTO;
 import ufps.edu.co.rest.dto.EntrevistaDTO;
 import ufps.edu.co.rest.dto.EstadoDTO;
+import ufps.edu.co.rest.dto.PersonaDTO;
 import ufps.edu.co.rest.dto.TipoentrevistaDTO;
 import ufps.edu.co.rest.dto.UbicacionDTO;
 import ufps.edu.co.rest.services.AspiranteService;
 import ufps.edu.co.rest.services.EntrevistaService;
 import ufps.edu.co.rest.services.EstadoService;
+import ufps.edu.co.rest.services.PersonaService;
 import ufps.edu.co.rest.services.TipoentrevistaService;
 import ufps.edu.co.rest.services.UbicacionService;
 import ufps.edu.co.services.EmailService;
@@ -37,6 +39,9 @@ public class EntrevistaProcessor implements
 
     @Autowired
     private AspiranteService aspiranteService;
+
+    @Autowired
+    private PersonaService personaService;
 
     @Autowired
     private UbicacionService ubicacionService;
@@ -72,7 +77,7 @@ public class EntrevistaProcessor implements
             dto.setIdUbicacion(ubicacion.getId());
             EntrevistaDTO created = service.create(dto);
             EntrevistaOutput output = map.toOutput(created);
-            notifyEntrevistaCreada(created.getId(), input.idAspirante());
+            notifyEntrevistaCreada(created, input.idAspirante());
             return output;
         } catch (Exception e) {
             throw new RuntimeException("Error creating Entrevista: " + e.getMessage(), e);
@@ -254,14 +259,20 @@ public class EntrevistaProcessor implements
         }
     }
 
-    private void notifyEntrevistaCreada(Integer idEntrevista, Integer idAspirante) {
+    private void notifyEntrevistaCreada(EntrevistaDTO entrevista, Integer idAspirante) {
         try {
-            EntrevistaDTO entrevista = service.findById(idEntrevista);
-            AspiranteDTO aspirante = aspiranteService.findById(idAspirante);
-            if (aspirante == null || aspirante.getPersona() == null) return;
+            Integer idPersona = aspiranteService.findIdPersonaById(idAspirante);
+            if (idPersona == null) {
+                return;
+            }
 
-            String nombre = aspirante.getPersona().getNombres();
-            String correoAspirante = aspirante.getPersona().getCorreo();
+            PersonaDTO persona = personaService.findById(idPersona);
+            if (persona == null) {
+                return;
+            }
+
+            String nombre = persona.getNombres();
+            String correoAspirante = persona.getCorreo();
             String fecha = entrevista.getFecha() != null ? entrevista.getFecha().toString() : "No definida";
             String hora = entrevista.getTiempo() != null ? entrevista.getTiempo().toString() : "No definida";
             String tipo = entrevista.getTipoentrevista() != null ? entrevista.getTipoentrevista().getTipo() : "No definido";

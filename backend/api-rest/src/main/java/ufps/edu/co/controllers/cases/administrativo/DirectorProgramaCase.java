@@ -198,7 +198,7 @@ public class DirectorProgramaCase {
             @PathVariable Integer idDoc,
             @RequestBody DOCUMENTO_ESTADO_UPDATE body) {
         try {
-            return ResponseEntity.ok(documentoProcessor.updateEstadoDocumento(idDoc, body));
+            return ResponseEntity.ok(documentoProcessor.updateEstadoDocumentoParaDirector(idDoc, body));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }

@@ -81,6 +81,10 @@ public class DocumentoService extends GenericService<DocumentoEntity, DocumentoD
         repository.deleteById(id);
     }
 
+    public int updateEstadoDocumentoById(Integer idDocumento, Integer idEstado, String observaciones) {
+        return repository.updateEstadoDocumentoById(idDocumento, idEstado, observaciones);
+    }
+
     @Transactional(readOnly = true)
     public List<DocumentoDTO> findByIdAspirante(Integer idAspirante) {
         return entityListToDtoList(repository.findByIdAspirante(idAspirante));

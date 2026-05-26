@@ -333,4 +333,26 @@ public class DocumentoProcessor implements
             throw new RuntimeException("Error actualizando estado del documento: " + e.getMessage(), e);
         }
     }
+
+    public DocumentoEstadoOutput updateEstadoDocumentoParaDirector(Integer docId, DOCUMENTO_ESTADO_UPDATE input) {
+        try {
+            EstadodocumentoDTO estadodocumentoDTO = estadodocumentoService.findByEstado(input.estado());
+            if (estadodocumentoDTO == null) {
+                throw new RuntimeException("Estado de documento no encontrado: " + input.estado());
+            }
+
+            int updatedRows = service.updateEstadoDocumentoById(docId, estadodocumentoDTO.getId(), input.motivoRechazo());
+            if (updatedRows == 0) {
+                throw new RuntimeException("Documento no encontrado con id: " + docId);
+            }
+
+            return DocumentoEstadoOutput.builder()
+                    .id(docId)
+                    .estado(estadodocumentoDTO.getEstado())
+                    .motivoRechazo(input.motivoRechazo())
+                    .build();
+        } catch (Exception e) {
+            throw new RuntimeException("Error actualizando estado del documento para director: " + e.getMessage(), e);
+        }
+    }
 }

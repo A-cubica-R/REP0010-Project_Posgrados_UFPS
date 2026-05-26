@@ -29,25 +29,37 @@ public class TipoentrevistaService extends GenericService<TipoentrevistaEntity, 
         super(TipoentrevistaEntity.class, TipoentrevistaDTO.class);
     }
 
+    private TipoentrevistaDTO toDto(TipoentrevistaEntity entity) {
+        if (entity == null) {
+            return null;
+        }
+
+        return TipoentrevistaDTO.builder()
+                .id(entity.getId())
+                .descripcion(entity.getDescripcion())
+                .tipo(entity.getTipo())
+                .build();
+    }
+
     @Transactional(readOnly = true)
     public List<TipoentrevistaDTO> findAll() {
-        return entityListToDtoList(repository.findAll());
+        return repository.findAll().stream().map(this::toDto).toList();
     }
 
     @Transactional(readOnly = true)
     public TipoentrevistaDTO findById(Integer id) {
-        return entityToDto(repository.findById(id));
+        return repository.findById(id).map(this::toDto).orElse(null);
     }
 
     public TipoentrevistaDTO create(TipoentrevistaDTO dto) {
-        return entityToDto(repository.save(dtoToEntity(dto)));
+        return toDto(repository.save(dtoToEntity(dto)));
     }
 
     public TipoentrevistaDTO update(Integer id, TipoentrevistaDTO dto) {
         repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Tipoentrevista no encontrado con id: " + id));
         dto.setId(id);
-        return entityToDto(repository.save(dtoToEntity(dto)));
+        return toDto(repository.save(dtoToEntity(dto)));
     }
 
     public void deleteById(Integer id) {
@@ -58,6 +70,6 @@ public class TipoentrevistaService extends GenericService<TipoentrevistaEntity, 
 
     @Transactional(readOnly = true)
     public TipoentrevistaDTO findByTipo(String tipo) {
-        return entityToDto(repository.findByTipoIgnoreCase(tipo));
+        return repository.findByTipoIgnoreCase(tipo).map(this::toDto).orElse(null);
     }
 }
