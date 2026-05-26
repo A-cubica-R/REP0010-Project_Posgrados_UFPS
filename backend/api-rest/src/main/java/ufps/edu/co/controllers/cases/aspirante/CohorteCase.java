@@ -14,8 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 import ufps.edu.co.processor.crud.AspiranteProcessor;
 import ufps.edu.co.records.output.entity.AspiranteCohorteOutput;
 import ufps.edu.co.records.output.entity.CohorteResumenOutput;
-import ufps.edu.co.rest.dto.AdministrativoDTO;
-import ufps.edu.co.rest.dto.UsuarioDTO;
 import ufps.edu.co.rest.services.AdministrativoService;
 import ufps.edu.co.rest.services.UsuarioService;
 
