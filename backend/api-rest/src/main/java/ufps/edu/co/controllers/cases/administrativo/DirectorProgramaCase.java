@@ -96,6 +96,7 @@ import ufps.edu.co.records.output.entity.EntrevistaSimpleOutput;
 import ufps.edu.co.records.output.entity.ListaadmitidosOutput;
 import ufps.edu.co.records.input.entity.PruebaInput.PRUEBA_CANCELAR_REQUEST;
 import ufps.edu.co.records.input.entity.PruebaInput.PRUEBA_CREAR_REQUEST;
+import ufps.edu.co.records.input.entity.PruebaInput.PRUEBA_EDITAR_REQUEST;
 import ufps.edu.co.records.input.entity.PruebaInput.PRUEBA_REAGENDAR_REQUEST;
 import ufps.edu.co.records.output.entity.PruebaResumenOutput;
 import ufps.edu.co.records.output.entity.PruebaSimpleOutput;
@@ -765,7 +766,7 @@ public class DirectorProgramaCase {
     @PatchMapping(value = "/pruebas/{idPrueba}/editar", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PruebaResumenOutput> editarPrueba(
             @PathVariable Integer idPrueba,
-            @Valid @RequestBody PRUEBA_REAGENDAR_REQUEST request) {
+            @RequestBody PRUEBA_EDITAR_REQUEST request) {
         try {
             return ResponseEntity.ok(pruebaProcessor.editPrueba(idPrueba, request));
         } catch (Exception e) {
