@@ -38,7 +38,7 @@ public class DocumentosrequisitoprogramaProcessor implements
         }
     }
 
-    public DocumentosrequisitoprogramaOutput create(DOCUMENTOSREQUISITOPROGRAMA_CREATE input, Integer idPrograma) {
+    public DocumentosrequisitoprogramaOutput create(DOCUMENTOSREQUISITOPROGRAMA_UPDATE input, Integer idPrograma) {
         try {
             DocumentosrequisitoprogramaDTO dto = map.toDto(input);
             dto.setId_programa(idPrograma);
