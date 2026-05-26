@@ -8,9 +8,11 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import ufps.edu.co.persistence.entities.DocumentoEntity;
 
@@ -29,4 +31,12 @@ public interface DocumentoRepository extends JpaRepository<DocumentoEntity, Inte
 	Optional<DocumentoEntity> findByIdAspiranteAndIdDocumentosrequisitoprogramacohorte(
 		@Param("idAspirante") Integer idAspirante,
 		@Param("idDocReqProgramaCohorte") Integer idDocumentosrequisitoprogramacohorte);
+
+	@Modifying
+	@Transactional
+	@Query("UPDATE DocumentoEntity d SET d.idEstadodocumento = :idEstado, d.observaciones = :observaciones WHERE d.id = :idDocumento")
+	int updateEstadoDocumentoById(
+		@Param("idDocumento") Integer idDocumento,
+		@Param("idEstado") Integer idEstado,
+		@Param("observaciones") String observaciones);
 }
