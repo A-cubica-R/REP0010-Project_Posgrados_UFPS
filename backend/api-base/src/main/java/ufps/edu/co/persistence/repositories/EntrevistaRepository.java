@@ -5,7 +5,6 @@
 package ufps.edu.co.persistence.repositories;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -17,26 +16,6 @@ import ufps.edu.co.persistence.entities.EntrevistaEntity;
 @Repository
 public interface EntrevistaRepository extends JpaRepository<EntrevistaEntity, Integer> {
 
-	@Query("SELECT e.id, e.fecha, e.tiempo, e.motivocambio, " +
-		   "e.idAspirante, e.idEstado, e.idTipoentrevista, e.idUbicacion, " +
-		   "est.tipo, est.entidad, t.tipo, t.descripcion, u.direccion " +
-		   "FROM EntrevistaEntity e " +
-		   "LEFT JOIN e.estado est LEFT JOIN e.tipoentrevista t LEFT JOIN e.ubicacion u")
-	List<Object[]> findAllScalar();
-
-	@Query("SELECT e.id, e.fecha, e.tiempo, e.motivocambio, " +
-		   "e.idAspirante, e.idEstado, e.idTipoentrevista, e.idUbicacion, " +
-		   "est.tipo, est.entidad, t.tipo, t.descripcion, u.direccion " +
-		   "FROM EntrevistaEntity e " +
-		   "LEFT JOIN e.estado est LEFT JOIN e.tipoentrevista t LEFT JOIN e.ubicacion u " +
-		   "WHERE e.id = :id")
-	Optional<Object[]> findByIdScalar(@Param("id") Integer id);
-
-	@Query("SELECT e.id, e.fecha, e.tiempo, e.motivocambio, " +
-		   "e.idAspirante, e.idEstado, e.idTipoentrevista, e.idUbicacion, " +
-		   "est.tipo, est.entidad, t.tipo, t.descripcion, u.direccion " +
-		   "FROM EntrevistaEntity e " +
-		   "LEFT JOIN e.estado est LEFT JOIN e.tipoentrevista t LEFT JOIN e.ubicacion u " +
-		   "WHERE e.idAspirante = :idAspirante")
-	List<Object[]> findByIdAspiranteScalar(@Param("idAspirante") Integer idAspirante);
+	@Query("SELECT e FROM EntrevistaEntity e LEFT JOIN FETCH e.estado LEFT JOIN FETCH e.tipoentrevista LEFT JOIN FETCH e.ubicacion WHERE e.idAspirante = :idAspirante")
+	List<EntrevistaEntity> findByIdAspirante(@Param("idAspirante") Integer idAspirante);
 }

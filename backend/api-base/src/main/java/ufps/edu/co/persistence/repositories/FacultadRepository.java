@@ -4,12 +4,7 @@
  */
 package ufps.edu.co.persistence.repositories;
 
-import java.util.List;
-import java.util.Optional;
-
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import ufps.edu.co.persistence.entities.FacultadEntity;
@@ -17,9 +12,4 @@ import ufps.edu.co.persistence.entities.FacultadEntity;
 @Repository
 public interface FacultadRepository extends JpaRepository<FacultadEntity, Integer> {
 
-	@Query("SELECT f.id, f.nombre, f.correo FROM FacultadEntity f")
-	List<Object[]> findAllScalar();
-
-	@Query("SELECT f.id, f.nombre, f.correo FROM FacultadEntity f WHERE f.id = :id")
-	Optional<Object[]> findByIdScalar(@Param("id") Integer id);
 }

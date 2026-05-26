@@ -29,73 +29,45 @@ public class DocumentosrequisitoprogramaService extends GenericService<Documento
         super(DocumentosrequisitoprogramaEntity.class, DocumentosrequisitoprogramaDTO.class);
     }
 
+    @Override
+    protected DocumentosrequisitoprogramaDTO entityToDto(DocumentosrequisitoprogramaEntity e) {
+        return DocumentosrequisitoprogramaDTO.builder()
+                .id(e.getId())
+                .nombre(e.getNombre())
+                .tamanomaximo(e.getTamanomaximo())
+                .urlformato(e.getUrlformato())
+                .build();
+    }
+
     @Transactional(readOnly = true)
     public List<DocumentosrequisitoprogramaDTO> findAll() {
-        return repository.findAll().stream().map(this::mapEntityToDto).toList();
+        return entityListToDtoList(repository.findAll());
     }
 
     @Transactional(readOnly = true)
     public DocumentosrequisitoprogramaDTO findById(Integer id) {
-        return repository.findById(id).map(this::mapEntityToDto).orElse(null);
+        return entityToDto(repository.findById(id));
     }
 
     @Transactional(readOnly = true)
     public List<DocumentosrequisitoprogramaDTO> findByIdPrograma(Integer idPrograma) {
-        return repository.findByIdPrograma(idPrograma).stream().map(this::mapEntityToDto).toList();
+        return entityListToDtoList(repository.findByIdPrograma(idPrograma));
     }
 
     public DocumentosrequisitoprogramaDTO create(DocumentosrequisitoprogramaDTO dto) {
-        DocumentosrequisitoprogramaEntity saved = repository.save(mapDtoToEntity(dto));
-        return mapEntityToDto(saved);
+        return entityToDto(repository.save(dtoToEntity(dto)));
     }
 
     public DocumentosrequisitoprogramaDTO update(Integer id, DocumentosrequisitoprogramaDTO dto) {
         repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Documentosrequisitoprograma no encontrado con id: " + id));
         dto.setId(id);
-        DocumentosrequisitoprogramaEntity saved = repository.save(mapDtoToEntity(dto));
-        return mapEntityToDto(saved);
+        return entityToDto(repository.save(dtoToEntity(dto)));
     }
 
     public void deleteById(Integer id) {
         repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Documentosrequisitoprograma no encontrado con id: " + id));
         repository.deleteById(id);
-    }
-
-    private DocumentosrequisitoprogramaDTO rowToDto(Object[] row) {
-        return DocumentosrequisitoprogramaDTO.builder()
-                .id((Integer) row[0])
-                .nombre((String) row[1])
-                .tamanomaximo((Integer) row[2])
-                .urlformato((String) row[3])
-                .id_programa((Integer) row[4])
-                .build();
-    }
-
-    private DocumentosrequisitoprogramaEntity mapDtoToEntity(DocumentosrequisitoprogramaDTO dto) {
-        if (dto == null) {
-            return null;
-        }
-        return DocumentosrequisitoprogramaEntity.builder()
-                .id(dto.getId())
-                .nombre(dto.getNombre())
-                .tamanomaximo(dto.getTamanomaximo())
-                .urlformato(dto.getUrlformato())
-                .idPrograma(dto.getId_programa())
-                .build();
-    }
-
-    private DocumentosrequisitoprogramaDTO mapEntityToDto(DocumentosrequisitoprogramaEntity entity) {
-        if (entity == null) {
-            return null;
-        }
-        return DocumentosrequisitoprogramaDTO.builder()
-                .id(entity.getId())
-                .nombre(entity.getNombre())
-                .tamanomaximo(entity.getTamanomaximo())
-                .urlformato(entity.getUrlformato())
-                .id_programa(entity.getIdPrograma())
-                .build();
     }
 }

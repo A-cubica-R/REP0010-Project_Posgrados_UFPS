@@ -29,46 +29,45 @@ public class DocumentosrequisitoconsejoService extends GenericService<Documentos
         super(DocumentosrequisitoconsejoEntity.class, DocumentosrequisitoconsejoDTO.class);
     }
 
+    @Override
+    protected DocumentosrequisitoconsejoDTO entityToDto(DocumentosrequisitoconsejoEntity e) {
+        return DocumentosrequisitoconsejoDTO.builder()
+                .id(e.getId())
+                .nombre(e.getNombre())
+                .tamanomaximo(e.getTamanomaximo())
+                .urlformato(e.getUrlformato())
+                .build();
+    }
+
     @Transactional(readOnly = true)
     public List<DocumentosrequisitoconsejoDTO> findAll() {
-        return repository.findAllScalar().stream().map(this::rowToDto).toList();
+        return entityListToDtoList(repository.findAll());
     }
 
     @Transactional(readOnly = true)
     public DocumentosrequisitoconsejoDTO findById(Integer id) {
-        return repository.findByIdScalar(id).map(this::rowToDto).orElse(null);
+        return entityToDto(repository.findById(id));
     }
 
     @Transactional(readOnly = true)
     public List<DocumentosrequisitoconsejoDTO> findByIdPrograma(Integer idPrograma) {
-        return repository.findByIdProgramaScalar(idPrograma).stream().map(this::rowToDto).toList();
+        return entityListToDtoList(repository.findByIdPrograma(idPrograma));
     }
 
     public DocumentosrequisitoconsejoDTO create(DocumentosrequisitoconsejoDTO dto) {
-        Integer id = repository.save(dtoToEntity(dto)).getId();
-        return repository.findByIdScalar(id).map(this::rowToDto).orElse(null);
+        return entityToDto(repository.save(dtoToEntity(dto)));
     }
 
     public DocumentosrequisitoconsejoDTO update(Integer id, DocumentosrequisitoconsejoDTO dto) {
         repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Documentosrequisitoconsejo no encontrado con id: " + id));
         dto.setId(id);
-        repository.save(dtoToEntity(dto));
-        return repository.findByIdScalar(id).map(this::rowToDto).orElse(null);
+        return entityToDto(repository.save(dtoToEntity(dto)));
     }
 
     public void deleteById(Integer id) {
         repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Documentosrequisitoconsejo no encontrado con id: " + id));
         repository.deleteById(id);
-    }
-
-    private DocumentosrequisitoconsejoDTO rowToDto(Object[] row) {
-        return DocumentosrequisitoconsejoDTO.builder()
-                .id((Integer) row[0])
-                .nombre((String) row[1])
-                .tamanomaximo((Integer) row[2])
-                .urlformato((String) row[3])
-                .build();
     }
 }

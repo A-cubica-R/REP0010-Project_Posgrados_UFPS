@@ -30,6 +30,16 @@ public class CalificacioncriterioService extends GenericService<Calificacioncrit
         super(CalificacioncriterioEntity.class, CalificacioncriterioDTO.class);
     }
 
+    @Override
+    protected CalificacioncriterioDTO entityToDto(CalificacioncriterioEntity e) {
+        return CalificacioncriterioDTO.builder()
+                .id(e.getId())
+                .puntuacion(e.getPuntuacion())
+                .idAspirante(e.getIdAspirante())
+                .idCriteriocohorte(e.getIdCriteriocohorte())
+                .build();
+    }
+
     @Transactional(readOnly = true)
     public List<CalificacioncriterioDTO> findAll() {
         return entityListToDtoList(repository.findAll());

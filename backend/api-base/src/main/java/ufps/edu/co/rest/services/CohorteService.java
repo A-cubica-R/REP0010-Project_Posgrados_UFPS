@@ -11,6 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 import ufps.edu.co.persistence.entities.CohorteEntity;
 import ufps.edu.co.persistence.repositories.CohorteRepository;
 import ufps.edu.co.rest.dto.CohorteDTO;
+import ufps.edu.co.rest.dto.EstadoDTO;
+import ufps.edu.co.rest.dto.PlazoDTO;
+import ufps.edu.co.rest.dto.SemestreDTO;
 import ufps.edu.co.rest.services.commons.GenericService;
 
 /**
@@ -27,6 +30,57 @@ public class CohorteService extends GenericService<CohorteEntity, CohorteDTO> {
 
     public CohorteService() {
         super(CohorteEntity.class, CohorteDTO.class);
+    }
+
+    @Override
+    protected CohorteDTO entityToDto(CohorteEntity e) {
+        EstadoDTO estadoDto = e.getEstado() != null ? EstadoDTO.builder()
+                .id(e.getEstado().getId())
+                .entidad(e.getEstado().getEntidad())
+                .tipo(e.getEstado().getTipo())
+                .build() : null;
+        SemestreDTO semestreDto = e.getSemestre() != null ? SemestreDTO.builder()
+                .id(e.getSemestre().getId())
+                .nombre(e.getSemestre().getNombre())
+                .fechaInicio(e.getSemestre().getFechaInicio())
+                .fechaFin(e.getSemestre().getFechaFin())
+                .idEstado(e.getSemestre().getIdEstado())
+                .build() : null;
+        PlazoDTO plazoDto = e.getPlazo() != null ? PlazoDTO.builder()
+                .id(e.getPlazo().getId())
+                .fechainicio(e.getPlazo().getFechainicio())
+                .fechafin(e.getPlazo().getFechafin())
+                .idTipoplazo(e.getPlazo().getIdTipoplazo())
+                .build() : null;
+        PlazoDTO plazo2Dto = e.getPlazo2() != null ? PlazoDTO.builder()
+                .id(e.getPlazo2().getId())
+                .fechainicio(e.getPlazo2().getFechainicio())
+                .fechafin(e.getPlazo2().getFechafin())
+                .idTipoplazo(e.getPlazo2().getIdTipoplazo())
+                .build() : null;
+        PlazoDTO plazo3Dto = e.getPlazo3() != null ? PlazoDTO.builder()
+                .id(e.getPlazo3().getId())
+                .fechainicio(e.getPlazo3().getFechainicio())
+                .fechafin(e.getPlazo3().getFechafin())
+                .idTipoplazo(e.getPlazo3().getIdTipoplazo())
+                .build() : null;
+        return CohorteDTO.builder()
+                .id(e.getId())
+                .nombre(e.getNombre())
+                .cupos(e.getCupos())
+                .idEstado(e.getIdEstado())
+                .idSemestre(e.getIdSemestre())
+                .idModalidad(e.getIdModalidad())
+                .idPlazodocumentacion(e.getIdPlazodocumentacion())
+                .idPlazoinscripcion(e.getIdPlazoinscripcion())
+                .idPlazopago(e.getIdPlazopago())
+                .idPrograma(e.getIdPrograma())
+                .estado(estadoDto)
+                .semestre(semestreDto)
+                .plazo(plazoDto)
+                .plazo2(plazo2Dto)
+                .plazo3(plazo3Dto)
+                .build();
     }
 
     @Transactional(readOnly = true)
@@ -48,8 +102,8 @@ public class CohorteService extends GenericService<CohorteEntity, CohorteDTO> {
     }
 
     @Transactional(readOnly = true)
-    public List<Object[]> findResumenDataByIdPrograma(Integer programaId) {
-        return repository.findResumenDataByIdPrograma(programaId);
+    public List<CohorteDTO> findResumenDataByIdPrograma(Integer programaId) {
+        return entityListToDtoList(repository.findResumenDataByIdPrograma(programaId));
     }
 
     public CohorteDTO update(Integer id, CohorteDTO dto) {

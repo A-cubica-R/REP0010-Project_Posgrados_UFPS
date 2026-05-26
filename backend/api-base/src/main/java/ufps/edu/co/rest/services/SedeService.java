@@ -30,24 +30,35 @@ public class SedeService extends GenericService<SedeEntity, SedeDTO> {
         super(SedeEntity.class, SedeDTO.class);
     }
 
+    @Override
+    protected SedeDTO entityToDto(SedeEntity e) {
+        UbicacionDTO ubicacionDto = e.getUbicacion() != null ? UbicacionDTO.builder()
+                .id(e.getUbicacion().getId())
+                .direccion(e.getUbicacion().getDireccion())
+                .idMunicipio(e.getUbicacion().getIdMunicipio())
+                .build() : null;
+        return SedeDTO.builder()
+                .id(e.getId())
+                .nombre(e.getNombre())
+                .idUbicacion(e.getIdUbicacion())
+                .ubicacion(ubicacionDto)
+                .build();
+    }
+
     @Transactional(readOnly = true)
     public List<SedeDTO> findAll() {
-        return repository.findAllScalar().stream()
-                .map(this::rowToDto)
-                .toList();
+        return entityListToDtoList(repository.findAll());
     }
 
     @Transactional(readOnly = true)
     public SedeDTO findById(Integer id) {
-        return repository.findByIdScalar(id)
-                .map(this::rowToDto)
-                .orElse(null);
+        return entityToDto(repository.findById(id));
     }
 
     @Transactional(readOnly = true)
     public SedeDTO findFirstByNombre(String nombre) {
-        return repository.findFirstByNombreScalar(nombre)
-                .map(this::rowToDto)
+        return repository.findFirstByNombre(nombre)
+                .map(this::entityToDto)
                 .orElse(null);
     }
 
@@ -59,29 +70,12 @@ public class SedeService extends GenericService<SedeEntity, SedeDTO> {
         repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Sede no encontrado con id: " + id));
         dto.setId(id);
-        repository.save(dtoToEntity(dto));
-        return repository.findByIdScalar(id)
-                .map(this::rowToDto)
-                .orElse(null);
+        return entityToDto(repository.save(dtoToEntity(dto)));
     }
 
     public void deleteById(Integer id) {
         repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Sede no encontrado con id: " + id));
         repository.deleteById(id);
-    }
-
-    private SedeDTO rowToDto(Object[] row) {
-        UbicacionDTO ubicacionDto = UbicacionDTO.builder()
-                .id((Integer) row[2])
-                .direccion((String) row[3])
-                .idMunicipio((Integer) row[4])
-                .build();
-        return SedeDTO.builder()
-                .id((Integer) row[0])
-                .nombre((String) row[1])
-                .idUbicacion((Integer) row[2])
-                .ubicacion(ubicacionDto)
-                .build();
     }
 }

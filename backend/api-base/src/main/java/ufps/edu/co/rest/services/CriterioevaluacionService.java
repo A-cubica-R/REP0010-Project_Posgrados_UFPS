@@ -29,6 +29,18 @@ public class CriterioevaluacionService extends GenericService<Criterioevaluacion
         super(CriterioevaluacionEntity.class, CriterioevaluacionDTO.class);
     }
 
+    @Override
+    protected CriterioevaluacionDTO entityToDto(CriterioevaluacionEntity e) {
+        return CriterioevaluacionDTO.builder()
+                .id(e.getId())
+                .nombre(e.getNombre())
+                .activo(e.getActivo())
+                .descripcion(e.getDescripcion())
+                .peso(e.getPeso())
+                .idprograma(e.getIdPrograma())
+                .build();
+    }
+
     @Transactional(readOnly = true)
     public List<CriterioevaluacionDTO> findAll() {
         return entityListToDtoList(repository.findAll());
@@ -45,19 +57,30 @@ public class CriterioevaluacionService extends GenericService<Criterioevaluacion
     }
 
     public CriterioevaluacionDTO create(CriterioevaluacionDTO dto) {
-        return entityToDto(repository.save(dtoToEntity(dto)));
+        return entityToDto(repository.save(toEntity(dto)));
     }
 
     public CriterioevaluacionDTO update(Integer id, CriterioevaluacionDTO dto) {
         repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Criterioevaluacion no encontrado con id: " + id));
         dto.setId(id);
-        return entityToDto(repository.save(dtoToEntity(dto)));
+        return entityToDto(repository.save(toEntity(dto)));
     }
 
     public void deleteById(Integer id) {
         repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Criterioevaluacion no encontrado con id: " + id));
         repository.deleteById(id);
+    }
+
+    private CriterioevaluacionEntity toEntity(CriterioevaluacionDTO dto) {
+        return CriterioevaluacionEntity.builder()
+                .id(dto.getId())
+                .nombre(dto.getNombre())
+                .activo(dto.getActivo())
+                .descripcion(dto.getDescripcion())
+                .peso(dto.getPeso())
+                .idPrograma(dto.getIdprograma())
+                .build();
     }
 }

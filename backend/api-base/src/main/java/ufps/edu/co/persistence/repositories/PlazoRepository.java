@@ -4,12 +4,7 @@
  */
 package ufps.edu.co.persistence.repositories;
 
-import java.util.List;
-import java.util.Optional;
-
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import ufps.edu.co.persistence.entities.PlazoEntity;
@@ -17,12 +12,4 @@ import ufps.edu.co.persistence.entities.PlazoEntity;
 @Repository
 public interface PlazoRepository extends JpaRepository<PlazoEntity, Integer> {
 
-	@Query("SELECT p.id, p.fechainicio, p.fechafin, p.idTipoplazo, t.tipo, t.descripcion " +
-		   "FROM PlazoEntity p LEFT JOIN p.tipoplazo t")
-	List<Object[]> findAllScalar();
-
-	@Query("SELECT p.id, p.fechainicio, p.fechafin, p.idTipoplazo, t.tipo, t.descripcion " +
-		   "FROM PlazoEntity p LEFT JOIN p.tipoplazo t " +
-		   "WHERE p.id = :id")
-	Optional<Object[]> findByIdScalar(@Param("id") Integer id);
 }

@@ -29,26 +29,23 @@ public class TipoplazoService extends GenericService<TipoplazoEntity, TipoplazoD
         super(TipoplazoEntity.class, TipoplazoDTO.class);
     }
 
+    @Override
+    protected TipoplazoDTO entityToDto(TipoplazoEntity e) {
+        return TipoplazoDTO.builder()
+                .id(e.getId())
+                .tipo(e.getTipo())
+                .descripcion(e.getDescripcion())
+                .build();
+    }
+
     @Transactional(readOnly = true)
     public List<TipoplazoDTO> findAll() {
-        return repository.findAllScalar().stream()
-                .map(row -> TipoplazoDTO.builder()
-                        .id((Integer) row[0])
-                        .tipo((String) row[1])
-                        .descripcion((String) row[2])
-                        .build())
-                .toList();
+        return entityListToDtoList(repository.findAll());
     }
 
     @Transactional(readOnly = true)
     public TipoplazoDTO findById(Integer id) {
-        return repository.findByIdScalar(id)
-                .map(row -> TipoplazoDTO.builder()
-                        .id((Integer) row[0])
-                        .tipo((String) row[1])
-                        .descripcion((String) row[2])
-                        .build())
-                .orElse(null);
+        return entityToDto(repository.findById(id));
     }
 
     public TipoplazoDTO create(TipoplazoDTO dto) {
@@ -59,14 +56,7 @@ public class TipoplazoService extends GenericService<TipoplazoEntity, TipoplazoD
         repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Tipoplazo no encontrado con id: " + id));
         dto.setId(id);
-        repository.save(dtoToEntity(dto));
-        return repository.findByIdScalar(id)
-                .map(row -> TipoplazoDTO.builder()
-                        .id((Integer) row[0])
-                        .tipo((String) row[1])
-                        .descripcion((String) row[2])
-                        .build())
-                .orElse(null);
+        return entityToDto(repository.save(dtoToEntity(dto)));
     }
 
     public void deleteById(Integer id) {
