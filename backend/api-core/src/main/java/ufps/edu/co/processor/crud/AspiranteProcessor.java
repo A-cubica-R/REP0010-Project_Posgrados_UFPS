@@ -322,6 +322,44 @@ public class AspiranteProcessor implements
                 .build();
     }
 
+            public List<ProgramaInicioOutput> getProgramaInicioByPrograma(Integer programaId) {
+            try {
+                    return cohorteService.findResumenDataByIdPrograma(programaId).stream()
+                        .filter(row -> row[3] != null && "ABIERTA".equalsIgnoreCase(row[3].toString()))
+                        .map(row -> {
+                        Integer cohorteId = (Integer) row[0];
+                        String nombre = (String) row[1];
+                        LocalDate fechaLimiteDocumentos = (LocalDate) row[5];
+                        LocalDate fechaLimitePago = (LocalDate) row[7];
+
+                        long totalInscritos = service.countByCohorte(cohorteId);
+                        long validados = service.countValidadosByCohorte(cohorteId);
+                        long calificados = service.countCalificadosByCohorte(cohorteId);
+
+                        return ProgramaInicioOutput.builder()
+                            .cohorteActual(ProgramaInicioOutput.CohorteResumen.builder()
+                                .id(cohorteId)
+                                .nombre(nombre)
+                                .activa(true)
+                                .fechaLimiteDocumentos(fechaLimiteDocumentos)
+                                .fechaLimitePago(fechaLimitePago)
+                                .build())
+                            .validacion(ProgramaInicioOutput.ValidacionResumen.builder()
+                                .totalInscritos(totalInscritos)
+                                .aspirantesValidados(validados)
+                                .build())
+                            .calificacion(ProgramaInicioOutput.CalificacionResumen.builder()
+                                .totalValidados(validados)
+                                .aspirantesCalificados(calificados)
+                                .build())
+                            .build();
+                        })
+                        .toList();
+            } catch (Exception e) {
+                throw new RuntimeException("Error finding programa inicio for programa: " + e.getMessage(), e);
+            }
+            }
+
     public EstadoOutput findEstadoById(ASPIRANTE_FIND input) {
         try {
             AspiranteDTO dto = service.findById(input.id());
