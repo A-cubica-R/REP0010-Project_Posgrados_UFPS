@@ -188,7 +188,7 @@ public class DirectorProgramaCase {
     @GetMapping(value = "/aspirantes/{idAspirante}/documentos")
     public ResponseEntity<AspiranteDocumentosOutput> getDocumentosDeAspirante(@PathVariable Integer idAspirante) {
         try {
-            return ResponseEntity.ok(documentoProcessor.getDocumentosDeAspirante(idAspirante));
+            return ResponseEntity.ok(documentoProcessor.getDocumentosDeAspiranteParaDirector(idAspirante));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }

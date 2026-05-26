@@ -234,17 +234,15 @@ public class DocumentoProcessor implements
                 estadoGeneral = "pendiente";
             }
 
-            // TODO: Esta funcion lanza error, habrá que implementarla de nuevo para mapear correctamente los documentos a DocumentoResumenOutput
-            List<DocumentoResumenOutput> documentosResumen = null;
-            // documentosResumen = docs.stream()
-            //         .map(doc -> DocumentoResumenOutput.builder()
-            //                 .id(doc.getId())
-            //                 .nombre(doc.getTipodocumento() != null ? doc.getTipodocumento().getDescripcion() : null)
-            //                 .estado(doc.getEstadodocumento() != null ? doc.getEstadodocumento().getEstado() : "PENDIENTE")
-            //                 .motivoRechazo(doc.getObservaciones())
-            //                 .linkArchivo(doc.getEnlaceurl())
-            //                 .build())
-            //         .toList();
+                List<DocumentoResumenOutput> documentosResumen = docs.stream()
+                    .map(doc -> DocumentoResumenOutput.builder()
+                        .id(doc.getId())
+                        .nombre(doc.getKeyfile())
+                        .estado(doc.getEstadodocumento() != null ? doc.getEstadodocumento().getEstado() : "PENDIENTE")
+                        .motivoRechazo(doc.getObservaciones())
+                        .linkArchivo(doc.getEnlaceurl())
+                        .build())
+                    .toList();
 
             return AspiranteDocumentosOutput.builder()
                     .idAspirante(aspiranteId)
@@ -256,6 +254,60 @@ public class DocumentoProcessor implements
         } catch (Exception e) {
             throw new RuntimeException("Error obteniendo documentos del aspirante: " + e.getMessage(), e);
         }
+    }
+
+    public AspiranteDocumentosOutput getDocumentosDeAspiranteParaDirector(Integer aspiranteId) {
+        try {
+            return buildAspiranteDocumentosOutput(aspiranteId);
+        } catch (Exception e) {
+            throw new RuntimeException("Error obteniendo documentos del aspirante para director: " + e.getMessage(), e);
+        }
+    }
+
+    private AspiranteDocumentosOutput buildAspiranteDocumentosOutput(Integer aspiranteId) {
+        AspiranteDTO aspirante = aspiranteService.findById(aspiranteId);
+        PersonaDTO p = aspirante != null ? aspirante.getPersona() : null;
+        String nombre = p != null
+                ? ((p.getNombres() != null ? p.getNombres() : "") + " "
+                        + (p.getApellidos() != null ? p.getApellidos() : "")).trim()
+                : "";
+        String cedula = p != null && p.getDocumentopersona() != null
+                && p.getDocumentopersona().getNumerodocumento() != null
+                ? p.getDocumentopersona().getNumerodocumento().toString() : null;
+
+        List<DocumentoDTO> docs = service.findByIdAspirante(aspiranteId);
+        long total = docs.size();
+        long validados = docs.stream()
+                .filter(d -> d.getEstadodocumento() != null
+                        && "APROBADO".equalsIgnoreCase(d.getEstadodocumento().getEstado()))
+                .count();
+
+        String estadoGeneral;
+        if (total > 0 && validados == total) {
+            estadoGeneral = "validados";
+        } else if (validados > 0) {
+            estadoGeneral = "en progreso";
+        } else {
+            estadoGeneral = "pendiente";
+        }
+
+        List<DocumentoResumenOutput> documentosResumen = docs.stream()
+                .map(doc -> DocumentoResumenOutput.builder()
+                        .id(doc.getId())
+                        .nombre(doc.getKeyfile())
+                        .estado(doc.getEstadodocumento() != null ? doc.getEstadodocumento().getEstado() : "PENDIENTE")
+                        .motivoRechazo(doc.getObservaciones())
+                        .linkArchivo(doc.getEnlaceurl())
+                        .build())
+                .toList();
+
+        return AspiranteDocumentosOutput.builder()
+                .idAspirante(aspiranteId)
+                .nombreAspirante(nombre)
+                .cedula(cedula)
+                .estadoGeneral(estadoGeneral)
+                .documentos(documentosResumen)
+                .build();
     }
 
     public DocumentoEstadoOutput updateEstadoDocumento(Integer docId, DOCUMENTO_ESTADO_UPDATE input) {
