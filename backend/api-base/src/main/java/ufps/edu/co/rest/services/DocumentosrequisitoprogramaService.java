@@ -36,6 +36,18 @@ public class DocumentosrequisitoprogramaService extends GenericService<Documento
                 .nombre(e.getNombre())
                 .tamanomaximo(e.getTamanomaximo())
                 .urlformato(e.getUrlformato())
+                .id_programa(e.getIdPrograma())
+                .build();
+    }
+
+    @Override
+    protected DocumentosrequisitoprogramaEntity dtoToEntity(DocumentosrequisitoprogramaDTO dto) {
+        return DocumentosrequisitoprogramaEntity.builder()
+                .id(dto.getId())
+                .nombre(dto.getNombre())
+                .tamanomaximo(dto.getTamanomaximo())
+                .urlformato(dto.getUrlformato())
+                .idPrograma(dto.getId_programa())
                 .build();
     }
 
