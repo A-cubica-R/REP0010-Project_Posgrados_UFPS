@@ -175,6 +175,22 @@ public class PruebaProcessor implements
         }
     }
 
+    public PruebaResumenOutput editPrueba(Integer idPrueba, PRUEBA_REAGENDAR_REQUEST request) {
+        try {
+            TipopruebaDTO tipoprueba = tipopruebaService.findById(request.idTipoprueba());
+            if (tipoprueba == null) {
+                throw new RuntimeException("Tipo de prueba no encontrado: " + request.idTipoprueba());
+            }
+            UbicacionDTO ubicacion = ubicacionService.create(
+                    UbicacionDTO.builder().direccion(request.ubicacion()).zonaurbana(true).build());
+            PruebaDTO updated = service.edit(idPrueba, request.fecha(), request.tiempo(),
+                    tipoprueba.getId(), ubicacion.getId());
+            return toPruebaResumen(updated);
+        } catch (Exception e) {
+            throw new RuntimeException("Error editing Prueba: " + e.getMessage(), e);
+        }
+    }
+
     public PruebaSimpleOutput completarPrueba(Integer idPrueba) {
         try {
             EstadoDTO estadoCompletada = estadoService.findByTipoAndEntidad("COMPLETADA", "prueba");
