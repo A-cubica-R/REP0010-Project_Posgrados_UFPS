@@ -29,6 +29,17 @@ public class UsuarioService extends GenericService<UsuarioEntity, UsuarioDTO> {
         super(UsuarioEntity.class, UsuarioDTO.class);
     }
 
+    @Override
+    protected UsuarioDTO entityToDto(UsuarioEntity e) {
+        return UsuarioDTO.builder()
+                .id(e.getId())
+                .idClave(e.getIdClave())
+                .idPersona(e.getIdPersona())
+                .idRol(e.getIdRol())
+                .nombreusuario(e.getNombreusuario())
+                .build();
+    }
+
     @Transactional(readOnly = true)
     public List<UsuarioDTO> findAll() {
         return entityListToDtoList(repository.findAll());
