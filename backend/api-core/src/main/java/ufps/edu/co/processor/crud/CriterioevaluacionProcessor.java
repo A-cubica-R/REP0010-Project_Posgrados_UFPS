@@ -57,7 +57,6 @@ public class CriterioevaluacionProcessor implements
 
     @Override
     public CriterioevaluacionOutput create(CRITERIOEVALUACION_CREATE input) {
-        validatePesoSum(input.idPrograma(), input.peso(), null);
         CriterioevaluacionDTO dto = map.toDto(input);
         CriterioevaluacionOutput output = map.toOutput(service.create(dto));
         marcarAspirantesEnProgreso(input.idPrograma());
@@ -66,7 +65,6 @@ public class CriterioevaluacionProcessor implements
 
     @Override
     public CriterioevaluacionOutput update(CRITERIOEVALUACION_UPDATE input) {
-        validatePesoSum(input.idPrograma(), input.peso(), input.id());
         try {
             CriterioevaluacionDTO old = service.findById(input.id());
             BigDecimal oldPeso = old != null ? old.getPeso() : null;
@@ -215,27 +213,6 @@ public class CriterioevaluacionProcessor implements
             }
         }
 
-        // Compute projected total peso
-        Set<Integer> bulkIds = input.criterios().stream()
-                .map(CRITERIO_BULK_ITEM::id)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toSet());
-
-        BigDecimal pesoNoTocados = existing.stream()
-                .filter(c -> !bulkIds.contains(c.getId()))
-                .map(CriterioevaluacionDTO::getPeso)
-                .filter(Objects::nonNull)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        BigDecimal pesoBulk = input.criterios().stream()
-                .map(CRITERIO_BULK_ITEM::peso)
-                .filter(Objects::nonNull)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        if (pesoNoTocados.add(pesoBulk).compareTo(BigDecimal.valueOf(100)) > 0) {
-            throw new DomainException(CriterioevaluacionErrorCode.PESO_EXCEDE_LIMITE, cohorteId);
-        }
-
         for (CRITERIO_BULK_ITEM item : input.criterios()) {
             CriterioevaluacionDTO dto = CriterioevaluacionDTO.builder()
                     .nombre(item.nombre())
@@ -311,15 +288,4 @@ public class CriterioevaluacionProcessor implements
         );
     }
 
-    private void validatePesoSum(Integer idPrograma, BigDecimal newPeso, Integer excludeId) {
-        List<CriterioevaluacionDTO> existing = service.findByIdPrograma(idPrograma);
-        BigDecimal sum = existing.stream()
-                .filter(dto -> !Objects.equals(dto.getId(), excludeId))
-                .map(CriterioevaluacionDTO::getPeso)
-                .filter(Objects::nonNull)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-        if (sum.add(newPeso).compareTo(BigDecimal.valueOf(100)) > 0) {
-            throw new DomainException(CriterioevaluacionErrorCode.PESO_EXCEDE_LIMITE, idPrograma);
-        }
-    }
 }
