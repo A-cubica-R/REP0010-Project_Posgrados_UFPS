@@ -54,13 +54,13 @@ public class UbicacionEntity implements Serializable {
     @OneToMany(mappedBy="ubicacion")
     private List<EntrevistaEntity> entrevistaList ; 
 
-    @OneToMany
+    @OneToMany(mappedBy="ubicacion")
     private List<PersonaEntity> personaList ; 
 
-    @OneToMany
+    @OneToMany(mappedBy="ubicacion2")
     private List<PersonaEntity> personaList2 ; 
 
-    @OneToMany
+    @OneToMany(mappedBy="ubicacion3")
     private List<PersonaEntity> personaList3 ; 
 
     @OneToMany(mappedBy="ubicacion")
