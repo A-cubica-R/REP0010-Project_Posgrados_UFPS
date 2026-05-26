@@ -38,9 +38,14 @@ public class DocumentosrequisitoprogramaProcessor implements
         }
     }
 
-    public DocumentosrequisitoprogramaOutput create(DOCUMENTOSREQUISITOPROGRAMA_UPDATE input, Integer idPrograma) {
+    public DocumentosrequisitoprogramaOutput create(DOCUMENTOSREQUISITOPROGRAMA_CREATEDOCUMENT input, Integer idPrograma) {
         try {
-            DocumentosrequisitoprogramaDTO dto = map.toDto(input);
+            DocumentosrequisitoprogramaDTO dto = DocumentosrequisitoprogramaDTO.builder()
+                    .nombre(input.nombre())
+                    .tamanomaximo(input.tamanomaximo())
+                    .urlformato(input.urlformato())
+                    .id_programa(idPrograma)
+                    .build();
             dto.setId_programa(idPrograma);
             return map.toOutput(service.create(dto));
         } catch (Exception e) {

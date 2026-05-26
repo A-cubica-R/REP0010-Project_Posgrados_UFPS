@@ -6,6 +6,12 @@ import ufps.edu.co.records.output.entity.DocumentosrequisitoprogramaOutput;
 import ufps.edu.co.services.S3Service;
 import ufps.edu.co.processor.cases.DocumentosrequisitoprogramaPE;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,22 +31,31 @@ public class Programadocumentos {
     @Autowired
     private S3Service s3Service;
 
+    private ObjectMapper objectMapper = new ObjectMapper();
+
     @PostMapping(value = "/documentos", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Object> createDocumentosrequisitoprograma(
-            @RequestPart("body") DOCUMENTOSREQUISITOPROGRAMA_CREATE body,
-            @RequestPart(value = "file", required = false) MultipartFile file) {
+            @Parameter(required = true, content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = DOCUMENTOSREQUISITOPROGRAMA_CREATE.class))) @RequestPart("body") String body,
+            @Parameter(required = false, content = @Content(mediaType = MediaType.APPLICATION_OCTET_STREAM_VALUE)) @RequestPart(value = "file", required = false) MultipartFile file) {
         try {
+            DOCUMENTOSREQUISITOPROGRAMA_CREATE requestBody = objectMapper.readValue(
+                    body, DOCUMENTOSREQUISITOPROGRAMA_CREATE.class);
+
             String urlformato = null;
             if (file != null && !file.isEmpty()) {
                 urlformato = s3Service.uploadFile(file).enlaceurl();
             }
-            // DOCUMENTOSREQUISITOPROGRAMA_CREATE bodyConUrl = new DOCUMENTOSREQUISITOPROGRAMA_CREATE(
-            //         body.nombre(), body.tamanomaximo(), body.idPrograma());
-            DOCUMENTOSREQUISITOPROGRAMA_UPDATE bodyConUrlUpdate = new DOCUMENTOSREQUISITOPROGRAMA_UPDATE(
-                    null, body.nombre(), 5, urlformato);
-            return ResponseEntity.status(HttpStatus.CREATED).body(processor.create(bodyConUrlUpdate, body.idPrograma()));
+            DOCUMENTOSREQUISITOPROGRAMA_CREATEDOCUMENT bodyConUrlUpdate = DOCUMENTOSREQUISITOPROGRAMA_CREATEDOCUMENT
+                    .builder()
+                    .nombre(requestBody.nombre())
+                    .tamanomaximo(5)
+                    .urlformato(urlformato)
+                    .build();
+
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(processor.create(bodyConUrlUpdate, requestBody.idPrograma()));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 

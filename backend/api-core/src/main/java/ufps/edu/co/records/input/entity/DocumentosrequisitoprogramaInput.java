@@ -1,6 +1,7 @@
 package ufps.edu.co.records.input.entity;
 
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import ufps.edu.co.records.contracts.CreateType;
 import ufps.edu.co.records.contracts.DeleteType;
 import ufps.edu.co.records.contracts.FindType;
@@ -13,6 +14,13 @@ public class DocumentosrequisitoprogramaInput {
         public record DOCUMENTOSREQUISITOPROGRAMA_CREATE(
                         String nombre,
                         Integer idPrograma) implements CreateType {
+        }
+
+        @Builder
+        public record DOCUMENTOSREQUISITOPROGRAMA_CREATEDOCUMENT(
+                        String nombre,
+                        Integer tamanomaximo,
+                        String urlformato) implements CreateType {
         }
 
         public record DOCUMENTOSREQUISITOPROGRAMA_UPDATE(
