@@ -59,6 +59,15 @@ public enum PruebaInput {
             @NotBlank String ubicacion) implements UpdateType {
     }
 
+    public record PRUEBA_EDITAR_REQUEST(
+            String nombre,
+            String descripcion,
+            LocalDate fecha,
+            LocalTime tiempo,
+            Integer idTipoprueba,
+            String ubicacion) {
+    }
+
     public record PRUEBA_CANCELAR_REQUEST(
             @NotBlank String motivocambio) implements PatchType {
     }

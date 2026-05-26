@@ -175,16 +175,24 @@ public class PruebaProcessor implements
         }
     }
 
-    public PruebaResumenOutput editPrueba(Integer idPrueba, PRUEBA_REAGENDAR_REQUEST request) {
+    public PruebaResumenOutput editPrueba(Integer idPrueba, PRUEBA_EDITAR_REQUEST request) {
         try {
-            TipopruebaDTO tipoprueba = tipopruebaService.findById(request.idTipoprueba());
-            if (tipoprueba == null) {
-                throw new RuntimeException("Tipo de prueba no encontrado: " + request.idTipoprueba());
+            Integer idTipoprueba = null;
+            if (request.idTipoprueba() != null) {
+                TipopruebaDTO tipoprueba = tipopruebaService.findById(request.idTipoprueba());
+                if (tipoprueba == null) {
+                    throw new RuntimeException("Tipo de prueba no encontrado: " + request.idTipoprueba());
+                }
+                idTipoprueba = tipoprueba.getId();
             }
-            UbicacionDTO ubicacion = ubicacionService.create(
-                    UbicacionDTO.builder().direccion(request.ubicacion()).zonaurbana(true).build());
-            PruebaDTO updated = service.edit(idPrueba, request.fecha(), request.tiempo(),
-                    tipoprueba.getId(), ubicacion.getId());
+            Integer idUbicacion = null;
+            if (request.ubicacion() != null) {
+                UbicacionDTO ubicacion = ubicacionService.create(
+                        UbicacionDTO.builder().direccion(request.ubicacion()).zonaurbana(true).build());
+                idUbicacion = ubicacion.getId();
+            }
+            PruebaDTO updated = service.edit(idPrueba, request.nombre(), request.descripcion(),
+                    request.fecha(), request.tiempo(), idTipoprueba, idUbicacion);
             return toPruebaResumen(updated);
         } catch (Exception e) {
             throw new RuntimeException("Error editing Prueba: " + e.getMessage(), e);
