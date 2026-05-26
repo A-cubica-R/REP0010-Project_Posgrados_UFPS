@@ -13,7 +13,8 @@ public class DocumentosrequisitoprogramaInput {
         public record DOCUMENTOSREQUISITOPROGRAMA_CREATE(
                         String nombre,
                         Integer tamanomaximo,
-                        String urlformato) implements CreateType {
+                        String urlformato,
+                        Integer idPrograma) implements CreateType {
         }
 
         public record DOCUMENTOSREQUISITOPROGRAMA_UPDATE(
