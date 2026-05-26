@@ -42,6 +42,8 @@ import ufps.edu.co.rest.services.AspiranteService;
 import ufps.edu.co.rest.services.CohorteService;
 import ufps.edu.co.rest.services.CriterioevaluacionService;
 import ufps.edu.co.rest.services.CriteriocohorteService;
+import ufps.edu.co.rest.services.DocumentosrequisitoconsejocohorteService;
+import ufps.edu.co.rest.services.DocumentosrequisitoprogramacohorteService;
 import ufps.edu.co.rest.services.EstadoService;
 import ufps.edu.co.rest.services.ModalidadService;
 import ufps.edu.co.rest.services.PlazoService;
@@ -91,6 +93,12 @@ public class AspiranteProcessor implements
 
     @Autowired
     private DocumentoService documentoService;
+
+    @Autowired
+    private DocumentosrequisitoconsejocohorteService documentosrequisitoconsejocohorteService;
+
+    @Autowired
+    private DocumentosrequisitoprogramacohorteService documentosrequisitoprogramacohorteService;
 
     @Override
     public AspiranteOutput create(ASPIRANTE_CREATE input) {
@@ -383,6 +391,24 @@ public class AspiranteProcessor implements
                 })
                 .toList();
 
+            List<ufps.edu.co.records.output.entity.DocumentosrequisitoconsejocohorteOutput> documentosConsejo = documentosrequisitoconsejocohorteService
+                .findByIdCohorte(cohorteId).stream()
+                .map(doc -> ufps.edu.co.records.output.entity.DocumentosrequisitoconsejocohorteOutput.builder()
+                    .id(doc.getId())
+                    .idDocrequisito(doc.getIdDocrequisito())
+                    .idCohorte(doc.getIdCohorte())
+                    .build())
+                .toList();
+
+            List<ufps.edu.co.records.output.entity.DocumentosrequisitoprogramacohorteOutput> documentosPrograma = documentosrequisitoprogramacohorteService
+                .findByIdCohorte(cohorteId).stream()
+                .map(doc -> ufps.edu.co.records.output.entity.DocumentosrequisitoprogramacohorteOutput.builder()
+                    .id(doc.getId())
+                    .idDocrequisito(doc.getIdDocrequisito())
+                    .idCohorte(doc.getIdCohorte())
+                    .build())
+                .toList();
+
         List<AspiranteDTO> aspirantes = service.findByCohorte(cohorteId);
 
         List<CohorteDetalleOutput.AspiranteInfo> inscritosData = aspirantes.stream()
@@ -440,6 +466,10 @@ public class AspiranteProcessor implements
                 .fechaLimitePago(cohorte.getPlazo3() != null ? cohorte.getPlazo3().getFechafin() : null)
                 .fechaInicio(cohorte.getSemestre() != null ? cohorte.getSemestre().getFechaInicio() : null)
                 .criterios(criterios)
+                .documentosAsignados(CohorteDetalleOutput.DocumentosAsignadosInfo.builder()
+                    .documentosConsejo(documentosConsejo)
+                    .documentosPrograma(documentosPrograma)
+                    .build())
                 .inscritosData(inscritosData)
                 .admitidosData(admitidosData)
                 .build();

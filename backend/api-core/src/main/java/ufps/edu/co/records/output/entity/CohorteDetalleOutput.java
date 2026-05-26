@@ -6,6 +6,8 @@ import java.util.List;
 
 import lombok.Builder;
 import ufps.edu.co.records.OutputResponse;
+import ufps.edu.co.records.output.entity.DocumentosrequisitoconsejocohorteOutput;
+import ufps.edu.co.records.output.entity.DocumentosrequisitoprogramacohorteOutput;
 
 @Builder
 public record CohorteDetalleOutput(
@@ -19,6 +21,7 @@ public record CohorteDetalleOutput(
         LocalDate fechaLimitePago,
         LocalDate fechaInicio,
         List<CriterioInfo> criterios,
+        DocumentosAsignadosInfo documentosAsignados,
         List<AspiranteInfo> inscritosData,
         List<AspiranteInfo> admitidosData
 ) implements OutputResponse {
@@ -28,4 +31,9 @@ public record CohorteDetalleOutput(
 
     @Builder
     public record AspiranteInfo(Integer id, String nombre, String cedula, String correo) {}
+
+    @Builder
+    public record DocumentosAsignadosInfo(
+            List<DocumentosrequisitoconsejocohorteOutput> documentosConsejo,
+            List<DocumentosrequisitoprogramacohorteOutput> documentosPrograma) {}
 }
