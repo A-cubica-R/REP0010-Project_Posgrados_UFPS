@@ -146,6 +146,18 @@ public class CriteriocohorteProcessor implements
 
     public CriteriocohorteOutput updatePeso(Integer id, BigDecimal pesoSnapshot) {
         CriteriocohorteOutput existing = findById(new CRITERIOCOHORTE_FIND(id));
+
+        BigDecimal pesoEfectivo = pesoSnapshot != null ? pesoSnapshot : BigDecimal.ZERO;
+        BigDecimal sumaActual = service.findByIdCohorte(existing.idCohorte()).stream()
+                .filter(cc -> !Objects.equals(cc.getId(), id))
+                .map(CriteriocohorteDTO::getPesoSnapshot)
+                .filter(Objects::nonNull)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        if (sumaActual.add(pesoEfectivo).compareTo(BigDecimal.valueOf(100)) > 0) {
+            throw new DomainException(CriteriocohorteErrorCode.PESO_SNAPSHOT_EXCEDE_LIMITE, existing.idCohorte());
+        }
+
         CriteriocohorteOutput updated = update(CRITERIOCOHORTE_UPDATE.builder()
                 .id(id)
                 .idCohorte(existing.idCohorte())
