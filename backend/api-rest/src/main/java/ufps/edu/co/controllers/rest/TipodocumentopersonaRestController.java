@@ -1,12 +1,10 @@
 package ufps.edu.co.controllers.rest;
 
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,12 +21,6 @@ public class TipodocumentopersonaRestController {
 
     @Autowired
     private TipodocumentopersonaProcessor processor;
-
-    @GetMapping("/listall")
-    public ResponseEntity<List<TipodocumentopersonaOutput>> findAll() {
-        List<TipodocumentopersonaOutput> list = processor.findAll();
-        return ResponseEntity.ok(list);
-    }
 
     @PostMapping(value = "/list", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TipodocumentopersonaOutput> findById(@RequestBody TIPODOCUMENTOPERSONA_FIND request) {
