@@ -6,5 +6,5 @@ import ufps.edu.co.records.OutputResponse;
 @Builder
 public record PoblacionindigenaOutput(
         Integer id,
-        String poblacion
+        String nombre
 ) implements OutputResponse {}

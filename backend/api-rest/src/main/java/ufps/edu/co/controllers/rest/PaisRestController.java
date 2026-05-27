@@ -30,12 +30,6 @@ public class PaisRestController {
      *
      * @return 200 con lista de DTO
      */
-    @GetMapping("/listall")
-    public ResponseEntity<List<PaisOutput>> findAll() {
-        List<PaisOutput> list = processor.findAll();
-        return ResponseEntity.ok(list); // 200 OK
-    }
-
     /**
      * Get ONE identified by the given PK
      *

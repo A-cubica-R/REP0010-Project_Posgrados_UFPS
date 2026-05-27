@@ -58,7 +58,7 @@ public class GrupoetnicoMap extends GlobalMapper<GRUPOETNICO_CREATE, GRUPOETNICO
         if (dto == null) return null;
         return GrupoetnicoOutput.builder()
                 .id(dto.getId())
-                .grupo(dto.getGrupo())
+                .nombre(dto.getGrupo())
                 .build();
     }
 
