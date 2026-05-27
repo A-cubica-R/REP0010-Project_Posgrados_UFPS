@@ -67,7 +67,8 @@ public class EntrevistaProcessor implements
             }
             EstadoDTO estadoInicial = estadoService.findByTipoAndEntidad("PENDIENTE DE CONFIRMACION", "entrevista");
             if (estadoInicial == null) {
-                throw new RuntimeException("Estado inicial 'PENDIENTE DE CONFIRMACION' no encontrado para entidad 'entrevista'");
+                throw new RuntimeException(
+                        "Estado inicial 'PENDIENTE DE CONFIRMACION' no encontrado para entidad 'entrevista'");
             }
             UbicacionDTO ubicacion = ubicacionService.create(
                     UbicacionDTO.builder().direccion(input.ubicacion()).zonaurbana(true).build());
@@ -87,7 +88,8 @@ public class EntrevistaProcessor implements
     @Override
     public EntrevistaOutput update(ENTREVISTA_UPDATE input) {
         try {
-            UbicacionDTO ubicacion = ubicacionService.create(UbicacionDTO.builder().direccion(input.ubicacion()).zonaurbana(true).build());
+            UbicacionDTO ubicacion = ubicacionService
+                    .create(UbicacionDTO.builder().direccion(input.ubicacion()).zonaurbana(true).build());
             EntrevistaDTO dto = map.toDto(input);
             dto.setIdUbicacion(ubicacion.getId());
             EntrevistaDTO updated = service.update(input.id(), dto);
@@ -142,11 +144,24 @@ public class EntrevistaProcessor implements
             }
             EntrevistaDTO updated = service.changeEstado(input.id(), estadoCompletada.getId(), "CONFIRMADA");
 
-            EstadoDTO estadoEntrevistado = estadoService.findByTipoAndEntidad("ENTREVISTADO", "aspirante");
-            if (estadoEntrevistado == null) {
-                throw new RuntimeException("Estado 'ENTREVISTADO' no encontrado para entidad 'aspirante'");
-            }
-            aspiranteService.updateEstado(updated.getIdAspirante(), estadoEntrevistado.getId());
+            /*
+             * NOTE: El siguiente bloque de código está comentado porque actualmente el
+             * método changeEstado no actualiza el estado del aspirante a ENTREVISTADO, sino
+             * que solo cambia el estado de la entrevista. Para que este bloque funcione,
+             * habría que modificar el servicio para que al cambiar el estado de la
+             * entrevista a COMPLETADA, también actualice el estado del aspirante a
+             * ENTREVISTADO. Si se hace esa modificación, entonces este bloque se podría
+             * descomentar para que al completar la entrevista también se actualice el
+             * estado del aspirante.
+             * EstadoDTO estadoEntrevistado =
+             * estadoService.findByTipoAndEntidad("ENTREVISTADO", "aspirante");
+             * if (estadoEntrevistado == null) {
+             * throw new RuntimeException("Estado 'ENTREVISTADO' no encontrado para entidad
+             * 'aspirante'");
+             * }
+             */
+            // aspiranteService.updateEstado(updated.getIdAspirante(),
+            // estadoEntrevistado.getId());
 
             return map.toOutput(updated);
         } catch (Exception e) {
@@ -164,7 +179,8 @@ public class EntrevistaProcessor implements
             if (estadoCancelada == null) {
                 throw new RuntimeException("Estado 'CANCELADA' no encontrado para entidad 'entrevista'");
             }
-            EntrevistaDTO updated = service.changeEstadoWithMotivo(id, estadoCancelada.getId(), "CONFIRMADA", motivocambio);
+            EntrevistaDTO updated = service.changeEstadoWithMotivo(id, estadoCancelada.getId(), "CONFIRMADA",
+                    motivocambio);
             return map.toOutput(updated);
         } catch (Exception e) {
             throw new RuntimeException("Error cancelling Entrevista: " + e.getMessage(), e);
@@ -177,7 +193,8 @@ public class EntrevistaProcessor implements
             if (estadoConfirmada == null) {
                 throw new RuntimeException("Estado 'CONFIRMADA' no encontrado para entidad 'entrevista'");
             }
-            EntrevistaDTO updated = service.changeEstado(input.id(), estadoConfirmada.getId(), "PENDIENTE DE CONFIRMACION");
+            EntrevistaDTO updated = service.changeEstado(input.id(), estadoConfirmada.getId(),
+                    "PENDIENTE DE CONFIRMACION");
             return map.toOutput(updated);
         } catch (Exception e) {
             throw new RuntimeException("Error confirming Entrevista: " + e.getMessage(), e);
@@ -251,7 +268,9 @@ public class EntrevistaProcessor implements
 
     public EntrevistaOutput rateInterview(ENTREVISTA_RATE input) {
         try {
-            // TODO: Actualmente el método rateInterview no asigna la calificación a la entrevista. Habría que modificar el servicio para que lo haga, y luego este método funcionaría correctamente.
+            // TODO: Actualmente el método rateInterview no asigna la calificación a la
+            // entrevista. Habría que modificar el servicio para que lo haga, y luego este
+            // método funcionaría correctamente.
             EntrevistaDTO updated = service.rateInterview(input.id(), input.calificacion());
             return map.toOutput(updated);
         } catch (Exception e) {
@@ -275,7 +294,8 @@ public class EntrevistaProcessor implements
             String correoAspirante = persona.getCorreo();
             String fecha = entrevista.getFecha() != null ? entrevista.getFecha().toString() : "No definida";
             String hora = entrevista.getTiempo() != null ? entrevista.getTiempo().toString() : "No definida";
-            String tipo = entrevista.getTipoentrevista() != null ? entrevista.getTipoentrevista().getTipo() : "No definido";
+            String tipo = entrevista.getTipoentrevista() != null ? entrevista.getTipoentrevista().getTipo()
+                    : "No definido";
             String lugar = entrevista.getUbicacion() != null ? entrevista.getUbicacion().getDireccion() : "No definido";
 
             String html = "<p>Hola <strong>" + nombre + "</strong>,</p>"
@@ -297,7 +317,8 @@ public class EntrevistaProcessor implements
     private void notifyEntrevistaEliminada(EntrevistaDTO entrevista) {
         try {
             AspiranteDTO aspirante = aspiranteService.findById(entrevista.getIdAspirante());
-            if (aspirante == null || aspirante.getPersona() == null) return;
+            if (aspirante == null || aspirante.getPersona() == null)
+                return;
 
             String nombre = aspirante.getPersona().getNombres();
             String correoAspirante = aspirante.getPersona().getCorreo();
