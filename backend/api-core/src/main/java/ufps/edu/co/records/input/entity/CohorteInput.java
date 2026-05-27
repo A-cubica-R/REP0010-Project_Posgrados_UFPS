@@ -64,6 +64,11 @@ public enum CohorteInput {
                         List<CriteriocohorteInput.CRITERIOCOHORTE_CREATE> criteriosCohorte) implements CreateType {
         }
 
+        public record CRITERIOCOHORTE_DIRECTOR_UPDATE(
+                        @NotNull Integer id,
+                        java.math.BigDecimal pesoSnapshot) {
+        }
+
         public record DOCUMENTO_ASIGNADO_CREATE(
                         Integer id,
                         Integer idDocrequisito,
@@ -80,7 +85,7 @@ public enum CohorteInput {
                         LocalDate fechaLimitePago,
                         List<DOCUMENTO_ASIGNADO_CREATE> documentosConsejo,
                         List<DOCUMENTO_ASIGNADO_CREATE> documentosPrograma,
-                        List<CriteriocohorteInput.CRITERIOCOHORTE_CREATE> criteriosCohorte) implements UpdateType {
+                        List<CRITERIOCOHORTE_DIRECTOR_UPDATE> criteriosCohorte) implements UpdateType {
         }
 
         public record COHORTE_WITHPLAZO_CREATE(
