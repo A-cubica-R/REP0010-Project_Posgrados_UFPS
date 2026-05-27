@@ -6,8 +6,6 @@ import java.util.List;
 
 import lombok.Builder;
 import ufps.edu.co.records.OutputResponse;
-import ufps.edu.co.records.output.entity.DocumentosrequisitoconsejocohorteOutput;
-import ufps.edu.co.records.output.entity.DocumentosrequisitoprogramacohorteOutput;
 
 @Builder
 public record CohorteDetalleOutput(
@@ -33,7 +31,10 @@ public record CohorteDetalleOutput(
     public record AspiranteInfo(Integer id, String nombre, String cedula, String correo) {}
 
     @Builder
+    public record DocumentoAsignadoInfo(Integer id, Integer idDocrequisito, Integer idCohorte, String nombre) {}
+
+    @Builder
     public record DocumentosAsignadosInfo(
-            List<DocumentosrequisitoconsejocohorteOutput> documentosConsejo,
-            List<DocumentosrequisitoprogramacohorteOutput> documentosPrograma) {}
+            List<DocumentoAsignadoInfo> documentosConsejo,
+            List<DocumentoAsignadoInfo> documentosPrograma) {}
 }
