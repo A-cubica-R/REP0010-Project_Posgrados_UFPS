@@ -17,12 +17,10 @@ import ufps.edu.co.records.output.entity.CalificacioncriterioOutput;
 import ufps.edu.co.rest.dto.AspiranteDTO;
 import ufps.edu.co.rest.dto.CalificacioncriterioDTO;
 import ufps.edu.co.rest.dto.CriteriocohorteDTO;
-import ufps.edu.co.rest.dto.CriterioevaluacionDTO;
 import ufps.edu.co.rest.dto.EstadoDTO;
 import ufps.edu.co.rest.services.AspiranteService;
 import ufps.edu.co.rest.services.CalificacioncriterioService;
 import ufps.edu.co.rest.services.CriteriocohorteService;
-import ufps.edu.co.rest.services.CriterioevaluacionService;
 import ufps.edu.co.rest.services.EstadoService;
 import ufps.edu.co.usecase.GlobalUseCase;
 
@@ -43,9 +41,6 @@ public class CalificacioncriterioProcessor implements
 
     @Autowired
     private CriteriocohorteService criteriocohorteService;
-
-    @Autowired
-    private CriterioevaluacionService criterioevaluacionService;
 
     @Autowired
     private EstadoService estadoService;
