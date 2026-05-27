@@ -58,7 +58,7 @@ public class EstadocivilMap extends GlobalMapper<ESTADOCIVIL_CREATE, ESTADOCIVIL
         if (dto == null) return null;
         return EstadocivilOutput.builder()
                 .id(dto.getId())
-                .estado(dto.getEstado())
+                .tipo(dto.getEstado())
                 .build();
     }
 

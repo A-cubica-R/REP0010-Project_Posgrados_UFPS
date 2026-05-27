@@ -6,5 +6,5 @@ import ufps.edu.co.records.OutputResponse;
 @Builder
 public record EstadocivilOutput(
         Integer id,
-        String estado
+        String tipo
 ) implements OutputResponse {}

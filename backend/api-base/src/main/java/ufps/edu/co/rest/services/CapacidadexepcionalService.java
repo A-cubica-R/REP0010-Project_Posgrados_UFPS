@@ -4,14 +4,14 @@
  */
 package ufps.edu.co.rest.services;
 
-import java.util.List;
+import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ufps.edu.co.persistence.entities.CapacidadexepcionalEntity;
-import ufps.edu.co.persistence.repositories.CapacidadexepcionalRepository;
-import ufps.edu.co.rest.dto.CapacidadexepcionalDTO;
-import ufps.edu.co.rest.services.commons.GenericService;
+import ufps.edu.co.persistence.entities.*;
+import ufps.edu.co.persistence.repositories.*;
+import ufps.edu.co.rest.dto.*;
+import ufps.edu.co.rest.services.commons.*;
 
 /**
  * REST service for entity "Capacidadexepcional" <br>
@@ -54,5 +54,10 @@ public class CapacidadexepcionalService extends GenericService<Capacidadexepcion
         repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Capacidadexepcional no encontrado con id: " + id));
         repository.deleteById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public CapacidadexepcionalDTO findByNombre(String nombre) {
+        return entityToDto(repository.findByTipocapacidadIgnoreCase(nombre));
     }
 }

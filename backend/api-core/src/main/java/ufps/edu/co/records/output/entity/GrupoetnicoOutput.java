@@ -6,5 +6,5 @@ import ufps.edu.co.records.OutputResponse;
 @Builder
 public record GrupoetnicoOutput(
         Integer id,
-        String grupo
+        String nombre
 ) implements OutputResponse {}
