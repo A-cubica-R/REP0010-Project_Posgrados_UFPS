@@ -6,5 +6,5 @@ import ufps.edu.co.records.OutputResponse;
 @Builder
 public record DiscapacidadOutput(
         Integer id,
-        String tipodiscapacidad
+        String nombre
 ) implements OutputResponse {}

@@ -50,6 +50,11 @@ public class DepartamentoService extends GenericService<DepartamentoEntity, Depa
         return entityToDto(repository.save(dtoToEntity(dto)));
     }
 
+    @Transactional(readOnly = true)
+    public List<DepartamentoDTO> findByIdPais(Integer idPais) {
+        return entityListToDtoList(repository.findByIdPais(idPais));
+    }
+
     public void deleteById(Integer id) {
         repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Departamento no encontrado con id: " + id));

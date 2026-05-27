@@ -58,7 +58,7 @@ public class PoblacionindigenaMap extends GlobalMapper<POBLACIONINDIGENA_CREATE,
         if (dto == null) return null;
         return PoblacionindigenaOutput.builder()
                 .id(dto.getId())
-                .poblacion(dto.getPoblacion())
+                .nombre(dto.getPoblacion())
                 .build();
     }
 

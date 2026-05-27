@@ -58,7 +58,7 @@ public class DiscapacidadMap extends GlobalMapper<DISCAPACIDAD_CREATE, DISCAPACI
         if (dto == null) return null;
         return DiscapacidadOutput.builder()
                 .id(dto.getId())
-                .tipodiscapacidad(dto.getTipodiscapacidad())
+                .nombre(dto.getTipodiscapacidad())
                 .build();
     }
 

@@ -58,7 +58,7 @@ public class CapacidadexepcionalMap extends GlobalMapper<CAPACIDADEXEPCIONAL_CRE
         if (dto == null) return null;
         return CapacidadexepcionalOutput.builder()
                 .id(dto.getId())
-                .tipocapacidad(dto.getTipocapacidad())
+                .nombre(dto.getTipocapacidad())
                 .build();
     }
 

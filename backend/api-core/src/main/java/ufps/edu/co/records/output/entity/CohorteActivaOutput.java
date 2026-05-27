@@ -4,7 +4,7 @@ import lombok.Builder;
 import ufps.edu.co.records.OutputResponse;
 
 @Builder
-public record CapacidadexepcionalOutput(
+public record CohorteActivaOutput(
         Integer id,
         String nombre
 ) implements OutputResponse {}

@@ -4,10 +4,12 @@
  */
 package ufps.edu.co.persistence.repositories;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;
 
-import ufps.edu.co.persistence.entities.CapacidadexepcionalEntity;
+import ufps.edu.co.persistence.entities.*;
+
+import java.util.*;
 
 /**
  * Spring Data JPA repository for the CapacidadexepcionalEntity entity.
@@ -37,7 +39,9 @@ import ufps.edu.co.persistence.entities.CapacidadexepcionalEntity;
 @Repository
 public interface CapacidadexepcionalRepository extends JpaRepository<CapacidadexepcionalEntity, Integer> {
 
-	// Insert specific finders here 
+	Optional<CapacidadexepcionalEntity> findByTipocapacidadIgnoreCase(String tipocapacidad);
+
+	// Insert specific finders here
 
 	//List<CapacidadexepcionalEntity> findByXxx(String xxx);
 
