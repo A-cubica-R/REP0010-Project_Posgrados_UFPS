@@ -28,6 +28,7 @@ import ufps.edu.co.records.output.entity.PasoProcesoOutput;
 import ufps.edu.co.records.output.entity.ProgramaInicioOutput;
 import ufps.edu.co.rest.dto.CohorteDTO;
 import ufps.edu.co.rest.dto.AspiranteDTO;
+import ufps.edu.co.rest.dto.CriteriocohorteDTO;
 import ufps.edu.co.rest.dto.DocumentoDTO;
 import ufps.edu.co.rest.dto.DocumentosrequisitoconsejocohorteDTO;
 import ufps.edu.co.rest.dto.DocumentosrequisitoconsejoDTO;
@@ -708,6 +709,19 @@ public class AspiranteProcessor implements
                             .build()));
             }
 
+            if (body.criteriosCohorte() != null) {
+                body.criteriosCohorte().stream()
+                    .filter(java.util.Objects::nonNull)
+                    .filter(criterio -> criterio.idCriterio() != null)
+                    .distinct()
+                    .forEach(criterio -> criteriocohorteService.create(
+                        CriteriocohorteDTO.builder()
+                            .idCohorte(cohorteId)
+                            .idCriterio(criterio.idCriterio())
+                            .pesoSnapshot(criterio.pesoSnapshot())
+                            .build()));
+            }
+
         return CohorteListadoOutput.builder()
                 .id(cohorteId)
                 .nombre(nombre)
@@ -954,6 +968,22 @@ public class AspiranteProcessor implements
                     DocumentosrequisitoprogramacohorteDTO.builder()
                         .idDocrequisito(idDocrequisito)
                         .idCohorte(targetCohorteId)
+                        .build()));
+        }
+
+        if (body.criteriosCohorte() != null) {
+            criteriocohorteService.findByIdCohorte(targetCohorteId)
+                .forEach(actual -> criteriocohorteService.deleteById(actual.getId()));
+
+            body.criteriosCohorte().stream()
+                .filter(java.util.Objects::nonNull)
+                .filter(criterio -> criterio.idCriterio() != null)
+                .distinct()
+                .forEach(criterio -> criteriocohorteService.create(
+                    CriteriocohorteDTO.builder()
+                        .idCohorte(targetCohorteId)
+                        .idCriterio(criterio.idCriterio())
+                        .pesoSnapshot(criterio.pesoSnapshot())
                         .build()));
         }
 
