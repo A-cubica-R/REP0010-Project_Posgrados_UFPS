@@ -48,6 +48,6 @@ public enum CalificacioncriterioInput {
     }
 
     public record CALIFICACION_PUNTAJE_REQUEST(
-            @NotNull @DecimalMin("0") @DecimalMax("100") BigDecimal puntajeObtenido) {
+            @DecimalMin("0") @DecimalMax("100") BigDecimal puntajeObtenido) {
     }
 }

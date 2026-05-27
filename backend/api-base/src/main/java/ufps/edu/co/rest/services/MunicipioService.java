@@ -50,6 +50,11 @@ public class MunicipioService extends GenericService<MunicipioEntity, MunicipioD
         return entityToDto(repository.save(dtoToEntity(dto)));
     }
 
+    @Transactional(readOnly = true)
+    public List<MunicipioDTO> findByIdDepartamento(Integer idDepartamento) {
+        return entityListToDtoList(repository.findByIdDepartamento(idDepartamento));
+    }
+
     public void deleteById(Integer id) {
         repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Municipio no encontrado con id: " + id));

@@ -25,12 +25,6 @@ public class GeneroRestController {
     @Autowired
     private GeneroProcessor processor;
 
-    @GetMapping("/listall")
-    public ResponseEntity<List<GeneroOutput>> findAll() {
-        List<GeneroOutput> list = processor.findAll();
-        return ResponseEntity.ok(list);
-    }
-
     @PostMapping(value = "/list", consumes   = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<GeneroOutput> findById(@RequestBody GENERO_FIND request) {
         GeneroOutput output = processor.findById(request);

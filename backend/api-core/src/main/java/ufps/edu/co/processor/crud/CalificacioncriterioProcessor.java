@@ -132,17 +132,16 @@ public class CalificacioncriterioProcessor implements
                     "El aspirante no pertenece a la cohorte del criterio");
         }
 
-        CriterioevaluacionDTO criterioevaluacion = criterioevaluacionService.findById(criteriocohorte.getIdCriterio());
-        BigDecimal peso = criterioevaluacion != null ? criterioevaluacion.getPeso() : null;
-        if (peso == null) {
+        BigDecimal pesoMaximo = criteriocohorte.getPesoSnapshot();
+        if (pesoMaximo == null) {
             throw new DomainException(CalificacioncriterioErrorCode.CALIFICACIONCRITERIO_NOT_FOUND, idCriterio);
         }
-        if (puntaje == null || puntaje.remainder(BigDecimal.ONE).compareTo(BigDecimal.ZERO) != 0
-                || puntaje.compareTo(BigDecimal.ONE) < 0) {
+        if (puntaje != null && (puntaje.remainder(BigDecimal.ONE).compareTo(BigDecimal.ZERO) != 0
+            || puntaje.compareTo(BigDecimal.ZERO) < 0)) {
             throw new DomainException(CalificacioncriterioErrorCode.PUNTUACION_INVALIDA, puntaje);
         }
-        if (puntaje.compareTo(peso) > 0) {
-            throw new DomainException(CalificacioncriterioErrorCode.PUNTAJE_EXCEDE_MAXIMO, peso.stripTrailingZeros().toPlainString());
+        if (puntaje != null && puntaje.compareTo(pesoMaximo) > 0) {
+            throw new DomainException(CalificacioncriterioErrorCode.PUNTAJE_EXCEDE_MAXIMO, pesoMaximo.stripTrailingZeros().toPlainString());
         }
         CalificacioncriterioOutput result = service.findByIdAspiranteAndIdCriterio(idAspirante, idCriterio)
                 .map(existing -> {
