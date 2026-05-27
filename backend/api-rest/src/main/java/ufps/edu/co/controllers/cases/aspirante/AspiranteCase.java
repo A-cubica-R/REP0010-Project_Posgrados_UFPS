@@ -2,12 +2,12 @@ package ufps.edu.co.controllers.cases.aspirante;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
+import ufps.edu.co.processor.cases.DocumentosrequisitoprogramaPE;
 import ufps.edu.co.processor.crud.AspiranteProcessor;
 import ufps.edu.co.processor.crud.DocumentoProcessor;
 import ufps.edu.co.processor.crud.EntrevistaProcessor;
@@ -30,24 +32,22 @@ import ufps.edu.co.records.input.entity.PruebaInput.PRUEBA_CANCELAR_REQUEST;
 import ufps.edu.co.records.output.entity.AspiranteCriteriosOutput;
 import ufps.edu.co.records.output.entity.AspiranteDocumentosOutput;
 import ufps.edu.co.records.output.entity.AspiranteIdOutput;
-import ufps.edu.co.records.output.entity.DocumentoAspiranteOutput;
+import ufps.edu.co.records.output.entity.DocumentoOutput;
+import ufps.edu.co.records.output.entity.DocumentoRequeridoOutput;
+import ufps.edu.co.rest.dto.DocumentoDTO;
+import ufps.edu.co.rest.services.CohorteService;
+import ufps.edu.co.rest.services.DocumentoService;
+import ufps.edu.co.rest.services.EstadodocumentoService;
+import ufps.edu.co.services.S3Service;
 import ufps.edu.co.records.output.entity.EntrevistaOutput;
 import ufps.edu.co.records.output.entity.EntrevistaResumenOutput;
 import ufps.edu.co.records.output.entity.EntrevistaSimpleOutput;
 import ufps.edu.co.records.output.entity.PasoProcesoOutput;
 import ufps.edu.co.records.output.entity.PruebaResumenOutput;
 import ufps.edu.co.records.output.entity.PruebaSimpleOutput;
-import ufps.edu.co.rest.dto.AspiranteDTO;
-import ufps.edu.co.rest.dto.CohorteDTO;
-import ufps.edu.co.rest.dto.DocumentoDTO;
-import ufps.edu.co.rest.dto.EstadodocumentoDTO;
 import ufps.edu.co.rest.dto.UsuarioDTO;
 import ufps.edu.co.rest.services.AspiranteService;
-import ufps.edu.co.rest.services.CohorteService;
-import ufps.edu.co.rest.services.DocumentoService;
-import ufps.edu.co.rest.services.EstadodocumentoService;
 import ufps.edu.co.rest.services.UsuarioService;
-import ufps.edu.co.services.S3Service;
 
 @RestController
 @RequestMapping(value = "/aspirantes", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -65,8 +65,8 @@ public class AspiranteCase {
     @Autowired
     private UsuarioService usuarioService;
 
-    // @Autowired
-    // private TipodocumentoService tipodocumentoService;
+    @Autowired
+    private DocumentosrequisitoprogramaPE documentosRequeridosPE;
 
     @Autowired
     private DocumentoService documentoService;
@@ -116,130 +116,76 @@ public class AspiranteCase {
         return ResponseEntity.ok(documentoProcessor.getDocumentosDeAspirante(idAspirante));
     }
 
-    @GetMapping("/documentos")
-    public ResponseEntity<List<DocumentoAspiranteOutput>> getDocumentosAspirante() {
-        AspiranteDTO aspirante = resolveAspirante();
-        return ResponseEntity.ok(buildDocumentosResponse(aspirante.getId()));
+    @GetMapping("/{idAspirante}/documentos/requeridos")
+    public ResponseEntity<List<DocumentoRequeridoOutput>> getDocumentosRequeridos(
+            @PathVariable Integer idAspirante) {
+        try {
+            Integer idCohorte = aspiranteService.findById(idAspirante).getIdCohorte();
+            return ResponseEntity.ok(documentosRequeridosPE.findByIdCohorte(idCohorte));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(List.of());
+        }
     }
 
-    @PostMapping(value = "/{idAspirante}/documentos", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<DocumentoAspiranteOutput> uploadDocumento(
+    @PostMapping(value = "/{idAspirante}/documentos/requeridos", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<DocumentoOutput> subirDocumentoRequerido(
             @PathVariable Integer idAspirante,
-            @RequestParam("idRequisito") Integer idRequisito,
+            @RequestParam(required = false) Integer idDocumentosrequisitoconsejocohorte,
+            @RequestParam(required = false) Integer idDocumentosrequisitoprogramacohorte,
             @RequestParam("file") MultipartFile file) {
 
-        // TODO:Hay que conciderar hacer la logica de los documentos desde 0, ya no hay
-        // compatibilidad con el modelo anterior
-        boolean isNew = false;
-        // documentoService
-        // .findByIdAspiranteAndIdTipodocumento(idAspirante, idRequisito)
-        // .isEmpty();
+        boolean tieneConsejo = idDocumentosrequisitoconsejocohorte != null;
+        boolean tienePrograma = idDocumentosrequisitoprogramacohorte != null;
+        if (tieneConsejo == tienePrograma) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Debe indicar exactamente un tipo de requisito.");
+        }
+
+        Integer idCohorte = aspiranteService.findById(idAspirante).getIdCohorte();
+        LocalDate fechafin = cohorteService.findById(idCohorte).getPlazo().getFechafin();
+        if (LocalDate.now().isAfter(fechafin)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                    "El plazo de documentación venció el " + fechafin + ". No es posible subir documentos después de esa fecha.");
+        }
+
+        Optional<DocumentoDTO> existing = tieneConsejo
+                ? documentoService.findByIdAspiranteAndIdDocumentosrequisitoconsejocohorte(
+                        idAspirante, idDocumentosrequisitoconsejocohorte)
+                : documentoService.findByIdAspiranteAndIdDocumentosrequisitoprogramacohorte(
+                        idAspirante, idDocumentosrequisitoprogramacohorte);
+
+        if (existing.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    "Ya ha subido un archivo para este requisito.");
+        }
 
         S3Service.UploadResult upload = s3Service.uploadFile(file);
+        Integer idEstadoPendiente = estadodocumentoService.findByEstado("PENDIENTE").getId();
 
-        AspiranteDTO aspirante = aspiranteService.findById(idAspirante);
-        CohorteDTO cohorte = cohorteService.findById(aspirante.getIdCohorte());
-        EstadodocumentoDTO estadoPendiente = estadodocumentoService.findByEstado("PENDIENTE");
-
-        if (isNew) {
-            DocumentoDTO nuevo = DocumentoDTO.builder()
-                    .enlaceurl(upload.enlaceurl())
-                    .keyfile(upload.keyfile())
-                    .fechacargue(LocalDate.now())
-                    .idAspirante(idAspirante)
-                    .idEstadodocumento(estadoPendiente.getId())
-                    .idPlazo(cohorte.getIdPlazodocumentacion())
-                    .build();
-            documentoService.create(nuevo);
-        } else {
-            DocumentoDTO doc = DocumentoDTO.builder()
-                    .enlaceurl(upload.enlaceurl())
-                    .keyfile(upload.keyfile())
-                    .fechacargue(LocalDate.now())
-                    .idAspirante(idAspirante)
-                    .idEstadodocumento(estadoPendiente.getId())
-                    .estadodocumento(estadoPendiente)
-                    .build();
-            documentoService.update(doc.getId(), doc);
-        }
-
-        // TipodocumentoDTO tipo = null;
-        // TipodocumentoDTO tipo = tipodocumentoService.findById(idRequisito);
-        DocumentoDTO saved = null;
-        // saved =documentoService
-        // .findByIdAspiranteAndIdTipodocumento(idAspirante, idRequisito)
-        // .orElseThrow();
-
-        return ResponseEntity.status(isNew ? HttpStatus.CREATED : HttpStatus.OK)
-                .body(toDocumentoOutput(saved));
-    }
-
-    private AspiranteDTO resolveAspirante() {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Integer idPersona = usuarioService.findIdPersonaByNombreusuario(username);
-        if (idPersona == null) {
-            throw new RuntimeException("No se pudo derivar el aspirante desde el usuario autenticado");
-        }
-        Integer idAspirante = aspiranteService.findIdByIdPersona(idPersona);
-        if (idAspirante == null) {
-            throw new RuntimeException("El usuario autenticado no tiene un aspirante asignado");
-        }
-        return aspiranteService.findById(idAspirante);
-    }
-
-    private List<DocumentoAspiranteOutput> buildDocumentosResponse(Integer idAspirante) {
-        // List<TipodocumentoDTO> tipos = tipodocumentoService.findAll();
-        // Map<Integer, DocumentoDTO> docsPorTipo =
-        // documentoService.findByIdAspirante(idAspirante)
-        // .stream()
-        // .filter(d -> d.getIdTipodocumento() != null)
-        // .collect(Collectors.toMap(DocumentoDTO::getIdTipodocumento,
-        // Function.identity(), (a, b) -> a));
-
-        // return tipos.stream().map(tipo -> {
-        // DocumentoDTO doc = docsPorTipo.get(tipo.getId());
-        // if (doc == null) {
-        // return DocumentoAspiranteOutput.builder()
-        // .idDocumento(null)
-        // .idRequisito(tipo.getId())
-        // .nombre(tipo.getDescripcion())
-        // .status("pending")
-        // .nombreArchivo(null)
-        // .rejectionReason(null)
-        // .build();
-        // }
-        // return toDocumentoOutput(doc, tipo);
-        // }).toList();
-        // TODO Este método ya no es funcional con el nuevo modelo, debe ser reescrito
-        throw new UnsupportedOperationException("No se ha implementado la lógica de documentos para el nuevo modelo");
-    }
-
-    private DocumentoAspiranteOutput toDocumentoOutput(DocumentoDTO doc) {
-        return DocumentoAspiranteOutput.builder()
-                .idDocumento(doc.getId())
-                // .idRequisito(tipo.getId())
-                // .nombre(tipo.getDescripcion())
-                .status(mapStatus(doc))
-                .nombreArchivo(extractNombre(doc.getKeyfile()))
-                .rejectionReason(doc.getObservaciones())
+        DocumentoDTO doc = DocumentoDTO.builder()
+                .enlaceurl(upload.enlaceurl())
+                .keyfile(upload.keyfile())
+                .fechacargue(LocalDate.now())
+                .idAspirante(idAspirante)
+                .idEstadodocumento(idEstadoPendiente)
+                .idDocumentosrequisitoconsejocohorte(idDocumentosrequisitoconsejocohorte)
+                .idDocumentosrequisitoprogramacohorte(idDocumentosrequisitoprogramacohorte)
                 .build();
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(toDocumentoOutput(documentoService.create(doc)));
     }
 
-    private String mapStatus(DocumentoDTO doc) {
-        if (doc.getEstadodocumento() == null)
-            return "pending";
-        return switch (doc.getEstadodocumento().getEstado().toUpperCase()) {
-            case "APROBADO" -> "approved";
-            case "RECHAZADO" -> "rejected";
-            default -> "pending";
-        };
-    }
-
-    private String extractNombre(String keyfile) {
-        if (keyfile == null)
-            return null;
-        int idx = keyfile.indexOf('-');
-        return idx >= 0 && idx < keyfile.length() - 1 ? keyfile.substring(idx + 1) : keyfile;
+    private DocumentoOutput toDocumentoOutput(DocumentoDTO dto) {
+        return DocumentoOutput.builder()
+                .id(dto.getId())
+                .enlaceurl(dto.getEnlaceurl())
+                .keyfile(dto.getKeyfile())
+                .fechacargue(dto.getFechacargue())
+                .idAspirante(dto.getIdAspirante())
+                .idEstadodocumento(dto.getIdEstadodocumento())
+                .idDocumentosrequisitoconsejocohorte(dto.getIdDocumentosrequisitoconsejocohorte())
+                .idDocumentosrequisitoprogramacohorte(dto.getIdDocumentosrequisitoprogramacohorte())
+                .build();
     }
 
     @GetMapping("/{idAspirante}/entrevistas")
@@ -314,6 +260,4 @@ public class AspiranteCase {
             @RequestBody PRUEBA_CANCELAR_REQUEST body) {
         return ResponseEntity.ok(pruebaProcessor.cancelarPrueba(idPrueba, body.motivocambio()));
     }
-
-   
 }
