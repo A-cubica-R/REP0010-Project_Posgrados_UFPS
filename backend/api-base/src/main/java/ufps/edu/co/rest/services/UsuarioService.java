@@ -10,6 +10,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ufps.edu.co.persistence.entities.UsuarioEntity;
 import ufps.edu.co.persistence.repositories.UsuarioRepository;
+import ufps.edu.co.rest.dto.ClaveDTO;
+import ufps.edu.co.rest.dto.PersonaDTO;
+import ufps.edu.co.rest.dto.RolDTO;
 import ufps.edu.co.rest.dto.UsuarioDTO;
 import ufps.edu.co.rest.services.commons.GenericService;
 
@@ -31,12 +34,51 @@ public class UsuarioService extends GenericService<UsuarioEntity, UsuarioDTO> {
 
     @Override
     protected UsuarioDTO entityToDto(UsuarioEntity e) {
+        RolDTO rolDto = e.getRol() != null ? RolDTO.builder()
+                .id(e.getRol().getId())
+                .nombre(e.getRol().getNombre())
+                .build() : null;
+
+        ClaveDTO claveDto = e.getClave() != null ? ClaveDTO.builder()
+                .id(e.getClave().getId())
+                .valor(e.getClave().getValor())
+                .build() : null;
+
+        PersonaDTO personaDto = e.getPersona() != null ? PersonaDTO.builder()
+                .id(e.getPersona().getId())
+                .nombres(e.getPersona().getNombres())
+                .apellidos(e.getPersona().getApellidos())
+                .correo(e.getPersona().getCorreo())
+                .celular(e.getPersona().getCelular())
+                .telefono(e.getPersona().getTelefono())
+                .fechanacimiento(e.getPersona().getFechanacimiento())
+                .egresadoufps(e.getPersona().isEgresadoufps())
+                .empresa(e.getPersona().getEmpresa())
+                .experiencialaboral(e.getPersona().getExperiencialaboral())
+                .promediopregrado(e.getPersona().getPromediopregrado())
+                .titulopregrado(e.getPersona().getTitulopregrado())
+                .titulosposgrados(e.getPersona().getTitulosposgrados())
+                .idDocumentopersona(e.getPersona().getIdDocumentopersona())
+                .idCapacidadexepcional(e.getPersona().getIdCapacidadexepcional())
+                .idDiscapacidad(e.getPersona().getIdDiscapacidad())
+                .idEstadocivil(e.getPersona().getIdEstadocivil())
+                .idGenero(e.getPersona().getIdGenero())
+                .idGrupoetnico(e.getPersona().getIdGrupoetnico())
+                .idPoblacionindigena(e.getPersona().getIdPoblacionindigena())
+                .idUbicacionnacimiento(e.getPersona().getIdUbicacionnacimiento())
+                .idUbicaciontrabajo(e.getPersona().getIdUbicaciontrabajo())
+                .idUbicacionvivienda(e.getPersona().getIdUbicacionvivienda())
+                .build() : null;
+
         return UsuarioDTO.builder()
                 .id(e.getId())
                 .idClave(e.getIdClave())
                 .idPersona(e.getIdPersona())
                 .idRol(e.getIdRol())
                 .nombreusuario(e.getNombreusuario())
+                .persona(personaDto)
+                .rol(rolDto)
+                .clave(claveDto)
                 .build();
     }
 
