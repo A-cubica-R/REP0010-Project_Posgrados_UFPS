@@ -60,7 +60,8 @@ public enum CohorteInput {
                         @NotNull LocalDate fechaLimiteDocumentos,
                         @NotNull LocalDate fechaLimitePago,
                         List<DOCUMENTO_ASIGNADO_CREATE> documentosConsejo,
-                        List<DOCUMENTO_ASIGNADO_CREATE> documentosPrograma) implements CreateType {
+                        List<DOCUMENTO_ASIGNADO_CREATE> documentosPrograma,
+                        List<CriteriocohorteInput.CRITERIOCOHORTE_CREATE> criteriosCohorte) implements CreateType {
         }
 
         public record DOCUMENTO_ASIGNADO_CREATE(
@@ -78,7 +79,8 @@ public enum CohorteInput {
                         LocalDate fechaLimiteDocumentos,
                         LocalDate fechaLimitePago,
                         List<DOCUMENTO_ASIGNADO_CREATE> documentosConsejo,
-                        List<DOCUMENTO_ASIGNADO_CREATE> documentosPrograma) implements UpdateType {
+                        List<DOCUMENTO_ASIGNADO_CREATE> documentosPrograma,
+                        List<CriteriocohorteInput.CRITERIOCOHORTE_CREATE> criteriosCohorte) implements UpdateType {
         }
 
         public record COHORTE_WITHPLAZO_CREATE(
