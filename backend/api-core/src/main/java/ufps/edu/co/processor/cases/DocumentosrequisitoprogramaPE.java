@@ -2,6 +2,7 @@ package ufps.edu.co.processor.cases;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,7 +12,9 @@ import ufps.edu.co.processor.crud.DocumentosrequisitoprogramaProcessor;
 import ufps.edu.co.records.output.cases.Listdocumentosprogramaconsejo;
 import ufps.edu.co.records.output.entity.DocumentoRequeridoOutput;
 import ufps.edu.co.records.output.entity.DocumentosrequisitoprogramaOutput;
+import ufps.edu.co.rest.dto.DocumentoDTO;
 import ufps.edu.co.rest.dto.DocumentosrequisitoconsejoDTO;
+import ufps.edu.co.rest.services.DocumentoService;
 import ufps.edu.co.rest.services.DocumentosrequisitoprogramaService;
 import ufps.edu.co.rest.services.DocumentosrequisitoprogramacohorteService;
 import ufps.edu.co.rest.services.DocumentosrequisitoconsejoService;
@@ -35,13 +38,20 @@ public class DocumentosrequisitoprogramaPE extends DocumentosrequisitoprogramaPr
     @Autowired
     private DocumentosrequisitoconsejocohorteService consejoCohorteService;
 
-    public List<DocumentoRequeridoOutput> findByIdCohorte(Integer idCohorte) {
+    @Autowired
+    private DocumentoService documentoService;
+
+    public List<DocumentoRequeridoOutput> findByIdCohorte(Integer idCohorte, Integer idAspirante) {
         List<DocumentoRequeridoOutput> result = new ArrayList<>();
 
         consejoCohorteService.findByIdCohorte(idCohorte).forEach(junction -> {
             DocumentosrequisitoconsejoDTO doc = consejoService.findById(junction.getIdDocrequisito());
+            Optional<DocumentoDTO> uploaded = documentoService
+                    .findByIdAspiranteAndIdDocumentosrequisitoconsejocohorte(idAspirante, junction.getId());
             result.add(DocumentoRequeridoOutput.builder()
-                    .id(doc.getId())
+                    .idDocumento(uploaded.map(DocumentoDTO::getId).orElse(null))
+                    .idDocumentosrequisitoconsejocohorte(junction.getId())
+                    .idDocumentosrequisitoprogramacohorte(null)
                     .nombre(doc.getNombre())
                     .urlformato(doc.getUrlformato())
                     .build());
@@ -49,8 +59,12 @@ public class DocumentosrequisitoprogramaPE extends DocumentosrequisitoprogramaPr
 
         programaCohorteService.findByIdCohorte(idCohorte).forEach(junction -> {
             var doc = service.findById(junction.getIdDocrequisito());
+            Optional<DocumentoDTO> uploaded = documentoService
+                    .findByIdAspiranteAndIdDocumentosrequisitoprogramacohorte(idAspirante, junction.getId());
             result.add(DocumentoRequeridoOutput.builder()
-                    .id(doc.getId())
+                    .idDocumento(uploaded.map(DocumentoDTO::getId).orElse(null))
+                    .idDocumentosrequisitoconsejocohorte(null)
+                    .idDocumentosrequisitoprogramacohorte(junction.getId())
                     .nombre(doc.getNombre())
                     .urlformato(doc.getUrlformato())
                     .build());
