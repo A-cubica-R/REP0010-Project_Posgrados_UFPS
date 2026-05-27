@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ufps.edu.co.persistence.entities.ProgramaEntity;
 import ufps.edu.co.persistence.repositories.ProgramaRepository;
 import ufps.edu.co.rest.dto.FacultadDTO;
+import ufps.edu.co.rest.dto.MunicipioDTO;
 import ufps.edu.co.rest.dto.OtrosvaloresDTO;
 import ufps.edu.co.rest.dto.ProgramaDTO;
 import ufps.edu.co.rest.dto.SedeDTO;
@@ -41,9 +42,19 @@ public class ProgramaService extends GenericService<ProgramaEntity, ProgramaDTO>
                 .nombre(e.getFacultad().getNombre())
                 .correo(e.getFacultad().getCorreo())
                 .build() : null;
+        MunicipioDTO municipioDto = e.getSede() != null
+                && e.getSede().getUbicacion() != null
+                && e.getSede().getUbicacion().getMunicipio() != null
+                ? MunicipioDTO.builder()
+                        .id(e.getSede().getUbicacion().getMunicipio().getId())
+                        .nombre(e.getSede().getUbicacion().getMunicipio().getNombre())
+                        .idDepartamento(e.getSede().getUbicacion().getMunicipio().getIdDepartamento())
+                        .build() : null;
         UbicacionDTO ubicacionDto = e.getSede() != null && e.getSede().getUbicacion() != null ? UbicacionDTO.builder()
                 .id(e.getSede().getUbicacion().getId())
                 .direccion(e.getSede().getUbicacion().getDireccion())
+                .idMunicipio(e.getSede().getUbicacion().getIdMunicipio())
+                .municipio(municipioDto)
                 .build() : null;
         SedeDTO sedeDto = e.getSede() != null ? SedeDTO.builder()
                 .id(e.getSede().getId())
