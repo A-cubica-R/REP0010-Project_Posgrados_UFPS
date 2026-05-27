@@ -26,19 +26,22 @@ public class SecurityConfig {
                         "/swagger-ui.html",
                         "/api-docs/**",
                         "/v3/api-docs/**",
-                        "/error"
-        };
-
-        /**
-         * los controllers del paquete CRUD ussan la ruta : /api/dev/endpoint/
-         * los controllers del paquete CASE ussan la ruta : /api/application/case/
-         */
-        private static final String[] DIRECTOR_POSGRADOS_PATHS = {
-                        "/api/application/case/cohortes/**",
-                        "/api/application/case/documentos/**",
-                        "/api/dev/endpoint/tipoentrevista/listall",
-                        "/api/dev/endpoint/estado/listall",
-                        "/api/application/case/director-posgrados/**"
+                        "/error",
+                        "/api/application/case/inscripciones/usuario",
+                        "/api/application/case/inscripciones/zonas-residencia",
+                        "/api/application/case/inscripciones/tipos-vinculación",
+                        "/api/application/case/inscripciones/tipos-documento",
+                        "/api/application/case/inscripciones/requisitos",
+                        "/api/application/case/inscripciones/pueblos-indígenas",
+                        "/api/application/case/inscripciones/programa/{programaId}/cohortes",
+                        "/api/application/case/inscripciones/países",
+                        "/api/application/case/inscripciones/paises/{idPais}/departamentos",
+                        "/api/application/case/inscripciones/grupos-étnicos",
+                        "/api/application/case/inscripciones/géneros",
+                        "/api/application/case/inscripciones/estados-civiles",
+                        "/api/application/case/inscripciones/discapacidades",
+                        "/api/application/case/inscripciones/departamentos/{idDepartamento}/municipios",
+                        "/api/application/case/inscripciones/capacidades-excepcionales"
 
         };
 
@@ -47,11 +50,23 @@ public class SecurityConfig {
                         "/api/application/case/cohortes/**",
                         "/api/application/case/documentos/**",
                         "/api/dev/endpoint/tipoentrevista/listall",
-                        "/api/dev/endpoint/estado/listall"
+                        "/api/dev/endpoint/estado/listall",
+                        "/api/application/case/cohortes/**",
+                        "/api/application/case/documentos/**",
+                        "/api/dev/endpoint/tipoentrevista/listall",
+                        "/api/dev/endpoint/estado/listall",
+                        "/api/application/case/director-posgrados/**"
         };
 
-        private static final String[] DIRECTOR_PROGRAMA_SHARED_PATHS = {
-                        "/api/application/case/director-programa/programa/**"
+        private static final String[] POSGRADOS_PATHS = {
+                        "/api/dev/endpoint/otrosvalores/listall",
+                        "/api/dev/endpoint/sedes/listall",
+                        "/api/dev/endpoint/administrativo/listall",
+                        "/api/dev/endpoint/facultad/listall",
+                        "/api/dev/endpoint/programa/listbyfacultad",
+                        "/api/dev/endpoint/programa/listall",
+                        "/api/dev/endpoint/estado/listall",
+                        "/api/dev/endpoint/semestre/listall"
         };
 
         private static final String[] ASPIRANTE_PATHS = {
@@ -78,12 +93,8 @@ public class SecurityConfig {
                                                 .permitAll()
 
                                                 // Rutas específicas por rol (antes del catch-all)
-                                                .requestMatchers(DIRECTOR_PROGRAMA_SHARED_PATHS)
-                                                .hasAnyRole("DIRECTOR_DE_PROGRAMA", "DIRECTOR_DE_POSGRADOS", "SUPER_ADMINISTRADOR")
-
-                                                // Rutas específicas por rol (antes del catch-all)
-                                                .requestMatchers(DIRECTOR_POSGRADOS_PATHS)
-                                                .hasAnyRole("DIRECTOR_DE_POSGRADOS", "SUPER_ADMINISTRADOR")
+                                                .requestMatchers(POSGRADOS_PATHS)
+                                                .hasAnyRole("POSGRADOS", "SUPER_ADMINISTRADOR")
 
                                                 // Rutas específicas por rol (antes del catch-all)
                                                 .requestMatchers(DIRECTOR_PROGRAMA_PATHS)
