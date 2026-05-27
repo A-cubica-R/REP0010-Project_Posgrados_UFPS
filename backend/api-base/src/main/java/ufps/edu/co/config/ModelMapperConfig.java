@@ -4,20 +4,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import ufps.edu.co.persistence.entities.AdministrativoEntity;
-import ufps.edu.co.persistence.entities.AspiranteEntity;
-import ufps.edu.co.persistence.entities.CohorteEntity;
-import ufps.edu.co.persistence.entities.EstadoEntity;
-import ufps.edu.co.persistence.entities.PersonaEntity;
-import ufps.edu.co.persistence.entities.SemestreEntity;
-import ufps.edu.co.persistence.entities.UbicacionEntity;
-import ufps.edu.co.rest.dto.AdministrativoDTO;
-import ufps.edu.co.rest.dto.AspiranteDTO;
-import ufps.edu.co.rest.dto.CohorteDTO;
-import ufps.edu.co.rest.dto.EstadoDTO;
-import ufps.edu.co.rest.dto.PersonaDTO;
-import ufps.edu.co.rest.dto.SemestreDTO;
-import ufps.edu.co.rest.dto.UbicacionDTO;
+import ufps.edu.co.persistence.entities.*;
+import ufps.edu.co.rest.dto.*;
 
 @Configuration
 public class ModelMapperConfig {
@@ -97,6 +85,10 @@ public class ModelMapperConfig {
                   m.skip(AspiranteDTO::setAdmitidoList);
                   m.skip(AspiranteDTO::setPagoList);
               });
+
+        // Tipovinculacion → evita referencia circular con aspiranteList
+        mapper.createTypeMap(TipovinculacionEntity.class, TipovinculacionDTO.class)
+              .addMappings(m -> m.skip(TipovinculacionDTO::setAspiranteList));
 
         // Administrativo ↔ Documento
         mapper.createTypeMap(AdministrativoEntity.class, AdministrativoDTO.class)

@@ -1,5 +1,6 @@
 package ufps.edu.co.processor.cases;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,10 +9,13 @@ import org.springframework.stereotype.Service;
 import ufps.edu.co.maps.specific.DocumentosrequisitoprogramaMap;
 import ufps.edu.co.processor.crud.DocumentosrequisitoprogramaProcessor;
 import ufps.edu.co.records.output.cases.Listdocumentosprogramaconsejo;
+import ufps.edu.co.records.output.entity.DocumentoRequeridoOutput;
 import ufps.edu.co.records.output.entity.DocumentosrequisitoprogramaOutput;
 import ufps.edu.co.rest.dto.DocumentosrequisitoconsejoDTO;
 import ufps.edu.co.rest.services.DocumentosrequisitoprogramaService;
+import ufps.edu.co.rest.services.DocumentosrequisitoprogramacohorteService;
 import ufps.edu.co.rest.services.DocumentosrequisitoconsejoService;
+import ufps.edu.co.rest.services.DocumentosrequisitoconsejocohorteService;
 
 @Service
 public class DocumentosrequisitoprogramaPE extends DocumentosrequisitoprogramaProcessor {
@@ -24,6 +28,36 @@ public class DocumentosrequisitoprogramaPE extends DocumentosrequisitoprogramaPr
 
     @Autowired
     private DocumentosrequisitoconsejoService consejoService;
+
+    @Autowired
+    private DocumentosrequisitoprogramacohorteService programaCohorteService;
+
+    @Autowired
+    private DocumentosrequisitoconsejocohorteService consejoCohorteService;
+
+    public List<DocumentoRequeridoOutput> findByIdCohorte(Integer idCohorte) {
+        List<DocumentoRequeridoOutput> result = new ArrayList<>();
+
+        consejoCohorteService.findByIdCohorte(idCohorte).forEach(junction -> {
+            DocumentosrequisitoconsejoDTO doc = consejoService.findById(junction.getIdDocrequisito());
+            result.add(DocumentoRequeridoOutput.builder()
+                    .id(doc.getId())
+                    .nombre(doc.getNombre())
+                    .urlformato(doc.getUrlformato())
+                    .build());
+        });
+
+        programaCohorteService.findByIdCohorte(idCohorte).forEach(junction -> {
+            var doc = service.findById(junction.getIdDocrequisito());
+            result.add(DocumentoRequeridoOutput.builder()
+                    .id(doc.getId())
+                    .nombre(doc.getNombre())
+                    .urlformato(doc.getUrlformato())
+                    .build());
+        });
+
+        return result;
+    }
 
     public List<DocumentosrequisitoprogramaOutput> findByIdPrograma(Integer idPrograma) {
         try {
