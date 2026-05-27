@@ -16,7 +16,9 @@ public record AspiranteDocumentosOutput(
 
     @Builder
     public record DocumentoResumenOutput(
-            Integer id,
+            Integer idDocumento,
+            Integer idDocumentosrequisitoconsejocohorte,
+            Integer idDocumentosrequisitoprogramacohorte,
             String nombre,
             String estado,
             String motivoRechazo,

@@ -121,7 +121,7 @@ public class AspiranteCase {
             @PathVariable Integer idAspirante) {
         try {
             Integer idCohorte = aspiranteService.findById(idAspirante).getIdCohorte();
-            return ResponseEntity.ok(documentosRequeridosPE.findByIdCohorte(idCohorte));
+            return ResponseEntity.ok(documentosRequeridosPE.findByIdCohorte(idCohorte, idAspirante));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(List.of());
         }
