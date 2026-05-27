@@ -29,20 +29,19 @@ public class SecurityConfig {
                         "/error",
                         "/api/application/case/inscripciones/usuario",
                         "/api/application/case/inscripciones/zonas-residencia",
-                        "/api/application/case/inscripciones/tipos-vinculación",
+                        "/api/application/case/inscripciones/tipos-vinculacion",
                         "/api/application/case/inscripciones/tipos-documento",
                         "/api/application/case/inscripciones/requisitos",
-                        "/api/application/case/inscripciones/pueblos-indígenas",
+                        "/api/application/case/inscripciones/pueblos-indigenas",
                         "/api/application/case/inscripciones/programa/{programaId}/cohortes",
-                        "/api/application/case/inscripciones/países",
+                        "/api/application/case/inscripciones/paises",
                         "/api/application/case/inscripciones/paises/{idPais}/departamentos",
-                        "/api/application/case/inscripciones/grupos-étnicos",
-                        "/api/application/case/inscripciones/géneros",
+                        "/api/application/case/inscripciones/grupos-etnicos",
+                        "/api/application/case/inscripciones/generos",
                         "/api/application/case/inscripciones/estados-civiles",
                         "/api/application/case/inscripciones/discapacidades",
                         "/api/application/case/inscripciones/departamentos/{idDepartamento}/municipios",
                         "/api/application/case/inscripciones/capacidades-excepcionales"
-
         };
 
         private static final String[] DIRECTOR_PROGRAMA_PATHS = {
