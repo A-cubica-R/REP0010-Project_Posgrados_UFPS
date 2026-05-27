@@ -236,7 +236,9 @@ public class DocumentoProcessor implements
 
                 List<DocumentoResumenOutput> documentosResumen = docs.stream()
                     .map(doc -> DocumentoResumenOutput.builder()
-                        .id(doc.getId())
+                        .idDocumento(doc.getId())
+                        .idDocumentosrequisitoconsejocohorte(doc.getIdDocumentosrequisitoconsejocohorte())
+                        .idDocumentosrequisitoprogramacohorte(doc.getIdDocumentosrequisitoprogramacohorte())
                         .nombre(doc.getKeyfile())
                         .estado(doc.getEstadodocumento() != null ? doc.getEstadodocumento().getEstado() : "PENDIENTE")
                         .motivoRechazo(doc.getObservaciones())
@@ -293,7 +295,9 @@ public class DocumentoProcessor implements
 
         List<DocumentoResumenOutput> documentosResumen = docs.stream()
                 .map(doc -> DocumentoResumenOutput.builder()
-                        .id(doc.getId())
+                        .idDocumento(doc.getId())
+                        .idDocumentosrequisitoconsejocohorte(doc.getIdDocumentosrequisitoconsejocohorte())
+                        .idDocumentosrequisitoprogramacohorte(doc.getIdDocumentosrequisitoprogramacohorte())
                         .nombre(doc.getKeyfile())
                         .estado(doc.getEstadodocumento() != null ? doc.getEstadodocumento().getEstado() : "PENDIENTE")
                         .motivoRechazo(doc.getObservaciones())
