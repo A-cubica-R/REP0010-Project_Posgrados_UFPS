@@ -1,6 +1,5 @@
 package ufps.edu.co.controllers.cases.aspirante;
 
-<<<<<<< HEAD
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
@@ -13,10 +12,7 @@ import ufps.edu.co.processor.crud.*;
 import ufps.edu.co.records.output.entity.*;
 import ufps.edu.co.rest.dto.*;
 import ufps.edu.co.rest.services.*;
-=======
 import java.util.List;
- 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,14 +24,12 @@ import ufps.edu.co.records.output.entity.ProgramaListadoOutput;
 import ufps.edu.co.records.output.entity.ProgramaOutput;
 import ufps.edu.co.records.output.entity.RequisitoDocumentoOutput;
 // import ufps.edu.co.rest.services.TipodocumentoService;
->>>>>>> Gabriel
 
 @RestController
 @RequestMapping(value = "/inscripciones", produces = MediaType.APPLICATION_JSON_VALUE)
 public class InscripcionCase {
 
     @Autowired
-<<<<<<< HEAD
     private CohorteService cohorteService;
 
     @Autowired
@@ -411,12 +405,10 @@ public class InscripcionCase {
                 .toList();
         return ResponseEntity.ok(cohortes);
     }
-=======
     private ProgramaProcessor programaProcessor;
 
     // @Autowired
     // private TipodocumentoService tipodocumentoService;
->>>>>>> Gabriel
 
     @GetMapping("/programas")
     public ResponseEntity<List<ProgramaListadoOutput>> getProgramas() {
@@ -431,7 +423,6 @@ public class InscripcionCase {
         throw new UnsupportedOperationException("Operación no soportada: reimplementación pendiente.");
     }
 
-<<<<<<< HEAD
     // ─── Helpers privados ────────────────────────────────────────────────────
 
     private String serializarExperiencia(List<ExperienciaLaboralItem> items) {
@@ -454,7 +445,6 @@ public class InscripcionCase {
         if (valor == null) return "null";
         return "\"" + valor.replace("\\", "\\\\").replace("\"", "\\\"") + "\"";
     }
-=======
     private ProgramaListadoOutput toProgramaListadoOutput(ProgramaOutput programa) {
         return ProgramaListadoOutput.builder()
                 .id(programa.id())
@@ -463,5 +453,4 @@ public class InscripcionCase {
     }
 
     
->>>>>>> Gabriel
 }
