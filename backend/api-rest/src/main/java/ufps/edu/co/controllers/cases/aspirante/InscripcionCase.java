@@ -405,10 +405,10 @@ public class InscripcionCase {
                 .toList();
         return ResponseEntity.ok(cohortes);
     }
-    private ProgramaProcessor programaProcessor;
+    
+        @Autowired
+        private ProgramaProcessor programaProcessor;
 
-    // @Autowired
-    // private TipodocumentoService tipodocumentoService;
 
     @GetMapping("/programas")
     public ResponseEntity<List<ProgramaListadoOutput>> getProgramas() {

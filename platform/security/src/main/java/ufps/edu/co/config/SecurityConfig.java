@@ -41,7 +41,8 @@ public class SecurityConfig {
                         "/api/application/case/inscripciones/estados-civiles",
                         "/api/application/case/inscripciones/discapacidades",
                         "/api/application/case/inscripciones/departamentos/{idDepartamento}/municipios",
-                        "/api/application/case/inscripciones/capacidades-excepcionales"
+                        "/api/application/case/inscripciones/capacidades-excepcionales",
+                        "/api/application/case/inscripciones/programas"
         };
 
         private static final String[] DIRECTOR_PROGRAMA_PATHS = {
