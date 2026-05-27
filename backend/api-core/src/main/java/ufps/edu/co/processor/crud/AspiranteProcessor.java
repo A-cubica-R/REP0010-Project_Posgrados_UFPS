@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ufps.edu.co.maps.specific.AspiranteMap;
 import ufps.edu.co.maps.specific.EstadoMap;
 import ufps.edu.co.records.input.entity.AspiranteInput.*;
+import ufps.edu.co.records.input.entity.CohorteInput;
 import ufps.edu.co.records.input.entity.CohorteInput.*;
 import ufps.edu.co.records.output.entity.AspiranteCalificacionOutput;
 import ufps.edu.co.records.output.entity.RankingAdmitidosOutput;
@@ -972,19 +973,33 @@ public class AspiranteProcessor implements
         }
 
         if (body.criteriosCohorte() != null) {
-            criteriocohorteService.findByIdCohorte(targetCohorteId)
+            List<CriteriocohorteDTO> criteriosExistentes = criteriocohorteService.findByIdCohorte(targetCohorteId);
+
+            Set<Integer> idsRecibidos = body.criteriosCohorte().stream()
+                .filter(java.util.Objects::nonNull)
+                .map(CohorteInput.CRITERIOCOHORTE_DIRECTOR_UPDATE::id)
+                .filter(java.util.Objects::nonNull)
+                .collect(Collectors.toSet());
+
+            criteriosExistentes.stream()
+                .filter(actual -> !idsRecibidos.contains(actual.getId()))
                 .forEach(actual -> criteriocohorteService.deleteById(actual.getId()));
 
             body.criteriosCohorte().stream()
                 .filter(java.util.Objects::nonNull)
-                .filter(criterio -> criterio.idCriterio() != null)
-                .distinct()
-                .forEach(criterio -> criteriocohorteService.create(
-                    CriteriocohorteDTO.builder()
-                        .idCohorte(targetCohorteId)
-                        .idCriterio(criterio.idCriterio())
+                .forEach(criterio -> {
+                    CriteriocohorteDTO existente = criteriosExistentes.stream()
+                        .filter(actual -> java.util.Objects.equals(actual.getId(), criterio.id()))
+                        .findFirst()
+                        .orElseThrow(() -> new RuntimeException(
+                            "Criterio de cohorte no encontrado con id: " + criterio.id()));
+
+                    criteriocohorteService.update(existente.getId(), CriteriocohorteDTO.builder()
+                        .idCohorte(existente.getIdCohorte())
+                        .idCriterio(existente.getIdCriterio())
                         .pesoSnapshot(criterio.pesoSnapshot())
-                        .build()));
+                        .build());
+                });
         }
 
         boolean activa = cohorte.getEstado() != null && "ABIERTA".equalsIgnoreCase(cohorte.getEstado().getTipo());
