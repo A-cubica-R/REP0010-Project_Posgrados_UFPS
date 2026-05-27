@@ -11,6 +11,10 @@ import org.springframework.transaction.annotation.Transactional;
 import ufps.edu.co.persistence.entities.AdministrativoEntity;
 import ufps.edu.co.persistence.repositories.AdministrativoRepository;
 import ufps.edu.co.rest.dto.AdministrativoDTO;
+import ufps.edu.co.rest.dto.CargoDTO;
+import ufps.edu.co.rest.dto.DocumentoDTO;
+import ufps.edu.co.rest.dto.EstadoDTO;
+import ufps.edu.co.rest.dto.PersonaDTO;
 import ufps.edu.co.rest.services.commons.GenericService;
 
 /**
@@ -27,6 +31,80 @@ public class AdministrativoService extends GenericService<AdministrativoEntity, 
 
     public AdministrativoService() {
         super(AdministrativoEntity.class, AdministrativoDTO.class);
+    }
+
+    @Override
+    protected AdministrativoDTO entityToDto(AdministrativoEntity e) {
+        if (e == null) return null;
+
+        CargoDTO cargoDto = e.getCargo() != null ? CargoDTO.builder()
+                .id(e.getCargo().getId())
+                .nombre(e.getCargo().getNombre())
+                .descripcion(e.getCargo().getDescripcion())
+                .idFacultad(e.getCargo().getIdFacultad())
+                .idPrograma(e.getCargo().getIdPrograma())
+                .build() : null;
+
+        EstadoDTO estadoDto = e.getEstado() != null ? EstadoDTO.builder()
+                .id(e.getEstado().getId())
+                .entidad(e.getEstado().getEntidad())
+                .tipo(e.getEstado().getTipo())
+                .build() : null;
+
+        PersonaDTO personaDto = e.getPersona() != null ? PersonaDTO.builder()
+                .id(e.getPersona().getId())
+                .nombres(e.getPersona().getNombres())
+                .apellidos(e.getPersona().getApellidos())
+                .correo(e.getPersona().getCorreo())
+                .celular(e.getPersona().getCelular())
+                .telefono(e.getPersona().getTelefono())
+                .fechanacimiento(e.getPersona().getFechanacimiento())
+                .egresadoufps(e.getPersona().isEgresadoufps())
+                .empresa(e.getPersona().getEmpresa())
+                .experiencialaboral(e.getPersona().getExperiencialaboral())
+                .promediopregrado(e.getPersona().getPromediopregrado())
+                .titulopregrado(e.getPersona().getTitulopregrado())
+                .titulosposgrados(e.getPersona().getTitulosposgrados())
+                .idDocumentopersona(e.getPersona().getIdDocumentopersona())
+                .idCapacidadexepcional(e.getPersona().getIdCapacidadexepcional())
+                .idDiscapacidad(e.getPersona().getIdDiscapacidad())
+                .idEstadocivil(e.getPersona().getIdEstadocivil())
+                .idGenero(e.getPersona().getIdGenero())
+                .idGrupoetnico(e.getPersona().getIdGrupoetnico())
+                .idPoblacionindigena(e.getPersona().getIdPoblacionindigena())
+                .idUbicacionnacimiento(e.getPersona().getIdUbicacionnacimiento())
+                .idUbicaciontrabajo(e.getPersona().getIdUbicaciontrabajo())
+                .idUbicacionvivienda(e.getPersona().getIdUbicacionvivienda())
+                .build() : null;
+
+        List<DocumentoDTO> documentoListDto = e.getDocumentoList() != null
+                ? e.getDocumentoList().stream().map(d -> DocumentoDTO.builder()
+                        .id(d.getId())
+                        .enlaceurl(d.getEnlaceurl())
+                        .fechacargue(d.getFechacargue())
+                        .keyfile(d.getKeyfile())
+                        .observaciones(d.getObservaciones())
+                        .idAdministrativo(d.getIdAdministrativo())
+                        .idAspirante(d.getIdAspirante())
+                        .idEstadodocumento(d.getIdEstadodocumento())
+                        .idPlazo(d.getIdPlazo())
+                        .idDocumentosrequisitoconsejocohorte(d.getIdDocumentosrequisitoconsejocohorte())
+                        .idDocumentosrequisitoprogramacohorte(d.getIdDocumentosrequisitoprogramacohorte())
+                        .build())
+                        .toList() : null;
+
+        return AdministrativoDTO.builder()
+                .id(e.getId())
+                .fechainicio(e.getFechainicio())
+                .fechasalida(e.getFechasalida())
+                .idCargo(e.getIdCargo())
+                .idEstado(e.getIdEstado())
+                .idPersona(e.getIdPersona())
+                .cargo(cargoDto)
+                .estado(estadoDto)
+                .persona(personaDto)
+                .documentoList(documentoListDto)
+                .build();
     }
 
     @Transactional(readOnly = true)
