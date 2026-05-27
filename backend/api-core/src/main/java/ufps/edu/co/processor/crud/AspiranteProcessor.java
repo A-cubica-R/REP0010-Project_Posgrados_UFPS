@@ -8,11 +8,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ufps.edu.co.maps.specific.AspiranteMap;
 import ufps.edu.co.maps.specific.EstadoMap;
 import ufps.edu.co.records.input.entity.AspiranteInput.*;
-import ufps.edu.co.records.input.entity.CohorteInput.COHORTE_DIRECTOR_CREATE;
-import ufps.edu.co.records.input.entity.CohorteInput.COHORTE_DIRECTOR_UPDATE;
+import ufps.edu.co.records.input.entity.CohorteInput.*;
 import ufps.edu.co.records.output.entity.AspiranteCalificacionOutput;
 import ufps.edu.co.records.output.entity.RankingAdmitidosOutput;
 import ufps.edu.co.records.output.entity.AspiranteCohorteOutput;
@@ -29,7 +29,9 @@ import ufps.edu.co.records.output.entity.ProgramaInicioOutput;
 import ufps.edu.co.rest.dto.CohorteDTO;
 import ufps.edu.co.rest.dto.AspiranteDTO;
 import ufps.edu.co.rest.dto.DocumentoDTO;
+import ufps.edu.co.rest.dto.DocumentosrequisitoconsejocohorteDTO;
 import ufps.edu.co.rest.dto.DocumentosrequisitoconsejoDTO;
+import ufps.edu.co.rest.dto.DocumentosrequisitoprogramacohorteDTO;
 import ufps.edu.co.rest.dto.DocumentosrequisitoprogramaDTO;
 import ufps.edu.co.rest.services.DocumentoService;
 import ufps.edu.co.rest.dto.CriterioevaluacionDTO;
@@ -622,6 +624,7 @@ public class AspiranteProcessor implements
         return service.countCalificadosByCohorte(cohorteId);
     }
 
+    @Transactional
     public CohorteListadoOutput createCohorte(Integer programaId, COHORTE_DIRECTOR_CREATE body) {
         LocalDate fechaInicio = body.fechaInicio();
         int year = fechaInicio.getYear();
@@ -680,6 +683,30 @@ public class AspiranteProcessor implements
                 .idPlazopago(plazoPago.getId())
                 .idPrograma(programaId)
                 .build());
+
+            if (body.documentosConsejo() != null) {
+                body.documentosConsejo().stream()
+                    .map(DOCUMENTO_ASIGNADO_CREATE::idDocrequisito)
+                    .filter(java.util.Objects::nonNull)
+                    .distinct()
+                    .forEach(idDocrequisito -> documentosrequisitoconsejocohorteService.create(
+                        DocumentosrequisitoconsejocohorteDTO.builder()
+                            .idDocrequisito(idDocrequisito)
+                            .idCohorte(cohorteId)
+                            .build()));
+            }
+
+            if (body.documentosPrograma() != null) {
+                body.documentosPrograma().stream()
+                    .map(DOCUMENTO_ASIGNADO_CREATE::idDocrequisito)
+                    .filter(java.util.Objects::nonNull)
+                    .distinct()
+                    .forEach(idDocrequisito -> documentosrequisitoprogramacohorteService.create(
+                        DocumentosrequisitoprogramacohorteDTO.builder()
+                            .idDocrequisito(idDocrequisito)
+                            .idCohorte(cohorteId)
+                            .build()));
+            }
 
         return CohorteListadoOutput.builder()
                 .id(cohorteId)
@@ -846,10 +873,19 @@ public class AspiranteProcessor implements
                 .build();
     }
 
+    @Transactional
     public CohorteListadoOutput updateCohorte(Integer cohorteId, COHORTE_DIRECTOR_UPDATE body) {
-        CohorteDTO cohorte = cohorteService.findById(cohorteId);
+        Integer targetCohorteId = body.id() != null ? body.id() : cohorteId;
+        if (targetCohorteId == null) {
+            throw new RuntimeException("Debe enviar el id de la cohorte a actualizar");
+        }
+        if (cohorteId != null && !cohorteId.equals(targetCohorteId)) {
+            throw new RuntimeException("El id de la ruta no coincide con el id del body");
+        }
+
+        CohorteDTO cohorte = cohorteService.findById(targetCohorteId);
         if (cohorte == null) {
-            throw new RuntimeException("Cohorte no encontrada: " + cohorteId);
+            throw new RuntimeException("Cohorte no encontrada: " + targetCohorteId);
         }
 
         boolean cohorteChanged = false;
@@ -887,17 +923,47 @@ public class AspiranteProcessor implements
         }
 
         if (cohorteChanged) {
-            cohorteService.update(cohorteId, cohorte);
+            cohorteService.update(targetCohorteId, cohorte);
+        }
+
+        if (body.documentosConsejo() != null) {
+            documentosrequisitoconsejocohorteService.findByIdCohorte(targetCohorteId)
+                .forEach(actual -> documentosrequisitoconsejocohorteService.deleteById(actual.getId()));
+
+            body.documentosConsejo().stream()
+                .map(DOCUMENTO_ASIGNADO_CREATE::idDocrequisito)
+                .filter(java.util.Objects::nonNull)
+                .distinct()
+                .forEach(idDocrequisito -> documentosrequisitoconsejocohorteService.create(
+                    DocumentosrequisitoconsejocohorteDTO.builder()
+                        .idDocrequisito(idDocrequisito)
+                        .idCohorte(targetCohorteId)
+                        .build()));
+        }
+
+        if (body.documentosPrograma() != null) {
+            documentosrequisitoprogramacohorteService.findByIdCohorte(targetCohorteId)
+                .forEach(actual -> documentosrequisitoprogramacohorteService.deleteById(actual.getId()));
+
+            body.documentosPrograma().stream()
+                .map(DOCUMENTO_ASIGNADO_CREATE::idDocrequisito)
+                .filter(java.util.Objects::nonNull)
+                .distinct()
+                .forEach(idDocrequisito -> documentosrequisitoprogramacohorteService.create(
+                    DocumentosrequisitoprogramacohorteDTO.builder()
+                        .idDocrequisito(idDocrequisito)
+                        .idCohorte(targetCohorteId)
+                        .build()));
         }
 
         boolean activa = cohorte.getEstado() != null && "ABIERTA".equalsIgnoreCase(cohorte.getEstado().getTipo());
 
         return CohorteListadoOutput.builder()
-                .id(cohorteId)
+            .id(targetCohorteId)
                 .nombre(cohorte.getNombre())
                 .activa(activa)
-                .inscritos(service.countByCohorte(cohorteId))
-                .admitidos(admitidoService.countByCohorte(cohorteId))
+            .inscritos(service.countByCohorte(targetCohorteId))
+            .admitidos(admitidoService.countByCohorte(targetCohorteId))
                 .cupos(cohorte.getCupos())
                 .fechaLimiteDocumentos(fechaLimiteDocumentos)
                 .fechaLimitePago(fechaLimitePago)
