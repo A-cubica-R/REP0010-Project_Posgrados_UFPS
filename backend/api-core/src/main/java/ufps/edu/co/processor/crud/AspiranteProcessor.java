@@ -29,6 +29,8 @@ import ufps.edu.co.records.output.entity.ProgramaInicioOutput;
 import ufps.edu.co.rest.dto.CohorteDTO;
 import ufps.edu.co.rest.dto.AspiranteDTO;
 import ufps.edu.co.rest.dto.DocumentoDTO;
+import ufps.edu.co.rest.dto.DocumentosrequisitoconsejoDTO;
+import ufps.edu.co.rest.dto.DocumentosrequisitoprogramaDTO;
 import ufps.edu.co.rest.services.DocumentoService;
 import ufps.edu.co.rest.dto.CriterioevaluacionDTO;
 import ufps.edu.co.rest.dto.EstadoDTO;
@@ -43,7 +45,9 @@ import ufps.edu.co.rest.services.CohorteService;
 import ufps.edu.co.rest.services.CriterioevaluacionService;
 import ufps.edu.co.rest.services.CriteriocohorteService;
 import ufps.edu.co.rest.services.DocumentosrequisitoconsejocohorteService;
+import ufps.edu.co.rest.services.DocumentosrequisitoconsejoService;
 import ufps.edu.co.rest.services.DocumentosrequisitoprogramacohorteService;
+import ufps.edu.co.rest.services.DocumentosrequisitoprogramaService;
 import ufps.edu.co.rest.services.EstadoService;
 import ufps.edu.co.rest.services.ModalidadService;
 import ufps.edu.co.rest.services.PlazoService;
@@ -99,6 +103,12 @@ public class AspiranteProcessor implements
 
     @Autowired
     private DocumentosrequisitoprogramacohorteService documentosrequisitoprogramacohorteService;
+
+    @Autowired
+    private DocumentosrequisitoconsejoService documentosrequisitoconsejoService;
+
+    @Autowired
+    private DocumentosrequisitoprogramaService documentosrequisitoprogramaService;
 
     @Override
     public AspiranteOutput create(ASPIRANTE_CREATE input) {
@@ -391,22 +401,18 @@ public class AspiranteProcessor implements
                 })
                 .toList();
 
-            List<ufps.edu.co.records.output.entity.DocumentosrequisitoconsejocohorteOutput> documentosConsejo = documentosrequisitoconsejocohorteService
+        List<CohorteDetalleOutput.DocumentoAsignadoInfo> documentosConsejo = documentosrequisitoconsejocohorteService
                 .findByIdCohorte(cohorteId).stream()
-                .map(doc -> ufps.edu.co.records.output.entity.DocumentosrequisitoconsejocohorteOutput.builder()
-                    .id(doc.getId())
-                    .idDocrequisito(doc.getIdDocrequisito())
-                    .idCohorte(doc.getIdCohorte())
-                    .build())
+            .filter(doc -> doc.getIdCohorte() != null && doc.getIdCohorte().equals(cohorteId)
+                && doc.getIdDocrequisito() != null)
+                .map(this::mapDocumentoConsejo)
                 .toList();
 
-            List<ufps.edu.co.records.output.entity.DocumentosrequisitoprogramacohorteOutput> documentosPrograma = documentosrequisitoprogramacohorteService
+        List<CohorteDetalleOutput.DocumentoAsignadoInfo> documentosPrograma = documentosrequisitoprogramacohorteService
                 .findByIdCohorte(cohorteId).stream()
-                .map(doc -> ufps.edu.co.records.output.entity.DocumentosrequisitoprogramacohorteOutput.builder()
-                    .id(doc.getId())
-                    .idDocrequisito(doc.getIdDocrequisito())
-                    .idCohorte(doc.getIdCohorte())
-                    .build())
+            .filter(doc -> doc.getIdCohorte() != null && doc.getIdCohorte().equals(cohorteId)
+                && doc.getIdDocrequisito() != null)
+                .map(this::mapDocumentoPrograma)
                 .toList();
 
         List<AspiranteDTO> aspirantes = service.findByCohorte(cohorteId);
@@ -472,6 +478,36 @@ public class AspiranteProcessor implements
                     .build())
                 .inscritosData(inscritosData)
                 .admitidosData(admitidosData)
+                .build();
+    }
+
+    private CohorteDetalleOutput.DocumentoAsignadoInfo mapDocumentoConsejo(
+            ufps.edu.co.rest.dto.DocumentosrequisitoconsejocohorteDTO dto) {
+        String nombre = null;
+        if (dto.getIdDocrequisito() != null) {
+            DocumentosrequisitoconsejoDTO documento = documentosrequisitoconsejoService.findById(dto.getIdDocrequisito());
+            nombre = documento != null ? documento.getNombre() : null;
+        }
+        return CohorteDetalleOutput.DocumentoAsignadoInfo.builder()
+                .id(dto.getId())
+                .idDocrequisito(dto.getIdDocrequisito())
+                .idCohorte(dto.getIdCohorte())
+                .nombre(nombre)
+                .build();
+    }
+
+    private CohorteDetalleOutput.DocumentoAsignadoInfo mapDocumentoPrograma(
+            ufps.edu.co.rest.dto.DocumentosrequisitoprogramacohorteDTO dto) {
+        String nombre = null;
+        if (dto.getIdDocrequisito() != null) {
+            DocumentosrequisitoprogramaDTO documento = documentosrequisitoprogramaService.findById(dto.getIdDocrequisito());
+            nombre = documento != null ? documento.getNombre() : null;
+        }
+        return CohorteDetalleOutput.DocumentoAsignadoInfo.builder()
+                .id(dto.getId())
+                .idDocrequisito(dto.getIdDocrequisito())
+                .idCohorte(dto.getIdCohorte())
+                .nombre(nombre)
                 .build();
     }
 
