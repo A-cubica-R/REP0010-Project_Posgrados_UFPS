@@ -508,10 +508,10 @@ public class DirectorProgramaCase {
         }
     }
 
-    @PostMapping(value = "/generateAdmittedList", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ListaAdmitidosResumenOutput> generateAdmittedList(@RequestBody GENERATE_LISTA request) {
+    @GetMapping("{idCohorte}/generateAdmittedList")
+    public ResponseEntity<ListaAdmitidosResumenOutput> generateAdmittedList(@PathVariable Integer idCohorte) {
         try {
-            return ResponseEntity.ok(listaadmitidosProcessor.generateAdmittedList(request));
+            return ResponseEntity.ok(listaadmitidosProcessor.generateAdmittedList(idCohorte));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
