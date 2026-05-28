@@ -131,15 +131,14 @@ public class InscripcionCase {
             BigDecimal promedioPonderadoAcumulado,
             Integer idGrupoEtnico,
             Integer idPuebloIndigena,
-            String capacidadExcepcional,
+            Integer idCapacidadExcepcional,
             Boolean egresadoUfpsCucuta,
             List<ExperienciaLaboralItem> experienciaLaboral,
             Integer idDiscapacidad,
             UbicacionNacimientoRequest ubicacionNacimiento,
             UbicacionTrabajoRequest ubicacionTrabajo,
             UbicacionResidenciaRequest ubicacionResidencia,
-            Integer idTipoVinculacion,
-            Integer idCohorte) {
+            Integer idTipoVinculacion) {
     }
 
     public record FormularioInscripcionOutput(Integer idPersona, Integer idAspirante) {
@@ -168,13 +167,7 @@ public class InscripcionCase {
         // 2. Serialización de la experiencia laboral (array → JSON string)
         String experienciaLaboralJson = serializarExperiencia(body.experienciaLaboral());
 
-        // 3. Resolución de capacidad excepcional por nombre
-        CapacidadexepcionalDTO capacidad = capacidadexepcionalService.findByNombre(body.capacidadExcepcional());
-        if (capacidad == null) {
-            throw new RuntimeException("Capacidad excepcional no encontrada: " + body.capacidadExcepcional());
-        }
-
-        // 4. Ubicación del lugar de expedición del documento
+        // 3. Ubicación del lugar de expedición del documento
         UbicacionDTO ubicExpedicion = ubicacionService.create(
                 UbicacionDTO.builder()
                         .idMunicipio(body.idMunicipioExpedicionDoc())
@@ -233,7 +226,7 @@ public class InscripcionCase {
                         .titulopregrado(body.tituloPregrado())
                         .titulosposgrados(body.titulosPostgrado())
                         .idDocumentopersona(docPersona.getId())
-                        .idCapacidadexepcional(capacidad.getId())
+                        .idCapacidadexepcional(body.idCapacidadExcepcional())
                         .idDiscapacidad(body.idDiscapacidad())
                         .idEstadocivil(body.idEstadoCivil())
                         .idGenero(body.idGenero())
@@ -254,7 +247,6 @@ public class InscripcionCase {
         AspiranteDTO aspirante = aspiranteService.create(
                 AspiranteDTO.builder()
                         .idPersona(persona.getId())
-                        .idCohorte(body.idCohorte())
                         .idEstado(estado.getId())
                         .idTipovinculacion(body.idTipoVinculacion())
                         .build());
