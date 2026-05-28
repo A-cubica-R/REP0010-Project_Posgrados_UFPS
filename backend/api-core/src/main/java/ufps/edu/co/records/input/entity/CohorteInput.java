@@ -66,6 +66,7 @@ public enum CohorteInput {
 
         public record CRITERIOCOHORTE_DIRECTOR_UPDATE(
                         @NotNull Integer id,
+                        @NotNull Integer idCriterio,
                         java.math.BigDecimal pesoSnapshot) {
         }
 
