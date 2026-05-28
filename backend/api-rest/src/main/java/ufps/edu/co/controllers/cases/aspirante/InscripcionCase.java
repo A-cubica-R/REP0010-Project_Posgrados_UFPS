@@ -249,8 +249,8 @@ public class InscripcionCase {
                         throw new RuntimeException("Cohorte no encontrada con id: " + body.idCohorte());
                 }
                 if (cohorte.getEstado() != null && cohorte.getEstado().getTipo() != null
-                                && !"ACTIVA".equalsIgnoreCase(cohorte.getEstado().getTipo())) {
-                        throw new RuntimeException("La cohorte indicada no está activa");
+                                && !"ABIERTA".equalsIgnoreCase(cohorte.getEstado().getTipo())) {
+                        throw new RuntimeException("La cohorte indicada no está abierta");
                 }
 
         // 11. Aspirante
