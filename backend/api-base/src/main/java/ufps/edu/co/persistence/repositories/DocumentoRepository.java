@@ -39,4 +39,10 @@ public interface DocumentoRepository extends JpaRepository<DocumentoEntity, Inte
 		@Param("idDocumento") Integer idDocumento,
 		@Param("idEstado") Integer idEstado,
 		@Param("observaciones") String observaciones);
+
+	@Query("SELECT COUNT(d) FROM DocumentoEntity d WHERE d.idDocumentosrequisitoconsejocohorte = :idDocReqConsejoCohorte")
+	int countByIdDocumentosrequisitoconsejocohorte(@Param("idDocReqConsejoCohorte") Integer idDocReqConsejoCohorte);
+
+	@Query("SELECT COUNT(d) FROM DocumentoEntity d WHERE d.idDocumentosrequisitoprogramacohorte = :idDocReqProgramaCohorte")
+	int countByIdDocumentosrequisitoprogramacohorte(@Param("idDocReqProgramaCohorte") Integer idDocReqProgramaCohorte);
 }
