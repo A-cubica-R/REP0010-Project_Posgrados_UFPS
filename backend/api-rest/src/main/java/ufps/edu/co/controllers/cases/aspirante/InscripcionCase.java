@@ -131,6 +131,7 @@ public class InscripcionCase {
             UbicacionNacimientoRequest ubicacionNacimiento,
             UbicacionTrabajoRequest ubicacionTrabajo,
             UbicacionResidenciaRequest ubicacionResidencia,
+            Integer idCohorte,
             Integer idTipoVinculacion) {
     }
 
@@ -235,11 +236,25 @@ public class InscripcionCase {
             throw new RuntimeException("Estado inicial 'INSCRITO' para ASPIRANTE no encontrado en la base de datos");
         }
 
+                // Validar cohorte enviada por el front
+                if (body.idCohorte() == null) {
+                        throw new RuntimeException("Se debe enviar idCohorte en el formulario de inscripción");
+                }
+                CohorteDTO cohorte = cohorteService.findById(body.idCohorte());
+                if (cohorte == null) {
+                        throw new RuntimeException("Cohorte no encontrada con id: " + body.idCohorte());
+                }
+                if (cohorte.getEstado() != null && cohorte.getEstado().getTipo() != null
+                                && !"ABIERTA".equalsIgnoreCase(cohorte.getEstado().getTipo())) {
+                        throw new RuntimeException("La cohorte indicada no está abierta");
+                }
+
         // 11. Aspirante
         AspiranteDTO aspirante = aspiranteService.create(
                 AspiranteDTO.builder()
                         .idPersona(persona.getId())
                         .idEstado(estado.getId())
+                        .idCohorte(body.idCohorte())
                         .idTipovinculacion(body.idTipoVinculacion())
                         .build());
 

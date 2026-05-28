@@ -119,6 +119,9 @@ public class AspiranteProcessor implements
     private DocumentosrequisitoprogramacohorteService documentosrequisitoprogramacohorteService;
 
     @Autowired
+    private PagoProcessor pagoProcessor;
+
+    @Autowired
     private DocumentosrequisitoconsejoService documentosrequisitoconsejoService;
 
     @Autowired
@@ -129,6 +132,7 @@ public class AspiranteProcessor implements
         try {
             AspiranteDTO dto = map.toDto(input);
             AspiranteDTO created = service.create(dto);
+            pagoProcessor.ensureInitialPaymentsForAspirante(created.getId());
             return map.toOutput(created);
         } catch (Exception e) {
             throw new RuntimeException("Error creating Aspirante: " + e.getMessage(), e);
