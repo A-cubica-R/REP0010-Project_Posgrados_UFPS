@@ -55,4 +55,8 @@ public class RolService extends GenericService<RolEntity, RolDTO> {
                 .orElseThrow(() -> new RuntimeException("Rol no encontrado con id: " + id));
         repository.deleteById(id);
     }
+
+    public RolDTO findByNombre(String nombre) {
+        return entityToDto(repository.findByNombre(nombre));
+    }
 }

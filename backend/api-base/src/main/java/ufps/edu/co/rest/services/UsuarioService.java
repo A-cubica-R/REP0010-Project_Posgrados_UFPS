@@ -52,7 +52,7 @@ public class UsuarioService extends GenericService<UsuarioEntity, UsuarioDTO> {
                 .celular(e.getPersona().getCelular())
                 .telefono(e.getPersona().getTelefono())
                 .fechanacimiento(e.getPersona().getFechanacimiento())
-                .egresadoufps(e.getPersona().isEgresadoufps())
+                .egresadoufps(e.getPersona().getEgresadoufps())
                 .empresa(e.getPersona().getEmpresa())
                 .experiencialaboral(e.getPersona().getExperiencialaboral())
                 .promediopregrado(e.getPersona().getPromediopregrado())

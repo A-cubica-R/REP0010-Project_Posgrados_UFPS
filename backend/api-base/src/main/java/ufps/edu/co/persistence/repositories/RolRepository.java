@@ -37,6 +37,8 @@ import ufps.edu.co.persistence.entities.RolEntity;
 @Repository
 public interface RolRepository extends JpaRepository<RolEntity, Integer> {
 
+	RolEntity findByNombre(String nombre);
+	
 	// Insert specific finders here 
 
 	//List<RolEntity> findByXxx(String xxx);
