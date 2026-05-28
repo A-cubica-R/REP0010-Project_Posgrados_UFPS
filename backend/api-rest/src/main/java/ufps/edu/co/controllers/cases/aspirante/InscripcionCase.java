@@ -88,13 +88,6 @@ public class InscripcionCase {
 
     // ─── Records de petición ────────────────────────────────────────────────
 
-    public record ExperienciaLaboralItem(
-            String empresa,
-            String cargo,
-            LocalDate fechaInicio,
-            LocalDate fechaFin) {
-    }
-
     public record UbicacionNacimientoRequest(
             Integer idDeptoNacimiento,
             Integer idMunicipioNacimiento) {
@@ -133,7 +126,7 @@ public class InscripcionCase {
             Integer idPuebloIndigena,
             Integer idCapacidadExcepcional,
             Boolean egresadoUfpsCucuta,
-            List<ExperienciaLaboralItem> experienciaLaboral,
+            String experienciaLaboral,
             Integer idDiscapacidad,
             UbicacionNacimientoRequest ubicacionNacimiento,
             UbicacionTrabajoRequest ubicacionTrabajo,
@@ -164,8 +157,7 @@ public class InscripcionCase {
             }
         }
 
-        // 2. Serialización de la experiencia laboral (array → JSON string)
-        String experienciaLaboralJson = serializarExperiencia(body.experienciaLaboral());
+        String experienciaLaboralJson = body.experienciaLaboral();
 
         // 3. Ubicación del lugar de expedición del documento
         UbicacionDTO ubicExpedicion = ubicacionService.create(
@@ -415,28 +407,6 @@ public class InscripcionCase {
         throw new UnsupportedOperationException("Operación no soportada: reimplementación pendiente.");
     }
 
-    // ─── Helpers privados ────────────────────────────────────────────────────
-
-    private String serializarExperiencia(List<ExperienciaLaboralItem> items) {
-        if (items == null || items.isEmpty()) return "[]";
-        StringBuilder sb = new StringBuilder("[");
-        for (int i = 0; i < items.size(); i++) {
-            ExperienciaLaboralItem item = items.get(i);
-            sb.append("{")
-              .append("\"empresa\":").append(jsonString(item.empresa())).append(",")
-              .append("\"cargo\":").append(jsonString(item.cargo())).append(",")
-              .append("\"fechaInicio\":").append(jsonString(item.fechaInicio() != null ? item.fechaInicio().toString() : null)).append(",")
-              .append("\"fechaFin\":").append(jsonString(item.fechaFin() != null ? item.fechaFin().toString() : null))
-              .append("}");
-            if (i < items.size() - 1) sb.append(",");
-        }
-        return sb.append("]").toString();
-    }
-
-    private String jsonString(String valor) {
-        if (valor == null) return "null";
-        return "\"" + valor.replace("\\", "\\\\").replace("\"", "\\\"") + "\"";
-    }
     private ProgramaListadoOutput toProgramaListadoOutput(ProgramaOutput programa) {
         return ProgramaListadoOutput.builder()
                 .id(programa.id())
