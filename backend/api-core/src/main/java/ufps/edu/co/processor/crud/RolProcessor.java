@@ -74,4 +74,13 @@ public class RolProcessor implements
             throw new RuntimeException("Error deleting Rol by ID: " + e.getMessage(), e);
         }
     }
+
+    public RolOutput findByNombre(String nombre) {
+        try {
+            RolDTO dto = service.findByNombre(nombre);
+            return map.toOutput(dto);
+        } catch (Exception e) {
+            throw new RuntimeException("Error finding Rol by nombre: " + e.getMessage(), e);
+        }
+    }
 }
