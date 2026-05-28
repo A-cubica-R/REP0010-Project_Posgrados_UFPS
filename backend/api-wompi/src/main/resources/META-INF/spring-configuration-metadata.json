@@ -1,0 +1,71 @@
+{
+  "groups": [
+    {
+      "name": "wompi",
+      "type": "wompi",
+      "sourceType": "ufps.edu.co.wompi.config.WompiProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "wompi.simulated",
+      "type": "java.lang.Boolean",
+      "description": "Habilita el modo simulado (sandbox). Cuando es true se usan respuestas simuladas para pruebas.",
+      "defaultValue": "true"
+    },
+    {
+      "name": "wompi.api-base-url",
+      "type": "java.lang.String",
+      "description": "URL base de la API de Wompi (por ejemplo sandbox o producción).",
+      "defaultValue": "https://sandbox.wompi.co/v1"
+    },
+    {
+      "name": "wompi.checkout-base-url",
+      "type": "java.lang.String",
+      "description": "URL base para la página de checkout de Wompi.",
+      "defaultValue": "https://checkout.wompi.co/p"
+    },
+    {
+      "name": "wompi.widget-script-url",
+      "type": "java.lang.String",
+      "description": "URL del script del Widget de Wompi que debe cargarse en el frontend.",
+      "defaultValue": "https://checkout.wompi.co/widget.js"
+    },
+    {
+      "name": "wompi.public-key",
+      "type": "java.lang.String",
+      "description": "Clave pública de Wompi usada por el frontend/Widget para inicializar el proceso.",
+      "defaultValue": ""
+    },
+    {
+      "name": "wompi.private-key",
+      "type": "java.lang.String",
+      "description": "Clave privada de Wompi para llamadas servidor a servidor. Trátela como secreto.",
+      "defaultValue": ""
+    },
+    {
+      "name": "wompi.integrity-secret",
+      "type": "java.lang.String",
+      "description": "Secreto usado para calcular firma/validación de integridad entre backend y Wompi.",
+      "defaultValue": ""
+    },
+    {
+      "name": "wompi.currency",
+      "type": "java.lang.String",
+      "description": "Moneda por defecto para los pagos (ej. COP).",
+      "defaultValue": "COP"
+    },
+    {
+      "name": "wompi.return-url",
+      "type": "java.lang.String",
+      "description": "URL a la que Wompi redirige al completar el pago (opcional).",
+      "defaultValue": ""
+    },
+    {
+      "name": "wompi.webhook-url",
+      "type": "java.lang.String",
+      "description": "URL pública donde Wompi debe enviar notificaciones (webhooks) de transacciones.",
+      "defaultValue": ""
+    }
+  ]
+}
