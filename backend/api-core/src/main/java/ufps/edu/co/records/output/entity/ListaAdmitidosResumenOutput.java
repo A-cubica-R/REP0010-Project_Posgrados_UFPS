@@ -25,6 +25,7 @@ public record ListaAdmitidosResumenOutput(
     public record AspiranteResumen(
             Integer id,
             String nombre,
+            Integer numerodocumento,
             String correo,
             BigDecimal puntaje
     ) {}
