@@ -50,11 +50,14 @@ public class ListaadmitidosProcessor {
 
     private String correo = "jljb1704@gmail.com";
 
-    public ListaAdmitidosResumenOutput generateAdmittedList(GENERATE_LISTA input) {
-        CohorteDTO cohorte = validateAndGetCohorte(input.idCohorte(), input.idAdministrativo());
-        List<AspiranteDTO> candidatos = getTopCandidates(input.idCohorte(), null, cohorte.getCupos());
+    public ListaAdmitidosResumenOutput generateAdmittedList(Integer idCohorte) {
+        CohorteDTO cohorte = cohorteService.findById(idCohorte);
+        if (cohorte == null) {
+            throw new RuntimeException("Cohorte no encontrada con id: " + idCohorte);
+        }
+        List<AspiranteDTO> candidatos = getTopCandidates(idCohorte, null, cohorte.getCupos());
 
-        long totalAdmitidos = listaadmitidosService.findByIdCohorte(input.idCohorte()).size();
+        long totalAdmitidos = listaadmitidosService.findByIdCohorte(idCohorte).size();
         int cuposDisponibles = Math.max(0, cohorte.getCupos() - (int) totalAdmitidos);
         boolean activa = cohorte.getEstado() != null
                 && "ABIERTA".equalsIgnoreCase(cohorte.getEstado().getTipo());
@@ -65,9 +68,13 @@ public class ListaadmitidosProcessor {
                             ? ((a.getPersona().getNombres() != null ? a.getPersona().getNombres() : "") + " "
                                     + (a.getPersona().getApellidos() != null ? a.getPersona().getApellidos() : "")).trim()
                             : "";
+                    Integer numerodocumento = a.getPersona() != null && a.getPersona().getDocumentopersona() != null
+                            ? a.getPersona().getDocumentopersona().getNumerodocumento()
+                            : null;
                     return ListaAdmitidosResumenOutput.AspiranteResumen.builder()
                             .id(a.getId())
                             .nombre(nombre)
+                            .numerodocumento(numerodocumento)
                             .correo(a.getPersona() != null ? a.getPersona().getCorreo() : null)
                             .puntaje(a.getPuntuacion())
                             .build();

@@ -1,6 +1,7 @@
 package ufps.edu.co.controllers.cases.aspirante;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -160,15 +161,79 @@ public class AspiranteCase {
         if (existing.isPresent()) {
             throw new DomainException(
                 AspiranteErrorCode.DOCUMENTO_REQUERIDO_YA_EXISTE_CONFLICT,
-                java.util.Map.of("idAspirante", idAspirante,
-                    "idDocumentosrequisitoconsejocohorte", idDocumentosrequisitoconsejocohorte,
-                    "idDocumentosrequisitoprogramacohorte", idDocumentosrequisitoprogramacohorte));
+                buildDocumentoRequeridoDetails(idAspirante,
+                    idDocumentosrequisitoconsejocohorte,
+                    idDocumentosrequisitoprogramacohorte));
         }
 
         S3Service.UploadResult upload = s3Service.uploadFile(file);
-        Integer idEstadoPendiente = estadodocumentoService.findByEstado("PENDIENTE").getId();
+        DocumentoDTO doc = buildDocumentoRequeridoDto(idAspirante,
+                idDocumentosrequisitoconsejocohorte,
+                idDocumentosrequisitoprogramacohorte,
+                upload);
 
-        DocumentoDTO doc = DocumentoDTO.builder()
+        return ResponseEntity.status(HttpStatus.CREATED).body(toDocumentoOutput(documentoService.create(doc)));
+    }
+
+    @PatchMapping(value = "/{idAspirante}/documentos/requeridos", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<DocumentoOutput> actualizarDocumentoRequerido(
+            @PathVariable Integer idAspirante,
+            @RequestParam(required = false) Integer idDocumentosrequisitoconsejocohorte,
+            @RequestParam(required = false) Integer idDocumentosrequisitoprogramacohorte,
+            @RequestParam("file") MultipartFile file) {
+
+        boolean tieneConsejo = idDocumentosrequisitoconsejocohorte != null;
+        boolean tienePrograma = idDocumentosrequisitoprogramacohorte != null;
+        if (tieneConsejo == tienePrograma) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Debe indicar exactamente un tipo de requisito.");
+        }
+
+        Integer idCohorte = aspiranteService.findById(idAspirante).getIdCohorte();
+        LocalDate fechafin = cohorteService.findById(idCohorte).getPlazo().getFechafin();
+        if (LocalDate.now().isAfter(fechafin)) {
+            throw new DomainException(
+                AspiranteErrorCode.DOCUMENTACION_FUERA_DE_PLAZO_FORBIDDEN,
+                java.util.Map.of("idAspirante", idAspirante, "idCohorte", idCohorte, "fechaLimite", fechafin));
+        }
+
+        Optional<DocumentoDTO> existing = tieneConsejo
+                ? documentoService.findByIdAspiranteAndIdDocumentosrequisitoconsejocohorte(
+                        idAspirante, idDocumentosrequisitoconsejocohorte)
+                : documentoService.findByIdAspiranteAndIdDocumentosrequisitoprogramacohorte(
+                        idAspirante, idDocumentosrequisitoprogramacohorte);
+
+        S3Service.UploadResult upload = s3Service.uploadFile(file);
+        DocumentoDTO doc = buildDocumentoRequeridoDto(idAspirante,
+                idDocumentosrequisitoconsejocohorte,
+                idDocumentosrequisitoprogramacohorte,
+                upload);
+
+        DocumentoDTO saved = existing
+                .map(documento -> documentoService.update(documento.getId(), doc))
+                .orElseGet(() -> documentoService.create(doc));
+
+        return ResponseEntity.ok(toDocumentoOutput(saved));
+    }
+
+    private java.util.Map<String, Object> buildDocumentoRequeridoDetails(
+            Integer idAspirante,
+            Integer idDocumentosrequisitoconsejocohorte,
+            Integer idDocumentosrequisitoprogramacohorte) {
+        java.util.Map<String, Object> details = new HashMap<>();
+        details.put("idAspirante", idAspirante);
+        details.put("idDocumentosrequisitoconsejocohorte", idDocumentosrequisitoconsejocohorte);
+        details.put("idDocumentosrequisitoprogramacohorte", idDocumentosrequisitoprogramacohorte);
+        return details;
+    }
+
+    private DocumentoDTO buildDocumentoRequeridoDto(
+            Integer idAspirante,
+            Integer idDocumentosrequisitoconsejocohorte,
+            Integer idDocumentosrequisitoprogramacohorte,
+            S3Service.UploadResult upload) {
+        Integer idEstadoPendiente = estadodocumentoService.findByEstado("PENDIENTE").getId();
+        return DocumentoDTO.builder()
                 .enlaceurl(upload.enlaceurl())
                 .keyfile(upload.keyfile())
                 .fechacargue(LocalDate.now())
@@ -177,8 +242,6 @@ public class AspiranteCase {
                 .idDocumentosrequisitoconsejocohorte(idDocumentosrequisitoconsejocohorte)
                 .idDocumentosrequisitoprogramacohorte(idDocumentosrequisitoprogramacohorte)
                 .build();
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(toDocumentoOutput(documentoService.create(doc)));
     }
 
     private DocumentoOutput toDocumentoOutput(DocumentoDTO dto) {
