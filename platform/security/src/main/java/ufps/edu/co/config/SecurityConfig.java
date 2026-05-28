@@ -100,7 +100,7 @@ public class SecurityConfig {
 
                                                 // Rutas específicas por rol (antes del catch-all)
                                                 .requestMatchers(DIRECTOR_PROGRAMA_PATHS)
-                                                .hasAnyRole("DIRECTOR_DE_PROGRAMA", "SUPER_ADMINISTRADOR")
+                                                .hasAnyRole("DIRECTOR_DE_PROGRAMA", "POSGRADOS" ,"SUPER_ADMINISTRADOR")
 
                                                 // Rutas específicas por rol (antes del catch-all)
                                                 .requestMatchers(ASPIRANTE_PATHS)

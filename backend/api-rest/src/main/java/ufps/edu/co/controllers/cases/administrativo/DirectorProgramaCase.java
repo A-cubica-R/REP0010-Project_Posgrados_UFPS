@@ -355,6 +355,11 @@ public class DirectorProgramaCase {
             @RequestBody COHORTE_DIRECTOR_UPDATE body) {
         try {
             return ResponseEntity.ok(aspiranteProcessor.updateCohorte(cohorteId, body));
+        } catch (DomainException e) {
+            throw e;
+        } catch (IllegalArgumentException e) {
+            logger.warn("Solicitud invalida para actualizar cohorte {}: {}", cohorteId, e.getMessage());
+            return ResponseEntity.badRequest().build();
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
