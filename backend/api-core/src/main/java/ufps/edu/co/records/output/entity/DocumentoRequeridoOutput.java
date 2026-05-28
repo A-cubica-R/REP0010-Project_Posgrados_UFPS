@@ -8,6 +8,7 @@ public record DocumentoRequeridoOutput(
         Integer idDocumentosrequisitoconsejocohorte,
         Integer idDocumentosrequisitoprogramacohorte,
         String nombre,
-        String urlformato
+        String urlformato, 
+        Integer tamanoMaximoMB
 ) implements OutputResponse {
 }
