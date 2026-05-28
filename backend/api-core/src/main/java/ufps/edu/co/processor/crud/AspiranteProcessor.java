@@ -226,6 +226,7 @@ public class AspiranteProcessor implements
                     .id(aspirante.getId())
                     .nombreCompleto(nombreCompleto)
                     .idEstado(aspirante.getIdEstado())
+                    .estado(aspirante.getEstado() != null ? aspirante.getEstado().getTipo() : null)
                     .correo(persona != null ? persona.getCorreo() : null)
                     .puntajeTotal(aspirante.getPuntuacion())
                     .build();
@@ -619,6 +620,7 @@ public class AspiranteProcessor implements
                             .id(aspirante.getId())
                             .nombreCompleto(nombreCompleto)
                             .idEstado(aspirante.getIdEstado())
+                            .estado(aspirante.getEstado() != null ? aspirante.getEstado().getTipo() : null)
                             .correo(persona != null ? persona.getCorreo() : null)
                             .puntajeTotal(aspirante.getPuntuacion())
                             .numerodocumento(numerodocumento)
