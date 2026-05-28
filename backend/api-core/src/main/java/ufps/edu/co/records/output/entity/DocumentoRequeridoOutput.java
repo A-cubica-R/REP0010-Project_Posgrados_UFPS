@@ -5,7 +5,6 @@ import ufps.edu.co.records.OutputResponse;
 
 @Builder
 public record DocumentoRequeridoOutput(
-        Integer idDocumento,
         Integer idDocumentosrequisitoconsejocohorte,
         Integer idDocumentosrequisitoprogramacohorte,
         String nombre,

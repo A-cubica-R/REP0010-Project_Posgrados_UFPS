@@ -236,7 +236,6 @@ public class DocumentoProcessor implements
 
                 List<DocumentoResumenOutput> documentosResumen = docs.stream()
                     .map(doc -> DocumentoResumenOutput.builder()
-                        .idDocumento(doc.getId())
                         .idDocumentosrequisitoconsejocohorte(doc.getIdDocumentosrequisitoconsejocohorte())
                         .idDocumentosrequisitoprogramacohorte(doc.getIdDocumentosrequisitoprogramacohorte())
                         .nombre(doc.getKeyfile())
@@ -295,7 +294,6 @@ public class DocumentoProcessor implements
 
         List<DocumentoResumenOutput> documentosResumen = docs.stream()
                 .map(doc -> DocumentoResumenOutput.builder()
-                        .idDocumento(doc.getId())
                         .idDocumentosrequisitoconsejocohorte(doc.getIdDocumentosrequisitoconsejocohorte())
                         .idDocumentosrequisitoprogramacohorte(doc.getIdDocumentosrequisitoprogramacohorte())
                         .nombre(doc.getKeyfile())
