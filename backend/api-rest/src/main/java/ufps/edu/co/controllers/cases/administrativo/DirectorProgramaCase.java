@@ -213,17 +213,6 @@ public class DirectorProgramaCase {
         }
     }
 
-    @PatchMapping(value = "/documentos/{idDoc}/estado", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<DocumentoEstadoOutput> updateEstadoDocumento(
-            @PathVariable Integer idDoc,
-            @RequestBody DOCUMENTO_ESTADO_UPDATE body) {
-        try {
-            return ResponseEntity.ok(documentoProcessor.updateEstadoDocumentoParaDirector(idDoc, body));
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
-        }
-    }
-
     @PostMapping(value = "/downloadByDocumentId", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<byte[]> download(@RequestBody DOCUMENTO_FIND request) {
         try {
