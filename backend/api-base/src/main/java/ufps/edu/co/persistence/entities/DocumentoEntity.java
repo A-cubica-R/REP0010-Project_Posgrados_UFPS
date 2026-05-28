@@ -61,7 +61,7 @@ public class DocumentoEntity implements Serializable {
     private int        idEstadodocumento ;
 
     @Column(name="id_plazo", nullable=true)
-    private int        idPlazo ;
+    private Integer    idPlazo ;
 
     @Column(name="id_documentosrequisitoprogramacohorte")
     private Integer    idDocumentosrequisitoprogramacohorte ;

@@ -9,7 +9,10 @@ import ufps.edu.co.domain.exceptions.BaseErrorCode;
 public enum AspiranteErrorCode implements BaseErrorCode {
     DOCUMENTACION_FUERA_DE_PLAZO_FORBIDDEN(
             "DOCUMENTACION_FUERA_DE_PLAZO_FORBIDDEN",
-            "El plazo de documentación venció. No es posible subir documentos después de la fecha límite");
+        "El plazo de documentación venció. No es posible subir documentos después de la fecha límite"),
+    DOCUMENTO_REQUERIDO_YA_EXISTE_CONFLICT(
+        "DOCUMENTO_REQUERIDO_YA_EXISTE_CONFLICT",
+        "Ya ha subido un archivo para este requisito");
 
     private final String code;
     private final String defaultMessage;
