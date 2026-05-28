@@ -8,7 +8,10 @@ import ufps.edu.co.domain.exceptions.BaseErrorCode;
 @AllArgsConstructor
 public enum CohorteErrorCode implements BaseErrorCode {
     COHORTE_NOT_FOUND("COHORTE_NOT_FOUND", "Cohorte no encontrada"),
-    COHORTE_DUPLICADO("COHORTE_DUPLICADO", "Cohorte duplicada");
+    COHORTE_DUPLICADO("COHORTE_DUPLICADO", "Cohorte duplicada"),
+    COHORTE_CON_ASIGNACIONES_BLOQUEADAS(
+            "COHORTE_CON_ASIGNACIONES_BLOQUEADAS",
+            "No se pueden eliminar asignaciones porque existen documentos cargados que dependen de ellas");
 
     private final String code;
     private final String defaultMessage;

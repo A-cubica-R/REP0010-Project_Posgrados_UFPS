@@ -105,4 +105,14 @@ public class DocumentoService extends GenericService<DocumentoEntity, DocumentoD
                 .findByIdAspiranteAndIdDocumentosrequisitoprogramacohorte(idAspirante, idDocumentosrequisitoprogramacohorte)
                 .map(this::entityToDto);
     }
+
+    @Transactional(readOnly = true)
+    public int countByIdDocumentosrequisitoconsejocohorte(Integer idDocumentosrequisitoconsejocohorte) {
+        return repository.countByIdDocumentosrequisitoconsejocohorte(idDocumentosrequisitoconsejocohorte);
+    }
+
+    @Transactional(readOnly = true)
+    public int countByIdDocumentosrequisitoprogramacohorte(Integer idDocumentosrequisitoprogramacohorte) {
+        return repository.countByIdDocumentosrequisitoprogramacohorte(idDocumentosrequisitoprogramacohorte);
+    }
 }
