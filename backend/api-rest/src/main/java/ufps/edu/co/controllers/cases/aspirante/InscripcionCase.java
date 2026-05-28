@@ -3,8 +3,6 @@ package ufps.edu.co.controllers.cases.aspirante;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
