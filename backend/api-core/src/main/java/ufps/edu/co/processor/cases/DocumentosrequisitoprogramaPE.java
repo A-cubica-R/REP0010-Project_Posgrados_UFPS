@@ -45,6 +45,7 @@ public class DocumentosrequisitoprogramaPE extends DocumentosrequisitoprogramaPr
                     .idDocumentosrequisitoprogramacohorte(null)
                     .nombre(doc.getNombre())
                     .urlformato(doc.getUrlformato())
+                    .tamanoMaximoMB(doc.getTamanomaximo())
                     .build());
         });
 
@@ -55,6 +56,7 @@ public class DocumentosrequisitoprogramaPE extends DocumentosrequisitoprogramaPr
                     .idDocumentosrequisitoprogramacohorte(junction.getId())
                     .nombre(doc.getNombre())
                     .urlformato(doc.getUrlformato())
+                    .tamanoMaximoMB(doc.getTamanomaximo())
                     .build());
         });
 
