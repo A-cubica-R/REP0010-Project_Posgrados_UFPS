@@ -153,7 +153,6 @@ public class InscripcionCase {
 
         public record RegistrarUsuarioOutput(Integer idUsuario, String nombreusuario, Integer idPersona) {
         }
-
         // ─── Endpoint 14: Registrar Formulario Completo ─────────────────────────
 
         @PostMapping(value = "/formulario", consumes = MediaType.APPLICATION_JSON_VALUE)
