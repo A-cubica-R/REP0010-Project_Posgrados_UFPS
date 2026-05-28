@@ -52,7 +52,6 @@ import ufps.edu.co.records.input.entity.CriteriocohorteInput.CRITERIOCOHORTE_PES
 import ufps.edu.co.records.output.entity.CriteriocohorteOutput;
 import ufps.edu.co.records.input.entity.CalificacioncriterioInput.CALIFICACIONCRITERIO_FIND_BY_ASPIRANTE;
 import ufps.edu.co.records.input.entity.CalificacioncriterioInput.CALIFICACIONCRITERIO_UPDATE;
-import ufps.edu.co.records.input.entity.DocumentoInput.DOCUMENTO_ESTADO_UPDATE;
 import ufps.edu.co.records.output.entity.CalificacionCriterioSimpleOutput;
 import ufps.edu.co.records.output.entity.CalificacioncriterioOutput;
 import ufps.edu.co.records.output.entity.AspiranteCohorteOutput;

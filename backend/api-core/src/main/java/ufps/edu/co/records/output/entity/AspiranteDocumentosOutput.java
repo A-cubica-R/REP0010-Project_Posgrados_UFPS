@@ -16,11 +16,12 @@ public record AspiranteDocumentosOutput(
 
     @Builder
     public record DocumentoResumenOutput(
-            Integer idDocumentosrequisitoconsejocohorte,
-            Integer idDocumentosrequisitoprogramacohorte,
-            String nombre,
-            String estado,
-            String motivoRechazo,
-            String linkArchivo
+        Integer idDocumento,
+        Integer idDocumentosrequisitoconsejocohorte,
+        Integer idDocumentosrequisitoprogramacohorte,
+        String nombreTitulo,
+        String estado,
+        String motivoRechazo,
+        String linkArchivo
     ) {}
 }
