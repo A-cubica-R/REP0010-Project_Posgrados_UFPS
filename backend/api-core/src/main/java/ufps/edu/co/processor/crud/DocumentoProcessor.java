@@ -11,6 +11,7 @@ import ufps.edu.co.maps.specific.DocumentoMap;
 import ufps.edu.co.maps.specific.PersonaMap;
 import ufps.edu.co.records.input.entity.AspiranteInput.ASPIRANTE_FIND;
 import ufps.edu.co.records.input.entity.DocumentoInput.*;
+import ufps.edu.co.records.output.entity.AprobarDocumentoOutput;
 import ufps.edu.co.records.output.entity.AspiranteDocumentosOutput;
 import ufps.edu.co.records.output.entity.AspiranteDocumentosOutput.DocumentoResumenOutput;
 import ufps.edu.co.records.output.entity.DocumentoEstadoOutput;
@@ -116,7 +117,7 @@ public class DocumentoProcessor implements
         }
     }
 
-    public DocumentoOutput approveDocument(DOCUMENTO_FIND input) {
+    public AprobarDocumentoOutput approveDocument(DOCUMENTO_FIND input) {
         try {
             DocumentoDTO dto = service.findById(input.id());
             EstadodocumentoDTO estadodocumentoDTO = estadodocumentoService.findByEstado("APROBADO");
@@ -124,21 +125,30 @@ public class DocumentoProcessor implements
             dto.setIdEstadodocumento(estadodocumentoDTO.getId());
             DocumentoDTO approve = service.update(input.id(), dto);
             checkAndUpdateEstadoValidacion(dto.getIdAspirante());
-            return map.toOutput(approve);
+            return AprobarDocumentoOutput.builder()
+                    .id(approve.getId())
+                    .nombre(approve.getKeyfile())
+                    .estado(approve.getEstadodocumento().getEstado())
+                    .build();
         } catch (Exception e) {
             throw new RuntimeException("Error approving Documento: " + e.getMessage(), e);
         }
     }
 
-    public DocumentoOutput rejectDocument(DOCUMENTO_REJECT input) {
+    public DocumentoEstadoOutput rejectDocument(DOCUMENTO_REJECT input) {
         try {
             DocumentoDTO dto = service.findById(input.id());
             EstadodocumentoDTO estadodocumentoDTO = estadodocumentoService.findByEstado("RECHAZADO");
             dto.setEstadodocumento(estadodocumentoDTO);
-            dto.setObservaciones(input.observaciones());
+            dto.setObservaciones(input.motivoRechazo());
             dto.setIdEstadodocumento(estadodocumentoDTO.getId());
             DocumentoDTO reject = service.update(input.id(), dto);
-            return map.toOutput(reject);
+            return DocumentoEstadoOutput.builder()
+                    .id(reject.getId())
+                    .nombre(reject.getKeyfile())
+                    .estado(reject.getEstadodocumento().getEstado())
+                    .motivoRechazo(reject.getObservaciones())
+                    .build();
         } catch (Exception e) {
             throw new RuntimeException("Error rejecting Documento: " + e.getMessage(), e);
         }

@@ -68,6 +68,7 @@ import ufps.edu.co.rest.services.ListaadmitidosService;
 import ufps.edu.co.rest.services.AspiranteService;
 import ufps.edu.co.rest.services.EstadoService;
 import ufps.edu.co.records.input.entity.DocumentoInput.DOCUMENTO_FIND;
+import ufps.edu.co.records.input.entity.DocumentoInput.DOCUMENTO_REJECT;
 import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_CANCELAR_REQUEST;
 import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_CREATE;
 import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_FIND;
@@ -79,6 +80,7 @@ import ufps.edu.co.records.input.entity.ListaadmitidosInput.GENERATE_LISTA;
 import ufps.edu.co.records.input.entity.ListaadmitidosInput.ADMITIR_ASPIRANTE;
 import ufps.edu.co.records.input.entity.ListaadmitidosInput.RECHAZAR_ASPIRANTE;
 import ufps.edu.co.records.output.entity.AdministrativoOutput;
+import ufps.edu.co.records.output.entity.AprobarDocumentoOutput;
 import ufps.edu.co.records.output.entity.CohorteDetalleOutput;
 import ufps.edu.co.records.output.entity.CohorteListadoOutput;
 import ufps.edu.co.records.output.entity.CohorteResumenOutput;
@@ -193,6 +195,24 @@ public class DirectorProgramaCase {
         }
     }
 
+    @PatchMapping(value = "/documentos/{idDocumento}/aprobar", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<AprobarDocumentoOutput> aprobarDocumento(@PathVariable Integer idDocumento) {
+        try {
+            return ResponseEntity.ok(documentoProcessor.approveDocument(DOCUMENTO_FIND.builder().id(idDocumento).build()));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PatchMapping(value = "/documentos/{idDocumento}/rechazar", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<DocumentoEstadoOutput> rechazarDocumento(@PathVariable Integer idDocumento, @RequestBody String motivoRechazo){
+        try{
+            return ResponseEntity.ok(documentoProcessor.rejectDocument(DOCUMENTO_REJECT.builder().id(idDocumento).motivoRechazo(motivoRechazo).build()));
+        }catch(Exception e){
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
     @PatchMapping(value = "/documentos/{idDoc}/estado", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<DocumentoEstadoOutput> updateEstadoDocumento(
             @PathVariable Integer idDoc,
@@ -277,7 +297,6 @@ public class DirectorProgramaCase {
         }
     }
 
-    
     @GetMapping("/programa/director/{idUsuario}")
     public ResponseEntity<Map<String, Integer>> findProgramaByUsuarioDirector(@PathVariable Integer idUsuario) {
         try {
