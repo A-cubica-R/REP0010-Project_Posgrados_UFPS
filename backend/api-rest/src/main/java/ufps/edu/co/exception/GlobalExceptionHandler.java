@@ -44,6 +44,7 @@ public class GlobalExceptionHandler {
     private HttpStatus resolveStatus(String code) {
         if (code.endsWith("_NOT_FOUND")) return HttpStatus.NOT_FOUND;
         if (code.endsWith("_ALREADY_EXISTS") || code.endsWith("_DUPLICADO")) return HttpStatus.CONFLICT;
+        if (code.endsWith("_FORBIDDEN")) return HttpStatus.FORBIDDEN;
         return HttpStatus.BAD_REQUEST;
     }
 }

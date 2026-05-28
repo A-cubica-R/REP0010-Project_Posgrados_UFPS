@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import ufps.edu.co.domain.exceptions.DomainException;
+import ufps.edu.co.domain.exceptions.errorcodes.AspiranteErrorCode;
 import ufps.edu.co.processor.cases.DocumentosrequisitoprogramaPE;
 import ufps.edu.co.processor.crud.AspiranteProcessor;
 import ufps.edu.co.processor.crud.DocumentoProcessor;
@@ -144,8 +146,9 @@ public class AspiranteCase {
         Integer idCohorte = aspiranteService.findById(idAspirante).getIdCohorte();
         LocalDate fechafin = cohorteService.findById(idCohorte).getPlazo().getFechafin();
         if (LocalDate.now().isAfter(fechafin)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
-                    "El plazo de documentación venció el " + fechafin + ". No es posible subir documentos después de esa fecha.");
+            throw new DomainException(
+                AspiranteErrorCode.DOCUMENTACION_FUERA_DE_PLAZO_FORBIDDEN,
+                java.util.Map.of("idAspirante", idAspirante, "idCohorte", idCohorte, "fechaLimite", fechafin));
         }
 
         Optional<DocumentoDTO> existing = tieneConsejo
