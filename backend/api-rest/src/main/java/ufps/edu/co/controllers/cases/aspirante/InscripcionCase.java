@@ -88,9 +88,6 @@ public class InscripcionCase {
 
     // ─── Records de petición ────────────────────────────────────────────────
 
-    public record ExperienciaLaboralItem(String experienciaLaboral) {
-    }
-
     public record UbicacionNacimientoRequest(
             Integer idDeptoNacimiento,
             Integer idMunicipioNacimiento) {
@@ -161,7 +158,6 @@ public class InscripcionCase {
             }
         }
 
-        // 2. Experiencia laboral enviada como texto plano o JSON serializado
         String experienciaLaboralJson = body.experienciaLaboral();
 
         // 3. Ubicación del lugar de expedición del documento
@@ -425,8 +421,6 @@ public class InscripcionCase {
     public ResponseEntity<List<RequisitoDocumentoOutput>> getRequisitos() {
         throw new UnsupportedOperationException("Operación no soportada: reimplementación pendiente.");
     }
-
-    // ─── Helpers privados ────────────────────────────────────────────────────
 
     private ProgramaListadoOutput toProgramaListadoOutput(ProgramaOutput programa) {
         return ProgramaListadoOutput.builder()
