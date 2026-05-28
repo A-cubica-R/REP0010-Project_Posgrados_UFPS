@@ -51,6 +51,7 @@ import ufps.edu.co.rest.dto.SemestreDTO;
 import ufps.edu.co.rest.dto.TipoplazoDTO;
 import ufps.edu.co.rest.services.AdmitidoService;
 import ufps.edu.co.rest.services.AspiranteService;
+import ufps.edu.co.rest.services.CalificacioncriterioService;
 import ufps.edu.co.rest.services.CohorteService;
 import ufps.edu.co.rest.services.CriterioevaluacionService;
 import ufps.edu.co.rest.services.CriteriocohorteService;
@@ -83,6 +84,9 @@ public class AspiranteProcessor implements
 
     @Autowired
     private CriteriocohorteService criteriocohorteService;
+
+    @Autowired
+    private CalificacioncriterioService calificacioncriterioService;
 
     @Autowired
     private CohorteService cohorteService;
@@ -1071,7 +1075,12 @@ public class AspiranteProcessor implements
 
             criteriosExistentes.stream()
                 .filter(actual -> !idsRecibidos.contains(actual.getId()))
-                .forEach(actual -> criteriocohorteService.deleteById(actual.getId()));
+                .forEach(actual -> {
+                    if (calificacioncriterioService.existsByCriterio(actual.getId())) {
+                        throw new DomainException(CriterioevaluacionErrorCode.CRITERIO_CON_CALIFICACIONES_BLOQUEADO, actual.getIdCriterio());
+                    }
+                    criteriocohorteService.deleteById(actual.getId());
+                });
 
             body.criteriosCohorte().stream()
                 .filter(java.util.Objects::nonNull)
@@ -1098,6 +1107,9 @@ public class AspiranteProcessor implements
                         }
                         if (!java.util.Objects.equals(existente.getIdCriterio(), criterio.idCriterio())) {
                             throw new DomainException(CriteriocohorteErrorCode.CRITERIOCOHORTE_MISMATCH, criterio.id());
+                        }
+                        if (calificacioncriterioService.existsByCriterio(existente.getId())) {
+                            throw new DomainException(CriterioevaluacionErrorCode.CRITERIO_CON_CALIFICACIONES_BLOQUEADO, existente.getIdCriterio());
                         }
 
                         criteriocohorteService.update(existente.getId(), CriteriocohorteDTO.builder()

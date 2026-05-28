@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ufps.edu.co.domain.exceptions.DomainException;
 import ufps.edu.co.domain.exceptions.DuplicateAdmisionException;
+import ufps.edu.co.domain.exceptions.errorcodes.CriterioevaluacionErrorCode;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -42,6 +43,9 @@ public class GlobalExceptionHandler {
     }
 
     private HttpStatus resolveStatus(String code) {
+        if (CriterioevaluacionErrorCode.CRITERIO_CON_CALIFICACIONES_BLOQUEADO.getCode().equals(code)) {
+            return HttpStatus.UNSUPPORTED_MEDIA_TYPE;
+        }
         if (code.endsWith("_NOT_FOUND")) return HttpStatus.NOT_FOUND;
         if (code.endsWith("_ALREADY_EXISTS") || code.endsWith("_DUPLICADO")) return HttpStatus.CONFLICT;
         if (code.endsWith("_CONFLICT")) return HttpStatus.CONFLICT;
