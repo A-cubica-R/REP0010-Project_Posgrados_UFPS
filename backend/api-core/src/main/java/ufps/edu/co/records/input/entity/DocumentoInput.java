@@ -1,7 +1,5 @@
 package ufps.edu.co.records.input.entity;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
 import java.time.LocalDate;
@@ -11,56 +9,59 @@ public enum DocumentoInput {
     ;
 
     public record DOCUMENTO_CREATE(
-        @NotBlank String enlaceurl,
-        @NotNull LocalDate fechacargue,
-        @NotNull Integer idAdministrativo,
-        @NotNull Integer idAspirante,
-        @NotNull Integer idEstadodocumento,
-        Integer idPlazo,
-        @NotBlank String keyfile,
-        String observaciones,
-        Integer idDocumentosrequisitoconsejocohorte,
-        Integer idDocumentosrequisitoprogramacohorte
-    ) implements CreateType {}
+            String enlaceurl,
+            LocalDate fechacargue,
+            Integer idAdministrativo,
+            Integer idAspirante,
+            Integer idEstadodocumento,
+            Integer idPlazo,
+            String keyfile,
+            String observaciones,
+            Integer idDocumentosrequisitoconsejocohorte,
+            Integer idDocumentosrequisitoprogramacohorte) implements CreateType {
+    }
 
     public record DOCUMENTO_UPDATE(
-        @NotNull Integer id,
-        @NotNull LocalDate fechacargue,
-        @NotNull Integer idEstadodocumento,
-        @NotNull Integer idAdministrativo,
-        Integer idPlazo,
-        @NotNull Integer idAspirante,
-        @NotBlank String enlaceurl,
-        @NotBlank String keyfile,
-        String observaciones,
-        Integer idDocumentosrequisitoconsejocohorte,
-        Integer idDocumentosrequisitoprogramacohorte
-    ) implements UpdateType {}
+            Integer id,
+            LocalDate fechacargue,
+            Integer idEstadodocumento,
+            Integer idAdministrativo,
+            Integer idPlazo,
+            Integer idAspirante,
+            String enlaceurl,
+            String keyfile,
+            String observaciones,
+            Integer idDocumentosrequisitoconsejocohorte,
+            Integer idDocumentosrequisitoprogramacohorte) implements UpdateType {
+    }
 
     public record DOCUMENTO_PATCH(
-        @NotNull Integer id,
-        LocalDate fechacargue,
-        Integer idEstadodocumento,
-        Integer idAdministrativo,
-        Integer idPlazo,
-        Integer idAspirante,
-        String enlaceurl,
-        String keyfile,
-        String observaciones,
-        Integer idDocumentosrequisitoconsejocohorte,
-        Integer idDocumentosrequisitoprogramacohorte
-    ) implements PatchType {}
+            Integer id,
+            LocalDate fechacargue,
+            Integer idEstadodocumento,
+            Integer idAdministrativo,
+            Integer idPlazo,
+            Integer idAspirante,
+            String enlaceurl,
+            String keyfile,
+            String observaciones,
+            Integer idDocumentosrequisitoconsejocohorte,
+            Integer idDocumentosrequisitoprogramacohorte) implements PatchType {
+    }
 
-    public record DOCUMENTO_DELETE(@NotNull Integer id) implements DeleteType {}
-
-    @Builder
-    public record DOCUMENTO_FIND(@NotNull Integer id) implements FindType {}
+    public record DOCUMENTO_DELETE(Integer id) implements DeleteType {
+    }
 
     @Builder
-    public record DOCUMENTO_REJECT(@NotNull Integer id, @NotBlank String motivoRechazo) implements PatchType {}
+    public record DOCUMENTO_FIND(Integer id) implements FindType {
+    }
+
+    @Builder
+    public record DOCUMENTO_REJECT(Integer id, String motivoRechazo) implements PatchType {
+    }
 
     public record DOCUMENTO_ESTADO_UPDATE(
-        @NotBlank String estado,
-        String motivoRechazo
-    ) {}
+            String estado,
+            String motivoRechazo) {
+    }
 }
