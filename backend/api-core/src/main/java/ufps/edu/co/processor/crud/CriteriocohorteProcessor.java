@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import ufps.edu.co.domain.exceptions.DomainException;
+import ufps.edu.co.domain.exceptions.errorcodes.CriterioevaluacionErrorCode;
 import ufps.edu.co.domain.exceptions.errorcodes.CriteriocohorteErrorCode;
 import ufps.edu.co.maps.specific.CriteriocohorteMap;
 import ufps.edu.co.records.input.entity.CriteriocohorteInput.*;
@@ -17,6 +18,7 @@ import ufps.edu.co.rest.dto.CohorteDTO;
 import ufps.edu.co.rest.dto.CriteriocohorteDTO;
 import ufps.edu.co.rest.dto.CriterioevaluacionDTO;
 import ufps.edu.co.rest.services.AspiranteService;
+import ufps.edu.co.rest.services.CalificacioncriterioService;
 import ufps.edu.co.rest.services.CohorteService;
 import ufps.edu.co.rest.services.CriteriocohorteService;
 import ufps.edu.co.rest.services.CriterioevaluacionService;
@@ -44,6 +46,9 @@ public class CriteriocohorteProcessor implements
     @Autowired
     private CalificacioncriterioProcessor calificacioncriterioProcessor;
 
+    @Autowired
+    private CalificacioncriterioService calificacioncriterioService;
+
     @Override
     public CriteriocohorteOutput create(CRITERIOCOHORTE_CREATE input) {
         try {
@@ -57,8 +62,11 @@ public class CriteriocohorteProcessor implements
     @Override
     public CriteriocohorteOutput update(CRITERIOCOHORTE_UPDATE input) {
         try {
+            assertSinCalificaciones(input.id());
             CriteriocohorteDTO dto = map.toDto(input);
             return map.toOutput(service.update(input.id(), dto));
+        } catch (DomainException e) {
+            throw e;
         } catch (Exception e) {
             throw new DomainException(CriteriocohorteErrorCode.CRITERIOCOHORTE_NOT_FOUND, input.id());
         }
@@ -90,7 +98,10 @@ public class CriteriocohorteProcessor implements
     @Override
     public void deleteById(CRITERIOCOHORTE_DELETE input) {
         try {
+            assertSinCalificaciones(input.id());
             service.deleteById(input.id());
+        } catch (DomainException e) {
+            throw e;
         } catch (Exception e) {
             throw new DomainException(CriteriocohorteErrorCode.CRITERIOCOHORTE_NOT_FOUND, input.id());
         }
@@ -146,6 +157,7 @@ public class CriteriocohorteProcessor implements
 
     public CriteriocohorteOutput updatePeso(Integer id, BigDecimal pesoSnapshot) {
         CriteriocohorteOutput existing = findById(new CRITERIOCOHORTE_FIND(id));
+        assertSinCalificaciones(id);
 
         BigDecimal pesoEfectivo = pesoSnapshot != null ? pesoSnapshot : BigDecimal.ZERO;
         BigDecimal sumaActual = service.findByIdCohorte(existing.idCohorte()).stream()
@@ -172,5 +184,11 @@ public class CriteriocohorteProcessor implements
                 .forEach(calificacioncriterioProcessor::recalcularPuntuacionAspirantePublic);
 
         return updated;
+    }
+
+    private void assertSinCalificaciones(Integer idCriteriocohorte) {
+        if (calificacioncriterioService.existsByCriterio(idCriteriocohorte)) {
+            throw new DomainException(CriterioevaluacionErrorCode.CRITERIO_CON_CALIFICACIONES_BLOQUEADO, idCriteriocohorte);
+        }
     }
 }
