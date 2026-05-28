@@ -11,21 +11,10 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 import ufps.edu.co.processor.crud.*;
+// import ufps.edu.co.rest.services.TipodocumentoService;
 import ufps.edu.co.records.output.entity.*;
 import ufps.edu.co.rest.dto.*;
 import ufps.edu.co.rest.services.*;
-import java.util.List;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import ufps.edu.co.processor.crud.ProgramaProcessor;
-import ufps.edu.co.records.output.entity.ProgramaListadoOutput;
-import ufps.edu.co.records.output.entity.ProgramaOutput;
-import ufps.edu.co.records.output.entity.RequisitoDocumentoOutput;
-// import ufps.edu.co.rest.services.TipodocumentoService;
 
 @RestController
 @RequestMapping(value = "/inscripciones", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -88,6 +77,9 @@ public class InscripcionCase {
         @Autowired
         private UsuarioService usuarioService;
 
+        @Autowired
+        RolProcessor rolProcessor = new RolProcessor();
+  
         // ─── Records de petición ────────────────────────────────────────────────
 
         public record ExperienciaLaboralItem(String experienciaLaboral) {
@@ -151,13 +143,9 @@ public class InscripcionCase {
 
         // ─── Endpoint 14: Registrar Formulario Completo ─────────────────────────
 
-        private static final Logger logger = LoggerFactory.getLogger(InscripcionCase.class);
-
         @PostMapping(value = "/formulario", consumes = MediaType.APPLICATION_JSON_VALUE)
-        public ResponseEntity<?> registrarFormulario(
+        public ResponseEntity<FormularioInscripcionOutput> registrarFormulario(
                         @RequestBody FormularioInscripcionRequest body) {
-
-                try {
 
                 // 1. Validación del promedio ponderado (rango 0.0 – 5.0)
                 if (body.promedioPonderadoAcumulado() != null) {
@@ -168,7 +156,6 @@ public class InscripcionCase {
                         }
                 }
 
-                // 2. Experiencia laboral enviada como texto plano o JSON serializado
                 String experienciaLaboralJson = body.experienciaLaboral();
 
                 // 3. Ubicación del lugar de expedición del documento
@@ -270,17 +257,8 @@ public class InscripcionCase {
                                                 .idTipovinculacion(body.idTipoVinculacion())
                                                 .build());
 
-                        return ResponseEntity.status(HttpStatus.CREATED)
-                                        .body(new FormularioInscripcionOutput(persona.getId(), aspirante.getId()));
-                } catch (Exception e) {
-                        logger.error("Error registrando formulario de inscripción", e);
-                        Map<String, Object> error = new HashMap<>();
-                        error.put("timestamp", java.time.OffsetDateTime.now().toString());
-                        error.put("status", 500);
-                        error.put("error", "Internal Server Error");
-                        error.put("message", e.getMessage());
-                        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
-                }
+                return ResponseEntity.status(HttpStatus.CREATED)
+                                .body(new FormularioInscripcionOutput(persona.getId(), aspirante.getId()));
         }
 
         // ─── Endpoint 15: Registrar Usuario del Aspirante ───────────────────────
@@ -296,6 +274,9 @@ public class InscripcionCase {
                 UsuarioDTO usuario = usuarioService.create(UsuarioDTO.builder()
                                 .idPersona(body.idPersona())
                                 .idClave(clave.getId())
+                                .idRol(
+                                        rolProcessor.findByNombre("ASPIRANTE").id()
+                                )
                                 .nombreusuario(body.usuario())
                                 .build());
 
@@ -442,8 +423,6 @@ public class InscripcionCase {
         public ResponseEntity<List<RequisitoDocumentoOutput>> getRequisitos() {
                 throw new UnsupportedOperationException("Operación no soportada: reimplementación pendiente.");
         }
-
-        // ─── Helpers privados ────────────────────────────────────────────────────
 
         private ProgramaListadoOutput toProgramaListadoOutput(ProgramaOutput programa) {
                 return ProgramaListadoOutput.builder()
