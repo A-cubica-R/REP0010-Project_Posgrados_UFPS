@@ -22,7 +22,7 @@
 		<module>backend/api-auth</module>
 		<module>backend/s3-storage</module>
 		<module>backend/mail-module</module>
-
+		<module>backend/api-wompi</module>
 		<!-- PLATFORM -->
 		<module>platform/application</module>
 		<module>platform/security</module>
