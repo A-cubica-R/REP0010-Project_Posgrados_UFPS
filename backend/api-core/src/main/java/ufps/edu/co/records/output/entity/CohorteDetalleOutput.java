@@ -25,7 +25,11 @@ public record CohorteDetalleOutput(
 ) implements OutputResponse {
 
     @Builder
-    public record CriterioInfo(String nombre, BigDecimal peso) {}
+    public record CriterioInfo(
+            Integer id,
+            Integer idCriterioevaluacion,
+            String nombre,
+            BigDecimal peso) {}
 
     @Builder
     public record AspiranteInfo(Integer id, String nombre, String cedula, String correo) {}

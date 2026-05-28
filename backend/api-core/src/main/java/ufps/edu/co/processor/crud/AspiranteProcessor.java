@@ -4,6 +4,7 @@ package ufps.edu.co.processor.crud;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Comparator;
+import java.util.Map;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -12,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ufps.edu.co.domain.exceptions.DomainException;
 import ufps.edu.co.domain.exceptions.errorcodes.CohorteErrorCode;
+import ufps.edu.co.domain.exceptions.errorcodes.CriteriocohorteErrorCode;
+import ufps.edu.co.domain.exceptions.errorcodes.CriterioevaluacionErrorCode;
 import ufps.edu.co.maps.specific.AspiranteMap;
 import ufps.edu.co.maps.specific.EstadoMap;
 import ufps.edu.co.records.input.entity.AspiranteInput.*;
@@ -48,6 +51,7 @@ import ufps.edu.co.rest.dto.SemestreDTO;
 import ufps.edu.co.rest.dto.TipoplazoDTO;
 import ufps.edu.co.rest.services.AdmitidoService;
 import ufps.edu.co.rest.services.AspiranteService;
+import ufps.edu.co.rest.services.CalificacioncriterioService;
 import ufps.edu.co.rest.services.CohorteService;
 import ufps.edu.co.rest.services.CriterioevaluacionService;
 import ufps.edu.co.rest.services.CriteriocohorteService;
@@ -80,6 +84,9 @@ public class AspiranteProcessor implements
 
     @Autowired
     private CriteriocohorteService criteriocohorteService;
+
+    @Autowired
+    private CalificacioncriterioService calificacioncriterioService;
 
     @Autowired
     private CohorteService cohorteService;
@@ -219,6 +226,7 @@ public class AspiranteProcessor implements
                     .id(aspirante.getId())
                     .nombreCompleto(nombreCompleto)
                     .idEstado(aspirante.getIdEstado())
+                    .estado(aspirante.getEstado() != null ? aspirante.getEstado().getTipo() : null)
                     .correo(persona != null ? persona.getCorreo() : null)
                     .puntajeTotal(aspirante.getPuntuacion())
                     .build();
@@ -402,6 +410,8 @@ public class AspiranteProcessor implements
                 .map(cc -> {
                     CriterioevaluacionDTO ce = criterioevaluacionService.findById(cc.getIdCriterio());
                     return CohorteDetalleOutput.CriterioInfo.builder()
+                    .id(cc.getId())
+                    .idCriterioevaluacion(cc.getIdCriterio())
                             .nombre(ce != null ? ce.getNombre() : null)
                             .peso(cc.getPesoSnapshot())
                             .build();
@@ -610,6 +620,7 @@ public class AspiranteProcessor implements
                             .id(aspirante.getId())
                             .nombreCompleto(nombreCompleto)
                             .idEstado(aspirante.getIdEstado())
+                            .estado(aspirante.getEstado() != null ? aspirante.getEstado().getTipo() : null)
                             .correo(persona != null ? persona.getCorreo() : null)
                             .puntajeTotal(aspirante.getPuntuacion())
                             .numerodocumento(numerodocumento)
@@ -1053,6 +1064,10 @@ public class AspiranteProcessor implements
 
         if (body.criteriosCohorte() != null) {
             List<CriteriocohorteDTO> criteriosExistentes = criteriocohorteService.findByIdCohorte(targetCohorteId);
+            Map<Integer, CriteriocohorteDTO> criteriosPorId = criteriosExistentes.stream()
+                .collect(Collectors.toMap(CriteriocohorteDTO::getId, criterio -> criterio));
+            Map<Integer, CriteriocohorteDTO> criteriosPorIdCriterio = criteriosExistentes.stream()
+                .collect(Collectors.toMap(CriteriocohorteDTO::getIdCriterio, criterio -> criterio, (primero, segundo) -> primero));
 
             Set<Integer> idsRecibidos = body.criteriosCohorte().stream()
                 .filter(java.util.Objects::nonNull)
@@ -1062,20 +1077,58 @@ public class AspiranteProcessor implements
 
             criteriosExistentes.stream()
                 .filter(actual -> !idsRecibidos.contains(actual.getId()))
-                .forEach(actual -> criteriocohorteService.deleteById(actual.getId()));
+                .forEach(actual -> {
+                    if (calificacioncriterioService.existsByCriterio(actual.getId())) {
+                        throw new DomainException(CriterioevaluacionErrorCode.CRITERIO_CON_CALIFICACIONES_BLOQUEADO, actual.getIdCriterio());
+                    }
+                    criteriocohorteService.deleteById(actual.getId());
+                });
 
             body.criteriosCohorte().stream()
                 .filter(java.util.Objects::nonNull)
                 .forEach(criterio -> {
-                    CriteriocohorteDTO existente = criteriosExistentes.stream()
-                        .filter(actual -> java.util.Objects.equals(actual.getId(), criterio.id()))
-                        .findFirst()
-                        .orElseThrow(() -> new RuntimeException(
-                            "Criterio de cohorte no encontrado con id: " + criterio.id()));
+                    if (criterio.idCriterio() == null) {
+                        throw new DomainException(CriteriocohorteErrorCode.CRITERIOCOHORTE_IDCRITERIO_OBLIGATORIO, criterio);
+                    }
 
-                    criteriocohorteService.update(existente.getId(), CriteriocohorteDTO.builder()
-                        .idCohorte(existente.getIdCohorte())
-                        .idCriterio(existente.getIdCriterio())
+                    CriterioevaluacionDTO criterioEvaluacion = criterioevaluacionService.findById(criterio.idCriterio());
+                    if (criterioEvaluacion == null) {
+                        throw new DomainException(CriterioevaluacionErrorCode.CRITERIOEVALUACION_NOT_FOUND, criterio.idCriterio());
+                    }
+                    if (!java.util.Objects.equals(criterioEvaluacion.getIdprograma(), cohorte.getIdPrograma())) {
+                        throw new DomainException(CriteriocohorteErrorCode.CRITERIO_NO_PERTENECE_AL_PROGRAMA, criterio.idCriterio());
+                    }
+                    if (Boolean.FALSE.equals(criterioEvaluacion.getActivo())) {
+                        throw new DomainException(CriteriocohorteErrorCode.CRITERIO_INACTIVO, criterio.idCriterio());
+                    }
+
+                    if (criterio.id() != null) {
+                        CriteriocohorteDTO existente = criteriosPorId.get(criterio.id());
+                        if (existente == null) {
+                            throw new DomainException(CriteriocohorteErrorCode.CRITERIOCOHORTE_NOT_FOUND, criterio.id());
+                        }
+                        if (!java.util.Objects.equals(existente.getIdCriterio(), criterio.idCriterio())) {
+                            throw new DomainException(CriteriocohorteErrorCode.CRITERIOCOHORTE_MISMATCH, criterio.id());
+                        }
+                        if (calificacioncriterioService.existsByCriterio(existente.getId())) {
+                            throw new DomainException(CriterioevaluacionErrorCode.CRITERIO_CON_CALIFICACIONES_BLOQUEADO, existente.getIdCriterio());
+                        }
+
+                        criteriocohorteService.update(existente.getId(), CriteriocohorteDTO.builder()
+                            .idCohorte(existente.getIdCohorte())
+                            .idCriterio(existente.getIdCriterio())
+                            .pesoSnapshot(criterio.pesoSnapshot())
+                            .build());
+                        return;
+                    }
+
+                    if (criteriosPorIdCriterio.containsKey(criterio.idCriterio())) {
+                        throw new DomainException(CriteriocohorteErrorCode.CRITERIO_YA_ASIGNADO_A_COHORTE, criterio.idCriterio());
+                    }
+
+                    criteriocohorteService.create(CriteriocohorteDTO.builder()
+                        .idCohorte(targetCohorteId)
+                        .idCriterio(criterio.idCriterio())
                         .pesoSnapshot(criterio.pesoSnapshot())
                         .build());
                 });

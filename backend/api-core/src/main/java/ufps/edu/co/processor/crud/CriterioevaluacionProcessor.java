@@ -66,6 +66,7 @@ public class CriterioevaluacionProcessor implements
     @Override
     public CriterioevaluacionOutput update(CRITERIOEVALUACION_UPDATE input) {
         try {
+            assertCriterioSinCalificaciones(input.id());
             CriterioevaluacionDTO old = service.findById(input.id());
             BigDecimal oldPeso = old != null ? old.getPeso() : null;
             CriterioevaluacionDTO dto = map.toDto(input);
@@ -74,6 +75,8 @@ public class CriterioevaluacionProcessor implements
                 calificacioncriterioProcessor.actualizarPesoSnapshotYRecalcular(input.id(), input.peso());
             }
             return output;
+        } catch (DomainException e) {
+            throw e;
         } catch (Exception e) {
             throw new DomainException(CriterioevaluacionErrorCode.CRITERIOEVALUACION_NOT_FOUND, input.id());
         }
@@ -100,15 +103,13 @@ public class CriterioevaluacionProcessor implements
 
     @Override
     public void deleteById(CRITERIOEVALUACION_DELETE input) {
-        boolean tieneCalificaciones = criteriocohorteService.findByIdCriterio(input.id()).stream()
-                .anyMatch(cc -> calificacioncriterioService.existsByCriterio(cc.getId()));
-        if (tieneCalificaciones) {
-            throw new DomainException(CriterioevaluacionErrorCode.CRITERIO_CON_ASPIRANTES_CALIFICADOS, input.id());
-        }
+        assertCriterioSinCalificaciones(input.id());
         CriterioevaluacionDTO criterio = service.findById(input.id());
         Integer programaId = criterio != null ? criterio.getIdprograma() : null;
         try {
             service.deleteById(input.id());
+        } catch (DomainException e) {
+            throw e;
         } catch (Exception e) {
             throw new DomainException(CriterioevaluacionErrorCode.CRITERIOEVALUACION_NOT_FOUND, input.id());
         }
@@ -168,6 +169,7 @@ public class CriterioevaluacionProcessor implements
         if (criterio == null || !programaId.equals(criterio.getIdprograma())) {
             throw new DomainException(CriterioevaluacionErrorCode.CRITERIO_COHORTE_MISMATCH, criterioId);
         }
+        assertCriterioSinCalificaciones(criterioId);
         criterio.setActivo(false);
         return map.toOutput(service.update(criterioId, criterio));
     }
@@ -221,6 +223,7 @@ public class CriterioevaluacionProcessor implements
                     .idprograma(programaId)
                     .build();
             if (item.id() != null) {
+                assertCriterioSinCalificaciones(item.id());
                 CriterioevaluacionDTO old = service.findById(item.id());
                 BigDecimal oldPeso = old != null ? old.getPeso() : null;
                 service.update(item.id(), dto);
@@ -286,6 +289,14 @@ public class CriterioevaluacionProcessor implements
                             && "VALIDADO_CALIFICADO".equalsIgnoreCase(a.getEstado().getTipo()))
                     .forEach(a -> aspiranteService.updateEstado(a.getId(), estadoEnProgreso.getId()))
         );
+    }
+
+    private void assertCriterioSinCalificaciones(Integer criterioId) {
+        boolean tieneCalificaciones = criteriocohorteService.findByIdCriterio(criterioId).stream()
+                .anyMatch(cc -> calificacioncriterioService.existsByCriterio(cc.getId()));
+        if (tieneCalificaciones) {
+            throw new DomainException(CriterioevaluacionErrorCode.CRITERIO_CON_CALIFICACIONES_BLOQUEADO, criterioId);
+        }
     }
 
 }

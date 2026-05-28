@@ -9,6 +9,7 @@ public record AspiranteCalificacionOutput(
         Integer id,
         String nombreCompleto,
         Integer idEstado,
+        String estado,
         String correo,
         BigDecimal puntajeTotal,
         Integer numerodocumento
