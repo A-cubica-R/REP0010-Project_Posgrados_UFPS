@@ -11,6 +11,7 @@ import ufps.edu.co.maps.specific.DocumentoMap;
 import ufps.edu.co.maps.specific.PersonaMap;
 import ufps.edu.co.records.input.entity.AspiranteInput.ASPIRANTE_FIND;
 import ufps.edu.co.records.input.entity.DocumentoInput.*;
+import ufps.edu.co.records.output.entity.AprobarDocumentoOutput;
 import ufps.edu.co.records.output.entity.AspiranteDocumentosOutput;
 import ufps.edu.co.records.output.entity.AspiranteDocumentosOutput.DocumentoResumenOutput;
 import ufps.edu.co.records.output.entity.DocumentoEstadoOutput;
@@ -25,7 +26,9 @@ import ufps.edu.co.rest.dto.EstadodocumentoDTO;
 import ufps.edu.co.rest.dto.PersonaDTO;
 import ufps.edu.co.rest.services.AspiranteService;
 import ufps.edu.co.rest.services.DocumentoService;
+import ufps.edu.co.rest.services.DocumentosrequisitoconsejoService;
 import ufps.edu.co.rest.services.DocumentosrequisitoconsejocohorteService;
+import ufps.edu.co.rest.services.DocumentosrequisitoprogramaService;
 import ufps.edu.co.rest.services.DocumentosrequisitoprogramacohorteService;
 import ufps.edu.co.rest.services.EstadoService;
 import ufps.edu.co.rest.services.EstadodocumentoService;
@@ -60,6 +63,12 @@ public class DocumentoProcessor implements
 
     @Autowired
     private DocumentosrequisitoprogramacohorteService documentosrequisitoprogramacohorteService;
+
+    @Autowired
+    private DocumentosrequisitoprogramaService documentosrequisitoprogramaService;
+
+    @Autowired
+    private DocumentosrequisitoconsejoService documentosrequisitoconsejoService;
 
     @Override
     public DocumentoOutput create(DOCUMENTO_CREATE input) {
@@ -116,7 +125,7 @@ public class DocumentoProcessor implements
         }
     }
 
-    public DocumentoOutput approveDocument(DOCUMENTO_FIND input) {
+    public AprobarDocumentoOutput approveDocument(DOCUMENTO_FIND input) {
         try {
             DocumentoDTO dto = service.findById(input.id());
             EstadodocumentoDTO estadodocumentoDTO = estadodocumentoService.findByEstado("APROBADO");
@@ -124,21 +133,30 @@ public class DocumentoProcessor implements
             dto.setIdEstadodocumento(estadodocumentoDTO.getId());
             DocumentoDTO approve = service.update(input.id(), dto);
             checkAndUpdateEstadoValidacion(dto.getIdAspirante());
-            return map.toOutput(approve);
+            return AprobarDocumentoOutput.builder()
+                    .id(approve.getId())
+                    .nombre(approve.getKeyfile())
+                    .estado(approve.getEstadodocumento().getEstado())
+                    .build();
         } catch (Exception e) {
             throw new RuntimeException("Error approving Documento: " + e.getMessage(), e);
         }
     }
 
-    public DocumentoOutput rejectDocument(DOCUMENTO_REJECT input) {
+    public DocumentoEstadoOutput rejectDocument(DOCUMENTO_REJECT input) {
         try {
             DocumentoDTO dto = service.findById(input.id());
             EstadodocumentoDTO estadodocumentoDTO = estadodocumentoService.findByEstado("RECHAZADO");
             dto.setEstadodocumento(estadodocumentoDTO);
-            dto.setObservaciones(input.observaciones());
+            dto.setObservaciones(input.motivoRechazo());
             dto.setIdEstadodocumento(estadodocumentoDTO.getId());
             DocumentoDTO reject = service.update(input.id(), dto);
-            return map.toOutput(reject);
+            return DocumentoEstadoOutput.builder()
+                    .id(reject.getId())
+                    .nombre(reject.getKeyfile())
+                    .estado(reject.getEstadodocumento().getEstado())
+                    .motivoRechazo(reject.getObservaciones())
+                    .build();
         } catch (Exception e) {
             throw new RuntimeException("Error rejecting Documento: " + e.getMessage(), e);
         }
@@ -163,14 +181,15 @@ public class DocumentoProcessor implements
             }
             Integer idCohorte = aspirante.getIdCohorte();
 
-            List<DocumentosrequisitoconsejocohorteDTO> requisitosConsejo =
-                    documentosrequisitoconsejocohorteService.findByIdCohorte(idCohorte);
+            List<DocumentosrequisitoconsejocohorteDTO> requisitosConsejo = documentosrequisitoconsejocohorteService
+                    .findByIdCohorte(idCohorte);
 
-            List<DocumentosrequisitoprogramacohorteDTO> requisitosPrograma =
-                    documentosrequisitoprogramacohorteService.findByIdCohorte(idCohorte);
+            List<DocumentosrequisitoprogramacohorteDTO> requisitosPrograma = documentosrequisitoprogramacohorteService
+                    .findByIdCohorte(idCohorte);
 
             if (requisitosConsejo.isEmpty() && requisitosPrograma.isEmpty()) {
-                throw new RuntimeException("La cohorte con id " + idCohorte + " no tiene documentos requisito configurados.");
+                throw new RuntimeException(
+                        "La cohorte con id " + idCohorte + " no tiene documentos requisito configurados.");
             }
 
             for (DocumentosrequisitoconsejocohorteDTO requisito : requisitosConsejo) {
@@ -200,7 +219,7 @@ public class DocumentoProcessor implements
         }
     }
 
-    public PersonaOutput findPersonByDocument(DOCUMENTO_FIND input){
+    public PersonaOutput findPersonByDocument(DOCUMENTO_FIND input) {
         DocumentoDTO documento = service.findById(input.id());
         PersonaDTO persona = documento.getAspirante().getPersona();
         return personaMap.toOutput(persona);
@@ -216,7 +235,8 @@ public class DocumentoProcessor implements
                     : "";
             String cedula = p != null && p.getDocumentopersona() != null
                     && p.getDocumentopersona().getNumerodocumento() != null
-                    ? p.getDocumentopersona().getNumerodocumento().toString() : null;
+                            ? p.getDocumentopersona().getNumerodocumento().toString()
+                            : null;
 
             List<DocumentoDTO> docs = service.findByIdAspirante(aspiranteId);
             long total = docs.size();
@@ -234,15 +254,17 @@ public class DocumentoProcessor implements
                 estadoGeneral = "pendiente";
             }
 
-                List<DocumentoResumenOutput> documentosResumen = docs.stream()
+            List<DocumentoResumenOutput> documentosResumen = docs.stream()
                     .map(doc -> DocumentoResumenOutput.builder()
-                        .idDocumentosrequisitoconsejocohorte(doc.getIdDocumentosrequisitoconsejocohorte())
-                        .idDocumentosrequisitoprogramacohorte(doc.getIdDocumentosrequisitoprogramacohorte())
-                        .nombre(doc.getKeyfile())
-                        .estado(doc.getEstadodocumento() != null ? doc.getEstadodocumento().getEstado() : "PENDIENTE")
-                        .motivoRechazo(doc.getObservaciones())
-                        .linkArchivo(doc.getEnlaceurl())
-                        .build())
+                            .idDocumento(doc.getId())
+                            .idDocumentosrequisitoconsejocohorte(doc.getIdDocumentosrequisitoconsejocohorte())
+                            .idDocumentosrequisitoprogramacohorte(doc.getIdDocumentosrequisitoprogramacohorte())
+                            .nombreTitulo(resolverNombreTitulo(doc))
+                            .estado(doc.getEstadodocumento() != null ? doc.getEstadodocumento().getEstado()
+                                    : "PENDIENTE")
+                            .motivoRechazo(doc.getObservaciones())
+                            .linkArchivo(doc.getEnlaceurl())
+                            .build())
                     .toList();
 
             return AspiranteDocumentosOutput.builder()
@@ -255,6 +277,20 @@ public class DocumentoProcessor implements
         } catch (Exception e) {
             throw new RuntimeException("Error obteniendo documentos del aspirante: " + e.getMessage(), e);
         }
+    }
+
+    private String resolverNombreTitulo(DocumentoDTO doc) {
+        if (doc.getIdDocumentosrequisitoconsejocohorte() != null) {
+            return documentosrequisitoconsejoService
+                    .findById(doc.getIdDocumentosrequisitoconsejocohorte())
+                    .getNombre();
+        }
+        if (doc.getIdDocumentosrequisitoprogramacohorte() != null) {
+            return documentosrequisitoprogramaService
+                    .findById(doc.getIdDocumentosrequisitoprogramacohorte())
+                    .getNombre();
+        }
+        return null;
     }
 
     public AspiranteDocumentosOutput getDocumentosDeAspiranteParaDirector(Integer aspiranteId) {
@@ -274,7 +310,8 @@ public class DocumentoProcessor implements
                 : "";
         String cedula = p != null && p.getDocumentopersona() != null
                 && p.getDocumentopersona().getNumerodocumento() != null
-                ? p.getDocumentopersona().getNumerodocumento().toString() : null;
+                        ? p.getDocumentopersona().getNumerodocumento().toString()
+                        : null;
 
         List<DocumentoDTO> docs = service.findByIdAspirante(aspiranteId);
         long total = docs.size();
@@ -294,10 +331,12 @@ public class DocumentoProcessor implements
 
         List<DocumentoResumenOutput> documentosResumen = docs.stream()
                 .map(doc -> DocumentoResumenOutput.builder()
+                        .idDocumento(doc.getId())
                         .idDocumentosrequisitoconsejocohorte(doc.getIdDocumentosrequisitoconsejocohorte())
                         .idDocumentosrequisitoprogramacohorte(doc.getIdDocumentosrequisitoprogramacohorte())
-                        .nombre(doc.getKeyfile())
-                        .estado(doc.getEstadodocumento() != null ? doc.getEstadodocumento().getEstado() : "PENDIENTE")
+                        .nombreTitulo(resolverNombreTitulo(doc))
+                        .estado(doc.getEstadodocumento() != null ? doc.getEstadodocumento().getEstado()
+                                : "PENDIENTE")
                         .motivoRechazo(doc.getObservaciones())
                         .linkArchivo(doc.getEnlaceurl())
                         .build())
@@ -324,7 +363,8 @@ public class DocumentoProcessor implements
                 checkAndUpdateEstadoValidacion(dto.getIdAspirante());
             }
 
-            // TODO: Ya no se mapea el nombre del documento, habría que agregarlo al output o eliminarlo si no es necesario
+            // TODO: Ya no se mapea el nombre del documento, habría que agregarlo al output
+            // o eliminarlo si no es necesario
             return DocumentoEstadoOutput.builder()
                     .id(docId)
                     // .nombre(nombreDoc)
@@ -343,7 +383,8 @@ public class DocumentoProcessor implements
                 throw new RuntimeException("Estado de documento no encontrado: " + input.estado());
             }
 
-            int updatedRows = service.updateEstadoDocumentoById(docId, estadodocumentoDTO.getId(), input.motivoRechazo());
+            int updatedRows = service.updateEstadoDocumentoById(docId, estadodocumentoDTO.getId(),
+                    input.motivoRechazo());
             if (updatedRows == 0) {
                 throw new RuntimeException("Documento no encontrado con id: " + docId);
             }
