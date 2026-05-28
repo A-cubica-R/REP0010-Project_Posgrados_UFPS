@@ -42,7 +42,8 @@ public class SecurityConfig {
                         "/api/application/case/inscripciones/discapacidades",
                         "/api/application/case/inscripciones/departamentos/{idDepartamento}/municipios",
                         "/api/application/case/inscripciones/capacidades-excepcionales",
-                        "/api/application/case/inscripciones/programas"
+                        "/api/application/case/inscripciones/programas",
+                        "/api/application/case/inscripciones/formulario"
         };
 
         private static final String[] DIRECTOR_PROGRAMA_PATHS = {
@@ -66,7 +67,8 @@ public class SecurityConfig {
                         "/api/dev/endpoint/programa/listbyfacultad",
                         "/api/dev/endpoint/programa/listall",
                         "/api/dev/endpoint/estado/listall",
-                        "/api/dev/endpoint/semestre/listall"
+                        "/api/dev/endpoint/semestre/listall",
+                        "/api/dev/endpoint/cohortes/listall"
         };
 
         private static final String[] ASPIRANTE_PATHS = {
@@ -98,7 +100,7 @@ public class SecurityConfig {
 
                                                 // Rutas específicas por rol (antes del catch-all)
                                                 .requestMatchers(DIRECTOR_PROGRAMA_PATHS)
-                                                .hasAnyRole("DIRECTOR_DE_PROGRAMA", "SUPER_ADMINISTRADOR")
+                                                .hasAnyRole("DIRECTOR_DE_PROGRAMA", "POSGRADOS" ,"SUPER_ADMINISTRADOR")
 
                                                 // Rutas específicas por rol (antes del catch-all)
                                                 .requestMatchers(ASPIRANTE_PATHS)
