@@ -158,8 +158,11 @@ public class AspiranteCase {
                         idAspirante, idDocumentosrequisitoprogramacohorte);
 
         if (existing.isPresent()) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT,
-                    "Ya ha subido un archivo para este requisito.");
+            throw new DomainException(
+                AspiranteErrorCode.DOCUMENTO_REQUERIDO_YA_EXISTE_CONFLICT,
+                java.util.Map.of("idAspirante", idAspirante,
+                    "idDocumentosrequisitoconsejocohorte", idDocumentosrequisitoconsejocohorte,
+                    "idDocumentosrequisitoprogramacohorte", idDocumentosrequisitoprogramacohorte));
         }
 
         S3Service.UploadResult upload = s3Service.uploadFile(file);
