@@ -39,6 +39,7 @@ public class ProgramaDTO implements Serializable {
     private Integer idOtros ;
     private Integer idSede ;
     private Integer idTiporegistro ;
+    private Integer idModalidad ;
     private String nivelformacion ;
     private String nombre ;
     private String periodicidad ;
