@@ -316,7 +316,7 @@ public class DirectorProgramaCase {
     @PostMapping(value = "/programa/{programaId}/cohortes", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CohorteListadoOutput> createCohorte(
             @PathVariable Integer programaId,
-            @RequestBody COHORTE_DIRECTOR_CREATE body) {
+            @Valid @RequestBody COHORTE_DIRECTOR_CREATE body) {
         try {
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(aspiranteProcessor.createCohorte(programaId, body));

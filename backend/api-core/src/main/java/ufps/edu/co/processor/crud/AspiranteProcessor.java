@@ -44,7 +44,6 @@ import ufps.edu.co.rest.dto.DocumentosrequisitoprogramaDTO;
 import ufps.edu.co.rest.services.DocumentoService;
 import ufps.edu.co.rest.dto.CriterioevaluacionDTO;
 import ufps.edu.co.rest.dto.EstadoDTO;
-import ufps.edu.co.rest.dto.ModalidadDTO;
 import ufps.edu.co.rest.dto.PersonaDTO;
 import ufps.edu.co.rest.dto.PlazoDTO;
 import ufps.edu.co.rest.dto.SemestreDTO;
@@ -60,7 +59,6 @@ import ufps.edu.co.rest.services.DocumentosrequisitoconsejoService;
 import ufps.edu.co.rest.services.DocumentosrequisitoprogramacohorteService;
 import ufps.edu.co.rest.services.DocumentosrequisitoprogramaService;
 import ufps.edu.co.rest.services.EstadoService;
-import ufps.edu.co.rest.services.ModalidadService;
 import ufps.edu.co.rest.services.PlazoService;
 import ufps.edu.co.rest.services.SemestreService;
 import ufps.edu.co.rest.services.TipoplazoService;
@@ -99,9 +97,6 @@ public class AspiranteProcessor implements
 
     @Autowired
     private SemestreService semestreService;
-
-    @Autowired
-    private ModalidadService modalidadService;
 
     @Autowired
     private EstadoService estadoService;
@@ -491,6 +486,8 @@ public class AspiranteProcessor implements
                 .cupos(cohorte.getCupos())
             .idSemestre(cohorte.getSemestre() != null ? cohorte.getSemestre().getId() : null)
             .nombreSemestre(cohorte.getSemestre() != null ? cohorte.getSemestre().getNombre() : null)
+            .idModalidad(cohorte.getModalidad() != null ? cohorte.getModalidad().getId() : null)
+            .nombreModalidad(cohorte.getModalidad() != null ? cohorte.getModalidad().getNombre() : null)
                 .fechaLimiteDocumentos(cohorte.getPlazo() != null ? cohorte.getPlazo().getFechafin() : null)
                 .fechaLimitePago(cohorte.getPlazo3() != null ? cohorte.getPlazo3().getFechafin() : null)
                 .fechaInicio(cohorte.getSemestre() != null ? cohorte.getSemestre().getFechaInicio() : null)
@@ -676,17 +673,12 @@ public class AspiranteProcessor implements
             throw new RuntimeException("No hay estado CERRADA configurado para cohorte");
         }
 
-        List<ModalidadDTO> modalidades = modalidadService.findAll();
-        if (modalidades.isEmpty()) {
-            throw new RuntimeException("No hay modalidades configuradas");
-        }
-
         Integer cohorteId = cohorteService.createAndGetId(CohorteDTO.builder()
                 .nombre(nombre)
                 .cupos(body.cupos())
                 .idEstado(estadoCohorte.getId())
                 .idSemestre(semestre.getId())
-                .idModalidad(modalidades.get(0).getId())
+                .idModalidad(body.idModalidad())
                 .idPlazodocumentacion(plazoDoc.getId())
                 .idPlazoinscripcion(plazoDoc.getId())
                 .idPlazopago(plazoPago.getId())
