@@ -7,6 +7,12 @@ import ufps.edu.co.domain.exceptions.BaseErrorCode;
 @Getter
 @AllArgsConstructor
 public enum AspiranteErrorCode implements BaseErrorCode {
+    ASPIRANTE_NOT_FOUND(
+        "ASPIRANTE_NOT_FOUND",
+        "Aspirante no encontrado"),
+    DOCUMENTO_REQUISITO_NOT_FOUND(
+        "DOCUMENTO_REQUISITO_NOT_FOUND",
+        "Documento requisito no encontrado"),
     DOCUMENTACION_FUERA_DE_PLAZO_FORBIDDEN(
             "DOCUMENTACION_FUERA_DE_PLAZO_FORBIDDEN",
         "El plazo de documentación venció. No es posible subir documentos después de la fecha límite"),

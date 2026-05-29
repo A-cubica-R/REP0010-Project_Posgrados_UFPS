@@ -7,6 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ufps.edu.co.domain.exceptions.DomainException;
+import ufps.edu.co.domain.exceptions.errorcodes.AspiranteErrorCode;
 import ufps.edu.co.maps.specific.DocumentoMap;
 import ufps.edu.co.maps.specific.PersonaMap;
 import ufps.edu.co.records.input.entity.AspiranteInput.ASPIRANTE_FIND;
@@ -19,7 +21,9 @@ import ufps.edu.co.records.output.entity.DocumentoOutput;
 import ufps.edu.co.records.output.entity.PersonaOutput;
 import ufps.edu.co.rest.dto.AspiranteDTO;
 import ufps.edu.co.rest.dto.DocumentoDTO;
+import ufps.edu.co.rest.dto.DocumentosrequisitoconsejoDTO;
 import ufps.edu.co.rest.dto.DocumentosrequisitoconsejocohorteDTO;
+import ufps.edu.co.rest.dto.DocumentosrequisitoprogramaDTO;
 import ufps.edu.co.rest.dto.DocumentosrequisitoprogramacohorteDTO;
 import ufps.edu.co.rest.dto.EstadoDTO;
 import ufps.edu.co.rest.dto.EstadodocumentoDTO;
@@ -281,14 +285,40 @@ public class DocumentoProcessor implements
 
     private String resolverNombreTitulo(DocumentoDTO doc) {
         if (doc.getIdDocumentosrequisitoconsejocohorte() != null) {
-            return documentosrequisitoconsejoService
-                    .findById(doc.getIdDocumentosrequisitoconsejocohorte())
-                    .getNombre();
+            Integer idReferencia = doc.getIdDocumentosrequisitoconsejocohorte();
+            DocumentosrequisitoconsejoDTO requisito = documentosrequisitoconsejoService.findById(idReferencia);
+            if (requisito != null) {
+                return requisito.getNombre();
+            }
+
+            DocumentosrequisitoconsejocohorteDTO puente = documentosrequisitoconsejocohorteService
+                    .findById(idReferencia);
+            if (puente != null && puente.getIdDocrequisito() != null) {
+                requisito = documentosrequisitoconsejoService.findById(puente.getIdDocrequisito());
+                if (requisito != null) {
+                    return requisito.getNombre();
+                }
+            }
+
+            throw new DomainException(AspiranteErrorCode.DOCUMENTO_REQUISITO_NOT_FOUND, idReferencia);
         }
         if (doc.getIdDocumentosrequisitoprogramacohorte() != null) {
-            return documentosrequisitoprogramaService
-                    .findById(doc.getIdDocumentosrequisitoprogramacohorte())
-                    .getNombre();
+            Integer idReferencia = doc.getIdDocumentosrequisitoprogramacohorte();
+            DocumentosrequisitoprogramaDTO requisito = documentosrequisitoprogramaService.findById(idReferencia);
+            if (requisito != null) {
+                return requisito.getNombre();
+            }
+
+            DocumentosrequisitoprogramacohorteDTO puente = documentosrequisitoprogramacohorteService
+                    .findById(idReferencia);
+            if (puente != null && puente.getIdDocrequisito() != null) {
+                requisito = documentosrequisitoprogramaService.findById(puente.getIdDocrequisito());
+                if (requisito != null) {
+                    return requisito.getNombre();
+                }
+            }
+
+            throw new DomainException(AspiranteErrorCode.DOCUMENTO_REQUISITO_NOT_FOUND, idReferencia);
         }
         return null;
     }
@@ -296,6 +326,8 @@ public class DocumentoProcessor implements
     public AspiranteDocumentosOutput getDocumentosDeAspiranteParaDirector(Integer aspiranteId) {
         try {
             return buildAspiranteDocumentosOutput(aspiranteId);
+        } catch (DomainException e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException("Error obteniendo documentos del aspirante para director: " + e.getMessage(), e);
         }
@@ -303,6 +335,9 @@ public class DocumentoProcessor implements
 
     private AspiranteDocumentosOutput buildAspiranteDocumentosOutput(Integer aspiranteId) {
         AspiranteDTO aspirante = aspiranteService.findById(aspiranteId);
+        if (aspirante == null) {
+            throw new DomainException(AspiranteErrorCode.ASPIRANTE_NOT_FOUND, aspiranteId);
+        }
         PersonaDTO p = aspirante != null ? aspirante.getPersona() : null;
         String nombre = p != null
                 ? ((p.getNombres() != null ? p.getNombres() : "") + " "
