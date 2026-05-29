@@ -56,7 +56,8 @@ public class SecurityConfig {
                         "/api/application/case/documentos/**",
                         "/api/dev/endpoint/tipoentrevista/listall",
                         "/api/dev/endpoint/estado/listall",
-                        "/api/application/case/director-posgrados/**"
+                        "/api/application/case/director-posgrados/**",
+                        "/api/dev/endpoint/semestre/listall"
         };
 
         private static final String[] POSGRADOS_PATHS = {
