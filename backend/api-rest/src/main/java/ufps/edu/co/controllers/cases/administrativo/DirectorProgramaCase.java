@@ -189,7 +189,10 @@ public class DirectorProgramaCase {
     public ResponseEntity<AspiranteDocumentosOutput> getDocumentosDeAspirante(@PathVariable Integer idAspirante) {
         try {
             return ResponseEntity.ok(documentoProcessor.getDocumentosDeAspiranteParaDirector(idAspirante));
+        } catch (DomainException e) {
+            throw e;
         } catch (Exception e) {
+            logger.error("Error obteniendo documentos del aspirante {}", idAspirante, e);
             return ResponseEntity.internalServerError().build();
         }
     }
