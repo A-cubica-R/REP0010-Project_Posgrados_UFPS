@@ -12,7 +12,13 @@ public enum AspiranteErrorCode implements BaseErrorCode {
         "El plazo de documentación venció. No es posible subir documentos después de la fecha límite"),
     DOCUMENTO_REQUERIDO_YA_EXISTE_CONFLICT(
         "DOCUMENTO_REQUERIDO_YA_EXISTE_CONFLICT",
-        "Ya ha subido un archivo para este requisito");
+        "Ya ha subido un archivo para este requisito"),
+    TELEFONO_INSCRIPCION_INVALIDO_CONFLICT(
+        "TELEFONO_INSCRIPCION_INVALIDO_CONFLICT",
+        "El teléfono de contacto debe tener exactamente 10 caracteres"),
+    PERSONA_INSCRIPCION_YA_EXISTE_CONFLICT(
+        "PERSONA_INSCRIPCION_YA_EXISTE_CONFLICT",
+        "La persona ya existe en la base de datos");
 
     private final String code;
     private final String defaultMessage;

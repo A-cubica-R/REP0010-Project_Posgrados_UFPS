@@ -647,8 +647,6 @@ public class AspiranteProcessor implements
     @Transactional
     public CohorteListadoOutput createCohorte(Integer programaId, COHORTE_DIRECTOR_CREATE body) {
         LocalDate fechaInicio = body.fechaInicio();
-        int year = fechaInicio.getYear();
-        int semNum = fechaInicio.getMonthValue() <= 6 ? 1 : 2;
         String nombre = body.nombre();
 
         List<TipoplazoDTO> tipoplazos = tipoplazoService.findAll();
@@ -669,18 +667,7 @@ public class AspiranteProcessor implements
                 .idTipoplazo(tipoplazoId)
                 .build());
 
-        EstadoDTO estadoSemestre = estadoService.findAll().stream()
-                .filter(e -> "semestre".equalsIgnoreCase(e.getEntidad()))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("No hay estado configurado para semestre"));
-
-        LocalDate fechaFin = semNum == 1 ? LocalDate.of(year, 6, 30) : LocalDate.of(year, 12, 31);
-        SemestreDTO semestre = semestreService.create(SemestreDTO.builder()
-                .nombre(year + "-" + semNum)
-                .fechaInicio(fechaInicio)
-                .fechaFin(fechaFin)
-                .idEstado(estadoSemestre.getId())
-                .build());
+        SemestreDTO semestre = resolverSemestreHabilitado(body.idSemestre(), fechaInicio);
 
         EstadoDTO estadoCohorte = estadoService.findByTipoAndEntidad("CERRADA", "cohorte");
         if (estadoCohorte == null) {
@@ -752,6 +739,33 @@ public class AspiranteProcessor implements
                 .fechaLimitePago(body.fechaLimitePago())
                 .fechaInicio(fechaInicio)
                 .build();
+    }
+
+    private SemestreDTO resolverSemestreHabilitado(Integer idSemestre, LocalDate fechaInicio) {
+        SemestreDTO semestre = semestreService.findById(idSemestre);
+        if (semestre == null) {
+            throw new DomainException(CohorteErrorCode.COHORTE_NOT_FOUND, idSemestre);
+        }
+
+        String tipoEstado = semestre.getEstado() != null ? semestre.getEstado().getTipo() : null;
+        boolean estadoPermitido = "EN CURSO".equalsIgnoreCase(tipoEstado) || "PROGRAMADO".equalsIgnoreCase(tipoEstado);
+        if (!estadoPermitido) {
+            throw new DomainException(CohorteErrorCode.COHORTE_SEMESTRE_NO_VALIDO_CONFLICT,
+                    idSemestre + " / " + tipoEstado);
+        }
+
+        LocalDate fechaInicioSemestre = semestre.getFechaInicio();
+        if (fechaInicioSemestre == null) {
+            throw new DomainException(CohorteErrorCode.COHORTE_SEMESTRE_NO_VALIDO_CONFLICT, idSemestre);
+        }
+
+        LocalDate limiteSuperior = fechaInicioSemestre.plusMonths(2);
+        if (fechaInicio.isBefore(fechaInicioSemestre) || fechaInicio.isAfter(limiteSuperior)) {
+            throw new DomainException(CohorteErrorCode.COHORTE_SEMESTRE_FECHA_INVALIDA_CONFLICT,
+                    "fechaInicio=" + fechaInicio + ", semestre=" + idSemestre + ", rango=" + fechaInicioSemestre + ".." + limiteSuperior);
+        }
+
+        return semestre;
     }
 
     public List<CohorteResumenOutput> getCohortesByProgramaResumen(Integer programaId) {
