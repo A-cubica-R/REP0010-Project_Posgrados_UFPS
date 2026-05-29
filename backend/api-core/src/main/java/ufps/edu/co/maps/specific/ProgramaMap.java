@@ -40,6 +40,7 @@ public class ProgramaMap extends
                 .idSede(input.idSede())
                 .idFacultad(input.idFacultad())
                 .idTiporegistro(input.idTiporegistro())
+                .idModalidad(input.idModalidad())
                 .idOtros(input.idOtros())
                 .build();
         return dto;
@@ -63,6 +64,7 @@ public class ProgramaMap extends
         dto.setIdSede(input.idSede());
         dto.setIdFacultad(input.idFacultad());
         dto.setIdTiporegistro(input.idTiporegistro());
+        dto.setIdModalidad(input.idModalidad());
         dto.setIdOtros(input.idOtros());
         return dto;
     }
@@ -106,6 +108,8 @@ public class ProgramaMap extends
             dto.setIdFacultad(input.idFacultad());
         if (input.idTiporegistro() != null)
             dto.setIdTiporegistro(input.idTiporegistro());
+        if (input.idModalidad() != null)
+            dto.setIdModalidad(input.idModalidad());
         if (input.idOtros() != null)
             dto.setIdOtros(input.idOtros());
         return dto;
@@ -168,6 +172,7 @@ public class ProgramaMap extends
                 .idOtros(dto.getIdOtros())
                 .idSede(dto.getIdSede())
                 .idTiporegistro(dto.getIdTiporegistro())
+                .idModalidad(dto.getIdModalidad())
                 .sede(sedeOutput)
                 .facultad(facultadOutput)
                 .otrosvalores(otrosOutput)
