@@ -1,0 +1,38 @@
+package ufps.edu.co.domain.exceptions.errorcodes;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import ufps.edu.co.domain.exceptions.BaseErrorCode;
+
+@Getter
+@AllArgsConstructor
+public enum ProgramaErrorCode implements BaseErrorCode {
+    PROGRAMA_NOT_FOUND(
+            "PROGRAMA_NOT_FOUND",
+            "Programa no encontrado"),
+    PROGRAMA_SIN_TIPO_REGISTRO(
+            "PROGRAMA_SIN_TIPO_REGISTRO",
+            "El programa no tiene tipo de registro configurado"),
+    PROGRAMA_TIPO_REGISTRO_NO_VALIDO(
+            "PROGRAMA_TIPO_REGISTRO_NO_VALIDO",
+            "Tipo de registro no soportado para consultar modalidades"),
+    PROGRAMA_SIN_MODALIDAD_ASIGNADA(
+            "PROGRAMA_SIN_MODALIDAD_ASIGNADA",
+            "El programa no tiene modalidad asignada"),
+    MODALIDAD_NOT_FOUND(
+            "MODALIDAD_NOT_FOUND",
+            "Modalidad no encontrada");
+
+    private final String code;
+    private final String defaultMessage;
+
+    @Override
+    public String getCode() {
+        return code;
+    }
+
+    @Override
+    public String getDefaultMessage() {
+        return defaultMessage;
+    }
+}

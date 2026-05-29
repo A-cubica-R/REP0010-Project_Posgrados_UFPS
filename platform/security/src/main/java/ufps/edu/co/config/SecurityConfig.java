@@ -32,6 +32,7 @@ public class SecurityConfig {
         // Rutas del director de programa: bloque propio y bloque compartido.
         private static final String[] DIRECTOR_PROGRAMA_CORE_PATHS = {
                         "/api/application/case/director-programa/**",
+                        "/director-programa/**",
                         "/api/application/case/director-posgrados/**"
         };
 
@@ -100,17 +101,17 @@ public class SecurityConfig {
 
                                                 // Posgrados y super admin.
                                                 .requestMatchers(POSGRADOS_PATHS)
-                                                .hasAnyRole("POSGRADOS", "SUPER_ADMINISTRADOR")
+                                                .hasAnyRole("SUPER_ADMINISTRADOR", "POSGRADOS")
 
                                                 .requestMatchers(DIRECTOR_PROGRAMA_PATHS)
-                                                .hasAnyRole("DIRECTOR_DE_PROGRAMA", "POSGRADOS", "SUPER_ADMINISTRADOR")
+                                                .hasAnyRole("SUPER_ADMINISTRADOR", "DIRECTOR_DE_PROGRAMA", "POSGRADOS")
 
                                                 .requestMatchers(DIRECTOR_PROGRAMA_POSGRADOS_PATHS)
-                                                .hasAnyRole("DIRECTOR_DE_PROGRAMA", "POSGRADOS")
+                                                .hasAnyRole("SUPER_ADMINISTRADOR", "DIRECTOR_DE_PROGRAMA", "POSGRADOS")
 
                                                 // Aspirante, director de programa y super admin.
                                                 .requestMatchers(ASPIRANTE_PATHS)
-                                                .hasAnyRole("ASPIRANTE", "DIRECTOR_DE_PROGRAMA", "SUPER_ADMINISTRADOR")
+                                                .hasAnyRole("SUPER_ADMINISTRADOR", "DIRECTOR_DE_PROGRAMA", "ASPIRANTE")
 
                                                 // Catch-all para cualquier otra ruta: solo super admin.
                                                 .requestMatchers(SUPER_ADMIN_PATHS)
