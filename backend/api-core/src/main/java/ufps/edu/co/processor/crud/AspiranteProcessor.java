@@ -950,6 +950,10 @@ public class AspiranteProcessor implements
             throw new IllegalArgumentException("Debe enviar el id del semestre");
         }
 
+        if (body.idModalidad() == null) {
+            throw new IllegalArgumentException("Debe enviar el id de la modalidad");
+        }
+
         if (fechaReferencia == null) {
             throw new IllegalArgumentException("Debe enviar la fecha de inicio para validar el semestre");
         }
@@ -957,6 +961,11 @@ public class AspiranteProcessor implements
         SemestreDTO semestre = resolverSemestreHabilitado(body.idSemestre(), fechaReferencia);
         if (cohorte.getIdSemestre() == null || !cohorte.getIdSemestre().equals(semestre.getId())) {
             cohorte.setIdSemestre(semestre.getId());
+            cohorteChanged = true;
+        }
+
+        if (cohorte.getIdModalidad() == null || !cohorte.getIdModalidad().equals(body.idModalidad())) {
+            cohorte.setIdModalidad(body.idModalidad());
             cohorteChanged = true;
         }
 

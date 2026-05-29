@@ -12,6 +12,7 @@ import ufps.edu.co.persistence.entities.CohorteEntity;
 import ufps.edu.co.persistence.repositories.CohorteRepository;
 import ufps.edu.co.rest.dto.CohorteDTO;
 import ufps.edu.co.rest.dto.EstadoDTO;
+import ufps.edu.co.rest.dto.ModalidadDTO;
 import ufps.edu.co.rest.dto.PlazoDTO;
 import ufps.edu.co.rest.dto.SemestreDTO;
 import ufps.edu.co.rest.services.commons.GenericService;
@@ -64,6 +65,10 @@ public class CohorteService extends GenericService<CohorteEntity, CohorteDTO> {
                 .fechafin(e.getPlazo3().getFechafin())
                 .idTipoplazo(e.getPlazo3().getIdTipoplazo())
                 .build() : null;
+        ModalidadDTO modalidadDto = e.getModalidad() != null ? ModalidadDTO.builder()
+            .id(e.getModalidad().getId())
+            .nombre(e.getModalidad().getNombre())
+            .build() : null;
         return CohorteDTO.builder()
                 .id(e.getId())
                 .nombre(e.getNombre())
@@ -77,6 +82,7 @@ public class CohorteService extends GenericService<CohorteEntity, CohorteDTO> {
                 .idPrograma(e.getIdPrograma())
                 .estado(estadoDto)
                 .semestre(semestreDto)
+                .modalidad(modalidadDto)
                 .plazo(plazoDto)
                 .plazo2(plazo2Dto)
                 .plazo3(plazo3Dto)
