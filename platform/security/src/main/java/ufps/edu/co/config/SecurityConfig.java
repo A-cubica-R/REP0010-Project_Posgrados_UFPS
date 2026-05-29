@@ -32,7 +32,7 @@ public class SecurityConfig {
         // Rutas del director de programa: bloque propio y bloque compartido.
         private static final String[] DIRECTOR_PROGRAMA_CORE_PATHS = {
                         "/api/application/case/director-programa/**",
-                        "/director-programa/**",
+                        "/director-programa/programa",
                         "/api/application/case/director-posgrados/**"
         };
 
