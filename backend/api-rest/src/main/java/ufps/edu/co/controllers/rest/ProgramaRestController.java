@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import ufps.edu.co.domain.exceptions.DomainException;
 import ufps.edu.co.processor.crud.ProgramaProcessor;
 import ufps.edu.co.records.input.entity.CohorteInput.COHORTE_FIND;
 import ufps.edu.co.records.input.entity.FacultadInput.FACULTAD_FIND;
@@ -54,8 +55,10 @@ public class ProgramaRestController {
         try {
             ProgramaOutput updated = processor.update(request);
             return ResponseEntity.ok(updated);
+        } catch (DomainException e) {
+            throw e;
         } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.internalServerError().build();
         }
     }
 
@@ -64,8 +67,10 @@ public class ProgramaRestController {
         try {
             processor.deleteById(request);
             return ResponseEntity.noContent().build();
+        } catch (DomainException e) {
+            throw e;
         } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.internalServerError().build();
         }
     }
 

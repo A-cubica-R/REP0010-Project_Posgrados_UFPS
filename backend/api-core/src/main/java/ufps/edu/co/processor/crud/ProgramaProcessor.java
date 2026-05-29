@@ -8,7 +8,9 @@ import org.springframework.stereotype.Service;
 
 import ufps.edu.co.domain.exceptions.DomainException;
 import ufps.edu.co.domain.exceptions.errorcodes.CohorteErrorCode;
+import ufps.edu.co.domain.exceptions.errorcodes.OtrosvaloresErrorCode;
 import ufps.edu.co.domain.exceptions.errorcodes.ProgramaErrorCode;
+import ufps.edu.co.domain.exceptions.errorcodes.SedeErrorCode;
 import ufps.edu.co.maps.specific.ProgramaMap;
 import ufps.edu.co.records.input.entity.OtrosvaloresInput.OTROSVALORES_CREATE;
 import ufps.edu.co.records.input.entity.ProgramaInput.*;
@@ -67,12 +69,12 @@ public class ProgramaProcessor implements
         if (Integer.valueOf(1).equals(dto.getIdTiporegistro())) {
             ModalidadDTO hibrida = modalidadService.findByNombre("HIBRIDA");
             if (hibrida == null) {
-                throw new RuntimeException("Modalidad HIBRIDA no encontrada en el sistema");
+                throw new DomainException(ProgramaErrorCode.MODALIDAD_NOT_FOUND, "HIBRIDA");
             }
             dto.setIdModalidad(hibrida.getId());
         } else if (Integer.valueOf(2).equals(dto.getIdTiporegistro())) {
             if (dto.getIdModalidad() == null) {
-                throw new RuntimeException("idModalidad es requerido cuando el tipo de registro es 2");
+                throw new DomainException(ProgramaErrorCode.PROGRAMA_PARAMETRO_REQUERIDO, "idModalidad");
             }
         }
     }
@@ -255,27 +257,27 @@ public class ProgramaProcessor implements
             Integer idFacultad) {
 
         if (idFacultad == null) {
-            throw new RuntimeException("Id de facultad es requerido");
+            throw new DomainException(ProgramaErrorCode.PROGRAMA_PARAMETRO_REQUERIDO, "idFacultad");
         }
         if (sedeNombre == null || sedeNombre.isBlank()) {
-            throw new RuntimeException("Nombre de sede es requerido");
+            throw new DomainException(ProgramaErrorCode.PROGRAMA_PARAMETRO_REQUERIDO, "sedeNombre");
         }
         if (tiporegistroTipo == null || tiporegistroTipo.isBlank()) {
-            throw new RuntimeException("Tipo de registro es requerido");
+            throw new DomainException(ProgramaErrorCode.PROGRAMA_PARAMETRO_REQUERIDO, "tiporegistroTipo");
         }
         if (otrosvalores == null || otrosvalores.carnet() == null
                 || otrosvalores.estampilla() == null || otrosvalores.seguro() == null) {
-            throw new RuntimeException("Otros valores son requeridos");
+            throw new DomainException(ProgramaErrorCode.PROGRAMA_PARAMETRO_REQUERIDO, "otrosvalores");
         }
 
         SedeDTO sede = sedeService.findFirstByNombre(sedeNombre.trim());
         if (sede == null || sede.getId() == null) {
-            throw new RuntimeException("Sede no encontrada con nombre: " + sedeNombre);
+            throw new DomainException(SedeErrorCode.SEDE_NOT_FOUND, sedeNombre);
         }
 
         TiporegistroDTO tiporegistro = tiporegistroService.findByTipo(tiporegistroTipo.trim());
         if (tiporegistro == null || tiporegistro.getId() == null) {
-            throw new RuntimeException("Tiporegistro no encontrado con tipo: " + tiporegistroTipo);
+            throw new DomainException(ProgramaErrorCode.TIPOREGISTRO_NOT_FOUND, tiporegistroTipo);
         }
 
         OtrosvaloresDTO otros = otrosvaloresService.findByValores(
@@ -283,7 +285,7 @@ public class ProgramaProcessor implements
                 otrosvalores.estampilla(),
                 otrosvalores.seguro());
         if (otros == null || otros.getId() == null) {
-            throw new RuntimeException("Otros valores no encontrados para los flags enviados");
+            throw new DomainException(OtrosvaloresErrorCode.OTROSVALORES_NOT_FOUND, otrosvalores);
         }
 
         return ProgramaDTO.builder()
