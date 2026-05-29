@@ -1,5 +1,7 @@
 package ufps.edu.co.config;
 
+import java.util.Arrays;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -14,10 +16,7 @@ import ufps.edu.co.security.JwtAuthenticationFilter;
 @Configuration
 public class SecurityConfig {
 
-        private static final String[] SUPER_ADMIN_PATHS = {
-                        "/**"
-        };
-
+        // Rutas totalmente públicas: autenticación, documentación y catálogos de consulta.
         private static final String[] PUBLIC_PATHS = {
                         "/auth/login",
                         "/auth/refresh",
@@ -27,39 +26,27 @@ public class SecurityConfig {
                         "/api-docs/**",
                         "/v3/api-docs/**",
                         "/error",
-                        "/api/application/case/inscripciones/usuario",
-                        "/api/application/case/inscripciones/zonas-residencia",
-                        "/api/application/case/inscripciones/tipos-vinculacion",
-                        "/api/application/case/inscripciones/tipos-documento",
-                        "/api/application/case/inscripciones/requisitos",
-                        "/api/application/case/inscripciones/pueblos-indigenas",
-                        "/api/application/case/inscripciones/programa/{programaId}/cohortes",
-                        "/api/application/case/inscripciones/paises",
-                        "/api/application/case/inscripciones/paises/{idPais}/departamentos",
-                        "/api/application/case/inscripciones/grupos-etnicos",
-                        "/api/application/case/inscripciones/generos",
-                        "/api/application/case/inscripciones/estados-civiles",
-                        "/api/application/case/inscripciones/discapacidades",
-                        "/api/application/case/inscripciones/departamentos/{idDepartamento}/municipios",
-                        "/api/application/case/inscripciones/capacidades-excepcionales",
-                        "/api/application/case/inscripciones/programas",
-                        "/api/application/case/inscripciones/formulario"
+                        "/api/application/case/inscripciones/**"
         };
 
-        private static final String[] DIRECTOR_PROGRAMA_PATHS = {
+        // Rutas del director de programa: bloque propio y bloque compartido.
+        private static final String[] DIRECTOR_PROGRAMA_CORE_PATHS = {
                         "/api/application/case/director-programa/**",
-                        "/api/application/case/cohortes/**",
-                        "/api/application/case/documentos/**",
-                        "/api/dev/endpoint/tipoentrevista/listall",
-                        "/api/dev/endpoint/estado/listall",
-                        "/api/application/case/cohortes/**",
-                        "/api/application/case/documentos/**",
-                        "/api/dev/endpoint/tipoentrevista/listall",
-                        "/api/dev/endpoint/estado/listall",
-                        "/api/application/case/director-posgrados/**",
-                        "/api/dev/endpoint/semestre/listall"
+                        "/api/application/case/director-posgrados/**"
         };
 
+        private static final String[] DIRECTOR_PROGRAMA_SHARED_PATHS = {
+                        "/api/application/case/cohortes/**",
+                        "/api/application/case/documentos/**",
+                        "/api/dev/endpoint/tipoentrevista/listall",
+                        "/api/dev/endpoint/estado/listall"
+        };
+
+        private static final String[] DIRECTOR_PROGRAMA_PATHS = concatPaths(
+                        DIRECTOR_PROGRAMA_CORE_PATHS,
+                        DIRECTOR_PROGRAMA_SHARED_PATHS);
+
+        // Rutas de administración académica para posgrados.
         private static final String[] POSGRADOS_PATHS = {
                         "/api/dev/endpoint/otrosvalores/listall",
                         "/api/dev/endpoint/sedes/listall",
@@ -68,14 +55,30 @@ public class SecurityConfig {
                         "/api/dev/endpoint/programa/listbyfacultad",
                         "/api/dev/endpoint/programa/listall",
                         "/api/dev/endpoint/estado/listall",
-                        "/api/dev/endpoint/semestre/listall",
                         "/api/dev/endpoint/cohortes/listall"
         };
 
+        // Rutas del aspirante: consulta y operación sobre inscripciones.
         private static final String[] ASPIRANTE_PATHS = {
                         "/api/application/case/aspirantes/**",
                         "/api/application/case/inscripciones/**"
         };
+
+        // Rutas compartidas entre director de programa y posgrados.
+        private static final String[] DIRECTOR_PROGRAMA_POSGRADOS_PATHS = {
+                        "/api/dev/endpoint/semestre/listall"
+        };
+
+        // Catch-all: solo super admin.
+        private static final String[] SUPER_ADMIN_PATHS = {
+                        "/**"
+        };
+
+        private static String[] concatPaths(String[]... groups) {
+                return Arrays.stream(groups)
+                                .flatMap(Arrays::stream)
+                                .toArray(String[]::new);
+        }
 
         @Bean
         public SecurityFilterChain filterChain(HttpSecurity http, CorsConfigurationSource corsConfigurationSource,
@@ -88,30 +91,32 @@ public class SecurityConfig {
                                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                                 .authorizeHttpRequests(auth -> auth
 
-                                                // Permite todas las solicitudes OPTIONS para CORS preflight
+                                                // Permite todas las solicitudes OPTIONS para CORS preflight.
                                                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
-                                                // Rutas públicas sin autenticación
+                                                // Rutas públicas sin autenticación.
                                                 .requestMatchers(PUBLIC_PATHS)
                                                 .permitAll()
 
-                                                // Rutas específicas por rol (antes del catch-all)
+                                                // Posgrados y super admin.
                                                 .requestMatchers(POSGRADOS_PATHS)
                                                 .hasAnyRole("POSGRADOS", "SUPER_ADMINISTRADOR")
 
-                                                // Rutas específicas por rol (antes del catch-all)
                                                 .requestMatchers(DIRECTOR_PROGRAMA_PATHS)
-                                                .hasAnyRole("DIRECTOR_DE_PROGRAMA", "POSGRADOS" ,"SUPER_ADMINISTRADOR")
+                                                .hasAnyRole("DIRECTOR_DE_PROGRAMA", "POSGRADOS", "SUPER_ADMINISTRADOR")
 
-                                                // Rutas específicas por rol (antes del catch-all)
+                                                .requestMatchers(DIRECTOR_PROGRAMA_POSGRADOS_PATHS)
+                                                .hasAnyRole("DIRECTOR_DE_PROGRAMA", "POSGRADOS")
+
+                                                // Aspirante, director de programa y super admin.
                                                 .requestMatchers(ASPIRANTE_PATHS)
                                                 .hasAnyRole("ASPIRANTE", "DIRECTOR_DE_PROGRAMA", "SUPER_ADMINISTRADOR")
 
-                                                // Rutas protegidas para el rol SUPER_ADMINISTRADOR (catch-all)
+                                                // Catch-all para cualquier otra ruta: solo super admin.
                                                 .requestMatchers(SUPER_ADMIN_PATHS)
                                                 .hasRole("SUPER_ADMINISTRADOR")
 
-                                                // Denegar cualquier otra solicitud no especificada
+                                                // Cualquier otra solicitud no contemplada se deniega.
                                                 .anyRequest().denyAll())
                                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
