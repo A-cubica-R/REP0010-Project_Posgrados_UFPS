@@ -990,7 +990,10 @@ public class AspiranteProcessor implements
             cohorteService.update(targetCohorteId, cohorte);
         }
 
-        if (body.documentosConsejo() != null) {
+        var existingConsejo = documentosrequisitoconsejocohorteService.findByIdCohorte(targetCohorteId);
+        if (body.documentosConsejo() == null) {
+            deleteAllConsejoDocuments(existingConsejo);
+        } else if (!sameConsejoDocuments(body.documentosConsejo(), existingConsejo)) {
             if (body.documentosConsejo().stream().anyMatch(doc -> doc == null || doc.idDocrequisito() == null)) {
                 throw new IllegalArgumentException(
                         "Todos los documentos de consejo deben incluir idDocrequisito");
@@ -1007,14 +1010,11 @@ public class AspiranteProcessor implements
                         "No existen documentos de consejo con ids: " + invalidConsejoIds);
             }
 
-            var existingConsejo = documentosrequisitoconsejocohorteService.findByIdCohorte(targetCohorteId);
-
             List<Integer> incomingConsejoIds = body.documentosConsejo().stream()
                 .map(DOCUMENTO_ASIGNADO_CREATE::idDocrequisito)
                 .distinct()
                 .toList();
 
-            // eliminar solo las asignaciones que ya existen y NO vienen en el body
             var toDeleteConsejo = existingConsejo.stream()
                 .filter(actual -> !incomingConsejoIds.contains(actual.getIdDocrequisito()))
                 .toList();
@@ -1030,7 +1030,6 @@ public class AspiranteProcessor implements
 
             toDeleteConsejo.forEach(actual -> documentosrequisitoconsejocohorteService.deleteById(actual.getId()));
 
-            // insertar solo los ids entrantes que no existían
             var existingConsejoDocIds = existingConsejo.stream()
                 .map(v -> v.getIdDocrequisito())
                 .toList();
@@ -1044,7 +1043,10 @@ public class AspiranteProcessor implements
                         .build()));
         }
 
-        if (body.documentosPrograma() != null) {
+        var existingPrograma = documentosrequisitoprogramacohorteService.findByIdCohorte(targetCohorteId);
+        if (body.documentosPrograma() == null) {
+            deleteAllProgramaDocuments(existingPrograma);
+        } else if (!sameProgramaDocuments(body.documentosPrograma(), existingPrograma)) {
             if (body.documentosPrograma().stream().anyMatch(doc -> doc == null || doc.idDocrequisito() == null)) {
                 throw new IllegalArgumentException(
                         "Todos los documentos de programa deben incluir idDocrequisito");
@@ -1060,8 +1062,6 @@ public class AspiranteProcessor implements
                 throw new IllegalArgumentException(
                         "No existen documentos de programa con ids: " + invalidProgramaIds);
             }
-
-            var existingPrograma = documentosrequisitoprogramacohorteService.findByIdCohorte(targetCohorteId);
 
             List<Integer> incomingProgramaIds = body.documentosPrograma().stream()
                 .map(DOCUMENTO_ASIGNADO_CREATE::idDocrequisito)
@@ -1096,8 +1096,10 @@ public class AspiranteProcessor implements
                         .build()));
         }
 
-        if (body.criteriosCohorte() != null) {
-            List<CriteriocohorteDTO> criteriosExistentes = criteriocohorteService.findByIdCohorte(targetCohorteId);
+        List<CriteriocohorteDTO> criteriosExistentes = criteriocohorteService.findByIdCohorte(targetCohorteId);
+        if (body.criteriosCohorte() == null) {
+            deleteAllCriterios(criteriosExistentes);
+        } else if (!sameCriterios(body.criteriosCohorte(), criteriosExistentes)) {
             Map<Integer, CriteriocohorteDTO> criteriosPorId = criteriosExistentes.stream()
                 .collect(Collectors.toMap(CriteriocohorteDTO::getId, criterio -> criterio));
             Map<Integer, CriteriocohorteDTO> criteriosPorIdCriterio = criteriosExistentes.stream()
@@ -1185,5 +1187,92 @@ public class AspiranteProcessor implements
 
     public AspiranteCriteriosOutput getCriteriosAspirante(Integer idAspirante) {
         return findCriteriosCalificacion(new ASPIRANTE_FIND(idAspirante));
+    }
+
+    private boolean sameConsejoDocuments(List<DOCUMENTO_ASIGNADO_CREATE> incoming,
+            List<DocumentosrequisitoconsejocohorteDTO> existing) {
+        Set<Integer> incomingIds = incoming.stream()
+            .map(documento -> documento != null ? documento.idDocrequisito() : null)
+            .collect(Collectors.toSet());
+        if (incomingIds.contains(null)) {
+            return false;
+        }
+
+        Set<Integer> existingIds = existing.stream()
+            .map(DocumentosrequisitoconsejocohorteDTO::getIdDocrequisito)
+            .collect(Collectors.toSet());
+        return incomingIds.equals(existingIds);
+    }
+
+    private boolean sameProgramaDocuments(List<DOCUMENTO_ASIGNADO_CREATE> incoming,
+            List<DocumentosrequisitoprogramacohorteDTO> existing) {
+        Set<Integer> incomingIds = incoming.stream()
+            .map(documento -> documento != null ? documento.idDocrequisito() : null)
+            .collect(Collectors.toSet());
+        if (incomingIds.contains(null)) {
+            return false;
+        }
+
+        Set<Integer> existingIds = existing.stream()
+            .map(DocumentosrequisitoprogramacohorteDTO::getIdDocrequisito)
+            .collect(Collectors.toSet());
+        return incomingIds.equals(existingIds);
+    }
+
+    private boolean sameCriterios(List<CRITERIOCOHORTE_DIRECTOR_UPDATE> incoming,
+            List<CriteriocohorteDTO> existing) {
+        Set<String> incomingSignatures = incoming.stream()
+            .map(criterio -> criterio != null ? criterioSignature(criterio.idCriterio(), criterio.pesoSnapshot()) : null)
+            .collect(Collectors.toSet());
+        if (incomingSignatures.contains(null)) {
+            return false;
+        }
+
+        Set<String> existingSignatures = existing.stream()
+            .map(criterio -> criterioSignature(criterio.getIdCriterio(), criterio.getPesoSnapshot()))
+            .collect(Collectors.toSet());
+        return incomingSignatures.equals(existingSignatures);
+    }
+
+    private String criterioSignature(Integer idCriterio, BigDecimal pesoSnapshot) {
+        String peso = pesoSnapshot != null ? pesoSnapshot.stripTrailingZeros().toPlainString() : "null";
+        return idCriterio + "::" + peso;
+    }
+
+    private void deleteAllConsejoDocuments(List<DocumentosrequisitoconsejocohorteDTO> existingConsejo) {
+        var toDeleteConsejo = existingConsejo;
+        var blockedConsejo = toDeleteConsejo.stream()
+            .filter(actual -> documentoService.countByIdDocumentosrequisitoconsejocohorte(actual.getId()) > 0)
+            .map(DocumentosrequisitoconsejocohorteDTO::getId)
+            .toList();
+
+        if (!blockedConsejo.isEmpty()) {
+            throw new DomainException(CohorteErrorCode.COHORTE_CON_ASIGNACIONES_BLOQUEADAS, blockedConsejo);
+        }
+
+        toDeleteConsejo.forEach(actual -> documentosrequisitoconsejocohorteService.deleteById(actual.getId()));
+    }
+
+    private void deleteAllProgramaDocuments(List<DocumentosrequisitoprogramacohorteDTO> existingPrograma) {
+        var toDeletePrograma = existingPrograma;
+        var blockedPrograma = toDeletePrograma.stream()
+            .filter(actual -> documentoService.countByIdDocumentosrequisitoprogramacohorte(actual.getId()) > 0)
+            .map(DocumentosrequisitoprogramacohorteDTO::getId)
+            .toList();
+
+        if (!blockedPrograma.isEmpty()) {
+            throw new DomainException(CohorteErrorCode.COHORTE_CON_ASIGNACIONES_BLOQUEADAS, blockedPrograma);
+        }
+
+        toDeletePrograma.forEach(actual -> documentosrequisitoprogramacohorteService.deleteById(actual.getId()));
+    }
+
+    private void deleteAllCriterios(List<CriteriocohorteDTO> criteriosExistentes) {
+        criteriosExistentes.forEach(actual -> {
+            if (calificacioncriterioService.existsByCriterio(actual.getId())) {
+                throw new DomainException(CriterioevaluacionErrorCode.CRITERIO_CON_CALIFICACIONES_BLOQUEADO, actual.getIdCriterio());
+            }
+            criteriocohorteService.deleteById(actual.getId());
+        });
     }
 }
