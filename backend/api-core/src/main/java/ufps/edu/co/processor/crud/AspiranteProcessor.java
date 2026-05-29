@@ -44,7 +44,6 @@ import ufps.edu.co.rest.dto.DocumentosrequisitoprogramaDTO;
 import ufps.edu.co.rest.services.DocumentoService;
 import ufps.edu.co.rest.dto.CriterioevaluacionDTO;
 import ufps.edu.co.rest.dto.EstadoDTO;
-import ufps.edu.co.rest.dto.ModalidadDTO;
 import ufps.edu.co.rest.dto.PersonaDTO;
 import ufps.edu.co.rest.dto.PlazoDTO;
 import ufps.edu.co.rest.dto.SemestreDTO;
@@ -99,9 +98,6 @@ public class AspiranteProcessor implements
 
     @Autowired
     private SemestreService semestreService;
-
-    @Autowired
-    private ModalidadService modalidadService;
 
     @Autowired
     private EstadoService estadoService;
