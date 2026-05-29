@@ -55,14 +55,19 @@ public class ListaadmitidosProcessor {
         if (cohorte == null) {
             throw new RuntimeException("Cohorte no encontrada con id: " + idCohorte);
         }
-        List<AspiranteDTO> candidatos = getTopCandidates(idCohorte, null, cohorte.getCupos());
 
-        long totalAdmitidos = listaadmitidosService.findByIdCohorte(idCohorte).size();
-        int cuposDisponibles = Math.max(0, cohorte.getCupos() - (int) totalAdmitidos);
+        int cupos = cohorte.getCupos();
+        List<AspiranteDTO> admitidos = aspiranteService.findAdmitidosByCohorte(idCohorte)
+                .stream()
+                .limit(cupos)
+                .toList();
+
+        long totalAdmitidos = admitidos.size();
+        int cuposDisponibles = Math.max(0, cupos - (int) totalAdmitidos);
         boolean activa = cohorte.getEstado() != null
                 && "ABIERTA".equalsIgnoreCase(cohorte.getEstado().getTipo());
 
-        List<ListaAdmitidosResumenOutput.AspiranteResumen> aspirantes = candidatos.stream()
+        List<ListaAdmitidosResumenOutput.AspiranteResumen> aspirantes = admitidos.stream()
                 .map(a -> {
                     String nombre = a.getPersona() != null
                             ? ((a.getPersona().getNombres() != null ? a.getPersona().getNombres() : "") + " "

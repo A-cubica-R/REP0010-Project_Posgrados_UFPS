@@ -89,6 +89,7 @@ public class ProgramaService extends GenericService<ProgramaEntity, ProgramaDTO>
                 .idOtros(e.getIdOtros())
                 .idSede(e.getIdSede())
                 .idTiporegistro(e.getIdTiporegistro())
+                .idModalidad(e.getIdModalidad())
                 .facultad(facultadDto)
                 .sede(sedeDto)
                 .otrosvalores(otrosDto)
