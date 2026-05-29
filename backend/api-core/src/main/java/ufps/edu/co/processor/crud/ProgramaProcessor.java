@@ -8,9 +8,11 @@ import org.springframework.stereotype.Service;
 
 import ufps.edu.co.domain.exceptions.DomainException;
 import ufps.edu.co.domain.exceptions.errorcodes.CohorteErrorCode;
+import ufps.edu.co.domain.exceptions.errorcodes.ProgramaErrorCode;
 import ufps.edu.co.maps.specific.ProgramaMap;
 import ufps.edu.co.records.input.entity.OtrosvaloresInput.OTROSVALORES_CREATE;
 import ufps.edu.co.records.input.entity.ProgramaInput.*;
+import ufps.edu.co.records.output.entity.ModalidadOutput;
 import ufps.edu.co.records.output.entity.ProgramaOutput;
 import ufps.edu.co.rest.dto.OtrosvaloresDTO;
 import ufps.edu.co.rest.dto.ProgramaDTO;
@@ -126,6 +128,55 @@ public class ProgramaProcessor implements
         } catch (Exception e) {
             throw new RuntimeException("Error finding Programas by Facultad ID: " + e.getMessage(), e);
         }
+    }
+
+    public List<ModalidadOutput> findModalidadesByPrograma(Integer programaId) {
+        try {
+            ProgramaDTO programa = service.findById(programaId);
+            if (programa == null) {
+                throw new DomainException(ProgramaErrorCode.PROGRAMA_NOT_FOUND, programaId);
+            }
+
+            String tipoRegistro = programa.getTiporegistro() != null ? programa.getTiporegistro().getTipo() : null;
+            if (tipoRegistro == null) {
+                throw new DomainException(ProgramaErrorCode.PROGRAMA_SIN_TIPO_REGISTRO, programaId);
+            }
+
+            if ("UNICO".equalsIgnoreCase(tipoRegistro)) {
+                return modalidadService.findAll().stream()
+                        .filter(modalidad -> modalidad != null
+                                && modalidad.getNombre() != null
+                                && !"HIBRIDA".equalsIgnoreCase(modalidad.getNombre()))
+                        .map(this::toModalidadOutput)
+                        .toList();
+            }
+
+            if ("ESTANDAR".equalsIgnoreCase(tipoRegistro)) {
+                if (programa.getIdModalidad() == null) {
+                    throw new DomainException(ProgramaErrorCode.PROGRAMA_SIN_MODALIDAD_ASIGNADA, programaId);
+                }
+
+                ModalidadDTO modalidad = modalidadService.findById(programa.getIdModalidad());
+                if (modalidad == null) {
+                    throw new DomainException(ProgramaErrorCode.MODALIDAD_NOT_FOUND, programa.getIdModalidad());
+                }
+
+                return List.of(toModalidadOutput(modalidad));
+            }
+
+            throw new DomainException(ProgramaErrorCode.PROGRAMA_TIPO_REGISTRO_NO_VALIDO, tipoRegistro);
+        } catch (RuntimeException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Error finding modalidades by programa: " + e.getMessage(), e);
+        }
+    }
+
+    private ModalidadOutput toModalidadOutput(ModalidadDTO dto) {
+        return ModalidadOutput.builder()
+                .id(dto.getId())
+                .nombre(dto.getNombre())
+                .build();
     }
 
     public long countAspirantesEnProcesoEnCohorteAbierta(Integer cohorteId) {
