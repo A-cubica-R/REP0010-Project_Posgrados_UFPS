@@ -489,6 +489,8 @@ public class AspiranteProcessor implements
                 .inscritos(aspirantes.size())
                 .admitidos(admitidosData.size())
                 .cupos(cohorte.getCupos())
+            .idSemestre(cohorte.getSemestre() != null ? cohorte.getSemestre().getId() : null)
+            .nombreSemestre(cohorte.getSemestre() != null ? cohorte.getSemestre().getNombre() : null)
                 .fechaLimiteDocumentos(cohorte.getPlazo() != null ? cohorte.getPlazo().getFechafin() : null)
                 .fechaLimitePago(cohorte.getPlazo3() != null ? cohorte.getPlazo3().getFechafin() : null)
                 .fechaInicio(cohorte.getSemestre() != null ? cohorte.getSemestre().getFechaInicio() : null)
