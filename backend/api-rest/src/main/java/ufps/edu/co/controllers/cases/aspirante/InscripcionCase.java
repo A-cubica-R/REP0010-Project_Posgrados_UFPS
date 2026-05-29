@@ -6,10 +6,13 @@ import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import ufps.edu.co.processor.crud.*;
 // import ufps.edu.co.rest.services.TipodocumentoService;
+import ufps.edu.co.domain.exceptions.DomainException;
+import ufps.edu.co.domain.exceptions.errorcodes.AspiranteErrorCode;
 import ufps.edu.co.records.output.entity.*;
 import ufps.edu.co.rest.dto.*;
 import ufps.edu.co.rest.services.*;
@@ -65,6 +68,9 @@ public class InscripcionCase {
 
         @Autowired
         private AspiranteService aspiranteService;
+
+        @Autowired
+        private PagoProcessor pagoProcessor;
 
         @Autowired
         private EstadoService estadoService;
@@ -141,9 +147,12 @@ public class InscripcionCase {
 
         // ─── Endpoint 14: Registrar Formulario Completo ─────────────────────────
 
+        @Transactional(rollbackFor = Exception.class)
         @PostMapping(value = "/formulario", consumes = MediaType.APPLICATION_JSON_VALUE)
         public ResponseEntity<FormularioInscripcionOutput> registrarFormulario(
                         @RequestBody FormularioInscripcionRequest body) {
+
+                validarFormulario(body);
 
                 // 1. Validación del promedio ponderado (rango 0.0 – 5.0)
                 if (body.promedioPonderadoAcumulado() != null) {
@@ -255,8 +264,34 @@ public class InscripcionCase {
                                                 .idTipovinculacion(body.idTipoVinculacion())
                                                 .build());
 
+                pagoProcessor.ensureInitialPaymentsForAspirante(aspirante.getId());
+
                 return ResponseEntity.status(HttpStatus.CREATED)
                                 .body(new FormularioInscripcionOutput(persona.getId(), aspirante.getId()));
+        }
+
+        private void validarFormulario(FormularioInscripcionRequest body) {
+                if (body.telefonoContacto() == null || body.telefonoContacto().trim().length() != 10) {
+                        throw new DomainException(AspiranteErrorCode.TELEFONO_INSCRIPCION_INVALIDO_CONFLICT,
+                                        body.telefonoContacto());
+                }
+
+                boolean personaExistePorCorreo = body.email() != null && personaService.findAll().stream()
+                                .anyMatch(persona -> persona.getCorreo() != null
+                                                && persona.getCorreo().equalsIgnoreCase(body.email()));
+
+                boolean personaExistePorDocumento = false;
+                if (body.numeroDocumento() != null && body.idTipoDoc() != null) {
+                        personaExistePorDocumento = documentopersonaService.findAll().stream()
+                                        .anyMatch(doc -> doc.getNumerodocumento() != null
+                                                        && body.numeroDocumento().equals(String.valueOf(doc.getNumerodocumento()))
+                                                        && java.util.Objects.equals(doc.getIdTipodocumento(), body.idTipoDoc()));
+                }
+
+                if (personaExistePorCorreo || personaExistePorDocumento) {
+                        throw new DomainException(AspiranteErrorCode.PERSONA_INSCRIPCION_YA_EXISTE_CONFLICT,
+                                        body.email() != null ? body.email() : body.numeroDocumento());
+                }
         }
 
         // ─── Endpoint 15: Registrar Usuario del Aspirante ───────────────────────

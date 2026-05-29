@@ -56,6 +56,7 @@ public enum CohorteInput {
         public record COHORTE_DIRECTOR_CREATE(
                         @NotBlank String nombre,
                         @NotNull Integer cupos,
+                        @NotNull Integer idSemestre,
                         @NotNull LocalDate fechaInicio,
                         @NotNull LocalDate fechaLimiteDocumentos,
                         @NotNull LocalDate fechaLimitePago,
