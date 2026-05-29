@@ -399,7 +399,7 @@ public class AspiranteProcessor implements
     public CohorteDetalleOutput getCohorteDetalle(Integer cohorteId) {
         CohorteDTO cohorte = cohorteService.findById(cohorteId);
         if (cohorte == null) {
-            throw new RuntimeException("Cohorte no encontrada: " + cohorteId);
+            throw new DomainException(CohorteErrorCode.COHORTE_NOT_FOUND, cohorteId);
         }
         boolean activa = cohorte.getEstado() != null
                 && "ABIERTA".equalsIgnoreCase(cohorte.getEstado().getTipo());

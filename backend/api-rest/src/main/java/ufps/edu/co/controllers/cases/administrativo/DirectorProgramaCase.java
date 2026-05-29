@@ -320,6 +320,8 @@ public class DirectorProgramaCase {
         try {
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(aspiranteProcessor.createCohorte(programaId, body));
+        } catch (DomainException e) {
+            throw e;
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
@@ -433,6 +435,8 @@ public class DirectorProgramaCase {
     public ResponseEntity<CohorteDetalleOutput> getCohorteDetalle(@PathVariable Integer cohorteId) {
         try {
             return ResponseEntity.ok(aspiranteProcessor.getCohorteDetalle(cohorteId));
+        } catch (DomainException e) {
+            throw e;
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
@@ -512,6 +516,8 @@ public class DirectorProgramaCase {
     public ResponseEntity<ListaAdmitidosResumenOutput> generateAdmittedList(@PathVariable Integer idCohorte) {
         try {
             return ResponseEntity.ok(listaadmitidosProcessor.generateAdmittedList(idCohorte));
+        } catch (DomainException e) {
+            throw e;
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
@@ -601,6 +607,8 @@ public class DirectorProgramaCase {
         List<ListaadmitidosOutput> outputs;
         try {
             outputs = listaadmitidosProcessor.admitirAspirantes(request);
+        } catch (DomainException e) {
+            throw e;
         } catch (DuplicateAdmisionException e) {
             throw e;
         } catch (Exception e) {
@@ -646,6 +654,8 @@ public class DirectorProgramaCase {
         try {
             List<ListaadmitidosOutput> outputs = listaadmitidosProcessor.rechazarAspirante(request);
             return ResponseEntity.ok(outputs);
+        } catch (DomainException e) {
+            throw e;
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
