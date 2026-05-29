@@ -25,6 +25,7 @@ public enum ProgramaInput {
             @NotNull Integer idSede,
             @NotNull Integer idFacultad,
             @NotNull Integer idTiporegistro,
+            Integer idModalidad,
             @NotNull Integer idOtros) implements CreateType {}
 
     public record PROGRAMA_UPDATE(
@@ -43,6 +44,7 @@ public enum ProgramaInput {
             @NotNull Integer idSede,
             @NotNull Integer idFacultad,
             @NotNull Integer idTiporegistro,
+            Integer idModalidad,
             @NotNull Integer idOtros) implements UpdateType {}
 
     public record PROGRAMA_PATCH(
@@ -61,6 +63,7 @@ public enum ProgramaInput {
             Integer idSede,
             Integer idFacultad,
             Integer idTiporegistro,
+            Integer idModalidad,
             Integer idOtros) implements PatchType {}
 
     public record PROGRAMA_DELETE(@NotNull Integer id) implements DeleteType {}

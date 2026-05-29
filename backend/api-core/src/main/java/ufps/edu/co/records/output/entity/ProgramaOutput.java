@@ -23,6 +23,7 @@ public record ProgramaOutput(
                 Integer idOtros,
                 Integer idSede,
                 Integer idTiporegistro,
+                Integer idModalidad,
                 SedeOutput sede,
                 FacultadOutput facultad,
                 OtrosvaloresOutput otrosvalores,

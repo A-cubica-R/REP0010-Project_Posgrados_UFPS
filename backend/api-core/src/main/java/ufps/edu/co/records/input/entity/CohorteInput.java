@@ -82,6 +82,7 @@ public enum CohorteInput {
                         @NotNull Integer id,
                         @NotBlank String nombre,
                         @NotNull Integer cupos,
+                        @NotNull Integer idSemestre,
                         LocalDate fechaInicio,
                         LocalDate fechaLimiteDocumentos,
                         LocalDate fechaLimitePago,

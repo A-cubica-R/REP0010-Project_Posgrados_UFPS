@@ -16,6 +16,8 @@ import ufps.edu.co.rest.dto.OtrosvaloresDTO;
 import ufps.edu.co.rest.dto.ProgramaDTO;
 import ufps.edu.co.rest.dto.SedeDTO;
 import ufps.edu.co.rest.dto.TiporegistroDTO;
+import ufps.edu.co.rest.dto.ModalidadDTO;
+import ufps.edu.co.rest.services.ModalidadService;
 import ufps.edu.co.rest.services.OtrosvaloresService;
 import ufps.edu.co.rest.services.ProgramaService;
 import ufps.edu.co.rest.services.SedeService;
@@ -39,6 +41,9 @@ public class ProgramaProcessor implements
     private TiporegistroService tiporegistroService;
 
     @Autowired
+    private ModalidadService modalidadService;
+
+    @Autowired
     private OtrosvaloresService otrosvaloresService;
 
     @Autowired
@@ -48,10 +53,25 @@ public class ProgramaProcessor implements
     public ProgramaOutput create(PROGRAMA_CREATE input) {
         try {
             ProgramaDTO dto = map.toDto(input);
+            resolveModalidad(dto);
             ProgramaDTO created = service.create(dto);
             return map.toOutput(created);
         } catch (Exception e) {
             throw new RuntimeException("Error creating Programa: " + e.getMessage(), e);
+        }
+    }
+
+    private void resolveModalidad(ProgramaDTO dto) {
+        if (Integer.valueOf(1).equals(dto.getIdTiporegistro())) {
+            ModalidadDTO hibrida = modalidadService.findByNombre("HIBRIDA");
+            if (hibrida == null) {
+                throw new RuntimeException("Modalidad HIBRIDA no encontrada en el sistema");
+            }
+            dto.setIdModalidad(hibrida.getId());
+        } else if (Integer.valueOf(2).equals(dto.getIdTiporegistro())) {
+            if (dto.getIdModalidad() == null) {
+                throw new RuntimeException("idModalidad es requerido cuando el tipo de registro es 2");
+            }
         }
     }
 

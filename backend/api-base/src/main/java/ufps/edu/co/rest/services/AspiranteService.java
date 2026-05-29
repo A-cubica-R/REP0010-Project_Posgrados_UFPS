@@ -124,6 +124,11 @@ public class AspiranteService extends GenericService<AspiranteEntity, AspiranteD
         return entityListToDtoList(repository.findByIdCohorteAndEstadoTipoIn(cohorteId, tipos));
     }
 
+    @Transactional(readOnly = true)
+    public List<AspiranteDTO> findAdmitidosByCohorte(int cohorteId) {
+        return entityListToDtoList(repository.findByIdCohorteAndEstadoTipoIn(cohorteId, List.of("ADMITIDO")));
+    }
+
     public long countValidados() {
         return repository.countByEstadoTipoIn(
                 List.of("VALIDADO_POR_CALIFICAR", "VALIDADO_EN_PROGRESO", "VALIDADO_CALIFICADO"));
