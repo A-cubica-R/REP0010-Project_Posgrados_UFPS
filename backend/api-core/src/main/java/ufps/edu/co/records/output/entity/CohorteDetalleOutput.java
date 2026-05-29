@@ -17,6 +17,8 @@ public record CohorteDetalleOutput(
         Integer cupos,
         Integer idSemestre,
         String nombreSemestre,
+        Integer idModalidad,
+        String nombreModalidad,
         LocalDate fechaLimiteDocumentos,
         LocalDate fechaLimitePago,
         LocalDate fechaInicio,
