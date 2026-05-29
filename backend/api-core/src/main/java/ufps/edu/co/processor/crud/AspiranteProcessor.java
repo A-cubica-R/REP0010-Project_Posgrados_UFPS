@@ -59,7 +59,6 @@ import ufps.edu.co.rest.services.DocumentosrequisitoconsejoService;
 import ufps.edu.co.rest.services.DocumentosrequisitoprogramacohorteService;
 import ufps.edu.co.rest.services.DocumentosrequisitoprogramaService;
 import ufps.edu.co.rest.services.EstadoService;
-import ufps.edu.co.rest.services.ModalidadService;
 import ufps.edu.co.rest.services.PlazoService;
 import ufps.edu.co.rest.services.SemestreService;
 import ufps.edu.co.rest.services.TipoplazoService;
