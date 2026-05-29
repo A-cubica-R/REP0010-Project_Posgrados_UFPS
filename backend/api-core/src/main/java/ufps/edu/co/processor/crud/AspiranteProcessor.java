@@ -948,13 +948,27 @@ public class AspiranteProcessor implements
             cohorteChanged = true;
         }
 
-        LocalDate fechaInicio = cohorte.getSemestre() != null ? cohorte.getSemestre().getFechaInicio() : null;
-        if (body.fechaInicio() != null && cohorte.getSemestre() != null) {
-            SemestreDTO semestre = cohorte.getSemestre();
-            semestre.setFechaInicio(body.fechaInicio());
-            semestreService.update(semestre.getId(), semestre);
-            fechaInicio = body.fechaInicio();
+        LocalDate fechaReferencia = body.fechaInicio();
+        SemestreDTO semestreActual = cohorte.getSemestre();
+        if (fechaReferencia == null && semestreActual != null) {
+            fechaReferencia = semestreActual.getFechaInicio();
         }
+
+        if (body.idSemestre() == null) {
+            throw new IllegalArgumentException("Debe enviar el id del semestre");
+        }
+
+        if (fechaReferencia == null) {
+            throw new IllegalArgumentException("Debe enviar la fecha de inicio para validar el semestre");
+        }
+
+        SemestreDTO semestre = resolverSemestreHabilitado(body.idSemestre(), fechaReferencia);
+        if (cohorte.getIdSemestre() == null || !cohorte.getIdSemestre().equals(semestre.getId())) {
+            cohorte.setIdSemestre(semestre.getId());
+            cohorteChanged = true;
+        }
+
+        LocalDate fechaInicio = semestre.getFechaInicio();
 
         LocalDate fechaLimiteDocumentos = cohorte.getPlazo() != null ? cohorte.getPlazo().getFechafin() : null;
         if (body.fechaLimiteDocumentos() != null && cohorte.getPlazo() != null) {
