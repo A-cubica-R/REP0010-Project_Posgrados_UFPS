@@ -4,6 +4,8 @@
  */
 package ufps.edu.co.persistence.repositories;
 
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -11,5 +13,7 @@ import ufps.edu.co.persistence.entities.ModalidadEntity;
 
 @Repository
 public interface ModalidadRepository extends JpaRepository<ModalidadEntity, Integer> {
+
+    Optional<ModalidadEntity> findByNombreIgnoreCase(String nombre);
 
 }

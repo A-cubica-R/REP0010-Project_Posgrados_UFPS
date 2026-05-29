@@ -47,6 +47,13 @@ public class ModalidadService extends GenericService<ModalidadEntity, ModalidadD
         return entityToDto(repository.findById(id));
     }
 
+    @Transactional(readOnly = true)
+    public ModalidadDTO findByNombre(String nombre) {
+        return repository.findByNombreIgnoreCase(nombre)
+                .map(this::entityToDto)
+                .orElse(null);
+    }
+
     public ModalidadDTO create(ModalidadDTO dto) {
         return entityToDto(repository.save(dtoToEntity(dto)));
     }
