@@ -19,6 +19,12 @@ public enum ProgramaErrorCode implements BaseErrorCode {
     PROGRAMA_SIN_MODALIDAD_ASIGNADA(
             "PROGRAMA_SIN_MODALIDAD_ASIGNADA",
             "El programa no tiene modalidad asignada"),
+    PROGRAMA_PARAMETRO_REQUERIDO(
+            "PROGRAMA_PARAMETRO_REQUERIDO",
+            "Falta un parámetro requerido para procesar el programa"),
+    TIPOREGISTRO_NOT_FOUND(
+            "TIPOREGISTRO_NOT_FOUND",
+            "Tiporegistro no encontrado"),
     MODALIDAD_NOT_FOUND(
             "MODALIDAD_NOT_FOUND",
             "Modalidad no encontrada");

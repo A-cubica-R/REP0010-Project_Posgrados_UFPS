@@ -9,7 +9,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import ufps.edu.co.domain.exceptions.DomainException;
 import ufps.edu.co.domain.exceptions.DuplicateAdmisionException;
+import ufps.edu.co.domain.exceptions.errorcodes.CohorteErrorCode;
+import ufps.edu.co.domain.exceptions.errorcodes.ListaadmitidosErrorCode;
 import ufps.edu.co.maps.specific.ListaadmitidosMap;
 import ufps.edu.co.records.input.entity.ListaadmitidosInput.GENERATE_LISTA;
 import ufps.edu.co.records.input.entity.ListaadmitidosInput.RECHAZAR_ASPIRANTE;
@@ -53,7 +56,7 @@ public class ListaadmitidosProcessor {
     public ListaAdmitidosResumenOutput generateAdmittedList(Integer idCohorte) {
         CohorteDTO cohorte = cohorteService.findById(idCohorte);
         if (cohorte == null) {
-            throw new RuntimeException("Cohorte no encontrada con id: " + idCohorte);
+                        throw new DomainException(CohorteErrorCode.COHORTE_NOT_FOUND, idCohorte);
         }
 
         int cupos = cohorte.getCupos();
@@ -150,16 +153,15 @@ public class ListaadmitidosProcessor {
     private CohorteDTO validateAndGetCohorte(Integer idCohorte, Integer idAdministrativo) {
         CohorteDTO cohorte = cohorteService.findById(idCohorte);
         if (cohorte == null) {
-            throw new RuntimeException("Cohorte no encontrada con id: " + idCohorte);
+                        throw new DomainException(CohorteErrorCode.COHORTE_NOT_FOUND, idCohorte);
         }
         AdministrativoDTO admin = administrativoService.findById(idAdministrativo);
         if (admin == null || admin.getCargo() == null) {
-            throw new RuntimeException(
-                    "Director no encontrado o sin cargo asignado, id: " + idAdministrativo);
+                        throw new DomainException(ListaadmitidosErrorCode.DIRECTOR_NO_VALIDO, idAdministrativo);
         }
         if (cohorte.getIdPrograma() == null || admin.getCargo().getIdPrograma() == null
                 || !cohorte.getIdPrograma().equals(admin.getCargo().getIdPrograma())) {
-            throw new RuntimeException("La cohorte no pertenece al programa del director de programa");
+                        throw new DomainException(ListaadmitidosErrorCode.COHORTE_NO_PERTENECE_AL_DIRECTOR, idCohorte);
         }
         return cohorte;
     }
