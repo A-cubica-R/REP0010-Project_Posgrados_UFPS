@@ -18,7 +18,7 @@ import ufps.edu.co.rest.dto.UsuarioDTO;
 import ufps.edu.co.rest.services.ClaveService;
 import ufps.edu.co.rest.services.PersonaService;
 import ufps.edu.co.rest.services.UsuarioService;
-import ufps.edu.co.services.EmailService;
+import ufps.edu.co.services.SESService;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -35,7 +35,7 @@ public class RecoveryPasswordRestCase {
 	private ClaveService claveService;
 
 	@Autowired
-	private EmailService emailService;
+	private SESService sesService;
 
 	@PostMapping(value = "/recoveryPassword", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> recoveryPassword(@RequestBody String correo) {
@@ -69,7 +69,7 @@ public class RecoveryPasswordRestCase {
 				+ "<p><strong>" + clave.getValor() + "</strong></p>"
 				+ "<p>Si no hiciste esta solicitud, ignora este correo.</p>";
 
-		emailService.sendEmail(email, "Pediste recuperar tu contrasena", htmlBody);
+		sesService.enviarCorreo(email, "Pediste recuperar tu contrasena", htmlBody);
 		return ResponseEntity.ok("Correo enviado");
 	}
 

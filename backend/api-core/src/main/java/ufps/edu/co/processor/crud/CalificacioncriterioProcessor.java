@@ -22,6 +22,8 @@ import ufps.edu.co.rest.services.AspiranteService;
 import ufps.edu.co.rest.services.CalificacioncriterioService;
 import ufps.edu.co.rest.services.CriteriocohorteService;
 import ufps.edu.co.rest.services.EstadoService;
+import ufps.edu.co.services.*;
+import ufps.edu.co.utils.*;
 import ufps.edu.co.usecase.GlobalUseCase;
 
 @Service
@@ -44,6 +46,12 @@ public class CalificacioncriterioProcessor implements
 
     @Autowired
     private EstadoService estadoService;
+
+    @Autowired
+    private SESService sesService;
+
+    @Autowired
+    private EmailTemplates emailTemplates;
 
     @Override
     public CalificacioncriterioOutput create(CALIFICACIONCRITERIO_CREATE input) {
@@ -150,6 +158,11 @@ public class CalificacioncriterioProcessor implements
                     return create(createInput);
                 });
         AspiranteDTO aspirante = aspiranteService.findById(idAspirante);
+        String nombreCriterio = criteriocohorte.getCriterioevaluacion() != null
+                ? criteriocohorte.getCriterioevaluacion().getNombre() : "Criterio";
+        sesService.enviarCorreo(aspirante.getPersona().getCorreo(), emailTemplates.ASUNTO_CALIFICACION_CRITERIO,
+                emailTemplates.cuerpoCalificacionCriterio(aspirante.getPersona().getNombres(), nombreCriterio,
+                        result.puntuacion(), aspirante.getPuntuacion()));
         return CalificacionCriterioSimpleOutput.builder()
                 .idAspirante(result.idAspirante())
                 .idCriterio(result.idCriteriocohorte())
