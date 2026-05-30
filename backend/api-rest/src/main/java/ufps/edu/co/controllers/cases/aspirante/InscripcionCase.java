@@ -154,12 +154,11 @@ public class InscripcionCase {
 
                 validarFormulario(body);
 
-                // 1. Validación del promedio ponderado (rango 0.0 – 5.0)
                 if (body.promedioPonderadoAcumulado() != null) {
                         BigDecimal promedio = body.promedioPonderadoAcumulado();
-                        if (promedio.compareTo(BigDecimal.ZERO) < 0 || promedio.compareTo(new BigDecimal("5.0")) > 0) {
+                        if (promedio.compareTo(BigDecimal.ZERO) < 0) {
                                 throw new RuntimeException(
-                                                "El promedio ponderado acumulado debe estar entre 0.0 y 5.0");
+                                                "El promedio ponderado acumulado debe ser un valor positivo");
                         }
                 }
 
