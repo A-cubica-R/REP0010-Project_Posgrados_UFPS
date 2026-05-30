@@ -19,7 +19,7 @@ public class SpringSecurityPrincipalAdapter {
                 .toList();
 
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                principal.username(), null, authorities);
+            principal, null, authorities);
         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         return authentication;
     }

@@ -13,6 +13,7 @@ import ufps.edu.co.persistence.entities.DocumentopersonaEntity;
 import ufps.edu.co.persistence.entities.PersonaEntity;
 import ufps.edu.co.persistence.repositories.AspiranteRepository;
 import ufps.edu.co.rest.dto.AspiranteDTO;
+import ufps.edu.co.rest.dto.AspiranteCheckoutDTO;
 import ufps.edu.co.rest.dto.DocumentopersonaDTO;
 import ufps.edu.co.rest.dto.EstadoDTO;
 import ufps.edu.co.rest.dto.PersonaDTO;
@@ -79,6 +80,12 @@ public class AspiranteService extends GenericService<AspiranteEntity, AspiranteD
     @Transactional(readOnly = true)
     public AspiranteDTO findById(Integer id) {
         return entityToDto(repository.findById(id));
+    }
+
+    @Transactional(readOnly = true)
+    public AspiranteCheckoutDTO findCheckoutById(Integer idAspirante) {
+        return repository.findCheckoutById(idAspirante)
+                .orElse(null);
     }
 
     public AspiranteDTO create(AspiranteDTO dto) {

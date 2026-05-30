@@ -1,13 +1,19 @@
 package ufps.edu.co.auth.model;
 
+import java.security.Principal;
 import java.util.List;
 
 public record AuthPrincipal(
         Integer userId,
         String username,
-        List<String> roles) {
+        List<String> roles) implements Principal {
 
     public AuthPrincipal {
         roles = roles == null ? List.of() : List.copyOf(roles);
+    }
+
+    @Override
+    public String getName() {
+        return username;
     }
 }
