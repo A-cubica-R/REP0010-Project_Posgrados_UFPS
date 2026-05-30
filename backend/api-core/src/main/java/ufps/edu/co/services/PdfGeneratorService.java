@@ -23,6 +23,7 @@ import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 
 import ufps.edu.co.records.output.entity.AspiranteOutput;
+import ufps.edu.co.wompi.model.WompiReceiptData;
 
 @Service
 public class PdfGeneratorService {
@@ -152,5 +153,12 @@ public class PdfGeneratorService {
             logger.error("Error generando PDF de lista de admitidos para cohorte '{}'", cohorteNombre, e);
             throw new RuntimeException("Error generando PDF de admitidos: " + e.getMessage(), e);
         }
+    }
+
+    public byte[] generarReciboInscripcion(WompiReceiptData receiptData) {
+        if (receiptData == null) {
+            return new byte[0];
+        }
+        return new byte[0];
     }
 }

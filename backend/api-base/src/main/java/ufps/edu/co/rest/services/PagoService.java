@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ufps.edu.co.persistence.entities.PagoEntity;
 import ufps.edu.co.persistence.repositories.PagoRepository;
 import ufps.edu.co.rest.dto.PagoDTO;
+import ufps.edu.co.rest.dto.PagoResumenDTO;
 import ufps.edu.co.rest.services.commons.GenericService;
 
 /**
@@ -59,5 +60,10 @@ public class PagoService extends GenericService<PagoEntity, PagoDTO> {
     @Transactional(readOnly = true)
     public List<PagoDTO> findByIdAspirante(Integer idAspirante) {
         return entityListToDtoList(repository.findByIdAspirante(idAspirante));
+    }
+
+    @Transactional(readOnly = true)
+    public List<PagoResumenDTO> findResumenByIdAspirante(Integer idAspirante) {
+        return repository.findResumenByIdAspirante(idAspirante);
     }
 }

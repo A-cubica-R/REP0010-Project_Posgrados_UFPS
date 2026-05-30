@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import ufps.edu.co.processor.crud.PagoProcessor;
 import ufps.edu.co.records.output.entity.PagoOutput;
 import ufps.edu.co.wompi.model.WompiWebhookRequest;
@@ -22,7 +24,12 @@ public class PagoWompiWebhookCase {
     }
 
     @PostMapping(value = "/webhook", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PagoOutput> recibirWebhook(@RequestBody WompiWebhookRequest request) {
-        return ResponseEntity.ok(pagoProcessor.confirmarWebhook(request));
+    public ResponseEntity<PagoOutput> recibirWebhook(@RequestBody JsonNode request) {
+        return ResponseEntity.ok(pagoProcessor.confirmarWebhook(WompiWebhookRequest.from(request)));
+    }
+
+    @PostMapping(value = "/webhook/automatico", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<PagoOutput> recibirWebhookAutomatico(@RequestBody JsonNode request) {
+        return ResponseEntity.ok(pagoProcessor.confirmarWebhookAutomatico(WompiWebhookRequest.from(request)));
     }
 }
