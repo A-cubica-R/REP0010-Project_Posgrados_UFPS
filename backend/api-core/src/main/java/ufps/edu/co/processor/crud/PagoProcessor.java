@@ -1,50 +1,47 @@
 package ufps.edu.co.processor.crud;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import ufps.edu.co.domain.exceptions.DomainException;
 import ufps.edu.co.domain.exceptions.errorcodes.PagoErrorCode;
 import ufps.edu.co.maps.specific.PagoMap;
+import ufps.edu.co.rest.dto.AspiranteCheckoutDTO;
+import ufps.edu.co.records.output.entity.PagoListadoOutput;
+import ufps.edu.co.records.output.entity.PagoconceptoResumenOutput;
 import ufps.edu.co.records.output.entity.PagoOutput;
 import ufps.edu.co.rest.dto.AspiranteDTO;
 import ufps.edu.co.rest.dto.EstadoDTO;
 import ufps.edu.co.rest.dto.PagoDTO;
+import ufps.edu.co.rest.dto.PagoResumenDTO;
 import ufps.edu.co.rest.dto.PagoconceptoDTO;
-import ufps.edu.co.rest.dto.ValoresglobalesDTO;
 import ufps.edu.co.rest.services.AspiranteService;
 import ufps.edu.co.rest.services.EstadoService;
 import ufps.edu.co.rest.services.PagoService;
 import ufps.edu.co.rest.services.PagoconceptoService;
-import ufps.edu.co.rest.services.ValoresglobalesService;
+import ufps.edu.co.rest.services.UsuarioService;
 import ufps.edu.co.wompi.WompiGateway;
 import ufps.edu.co.wompi.config.WompiProperties;
 import ufps.edu.co.wompi.model.WompiCheckoutRequest;
 import ufps.edu.co.wompi.model.WompiCheckoutResponse;
+import ufps.edu.co.wompi.model.WompiCustomerData;
+import ufps.edu.co.wompi.model.WompiReceiptData;
 import ufps.edu.co.wompi.model.WompiWebhookRequest;
 
 @Service
 @Transactional
 public class PagoProcessor {
-
-    private static final Pattern GLOBAL_KEY_PATTERN = Pattern.compile("^(?<prefix>[A-Z_]+)_(?<year>\\d{4})_(?<version>\\d+)$");
 
     @Autowired
     private PagoService pagoService;
@@ -56,10 +53,13 @@ public class PagoProcessor {
     private EstadoService estadoService;
 
     @Autowired
-    private ValoresglobalesService valoresglobalesService;
+    private ValoresglobalesProcessor valoresglobalesProcessor;
 
     @Autowired
     private AspiranteService aspiranteService;
+
+    @Autowired
+    private UsuarioService usuarioService;
 
     @Autowired
     private PagoMap pagoMap;
@@ -71,12 +71,31 @@ public class PagoProcessor {
     private WompiProperties wompiProperties;
 
     @Transactional(readOnly = true)
-    public List<PagoOutput> findByAspirante(Integer idAspirante) {
-        return pagoService.findByIdAspirante(idAspirante).stream().map(pagoMap::toOutput).toList();
+        public List<PagoListadoOutput> findByAspirante(Integer idAspirante) {
+        List<PagoResumenDTO> pagos = pagoService.findResumenByIdAspirante(idAspirante);
+        BigDecimal valorInscripcion = calcularMontoInscripcionEnPesos();
+        BigDecimal valorMatricula = calcularMontoMatriculaEnPesos(idAspirante);
+
+        return pagos.stream()
+            .map(dto -> PagoListadoOutput.builder()
+                .id(dto.id())
+                .idAspirante(dto.idAspirante())
+                .idEstado(dto.idEstado())
+                .idPagoconcepto(dto.idPagoconcepto())
+                .aspirante(dto.aspirante())
+                .estado(dto.estado())
+                .pagoconcepto(PagoconceptoResumenOutput.builder()
+                    .id(dto.pagoconceptoId())
+                    .tipo(dto.pagoconceptoTipo())
+                    .build())
+                .valorPagoPesos(resolveValorPagoPorTipoConcepto(dto.pagoconceptoTipo(), valorInscripcion,
+                    valorMatricula))
+                .build())
+            .toList();
     }
 
     public void ensureInitialPaymentsForAspirante(Integer idAspirante) {
-        AspiranteDTO aspirante = aspiranteService.findById(idAspirante);
+        AspiranteCheckoutDTO aspirante = aspiranteService.findCheckoutById(idAspirante);
         if (aspirante == null) {
             throw new DomainException(PagoErrorCode.PAGO_NOT_FOUND, idAspirante);
         }
@@ -87,8 +106,8 @@ public class PagoProcessor {
                 .collect(Collectors.toMap(concepto -> concepto.getTipo().toUpperCase(Locale.ROOT), concepto -> concepto,
                         (primero, segundo) -> primero));
 
-        Set<Integer> conceptosExistentes = pagoService.findByIdAspirante(idAspirante).stream()
-                .map(PagoDTO::getIdPagoconcepto)
+        Set<Integer> conceptosExistentes = pagoService.findResumenByIdAspirante(idAspirante).stream()
+            .map(PagoResumenDTO::idPagoconcepto)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
 
@@ -96,27 +115,32 @@ public class PagoProcessor {
         crearPagoPendienteSiFalta(idAspirante, estadoPendiente, conceptosExistentes, conceptos.get("MATRICULA"));
     }
 
-    public WompiCheckoutResponse iniciarCheckoutInscripcion(Integer idAspirante) {
-        PagoDTO pago = encontrarPagoConcepto(idAspirante, "INSCRIPCION");
+    public WompiCheckoutResponse iniciarCheckoutInscripcion(Integer idAspirante, Integer authenticatedUserId,
+            boolean validarTitular) {
+        PagoResumenDTO pago = encontrarPagoConceptoResumen(idAspirante, "INSCRIPCION");
         validarPagoPerteneceAspirante(pago, idAspirante);
 
+        AspiranteCheckoutDTO aspirante = aspiranteService.findCheckoutById(idAspirante);
+        validarAspiranteAutenticado(aspirante, authenticatedUserId, validarTitular);
+
         EstadoDTO estadoRealizado = resolveEstadoPagoOpcional("REALIZADO");
-        if (estadoRealizado != null && Objects.equals(pago.getIdEstado(), estadoRealizado.getId())) {
-            throw new DomainException(PagoErrorCode.PAGO_YA_REALIZADO_CONFLICT, pago.getId());
+        if (estadoRealizado != null && Objects.equals(pago.idEstado(), estadoRealizado.getId())) {
+            throw new DomainException(PagoErrorCode.PAGO_YA_REALIZADO_CONFLICT, pago.id());
         }
 
         BigDecimal monto = calcularMontoInscripcionEnPesos();
-        long montoEnCents = monto.multiply(BigDecimal.valueOf(100L)).setScale(0, RoundingMode.HALF_UP).longValueExact();
-        AspiranteDTO aspirante = aspiranteService.findById(idAspirante);
+        long montoEnCents = valoresglobalesProcessor.calcularValorInscripcionCentavos();
         String referencia = construirReferencia(pago, aspirante);
         String currency = resolverCurrency();
         String signatureIntegrity = generarSignatureIntegrity(referencia, montoEnCents, currency);
         String publicKey = resolverPublicKey();
+        WompiCustomerData customerData = construirCustomerData(aspirante);
+        WompiReceiptData receiptData = construirReceiptData(pago, aspirante, referencia, monto, montoEnCents, currency);
 
         WompiCheckoutRequest request = WompiCheckoutRequest.builder()
-                .paymentId(pago.getId())
+                .paymentId(pago.id())
                 .aspiranteId(idAspirante)
-                .pagoconceptoId(pago.getIdPagoconcepto())
+                .pagoconceptoId(pago.idPagoconcepto())
                 .concepto("INSCRIPCION")
                 .reference(referencia)
                 .amount(monto)
@@ -126,12 +150,15 @@ public class PagoProcessor {
             .signatureIntegrity(signatureIntegrity)
             .redirectUrl(resolveReturnUrl())
             .widgetScriptUrl(resolveWidgetScriptUrl())
-                .customerEmail(aspirante != null && aspirante.getPersona() != null ? aspirante.getPersona().getCorreo() : null)
+                //.customerEmail(aspirante != null && aspirante.getPersona() != null ? aspirante.getPersona().getCorreo() : null)
+                .customerEmail(null)
                 .customerName(construirNombreAspirante(aspirante))
+                .customerData(customerData)
+                .receiptData(receiptData)
             .returnUrl(resolveReturnUrl())
             .webhookUrl(resolveWebhookUrl())
                 .metadata(Map.of(
-                        "paymentId", String.valueOf(pago.getId()),
+                        "paymentId", String.valueOf(pago.id()),
                         "aspiranteId", String.valueOf(idAspirante),
                         "concepto", "INSCRIPCION"))
                 .build();
@@ -139,7 +166,29 @@ public class PagoProcessor {
         return wompiGateway.createCheckout(request);
     }
 
+    public WompiReceiptData prepararReciboInscripcion(Integer idAspirante, Integer authenticatedUserId,
+            boolean validarTitular) {
+        PagoResumenDTO pago = encontrarPagoConceptoResumen(idAspirante, "INSCRIPCION");
+        validarPagoPerteneceAspirante(pago, idAspirante);
+
+        AspiranteCheckoutDTO aspirante = aspiranteService.findCheckoutById(idAspirante);
+        validarAspiranteAutenticado(aspirante, authenticatedUserId, validarTitular);
+
+        BigDecimal monto = calcularMontoInscripcionEnPesos();
+        long montoEnCents = valoresglobalesProcessor.calcularValorInscripcionCentavos();
+        String referencia = construirReferencia(pago, aspirante);
+        return construirReceiptData(pago, aspirante, referencia, monto, montoEnCents, resolverCurrency());
+    }
+
     public PagoOutput confirmarWebhook(WompiWebhookRequest request) {
+        return procesarWebhook(request, false);
+    }
+
+    public PagoOutput confirmarWebhookAutomatico(WompiWebhookRequest request) {
+        return procesarWebhook(request, true);
+    }
+
+    private PagoOutput procesarWebhook(WompiWebhookRequest request, boolean actualizarEstado) {
         if (request == null || request.paymentId() == null) {
             throw new DomainException(PagoErrorCode.PAGO_NOT_FOUND, null);
         }
@@ -159,8 +208,16 @@ public class PagoProcessor {
             }
         }
 
-        if (request.status() == null || !esEstadoAprobado(request.status())) {
+        WompiCheckoutResponse wompiConfirmation = wompiGateway.confirmPayment(request);
+        String status = wompiConfirmation != null && wompiConfirmation.status() != null ? wompiConfirmation.status()
+                : request.status();
+
+        if (status == null || !esEstadoAprobado(status)) {
             throw new DomainException(PagoErrorCode.WOMPI_PAGO_NO_APROBADO_CONFLICT, request.status());
+        }
+
+        if (!actualizarEstado) {
+            return pagoMap.toOutput(pago);
         }
 
         EstadoDTO estadoRealizado = resolveEstadoPago("REALIZADO");
@@ -171,7 +228,7 @@ public class PagoProcessor {
         return pagoMap.toOutput(updated);
     }
 
-    private void crearPagoPendienteSiFalta(Integer idAspirante, EstadoDTO estadoPendiente,
+        private void crearPagoPendienteSiFalta(Integer idAspirante, EstadoDTO estadoPendiente,
             Set<Integer> conceptosExistentes, PagoconceptoDTO concepto) {
         if (concepto == null || conceptosExistentes.contains(concepto.getId())) {
             return;
@@ -183,23 +240,23 @@ public class PagoProcessor {
                 .build());
     }
 
-    private PagoDTO encontrarPagoConcepto(Integer idAspirante, String tipoConcepto) {
+    private PagoResumenDTO encontrarPagoConceptoResumen(Integer idAspirante, String tipoConcepto) {
         PagoconceptoDTO concepto = pagoconceptoService.findAll().stream()
                 .filter(item -> item.getTipo() != null && item.getTipo().equalsIgnoreCase(tipoConcepto))
                 .findFirst()
                 .orElseThrow(() -> new DomainException(PagoErrorCode.PAGO_CONCEPTO_NOT_FOUND, tipoConcepto));
 
-        return pagoService.findByIdAspirante(idAspirante).stream()
-                .filter(pago -> Objects.equals(pago.getIdPagoconcepto(), concepto.getId()))
+        return pagoService.findResumenByIdAspirante(idAspirante).stream()
+                .filter(pago -> Objects.equals(pago.idPagoconcepto(), concepto.getId()))
                 .findFirst()
                 .orElseThrow(() -> new DomainException(PagoErrorCode.PAGO_NOT_FOUND, idAspirante));
     }
 
-    private void validarPagoPerteneceAspirante(PagoDTO pago, Integer idAspirante) {
+    private void validarPagoPerteneceAspirante(PagoResumenDTO pago, Integer idAspirante) {
         if (pago == null) {
             throw new DomainException(PagoErrorCode.PAGO_NOT_FOUND, idAspirante);
         }
-        if (!Objects.equals(pago.getIdAspirante(), idAspirante)) {
+        if (!Objects.equals(pago.idAspirante(), idAspirante)) {
             throw new DomainException(PagoErrorCode.PAGO_NO_PERTENECE_AL_ASPIRANTE_FORBIDDEN, idAspirante);
         }
     }
@@ -224,10 +281,31 @@ public class PagoProcessor {
     }
 
     private BigDecimal calcularMontoInscripcionEnPesos() {
-        int anio = LocalDate.now().getYear();
-        BigDecimal salariosMinimos = leerValorGlobalNumerico("SALARIO_MINIMO", anio, false);
-        BigDecimal cantidadSalarios = leerValorGlobalNumerico("VALOR_INSCRIPCION", anio, true);
-        return salariosMinimos.multiply(cantidadSalarios);
+        return valoresglobalesProcessor.calcularValorInscripcionPesos();
+    }
+
+    private BigDecimal calcularMontoMatriculaEnPesos(Integer idAspirante) {
+        AspiranteDTO aspirante = aspiranteService.findById(idAspirante);
+        if (aspirante == null || aspirante.getCohorte() == null || aspirante.getCohorte().getPrograma() == null) {
+            return null;
+        }
+        return aspirante.getCohorte().getPrograma().getValormatricula();
+    }
+
+    private BigDecimal resolveValorPagoPorTipoConcepto(String tipoConcepto, BigDecimal valorInscripcion,
+            BigDecimal valorMatricula) {
+        if (tipoConcepto == null) {
+            return null;
+        }
+
+        String tipoNormalizado = tipoConcepto.trim().toUpperCase(Locale.ROOT);
+        if ("INSCRIPCION".equals(tipoNormalizado)) {
+            return valorInscripcion;
+        }
+        if ("MATRICULA".equals(tipoNormalizado)) {
+            return valorMatricula;
+        }
+        return null;
     }
 
     private String resolverCurrency() {
@@ -280,61 +358,83 @@ public class PagoProcessor {
         return value == null || value.isBlank() ? null : value;
     }
 
-    private BigDecimal leerValorGlobalNumerico(String prefijo, int anio, boolean permitirSufijoSmmlv) {
-        ValoresglobalesDTO valor = valoresglobalesService.findAll().stream()
-                .filter(item -> item.getClave() != null)
-                .filter(item -> item.getClave().startsWith(prefijo + "_" + anio + "_"))
-                .max(Comparator.comparingInt(item -> extraerVersion(item.getClave(), prefijo, anio)))
-                .orElseThrow(() -> new DomainException(PagoErrorCode.VALOR_GLOBAL_NO_CONFIGURADO_NOT_FOUND,
-                        prefijo + "_" + anio));
-
-        String texto = valor.getValor() != null ? valor.getValor().trim() : null;
-        if (texto == null || texto.isEmpty()) {
-            throw new DomainException(PagoErrorCode.VALOR_GLOBAL_FORMATO_INVALIDO, valor.getClave());
-        }
-
-        if (permitirSufijoSmmlv) {
-            texto = texto.toUpperCase(Locale.ROOT)
-                    .replace("SMMLV", "")
-                    .replace("SMLMV", "")
-                    .trim();
-        }
-
-        try {
-            return new BigDecimal(texto);
-        } catch (NumberFormatException ex) {
-            throw new DomainException(PagoErrorCode.VALOR_GLOBAL_FORMATO_INVALIDO, valor.getClave());
-        }
-    }
-
-    private int extraerVersion(String clave, String prefijo, int anio) {
-        Matcher matcher = GLOBAL_KEY_PATTERN.matcher(clave);
-        if (!matcher.matches()) {
-            return 0;
-        }
-        if (!prefijo.equalsIgnoreCase(matcher.group("prefix"))) {
-            return 0;
-        }
-        if (Integer.parseInt(matcher.group("year")) != anio) {
-            return 0;
-        }
-        return Integer.parseInt(matcher.group("version"));
-    }
-
-    private String construirReferencia(PagoDTO pago, AspiranteDTO aspirante) {
-        String nombre = aspirante != null && aspirante.getPersona() != null && aspirante.getPersona().getCorreo() != null
-                ? aspirante.getPersona().getCorreo().replaceAll("[^a-zA-Z0-9]", "")
+    private String construirReferencia(PagoResumenDTO pago, AspiranteCheckoutDTO aspirante) {
+        String nombre = aspirante != null && aspirante.correo() != null
+                ? aspirante.correo().replaceAll("[^a-zA-Z0-9]", "")
                 : "aspirante";
-        return "PAGO-" + pago.getId() + "-" + nombre.toUpperCase(Locale.ROOT) + "-" + LocalDate.now().getYear();
+        return "PAGO-" + pago.id() + "-" + nombre.toUpperCase(Locale.ROOT) + "-" + LocalDate.now().getYear();
     }
 
-    private String construirNombreAspirante(AspiranteDTO aspirante) {
-        if (aspirante == null || aspirante.getPersona() == null) {
+    private String construirNombreAspirante(AspiranteCheckoutDTO aspirante) {
+        if (aspirante == null) {
             return null;
         }
-        String nombres = aspirante.getPersona().getNombres() != null ? aspirante.getPersona().getNombres() : "";
-        String apellidos = aspirante.getPersona().getApellidos() != null ? aspirante.getPersona().getApellidos() : "";
+        String nombres = aspirante.nombres() != null ? aspirante.nombres() : "";
+        String apellidos = aspirante.apellidos() != null ? aspirante.apellidos() : "";
         return (nombres + " " + apellidos).trim();
+    }
+
+    private WompiCustomerData construirCustomerData(AspiranteCheckoutDTO aspirante) {
+        if (aspirante == null) {
+            return null;
+        }
+
+        String fullName = construirNombreAspirante(aspirante);
+        String email = aspirante.correo();
+        String phoneNumber = aspirante.celular() != null ? aspirante.celular() : aspirante.telefono();
+        String legalId = aspirante.numerodocumento() != null ? String.valueOf(aspirante.numerodocumento()) : null;
+        String legalIdType = aspirante.tipoDocumento();
+
+        return WompiCustomerData.builder()
+                .email(email)
+                .fullName(fullName)
+                .phoneNumber(phoneNumber)
+                .phoneNumberPrefix("+57")
+                .legalId(legalId)
+                .legalIdType(legalIdType)
+                .build();
+    }
+
+    private WompiReceiptData construirReceiptData(PagoResumenDTO pago, AspiranteCheckoutDTO aspirante, String referencia,
+            BigDecimal monto, long montoEnCents, String currency) {
+        Integer personaId = aspirante != null ? aspirante.idPersona() : null;
+        Integer cohorteId = aspirante != null ? aspirante.idCohorte() : null;
+        WompiCustomerData customerData = construirCustomerData(aspirante);
+
+        return WompiReceiptData.builder()
+                .paymentId(pago != null ? pago.id() : null)
+                .aspiranteId(aspirante != null ? aspirante.id() : null)
+                .personaId(personaId)
+                .cohorteId(cohorteId)
+                .pagoconceptoId(pago != null ? pago.idPagoconcepto() : null)
+                .concepto("INSCRIPCION")
+                .reference(referencia)
+                .amount(monto)
+                .amountInCents(montoEnCents)
+                .currency(currency)
+                .fullName(customerData != null ? customerData.fullName() : null)
+                .email(customerData != null ? customerData.email() : null)
+                .phoneNumber(customerData != null ? customerData.phoneNumber() : null)
+                .legalId(customerData != null ? customerData.legalId() : null)
+                .legalIdType(customerData != null ? customerData.legalIdType() : null)
+                .build();
+    }
+
+    private void validarAspiranteAutenticado(AspiranteCheckoutDTO aspirante, Integer authenticatedUserId, boolean validarTitular) {
+        if (!validarTitular) {
+            return;
+        }
+        if (authenticatedUserId == null) {
+            throw new DomainException(PagoErrorCode.ASPIRANTE_AUTENTICADO_NO_COINCIDE_FORBIDDEN, null);
+        }
+
+        Integer idPersonaUsuario = usuarioService.findIdPersonaById(authenticatedUserId);
+        if (idPersonaUsuario != null && aspirante != null && aspirante.idPersona() != null
+                && idPersonaUsuario.equals(aspirante.idPersona())) {
+            return;
+        }
+
+        throw new DomainException(PagoErrorCode.ASPIRANTE_AUTENTICADO_NO_COINCIDE_FORBIDDEN, authenticatedUserId);
     }
 
     private boolean esEstadoAprobado(String status) {

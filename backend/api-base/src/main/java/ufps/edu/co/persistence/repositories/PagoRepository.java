@@ -7,9 +7,12 @@ package ufps.edu.co.persistence.repositories;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import ufps.edu.co.persistence.entities.PagoEntity;
+import ufps.edu.co.rest.dto.PagoResumenDTO;
 
 /**
  * Spring Data JPA repository for the PagoEntity entity.
@@ -40,5 +43,23 @@ import ufps.edu.co.persistence.entities.PagoEntity;
 public interface PagoRepository extends JpaRepository<PagoEntity, Integer> {
 
 	List<PagoEntity> findByIdAspirante(Integer idAspirante);
+
+	@Query("select new ufps.edu.co.rest.dto.PagoResumenDTO("
+			+ "p.id, "
+			+ "p.idAspirante, "
+			+ "p.idEstado, "
+			+ "p.idPagoconcepto, "
+			+ "concat(coalesce(per.nombres, ''), concat(' ', coalesce(per.apellidos, ''))), "
+			+ "e.tipo, "
+			+ "pc.id, "
+			+ "pc.tipo) "
+			+ "from PagoEntity p "
+			+ "join p.aspirante a "
+			+ "join a.persona per "
+			+ "join p.estado e "
+			+ "join p.pagoconcepto pc "
+			+ "where p.idAspirante = :idAspirante "
+			+ "order by p.id")
+	List<PagoResumenDTO> findResumenByIdAspirante(@Param("idAspirante") Integer idAspirante);
 
 }
