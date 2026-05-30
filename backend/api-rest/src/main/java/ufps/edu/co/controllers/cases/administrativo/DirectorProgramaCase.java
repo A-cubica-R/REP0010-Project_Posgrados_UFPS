@@ -1,10 +1,8 @@
 package ufps.edu.co.controllers.cases.administrativo;
 
-import java.time.LocalDateTime;
 import java.time.LocalDate;
 import java.util.Map;
 import java.util.List;
-import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,8 +25,6 @@ import jakarta.validation.Valid;
 
 import ufps.edu.co.domain.exceptions.DomainException;
 import ufps.edu.co.domain.exceptions.DuplicateAdmisionException;
-import ufps.edu.co.exception.PdfEmailException;
-import ufps.edu.co.processor.crud.AdministrativoProcessor;
 import ufps.edu.co.processor.crud.AspiranteProcessor;
 import ufps.edu.co.processor.crud.CalificacioncriterioProcessor;
 import ufps.edu.co.processor.crud.CriterioevaluacionProcessor;
@@ -38,7 +34,6 @@ import ufps.edu.co.processor.crud.DocumentosrequisitoprogramacohorteProcessor;
 import ufps.edu.co.processor.crud.EntrevistaProcessor;
 import ufps.edu.co.processor.crud.ListaadmitidosProcessor;
 import ufps.edu.co.processor.crud.PruebaProcessor;
-import ufps.edu.co.records.input.entity.AdministrativoInput.ADMINISTRATIVO_FIND;
 import ufps.edu.co.records.output.entity.DocumentosrequisitoprogramacohorteOutput;
 import ufps.edu.co.records.input.entity.AspiranteInput.ASPIRANTE_FIND;
 import ufps.edu.co.records.input.entity.CalificacioncriterioInput.CALIFICACION_PUNTAJE_REQUEST;
@@ -78,7 +73,6 @@ import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_SCHEDULE_REQU
 import ufps.edu.co.records.input.entity.ListaadmitidosInput.GENERATE_LISTA;
 import ufps.edu.co.records.input.entity.ListaadmitidosInput.ADMITIR_ASPIRANTE;
 import ufps.edu.co.records.input.entity.ListaadmitidosInput.RECHAZAR_ASPIRANTE;
-import ufps.edu.co.records.output.entity.AdministrativoOutput;
 import ufps.edu.co.records.output.entity.AprobarDocumentoOutput;
 import ufps.edu.co.records.output.entity.CohorteDetalleOutput;
 import ufps.edu.co.records.output.entity.CohorteListadoOutput;
@@ -101,9 +95,6 @@ import ufps.edu.co.records.input.entity.PruebaInput.PRUEBA_EDITAR_REQUEST;
 import ufps.edu.co.records.input.entity.PruebaInput.PRUEBA_REAGENDAR_REQUEST;
 import ufps.edu.co.records.output.entity.PruebaResumenOutput;
 import ufps.edu.co.records.output.entity.PruebaSimpleOutput;
-import ufps.edu.co.services.EmailService;
-
-import ufps.edu.co.services.PdfGeneratorService;
 import ufps.edu.co.services.S3Service;
 
 @RestController
@@ -117,15 +108,6 @@ public class DirectorProgramaCase {
 
     @Autowired
     private DocumentoProcessor documentoProcessor;
-
-    @Autowired
-    private EmailService emailService;
-
-    @Autowired
-    private PdfGeneratorService pdfGeneratorService;
-
-    @Autowired
-    private AdministrativoProcessor administrativoProcessor;
 
     @Autowired
     private AspiranteProcessor aspiranteProcessor;
@@ -607,9 +589,8 @@ public class DirectorProgramaCase {
 
     @PostMapping(value = "/admitAspirants", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<ListaadmitidosOutput>> admitirAspirantes(@RequestBody GENERATE_LISTA request) {
-        List<ListaadmitidosOutput> outputs;
         try {
-            outputs = listaadmitidosProcessor.admitirAspirantes(request);
+            return ResponseEntity.ok(listaadmitidosProcessor.admitirAspirantes(request));
         } catch (DomainException e) {
             throw e;
         } catch (DuplicateAdmisionException e) {
@@ -618,38 +599,6 @@ public class DirectorProgramaCase {
             logger.error("Error al admitir aspirantes para cohorte {}", request.idCohorte(), e);
             return ResponseEntity.internalServerError().build();
         }
-
-        if (outputs.isEmpty()) {
-            return ResponseEntity.ok(outputs);
-        }
-
-        try {
-            String cohorteNombre = outputs.get(0).cohorte() != null
-                    ? outputs.get(0).cohorte().nombre()
-                    : "Cohorte";
-
-            List<AspiranteOutput> admitidos = outputs.stream()
-                    .map(ListaadmitidosOutput::aspirante)
-                    .filter(Objects::nonNull)
-                    .toList();
-
-            AdministrativoOutput admin = administrativoProcessor.findById(
-                    new ADMINISTRATIVO_FIND(request.idAdministrativo()));
-            String directorNombre = admin.persona().nombres() + " " + admin.persona().apellidos();
-
-            byte[] pdf = pdfGeneratorService.generarListaAdmitidos(
-                    cohorteNombre, LocalDateTime.now(), admitidos, directorNombre);
-
-            emailService.sendPdfToDirector(directorNombre, cohorteNombre, pdf);
-
-        } catch (Exception e) {
-            logger.error("Error generando PDF o enviando correo al director tras admisión de aspirantes "
-                    + "en cohorte {}", request.idCohorte(), e);
-            throw new PdfEmailException(
-                    "Aspirantes admitidos correctamente, pero no se pudo enviar el correo al director.", e);
-        }
-
-        return ResponseEntity.ok(outputs);
     }
 
     @PostMapping(value = "/rejectAspirant", consumes = MediaType.APPLICATION_JSON_VALUE)

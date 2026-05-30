@@ -36,6 +36,8 @@ import ufps.edu.co.rest.services.DocumentosrequisitoprogramaService;
 import ufps.edu.co.rest.services.DocumentosrequisitoprogramacohorteService;
 import ufps.edu.co.rest.services.EstadoService;
 import ufps.edu.co.rest.services.EstadodocumentoService;
+import ufps.edu.co.services.*;
+import ufps.edu.co.utils.*;
 import ufps.edu.co.usecase.GlobalUseCase;
 
 @Service
@@ -73,6 +75,12 @@ public class DocumentoProcessor implements
 
     @Autowired
     private DocumentosrequisitoconsejoService documentosrequisitoconsejoService;
+
+    @Autowired
+    private SESService sesService;
+
+    @Autowired
+    private EmailTemplates emailTemplates;
 
     @Override
     public DocumentoOutput create(DOCUMENTO_CREATE input) {
@@ -137,6 +145,10 @@ public class DocumentoProcessor implements
             dto.setIdEstadodocumento(estadodocumentoDTO.getId());
             DocumentoDTO approve = service.update(input.id(), dto);
             checkAndUpdateEstadoValidacion(dto.getIdAspirante());
+            String nombreDocumento = resolverNombreTitulo(dto);
+            PersonaDTO persona = dto.getAspirante().getPersona();
+            sesService.enviarCorreo(persona.getCorreo(), emailTemplates.ASUNTO_APROBACION_DOCUMENTO,
+                    emailTemplates.cuerpoAprobacionDocumento(persona.getNombres(), nombreDocumento));
             return AprobarDocumentoOutput.builder()
                     .id(approve.getId())
                     .nombre(approve.getKeyfile())
@@ -155,6 +167,10 @@ public class DocumentoProcessor implements
             dto.setObservaciones(input.motivoRechazo());
             dto.setIdEstadodocumento(estadodocumentoDTO.getId());
             DocumentoDTO reject = service.update(input.id(), dto);
+            String nombreDocumento = resolverNombreTitulo(dto);
+            PersonaDTO persona = dto.getAspirante().getPersona();
+            sesService.enviarCorreo(persona.getCorreo(), emailTemplates.ASUNTO_RECHAZO_DOCUMENTO,
+                    emailTemplates.cuerpoRechazoDocumento(persona.getNombres(), nombreDocumento, input.motivoRechazo()));
             return DocumentoEstadoOutput.builder()
                     .id(reject.getId())
                     .nombre(reject.getKeyfile())
@@ -283,7 +299,7 @@ public class DocumentoProcessor implements
         }
     }
 
-    private String resolverNombreTitulo(DocumentoDTO doc) {
+    public String resolverNombreTitulo(DocumentoDTO doc) {
         if (doc.getIdDocumentosrequisitoconsejocohorte() != null) {
             Integer idReferencia = doc.getIdDocumentosrequisitoconsejocohorte();
             DocumentosrequisitoconsejoDTO requisito = documentosrequisitoconsejoService.findById(idReferencia);

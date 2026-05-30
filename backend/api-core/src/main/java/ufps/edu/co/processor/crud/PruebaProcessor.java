@@ -25,7 +25,8 @@ import ufps.edu.co.rest.services.EstadoService;
 import ufps.edu.co.rest.services.PruebaService;
 import ufps.edu.co.rest.services.TipopruebaService;
 import ufps.edu.co.rest.services.UbicacionService;
-import ufps.edu.co.services.EmailService;
+import ufps.edu.co.services.*;
+import ufps.edu.co.utils.*;
 import ufps.edu.co.usecase.GlobalUseCase;
 
 @Service
@@ -40,7 +41,8 @@ public class PruebaProcessor implements
     @Autowired private TipopruebaService tipopruebaService;
     @Autowired private EstadoService estadoService;
     @Autowired private PruebaMap map;
-    @Autowired private EmailService emailService;
+    @Autowired private SESService sesService;
+    @Autowired private EmailTemplates emailTemplates;
 
     @Override
     public PruebaOutput create(PRUEBA_CREATE input) {
@@ -167,7 +169,12 @@ public class PruebaProcessor implements
                     UbicacionDTO.builder().direccion(request.ubicacion()).zonaurbana(true).build());
             PruebaDTO updated = service.reschedule(idPrueba, request.fecha(), request.tiempo(),
                     tipoprueba.getId(), ubicacion.getId());
-            return toPruebaResumen(service.findById(updated.getId()));
+            PruebaResumenOutput result = toPruebaResumen(service.findById(updated.getId()));
+            AspiranteDTO aspirante = aspiranteService.findById(updated.getIdAspirante());
+            sesService.enviarCorreo(aspirante.getPersona().getCorreo(), emailTemplates.ASUNTO_REAGENDAR_PRUEBA,
+                    emailTemplates.cuerpoReagendarPrueba(aspirante.getPersona().getNombres(), result.nombre(),
+                            request.fecha(), request.tiempo(), tipoprueba.getTipo(), request.ubicacion()));
+            return result;
         } catch (IllegalStateException e) {
             throw e;
         } catch (Exception e) {
@@ -293,16 +300,9 @@ public class PruebaProcessor implements
             String descripcion = prueba.getDescripcion() != null ? prueba.getDescripcion() : "Sin descripción";
             String lugar = prueba.getUbicacion() != null ? prueba.getUbicacion().getDireccion() : "No definido";
 
-            String html = "<p>Hola <strong>" + nombre + "</strong>,</p>"
-                    + "<p>Se ha programado una prueba para tu proceso de admisión en los Posgrados de la UFPS.</p>"
-                    + "<table style=\"border-collapse:collapse;font-family:Arial,sans-serif;\">"
-                    + "<tr><td style=\"padding:4px 12px 4px 0\"><strong>Prueba:</strong></td><td>" + nombrePrueba + "</td></tr>"
-                    + "<tr><td style=\"padding:4px 12px 4px 0\"><strong>Descripción:</strong></td><td>" + descripcion + "</td></tr>"
-                    + "<tr><td style=\"padding:4px 12px 4px 0\"><strong>Lugar:</strong></td><td>" + lugar + "</td></tr>"
-                    + "</table>"
-                    + "<p>Por favor asegúrate de asistir puntualmente.</p>";
-
-            emailService.sendEmail(correoAspirante, "Prueba Programada - Posgrados UFPS", html);
+            String tipoPrueba = prueba.getTipoprueba() != null ? prueba.getTipoprueba().getTipo() : "No definido";
+            sesService.enviarCorreo(correoAspirante, emailTemplates.ASUNTO_AGENDAR_PRUEBA,
+                    emailTemplates.cuerpoAgendarPrueba(nombre, nombrePrueba, prueba.getFecha(), prueba.getTiempo(), tipoPrueba, lugar));
         } catch (Exception e) {
             logger.warn("No se pudo notificar prueba creada al aspirante {}: {}", idAspirante, e.getMessage());
         }
@@ -322,7 +322,7 @@ public class PruebaProcessor implements
                     + "</strong> programada para tu proceso de admisión ha sido cancelada.</p>"
                     + "<p>Pronto te contactaremos con más detalles sobre los próximos pasos en tu proceso de admisión.</p>";
 
-            emailService.sendEmail(correoAspirante, "Prueba Cancelada - Posgrados UFPS", html);
+            sesService.enviarCorreo(correoAspirante, "Prueba Cancelada - Posgrados UFPS", html);
         } catch (Exception e) {
             logger.warn("No se pudo notificar prueba eliminada para prueba {}: {}", prueba.getId(), e.getMessage());
         }
