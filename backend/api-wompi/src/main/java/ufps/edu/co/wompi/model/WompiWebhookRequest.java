@@ -129,6 +129,7 @@ public record WompiWebhookRequest(
                 }
         }
 
+        @SuppressWarnings("deprecation")
         private static Map<String, String> extractMetadata(JsonNode metadataNode) {
                 if (metadataNode == null || metadataNode.isMissingNode() || metadataNode.isNull()) {
                         return Map.of();

@@ -16,7 +16,6 @@ import ufps.edu.co.wompi.config.WompiProperties;
 import ufps.edu.co.wompi.model.WompiCheckoutRequest;
 import ufps.edu.co.wompi.model.WompiCheckoutResponse;
 import ufps.edu.co.wompi.model.WompiCustomerData;
-import ufps.edu.co.wompi.model.WompiReceiptData;
 import ufps.edu.co.wompi.model.WompiWebhookRequest;
 
 @Component
