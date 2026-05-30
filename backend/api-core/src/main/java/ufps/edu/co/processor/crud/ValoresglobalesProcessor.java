@@ -83,4 +83,50 @@ public class ValoresglobalesProcessor {
         }
         return Integer.parseInt(matcher.group("version"));
     }
+
+    public ValoresglobalesDTO createTamanoMaximoArchivos(ValoresglobalesDTO dto) {
+        return createForPrefix("TAMANO_MAXIMO_ARCHIVOS", dto);
+    }
+
+    public ValoresglobalesDTO createSalarioMinimo(ValoresglobalesDTO dto) {
+        return createForPrefix("SALARIO_MINIMO", dto);
+    }
+
+    public ValoresglobalesDTO createValorInscripcion(ValoresglobalesDTO dto) {
+        return createForPrefix("VALOR_INSCRIPCION", dto);
+    }
+
+    private ValoresglobalesDTO createForPrefix(String prefix, ValoresglobalesDTO dto) {
+        if (dto == null || dto.getClave() == null || dto.getValor() == null) {
+            throw new DomainException(PagoErrorCode.VALOR_GLOBAL_FORMATO_INVALIDO, dto == null ? null : dto.getClave());
+        }
+
+        String incoming = dto.getClave().trim();
+        // Reject if already contains suffix (year_version)
+        if (GLOBAL_KEY_PATTERN.matcher(incoming).matches()) {
+            throw new DomainException(PagoErrorCode.VALOR_GLOBAL_FORMATO_INVALIDO, incoming);
+        }
+
+        if (!prefix.equalsIgnoreCase(incoming)) {
+            throw new DomainException(PagoErrorCode.VALOR_GLOBAL_FORMATO_INVALIDO, incoming);
+        }
+
+        int year = LocalDate.now().getYear();
+        List<ValoresglobalesDTO> existing = findAll();
+        int maxVersion = existing.stream()
+                .filter(item -> item.getClave() != null && item.getClave().startsWith(prefix + "_" + year + "_"))
+                .mapToInt(item -> extractVersion(item.getClave(), prefix, year))
+                .max()
+                .orElse(0);
+
+        int nextVersion = maxVersion + 1;
+        String newKey = String.format("%s_%d_%d", prefix, year, nextVersion);
+
+        ValoresglobalesDTO toCreate = ValoresglobalesDTO.builder()
+                .clave(newKey)
+                .valor(dto.getValor())
+                .build();
+
+        return valoresglobalesService.create(toCreate);
+    }
 }
