@@ -21,6 +21,8 @@ public record WompiCheckoutRequest(
         String widgetScriptUrl,
         String customerEmail,
         String customerName,
+        WompiCustomerData customerData,
+        WompiReceiptData receiptData,
         String returnUrl,
         String webhookUrl,
         Map<String, String> metadata) {

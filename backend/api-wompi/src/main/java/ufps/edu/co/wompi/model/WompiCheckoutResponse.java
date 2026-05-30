@@ -24,5 +24,7 @@ public record WompiCheckoutResponse(
                 String transactionId,
                 String customerEmail,
                 String customerName,
+                WompiCustomerData customerData,
+                WompiReceiptData receiptData,
                 String status) {
 }
