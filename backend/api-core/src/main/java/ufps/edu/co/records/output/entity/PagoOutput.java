@@ -1,5 +1,7 @@
 package ufps.edu.co.records.output.entity;
 
+import java.math.BigDecimal;
+
 import lombok.Builder;
 import ufps.edu.co.records.OutputResponse;
 
@@ -9,6 +11,12 @@ public record PagoOutput(
                 Integer idAspirante,
                 Integer idEstado,
                 Integer idPagoconcepto,
+                BigDecimal valorPagoPesos,
+                // TODO [PAGO_SCHEMA_FUTURO]: mapear cuando se agreguen columnas persistidas.
+                // String urlRecibo,
+                // String urlFactura,
+                // String referenciaPago,
+                // Integer valorPago,
                 AspiranteOutput aspirante,
                 EstadoOutput estado,
                 PagoconceptoOutput pagoconcepto) implements OutputResponse {

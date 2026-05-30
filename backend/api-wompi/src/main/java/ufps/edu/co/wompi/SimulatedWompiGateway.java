@@ -39,6 +39,8 @@ public class SimulatedWompiGateway implements WompiGateway {
                 .transactionId("SIM-" + request.reference())
                 .customerEmail(request.customerEmail())
                 .customerName(request.customerName())
+                .customerData(request.customerData())
+                .receiptData(request.receiptData())
                 .build();
     }
 
@@ -61,6 +63,8 @@ public class SimulatedWompiGateway implements WompiGateway {
                 .transactionId(request.transactionId() != null ? request.transactionId() : "SIM-" + request.reference())
                 .customerEmail(request.customerEmail())
                 .customerName(request.customerName())
+                .customerData(request.customerData())
+                .receiptData(request.receiptData())
                 .status(status)
                 .build();
     }
