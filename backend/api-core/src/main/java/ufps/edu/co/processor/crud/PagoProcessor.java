@@ -23,7 +23,6 @@ import ufps.edu.co.records.output.entity.PagoconceptoResumenOutput;
 import ufps.edu.co.records.output.entity.PagoOutput;
 import ufps.edu.co.rest.dto.AspiranteDTO;
 import ufps.edu.co.rest.dto.EstadoDTO;
-import ufps.edu.co.rest.dto.DocumentopersonaDTO;
 import ufps.edu.co.rest.dto.PagoDTO;
 import ufps.edu.co.rest.dto.PagoResumenDTO;
 import ufps.edu.co.rest.dto.PagoconceptoDTO;
