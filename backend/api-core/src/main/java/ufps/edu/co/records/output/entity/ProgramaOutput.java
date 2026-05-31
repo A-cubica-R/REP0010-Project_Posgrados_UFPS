@@ -8,7 +8,7 @@ import ufps.edu.co.records.OutputResponse;
 @Builder
 public record ProgramaOutput(
                 Integer id,
-                Integer codigo,
+                String codigo,
                 String nombre,
                 Integer duracion,
                 String correo,
