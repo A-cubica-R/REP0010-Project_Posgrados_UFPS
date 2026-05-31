@@ -11,7 +11,7 @@ public enum ProgramaInput {
     ;
 
     public record PROGRAMA_CREATE(
-            @NotNull Integer codigo,
+            String codigo,
             @NotBlank String nombre,
             @NotNull Integer duracion,
             String correo,
@@ -30,7 +30,7 @@ public enum ProgramaInput {
 
     public record PROGRAMA_UPDATE(
             @NotNull Integer id,
-            @NotNull Integer codigo,
+            String codigo,
             @NotBlank String nombre,
             @NotNull Integer duracion,
             String correo,
@@ -49,7 +49,7 @@ public enum ProgramaInput {
 
     public record PROGRAMA_PATCH(
             @NotNull Integer id,
-            Integer codigo,
+            String codigo,
             String nombre,
             Integer duracion,
             String correo,
@@ -71,7 +71,7 @@ public enum ProgramaInput {
     public record PROGRAMA_FIND(@NotNull Integer id) implements FindType {}
 
     public record PROGRAMA_CREATE_WITH_RELATIONS(
-            @NotNull Integer codigo,
+            @NotNull String codigo,
             @NotBlank String nombre,
             @NotNull Integer duracion,
             String correo,
@@ -88,7 +88,7 @@ public enum ProgramaInput {
 
     public record PROGRAMA_UPDATE_WITH_RELATIONS(
             @NotNull Integer id,
-            @NotNull Integer codigo,
+            @NotNull String codigo,
             @NotBlank String nombre,
             @NotNull Integer duracion,
             String correo,

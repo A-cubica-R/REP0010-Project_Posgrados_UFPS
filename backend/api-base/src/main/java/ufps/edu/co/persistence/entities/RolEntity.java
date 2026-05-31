@@ -21,7 +21,7 @@ import java.util.List;
  *
  */
 @Entity
-@Table(name = "rol")
+@Table(name = "roles")
 @Getter
 @Setter
 @NoArgsConstructor

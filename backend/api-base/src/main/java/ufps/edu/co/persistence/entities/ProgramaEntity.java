@@ -22,7 +22,7 @@ import java.util.List;
  *
  */
 @Entity
-@Table(name = "programa")
+@Table(name = "programas")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -39,8 +39,8 @@ public class ProgramaEntity implements Serializable {
     private Integer id ;
 
     //--- OTHER DATA FIELDS 
-    @Column(name="codigo", nullable=false)
-    private int        codigo ;
+    @Column(name="codigo", length=100)
+    private String     codigo ;
 
     @Column(name="correo", length=100)
     private String     correo ;
@@ -49,22 +49,22 @@ public class ProgramaEntity implements Serializable {
     private Integer    creditos ;
 
     @Column(name="duracion", nullable=false)
-    private int        duracion ;
+    private Integer        duracion ;
 
     @Column(name="id_facultad", nullable=false)
-    private int        idFacultad ;
+    private Integer        idFacultad ;
 
     @Column(name="id_otros")
     private Integer    idOtros ;
 
     @Column(name="id_sede", nullable=false)
-    private int        idSede ;
+    private Integer        idSede ;
 
     @Column(name="id_tiporegistro", nullable=false)
-    private int        idTiporegistro ;
+    private Integer        idTiporegistro ;
 
     @Column(name="id_modalidad", nullable=false)
-    private int        idModalidad ;
+    private Integer        idModalidad ;
 
     @Column(name="nivelformacion", length=50)
     private String     nivelformacion ;
@@ -87,19 +87,40 @@ public class ProgramaEntity implements Serializable {
     @Column(name="valormatricula")
     private BigDecimal valormatricula ;
 
+    @Column(name="es_posgrado")
+    private Boolean    esPosgrado ;
+
+    @Column(name="historicoMoodleld", length=100)
+    private String     historicomoodleld ;
+
+    @Column(name="moodleld", length=100)
+    private String     moodleld ;
+
+    @Column(name="semestre_actual", length=100)
+    private String     semestreActual ;
+
+    @Column(name="tipo_programa_id")
+    private Integer    tipoProgramaId ;
+
+    @Column(name="director_id")
+    private Integer    directorId ;
+
     //--- LINKS ( RELATIONSHIPS )
-    @OneToMany(mappedBy="programa")
+    @OneToMany(mappedBy="programas")
     private List<CargoEntity> cargoList ; 
 
-    @OneToMany(mappedBy="programa")
+    @OneToMany(mappedBy="programas")
     private List<CohorteEntity> cohorteList ; 
 
-    @OneToMany(mappedBy="programa")
+    @OneToMany(mappedBy="programas")
     private List<CriterioevaluacionEntity> criterioevaluacionList ; 
 
-    @OneToMany(mappedBy="programa")
+    @OneToMany(mappedBy="programas")
     private List<DocumentosrequisitoprogramaEntity> documentosrequisitoprogramaList ; 
 
+    @OneToMany(mappedBy="programas")
+    private List<EstudiantesEntity> estudiantesList ;
+    
     @ManyToOne
     @JoinColumn(name="id_facultad", referencedColumnName="id", insertable=false, updatable=false)
     private FacultadEntity   facultad ; 

@@ -20,7 +20,7 @@ import lombok.Setter;
  *
  */
 @Entity
-@Table(name = "usuario")
+@Table(name = "usuarios")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -48,6 +48,42 @@ public class UsuarioEntity implements Serializable {
 
     @Column(name="nombreusuario", nullable=false, length=50)
     private String     nombreusuario ;
+
+    @Column(name="cedula", length=100)
+    private String     cedula ;
+
+    @Column(name="codigo", length=100)
+    private String     codigo ;
+
+    @Column(name="email", length=100)
+    private String     email ;
+
+    @Column(name="foto_url", length=100)
+    private String     fotoUrl ;
+
+    @Column(name="google_id", length=100)
+    private String     googleId ;
+
+    @Column(name="moodleld", length=100)
+    private String     moodleld ;
+
+    @Column(name="nombreCompleto", length=100)
+    private String     nombrecompleto ;
+
+    @Column(name="primerApellido", length=100)
+    private String     primerapellido ;
+
+    @Column(name="primerNombre", length=100)
+    private String     primernombre ;
+
+    @Column(name="segundoApellido", length=100)
+    private String     segundoapellido ;
+
+    @Column(name="segundoNombre", length=100)
+    private String     segundonombre ;
+
+    @Column(name="telefono", length=100)
+    private String     telefono ;
 
     //--- LINKS ( RELATIONSHIPS )
     @ManyToOne
