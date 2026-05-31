@@ -54,6 +54,7 @@ public class RealWompiGateway implements WompiGateway {
                 .customerData(request.customerData())
                 .receiptData(request.receiptData())
                 .pagoreciboinscripcion(request.pagoreciboinscripcion())
+                .creationDate(request.creationDate())
                 .build();
     }
 
@@ -98,6 +99,7 @@ public class RealWompiGateway implements WompiGateway {
                         .build())
                 .receiptData(request.receiptData())
                 .pagoreciboinscripcion(null)
+                    .creationDate(null)
                 .status(status)
                 .build();
     }

@@ -42,6 +42,7 @@ public class SimulatedWompiGateway implements WompiGateway {
                 .customerData(request.customerData())
                 .receiptData(request.receiptData())
                 .pagoreciboinscripcion(request.pagoreciboinscripcion())
+                .creationDate(request.creationDate())
                 .build();
     }
 
@@ -67,6 +68,7 @@ public class SimulatedWompiGateway implements WompiGateway {
                 .customerData(request.customerData())
                 .receiptData(request.receiptData())
                 .pagoreciboinscripcion(null)
+                .creationDate(null)
                 .status(status)
                 .build();
     }
