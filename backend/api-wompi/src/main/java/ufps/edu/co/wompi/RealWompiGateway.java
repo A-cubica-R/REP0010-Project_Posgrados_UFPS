@@ -53,6 +53,7 @@ public class RealWompiGateway implements WompiGateway {
                 .customerName(request.customerName())
                 .customerData(request.customerData())
                 .receiptData(request.receiptData())
+                .pagoreciboinscripcion(request.pagoreciboinscripcion())
                 .build();
     }
 
@@ -96,6 +97,7 @@ public class RealWompiGateway implements WompiGateway {
                         .legalIdType(firstText(customerData, "legal_id_type", null))
                         .build())
                 .receiptData(request.receiptData())
+                .pagoreciboinscripcion(null)
                 .status(status)
                 .build();
     }
