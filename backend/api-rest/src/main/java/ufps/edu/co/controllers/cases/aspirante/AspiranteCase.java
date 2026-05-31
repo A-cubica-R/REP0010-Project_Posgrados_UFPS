@@ -22,14 +22,14 @@ import org.springframework.web.server.ResponseStatusException;
 
 import ufps.edu.co.domain.exceptions.DomainException;
 import ufps.edu.co.domain.exceptions.errorcodes.AspiranteErrorCode;
-import ufps.edu.co.persistence.entities.PersonaEntity;
+// import ufps.edu.co.persistence.entities.PersonaEntity;
 import ufps.edu.co.processor.cases.DocumentosrequisitoprogramaPE;
 import ufps.edu.co.processor.crud.AspiranteProcessor;
 import ufps.edu.co.processor.crud.DocumentoProcessor;
 import ufps.edu.co.processor.crud.EntrevistaProcessor;
 import ufps.edu.co.processor.crud.PruebaProcessor;
 import ufps.edu.co.records.input.entity.AspiranteInput.ASPIRANTE_FIND;
-import ufps.edu.co.records.input.entity.DocumentoInput.DOCUMENTO_FIND;
+// import ufps.edu.co.records.input.entity.DocumentoInput.DOCUMENTO_FIND;
 import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_CANCELAR_REQUEST;
 import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_FIND;
 import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_REQUEST_CHANGE;
@@ -98,8 +98,8 @@ public class AspiranteCase {
     @Autowired
     private SESService sesService;
 
-    @Autowired
-    private EmailTemplates emailTemplates;
+    // @Autowired
+    // private EmailTemplates emailTemplates;
 
     @Autowired
     private PersonaService personaService;
@@ -188,8 +188,8 @@ public class AspiranteCase {
                 upload);
         String nombreDocumento = documentoProcessor.resolverNombreTitulo(doc);
         PersonaDTO persona = personaService.findById(aspiranteService.findById(idAspirante).getIdPersona());
-        sesService.enviarCorreo(persona.getCorreo(), emailTemplates.ASUNTO_SUBIDA_DOCUMENTO,
-                emailTemplates.cuerpoSubidaDocumento(persona.getNombres(), nombreDocumento, LocalDate.now()));
+        sesService.enviarCorreo(persona.getCorreo(), EmailTemplates.ASUNTO_SUBIDA_DOCUMENTO,
+                EmailTemplates.cuerpoSubidaDocumento(persona.getNombres(), nombreDocumento, LocalDate.now()));
         return ResponseEntity.status(HttpStatus.CREATED).body(toDocumentoOutput(documentoService.create(doc)));
     }
 

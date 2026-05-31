@@ -89,8 +89,8 @@ public class InscripcionCase {
         @Autowired
         private SESService sesService;
 
-        @Autowired
-        private EmailTemplates emailTemplates;
+        // @Autowired
+        // private EmailTemplates emailTemplates;
 
         // ─── Records de petición ────────────────────────────────────────────────
 
@@ -272,7 +272,7 @@ public class InscripcionCase {
                                                 .build());
 
                 pagoProcessor.ensureInitialPaymentsForAspirante(aspirante.getId());
-                sesService.enviarCorreo(persona.getCorreo(), emailTemplates.ASUNTO_INSCRIPCION, EmailTemplates.cuerpoInscripcion(persona.getNombres(), persona.getApellidos(), cohorte.getNombre(), cohorte.getPrograma().getNombre()));       
+                sesService.enviarCorreo(persona.getCorreo(), EmailTemplates.ASUNTO_INSCRIPCION, EmailTemplates.cuerpoInscripcion(persona.getNombres(), persona.getApellidos(), cohorte.getNombre(), cohorte.getPrograma().getNombre()));       
                 return ResponseEntity.status(HttpStatus.CREATED)
                                 .body(new FormularioInscripcionOutput(persona.getId(), aspirante.getId()));
         }
