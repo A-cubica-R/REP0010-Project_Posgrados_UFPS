@@ -50,8 +50,8 @@ public class CalificacioncriterioProcessor implements
     @Autowired
     private SESService sesService;
 
-    @Autowired
-    private EmailTemplates emailTemplates;
+    // @Autowired
+    // private EmailTemplates emailTemplates;
 
     @Override
     public CalificacioncriterioOutput create(CALIFICACIONCRITERIO_CREATE input) {
@@ -160,8 +160,8 @@ public class CalificacioncriterioProcessor implements
         AspiranteDTO aspirante = aspiranteService.findById(idAspirante);
         String nombreCriterio = criteriocohorte.getCriterioevaluacion() != null
                 ? criteriocohorte.getCriterioevaluacion().getNombre() : "Criterio";
-        sesService.enviarCorreo(aspirante.getPersona().getCorreo(), emailTemplates.ASUNTO_CALIFICACION_CRITERIO,
-                emailTemplates.cuerpoCalificacionCriterio(aspirante.getPersona().getNombres(), nombreCriterio,
+        sesService.enviarCorreo(aspirante.getPersona().getCorreo(), EmailTemplates.ASUNTO_CALIFICACION_CRITERIO,
+                EmailTemplates.cuerpoCalificacionCriterio(aspirante.getPersona().getNombres(), nombreCriterio,
                         result.puntuacion(), aspirante.getPuntuacion()));
         return CalificacionCriterioSimpleOutput.builder()
                 .idAspirante(result.idAspirante())

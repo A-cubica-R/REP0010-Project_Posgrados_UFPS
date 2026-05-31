@@ -59,8 +59,8 @@ public class EntrevistaProcessor implements
     @Autowired
     private SESService sesService;
 
-    @Autowired
-    private EmailTemplates emailTemplates;
+    // @Autowired
+    // private EmailTemplates emailTemplates;
 
     @Override
     public EntrevistaOutput create(ENTREVISTA_CREATE input) {
@@ -226,8 +226,8 @@ public class EntrevistaProcessor implements
                     input.id(), input.fecha(), input.tiempo(),
                     tipoentrevista.getId(), ubicacion.getId(), input.motivocambio());
             AspiranteDTO aspirante = aspiranteService.findById(updated.getIdAspirante());
-            sesService.enviarCorreo(aspirante.getPersona().getCorreo(), emailTemplates.ASUNTO_REAGENDAR_ENTREVISTA,
-                    emailTemplates.cuerpoReagendarEntrevista(aspirante.getPersona().getNombres(),
+            sesService.enviarCorreo(aspirante.getPersona().getCorreo(), EmailTemplates.ASUNTO_REAGENDAR_ENTREVISTA,
+                    EmailTemplates.cuerpoReagendarEntrevista(aspirante.getPersona().getNombres(),
                             input.fecha(), input.tiempo(), tipoentrevista.getTipo(), input.ubicacion()));
             return map.toOutput(updated);
         } catch (Exception e) {
@@ -300,14 +300,14 @@ public class EntrevistaProcessor implements
 
             String nombre = persona.getNombres();
             String correoAspirante = persona.getCorreo();
-            String fecha = entrevista.getFecha() != null ? entrevista.getFecha().toString() : "No definida";
-            String hora = entrevista.getTiempo() != null ? entrevista.getTiempo().toString() : "No definida";
+            // String fecha = entrevista.getFecha() != null ? entrevista.getFecha().toString() : "No definida";
+            // String hora = entrevista.getTiempo() != null ? entrevista.getTiempo().toString() : "No definida";
             String tipo = entrevista.getTipoentrevista() != null ? entrevista.getTipoentrevista().getTipo()
                     : "No definido";
             String lugar = entrevista.getUbicacion() != null ? entrevista.getUbicacion().getDireccion() : "No definido";
 
-            sesService.enviarCorreo(correoAspirante, emailTemplates.ASUNTO_AGENDAR_ENTREVISTA,
-                    emailTemplates.cuerpoAgendarEntrevista(nombre, entrevista.getFecha(), entrevista.getTiempo(), tipo, lugar));
+            sesService.enviarCorreo(correoAspirante, EmailTemplates.ASUNTO_AGENDAR_ENTREVISTA,
+                    EmailTemplates.cuerpoAgendarEntrevista(nombre, entrevista.getFecha(), entrevista.getTiempo(), tipo, lugar));
         } catch (Exception e) {
             logger.warn("No se pudo notificar entrevista creada al aspirante {}: {}", idAspirante, e.getMessage());
         }

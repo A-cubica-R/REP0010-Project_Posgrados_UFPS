@@ -79,8 +79,8 @@ public class DocumentoProcessor implements
     @Autowired
     private SESService sesService;
 
-    @Autowired
-    private EmailTemplates emailTemplates;
+    // @Autowired
+    // private EmailTemplates emailTemplates;
 
     @Override
     public DocumentoOutput create(DOCUMENTO_CREATE input) {
@@ -147,8 +147,8 @@ public class DocumentoProcessor implements
             checkAndUpdateEstadoValidacion(dto.getIdAspirante());
             String nombreDocumento = resolverNombreTitulo(dto);
             PersonaDTO persona = dto.getAspirante().getPersona();
-            sesService.enviarCorreo(persona.getCorreo(), emailTemplates.ASUNTO_APROBACION_DOCUMENTO,
-                    emailTemplates.cuerpoAprobacionDocumento(persona.getNombres(), nombreDocumento));
+            sesService.enviarCorreo(persona.getCorreo(), EmailTemplates.ASUNTO_APROBACION_DOCUMENTO,
+                    EmailTemplates.cuerpoAprobacionDocumento(persona.getNombres(), nombreDocumento));
             return AprobarDocumentoOutput.builder()
                     .id(approve.getId())
                     .nombre(approve.getKeyfile())
@@ -169,8 +169,8 @@ public class DocumentoProcessor implements
             DocumentoDTO reject = service.update(input.id(), dto);
             String nombreDocumento = resolverNombreTitulo(dto);
             PersonaDTO persona = dto.getAspirante().getPersona();
-            sesService.enviarCorreo(persona.getCorreo(), emailTemplates.ASUNTO_RECHAZO_DOCUMENTO,
-                    emailTemplates.cuerpoRechazoDocumento(persona.getNombres(), nombreDocumento, input.motivoRechazo()));
+            sesService.enviarCorreo(persona.getCorreo(), EmailTemplates.ASUNTO_RECHAZO_DOCUMENTO,
+                    EmailTemplates.cuerpoRechazoDocumento(persona.getNombres(), nombreDocumento, input.motivoRechazo()));
             return DocumentoEstadoOutput.builder()
                     .id(reject.getId())
                     .nombre(reject.getKeyfile())

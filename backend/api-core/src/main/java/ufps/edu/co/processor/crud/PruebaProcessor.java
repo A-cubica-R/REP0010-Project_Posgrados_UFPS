@@ -42,7 +42,7 @@ public class PruebaProcessor implements
     @Autowired private EstadoService estadoService;
     @Autowired private PruebaMap map;
     @Autowired private SESService sesService;
-    @Autowired private EmailTemplates emailTemplates;
+    // @Autowired private EmailTemplates emailTemplates;
 
     @Override
     public PruebaOutput create(PRUEBA_CREATE input) {
@@ -171,8 +171,8 @@ public class PruebaProcessor implements
                     tipoprueba.getId(), ubicacion.getId());
             PruebaResumenOutput result = toPruebaResumen(service.findById(updated.getId()));
             AspiranteDTO aspirante = aspiranteService.findById(updated.getIdAspirante());
-            sesService.enviarCorreo(aspirante.getPersona().getCorreo(), emailTemplates.ASUNTO_REAGENDAR_PRUEBA,
-                    emailTemplates.cuerpoReagendarPrueba(aspirante.getPersona().getNombres(), result.nombre(),
+            sesService.enviarCorreo(aspirante.getPersona().getCorreo(), EmailTemplates.ASUNTO_REAGENDAR_PRUEBA,
+                    EmailTemplates.cuerpoReagendarPrueba(aspirante.getPersona().getNombres(), result.nombre(),
                             request.fecha(), request.tiempo(), tipoprueba.getTipo(), request.ubicacion()));
             return result;
         } catch (IllegalStateException e) {
@@ -297,12 +297,12 @@ public class PruebaProcessor implements
             String nombre = aspirante.getPersona().getNombres();
             String correoAspirante = aspirante.getPersona().getCorreo();
             String nombrePrueba = prueba.getNombre() != null ? prueba.getNombre() : "No definido";
-            String descripcion = prueba.getDescripcion() != null ? prueba.getDescripcion() : "Sin descripción";
+            // String descripcion = prueba.getDescripcion() != null ? prueba.getDescripcion() : "Sin descripción";
             String lugar = prueba.getUbicacion() != null ? prueba.getUbicacion().getDireccion() : "No definido";
 
             String tipoPrueba = prueba.getTipoprueba() != null ? prueba.getTipoprueba().getTipo() : "No definido";
-            sesService.enviarCorreo(correoAspirante, emailTemplates.ASUNTO_AGENDAR_PRUEBA,
-                    emailTemplates.cuerpoAgendarPrueba(nombre, nombrePrueba, prueba.getFecha(), prueba.getTiempo(), tipoPrueba, lugar));
+            sesService.enviarCorreo(correoAspirante, EmailTemplates.ASUNTO_AGENDAR_PRUEBA,
+                    EmailTemplates.cuerpoAgendarPrueba(nombre, nombrePrueba, prueba.getFecha(), prueba.getTiempo(), tipoPrueba, lugar));
         } catch (Exception e) {
             logger.warn("No se pudo notificar prueba creada al aspirante {}: {}", idAspirante, e.getMessage());
         }
