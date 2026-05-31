@@ -1,8 +1,10 @@
 package ufps.edu.co.processor.crud;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +28,8 @@ import ufps.edu.co.rest.services.AdministrativoService;
 import ufps.edu.co.rest.services.AspiranteService;
 import ufps.edu.co.rest.services.CohorteService;
 import ufps.edu.co.rest.services.ListaadmitidosService;
-import ufps.edu.co.services.EmailService;
+import ufps.edu.co.records.output.entity.*;
+import ufps.edu.co.services.*;
 
 @Service
 public class ListaadmitidosProcessor {
@@ -49,7 +52,10 @@ public class ListaadmitidosProcessor {
     private ListaadmitidosMap map;
 
     @Autowired
-    private EmailService emailService;
+    private SESService sesService;
+
+    @Autowired
+    private PdfGeneratorService pdfGeneratorService;
 
     private String correo = "jljb1704@gmail.com";
 
@@ -105,7 +111,7 @@ public class ListaadmitidosProcessor {
         CohorteDTO cohorte = validateAndGetCohorte(input.idCohorte(), input.idAdministrativo());
         List<AspiranteDTO> admitidos = getTopCandidates(input.idCohorte(), null, cohorte.getCupos());
         LocalDate today = LocalDate.now();
-        return admitidos.stream()
+        List<ListaadmitidosOutput> outputs = admitidos.stream()
                 .map(a -> {
                     AdmitidoDTO dto = new AdmitidoDTO();
                     dto.setIdCohorte(input.idCohorte());
@@ -120,10 +126,31 @@ public class ListaadmitidosProcessor {
                     return map.toOutput(saved);
                 })
                 .toList();
+
+        if (!outputs.isEmpty()) {
+            try {
+                String cohorteNombre = cohorte.getNombre() != null ? cohorte.getNombre() : "Cohorte";
+                List<AspiranteOutput> aspirantesAdmitidos = outputs.stream()
+                        .map(ListaadmitidosOutput::aspirante)
+                        .filter(Objects::nonNull)
+                        .toList();
+                AdministrativoDTO admin = administrativoService.findById(input.idAdministrativo());
+                String directorNombre = admin.getPersona().getNombres() + " " + admin.getPersona().getApellidos();
+                String directorCorreo = admin.getPersona().getCorreo();
+                byte[] pdf = pdfGeneratorService.generarListaAdmitidos(
+                        cohorteNombre, LocalDateTime.now(), aspirantesAdmitidos, directorNombre);
+                sesService.sendPdfToDirector(directorCorreo, directorNombre, cohorteNombre, pdf);
+            } catch (Exception e) {
+                logger.error("Error generando PDF o enviando correo al director tras admisión en cohorte {}", input.idCohorte(), e);
+                throw new RuntimeException("Aspirantes admitidos correctamente, pero no se pudo enviar el correo al director.", e);
+            }
+        }
+
+        return outputs;
     }
 
     private void notifyAspirant(String email, String name, String message) {
-        emailService.sendEmail(
+        sesService.enviarCorreo(
                 email,
                 "Notificación sobre tu Proceso de Admisión - Posgrados UFPS",
                 "<p>Hola <strong>" + name + "</strong>,</p><p>" + message + "</p>");
