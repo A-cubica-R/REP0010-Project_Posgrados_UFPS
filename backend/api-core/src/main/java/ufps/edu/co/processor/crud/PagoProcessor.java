@@ -146,6 +146,24 @@ public class PagoProcessor {
         PagoreciboinscripcionDTO pagoreciboinscripcion = obtenerOCrearPagoreciboInscripcion(idAspirante, pago,
             referencia, monto);
 
+        // Build a shallow version of the pagoreciboinscripcion to avoid serializing the full Pago/Aspirante graph
+        PagoreciboinscripcionDTO pagoreciboShallow = null;
+        if (pagoreciboinscripcion != null) {
+            PagoDTO pagoShallow = PagoDTO.builder().id(pago.id()).build();
+            pagoreciboShallow = PagoreciboinscripcionDTO.builder()
+                    .id(pagoreciboinscripcion.getId())
+                    .fechavencimiento(pagoreciboinscripcion.getFechavencimiento())
+                    .urlrecibo(pagoreciboinscripcion.getUrlrecibo())
+                    .urlfactura(pagoreciboinscripcion.getUrlfactura())
+                    .referenciapago(pagoreciboinscripcion.getReferenciapago())
+                    .valorpago(pagoreciboinscripcion.getValorpago())
+                    .idEstado(pagoreciboinscripcion.getIdEstado())
+                    .idPago(pagoreciboinscripcion.getIdPago())
+                    .pago(pagoShallow)
+                    .estado(null)
+                    .build();
+        }
+
         WompiCheckoutRequest request = WompiCheckoutRequest.builder()
                 .paymentId(pago.id())
                 .aspiranteId(idAspirante)
@@ -164,7 +182,7 @@ public class PagoProcessor {
                 .customerName(construirNombreAspirante(aspirante))
                 .customerData(customerData)
                 .receiptData(receiptData)
-                .pagoreciboinscripcion(pagoreciboinscripcion)
+                .pagoreciboinscripcion(pagoreciboShallow)
             .returnUrl(resolveReturnUrl())
             .webhookUrl(resolveWebhookUrl())
                 .metadata(Map.of(
