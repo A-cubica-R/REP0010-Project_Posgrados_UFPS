@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ufps.edu.co.auth.model.AuthPrincipal;
 import ufps.edu.co.processor.crud.PagoProcessor;
 import ufps.edu.co.records.output.entity.PagoListadoOutput;
+import ufps.edu.co.rest.dto.PagoCheckoutPreviewDTO;
 import ufps.edu.co.wompi.model.WompiCheckoutResponse;
 import ufps.edu.co.wompi.model.WompiReceiptData;
 
@@ -37,6 +38,13 @@ public class PagoWompiCase {
             Authentication authentication) {
         Integer authenticatedUserId = extractAuthenticatedUserId(authentication);
         return ResponseEntity.ok(pagoProcessor.iniciarCheckoutInscripcion(idAspirante, authenticatedUserId, true));
+    }
+
+    @GetMapping(value = "/inscripcion/resumen", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<PagoCheckoutPreviewDTO> obtenerResumenCheckoutInscripcion(@PathVariable Integer idAspirante,
+            Authentication authentication) {
+        Integer authenticatedUserId = extractAuthenticatedUserId(authentication);
+        return ResponseEntity.ok(pagoProcessor.obtenerResumenCheckoutInscripcion(idAspirante, authenticatedUserId, true));
     }
 
     @GetMapping(value = "/inscripcion/recibo", produces = MediaType.APPLICATION_JSON_VALUE)

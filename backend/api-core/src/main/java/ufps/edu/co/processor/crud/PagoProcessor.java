@@ -5,6 +5,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -18,6 +19,8 @@ import ufps.edu.co.domain.exceptions.DomainException;
 import ufps.edu.co.domain.exceptions.errorcodes.PagoErrorCode;
 import ufps.edu.co.maps.specific.PagoMap;
 import ufps.edu.co.rest.dto.AspiranteCheckoutDTO;
+import ufps.edu.co.rest.dto.PagoCheckoutPreviewDTO;
+import ufps.edu.co.rest.dto.PagoCheckoutPreviewDataDTO;
 import ufps.edu.co.records.output.entity.PagoListadoOutput;
 import ufps.edu.co.records.output.entity.PagoconceptoResumenOutput;
 import ufps.edu.co.records.output.entity.PagoOutput;
@@ -178,6 +181,26 @@ public class PagoProcessor {
         long montoEnCents = valoresglobalesProcessor.calcularValorInscripcionCentavos();
         String referencia = construirReferencia(pago, aspirante);
         return construirReceiptData(pago, aspirante, referencia, monto, montoEnCents, resolverCurrency());
+    }
+
+    @Transactional(readOnly = true)
+    public PagoCheckoutPreviewDTO obtenerResumenCheckoutInscripcion(Integer idAspirante, Integer authenticatedUserId,
+            boolean validarTitular) {
+        PagoCheckoutPreviewDataDTO data = aspiranteService.findCheckoutPreviewById(idAspirante);
+        if (data == null) {
+            throw new DomainException(PagoErrorCode.PAGO_NOT_FOUND, idAspirante);
+        }
+
+        validarAspiranteAutenticado(data.idPersona(), authenticatedUserId, validarTitular);
+
+        return new PagoCheckoutPreviewDTO(
+            data.programa(),
+            data.periodo(),
+            construirNombreCompleto(data.nombres(), data.apellidos()),
+            formatearDocumento(data.numerodocumento()),
+            data.facultad(),
+            data.tipo(),
+            calcularMontoInscripcionEnPesos());
     }
 
     public PagoOutput confirmarWebhook(WompiWebhookRequest request) {
@@ -435,6 +458,35 @@ public class PagoProcessor {
         }
 
         throw new DomainException(PagoErrorCode.ASPIRANTE_AUTENTICADO_NO_COINCIDE_FORBIDDEN, authenticatedUserId);
+    }
+
+    private void validarAspiranteAutenticado(Integer idPersonaAspirante, Integer authenticatedUserId, boolean validarTitular) {
+        if (!validarTitular) {
+            return;
+        }
+        if (authenticatedUserId == null) {
+            throw new DomainException(PagoErrorCode.ASPIRANTE_AUTENTICADO_NO_COINCIDE_FORBIDDEN, null);
+        }
+
+        Integer idPersonaUsuario = usuarioService.findIdPersonaById(authenticatedUserId);
+        if (idPersonaUsuario != null && idPersonaAspirante != null && idPersonaUsuario.equals(idPersonaAspirante)) {
+            return;
+        }
+
+        throw new DomainException(PagoErrorCode.ASPIRANTE_AUTENTICADO_NO_COINCIDE_FORBIDDEN, authenticatedUserId);
+    }
+
+    private String construirNombreCompleto(String nombres, String apellidos) {
+        String nombresLimpios = nombres != null ? nombres : "";
+        String apellidosLimpios = apellidos != null ? apellidos : "";
+        return (nombresLimpios + " " + apellidosLimpios).trim();
+    }
+
+    private String formatearDocumento(Integer numerodocumento) {
+        if (numerodocumento == null) {
+            return null;
+        }
+        return String.format(Locale.ROOT, "%d", numerodocumento);
     }
 
     private boolean esEstadoAprobado(String status) {
