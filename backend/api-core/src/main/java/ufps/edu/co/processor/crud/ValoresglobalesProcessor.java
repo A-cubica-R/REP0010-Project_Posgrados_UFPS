@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import ufps.edu.co.domain.exceptions.DomainException;
 import ufps.edu.co.domain.exceptions.errorcodes.PagoErrorCode;
+import ufps.edu.co.domain.exceptions.errorcodes.VariablesglobalesErrorCode;
 import ufps.edu.co.maps.specific.ValoresglobalesMap;
 import ufps.edu.co.rest.dto.ValoresglobalesDTO;
 import ufps.edu.co.rest.services.ValoresglobalesService;
@@ -30,20 +31,23 @@ public class ValoresglobalesProcessor {
     private ValoresglobalesMap valoresglobalesMap;
 
     public ValoresglobalesDTO findCurrentByPrefix(String prefix) {
+        String normalizedPrefix = normalizePrefix(prefix);
         int currentYear = LocalDate.now().getYear();
+
         return findAll().stream()
-                .filter(item -> item.getClave() != null)
-                .filter(item -> item.getClave().startsWith(prefix + "_" + currentYear + "_"))
-                .max(Comparator.comparingInt(item -> extractVersion(item.getClave(), prefix, currentYear)))
-                .orElseThrow(() -> new DomainException(PagoErrorCode.VALOR_GLOBAL_NO_CONFIGURADO_NOT_FOUND,
-                        prefix + "_" + currentYear));
+            .filter(item -> item.getClave() != null)
+            .filter(item -> matchesCurrentFamily(item.getClave(), normalizedPrefix, currentYear))
+            .max(Comparator.comparingInt(item -> extractVersion(item.getClave(), familyPrefixFor(item.getClave(), normalizedPrefix), currentYear)))
+            .orElseThrow(() -> new DomainException(
+                VariablesglobalesErrorCode.VALOR_GLOBAL_NO_CONFIGURADO_NOT_FOUND_TAMANO_MAXIMO,
+                normalizedPrefix + "_" + currentYear));
     }
 
     public List<ValoresglobalesDTO> findAllByPrefix(String prefix) {
         String normalizedPrefix = normalizePrefix(prefix);
         return findAll().stream()
                 .filter(item -> item.getClave() != null)
-                .filter(item -> item.getClave().startsWith(normalizedPrefix + "_"))
+            .filter(item -> matchesFamily(item.getClave(), normalizedPrefix))
                 .sorted((left, right) -> right.getClave().compareToIgnoreCase(left.getClave()))
                 .collect(Collectors.toList());
     }
@@ -92,6 +96,41 @@ public class ValoresglobalesProcessor {
             return 0;
         }
         return Integer.parseInt(matcher.group("version"));
+    }
+
+    private boolean matchesCurrentFamily(String clave, String prefix, int year) {
+        for (String candidatePrefix : resolvePrefixAliases(prefix)) {
+            if (clave.startsWith(candidatePrefix + "_" + year + "_")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean matchesFamily(String clave, String prefix) {
+        for (String candidatePrefix : resolvePrefixAliases(prefix)) {
+            if (clave.startsWith(candidatePrefix + "_")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private String familyPrefixFor(String clave, String requestedPrefix) {
+        for (String candidatePrefix : resolvePrefixAliases(requestedPrefix)) {
+            if (clave.startsWith(candidatePrefix + "_")) {
+                return candidatePrefix;
+            }
+        }
+        return requestedPrefix;
+    }
+
+    private List<String> resolvePrefixAliases(String prefix) {
+        String normalizedPrefix = normalizePrefix(prefix);
+        if ("TAMANO_MAXIMO".equals(normalizedPrefix) || "TAMANO_MAXIMO_ARCHIVOS".equals(normalizedPrefix)) {
+            return List.of("TAMANO_MAXIMO", "TAMANO_MAXIMO_ARCHIVOS");
+        }
+        return List.of(normalizedPrefix);
     }
 
     public ValoresglobalesDTO createTamanoMaximoArchivos(ValoresglobalesDTO dto) {

@@ -240,7 +240,7 @@ public class ProgramaProcessor implements
     }
 
         private ProgramaDTO buildDtoFromRelations(
-            Integer codigo,
+            String codigo,
             String nombre,
             Integer duracion,
             String correo,
