@@ -21,7 +21,7 @@ public class SESService {
 
         public SESService(
                         @Value("${AWS_ACCESS_KEY_ID}") String accessKeyId,
-                        @Value("${AWS_SECRET_KEY}") String secretKey,
+                        @Value("${AWS_SECRET_KEY_SES}") String secretKey,
                         @Value("${AWS_SES_FROM_EMAIL}") String fromEmail,
                         @Value("${AWS_SES_REGION}") String region) {
                 this.fromEmail = fromEmail;
