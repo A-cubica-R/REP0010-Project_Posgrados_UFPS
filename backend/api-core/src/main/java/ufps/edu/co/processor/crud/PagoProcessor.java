@@ -1,8 +1,10 @@
 package ufps.edu.co.processor.crud;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
@@ -136,15 +138,26 @@ public class PagoProcessor {
         }
 
         BigDecimal monto = calcularMontoInscripcionEnPesos();
-        long montoEnCents = valoresglobalesProcessor.calcularValorInscripcionCentavos();
         String referencia = construirReferencia(pago, aspirante);
         String currency = resolverCurrency();
-        String signatureIntegrity = generarSignatureIntegrity(referencia, montoEnCents, currency);
         String publicKey = resolverPublicKey();
         WompiCustomerData customerData = construirCustomerData(aspirante);
-        WompiReceiptData receiptData = construirReceiptData(pago, aspirante, referencia, monto, montoEnCents, currency);
         PagoreciboinscripcionDTO pagoreciboinscripcion = obtenerOCrearPagoreciboInscripcion(idAspirante, pago,
             referencia, monto);
+
+        // If there is already an EN CURSO receipt, preserve its stored amount/reference for checkout.
+        if (pagoreciboinscripcion != null) {
+            if (pagoreciboinscripcion.getValorpago() != null) {
+                monto = pagoreciboinscripcion.getValorpago();
+            }
+            if (pagoreciboinscripcion.getReferenciapago() != null && !pagoreciboinscripcion.getReferenciapago().isBlank()) {
+                referencia = pagoreciboinscripcion.getReferenciapago();
+            }
+        }
+
+        long montoEnCents = calcularCentavosDesdePesos(monto);
+        String signatureIntegrity = generarSignatureIntegrity(referencia, montoEnCents, currency);
+        WompiReceiptData receiptData = construirReceiptData(pago, aspirante, referencia, monto, montoEnCents, currency);
 
         // Build a shallow version of the pagoreciboinscripcion to avoid serializing the full Pago/Aspirante graph
         PagoreciboinscripcionDTO pagoreciboShallow = null;
@@ -183,6 +196,7 @@ public class PagoProcessor {
                 .customerData(customerData)
                 .receiptData(receiptData)
                 .pagoreciboinscripcion(pagoreciboShallow)
+                .creationDate(LocalDateTime.now())
             .returnUrl(resolveReturnUrl())
             .webhookUrl(resolveWebhookUrl())
                 .metadata(Map.of(
@@ -330,6 +344,13 @@ public class PagoProcessor {
 
     private BigDecimal calcularMontoInscripcionEnPesos() {
         return valoresglobalesProcessor.calcularValorInscripcionPesos();
+    }
+
+    private long calcularCentavosDesdePesos(BigDecimal valorPesos) {
+        if (valorPesos == null) {
+            return 0L;
+        }
+        return valorPesos.multiply(BigDecimal.valueOf(100L)).setScale(0, RoundingMode.HALF_UP).longValue();
     }
 
     private PagoreciboinscripcionDTO obtenerOCrearPagoreciboInscripcion(Integer idAspirante, PagoResumenDTO pago,
