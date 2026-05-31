@@ -1,6 +1,7 @@
 package ufps.edu.co.wompi.model;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 import lombok.Builder;
 
@@ -29,5 +30,6 @@ public record WompiCheckoutResponse(
                 WompiCustomerData customerData,
                 WompiReceiptData receiptData,
                 PagoreciboinscripcionDTO pagoreciboinscripcion,
+                LocalDateTime creationDate,
                 String status) {
 }

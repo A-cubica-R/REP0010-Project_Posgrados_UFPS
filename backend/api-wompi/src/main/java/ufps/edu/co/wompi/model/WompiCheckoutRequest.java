@@ -1,6 +1,7 @@
 package ufps.edu.co.wompi.model;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Map;
 
 import lombok.Builder;
@@ -26,6 +27,7 @@ public record WompiCheckoutRequest(
         WompiCustomerData customerData,
         WompiReceiptData receiptData,
         PagoreciboinscripcionDTO pagoreciboinscripcion,
+        LocalDateTime creationDate,
         String returnUrl,
         String webhookUrl,
         Map<String, String> metadata) {
