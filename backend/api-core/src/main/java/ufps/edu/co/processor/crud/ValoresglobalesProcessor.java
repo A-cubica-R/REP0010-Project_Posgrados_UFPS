@@ -37,7 +37,7 @@ public class ValoresglobalesProcessor {
         return findAll().stream()
             .filter(item -> item.getClave() != null)
             .filter(item -> matchesCurrentFamily(item.getClave(), normalizedPrefix, currentYear))
-            .max(Comparator.comparingInt(item -> extractVersion(item.getClave(), familyPrefixFor(item.getClave(), normalizedPrefix), currentYear)))
+            .max(Comparator.comparingInt(item -> extractVersionForAliases(item.getClave(), normalizedPrefix, currentYear)))
             .orElseThrow(() -> new DomainException(
                 VariablesglobalesErrorCode.VALOR_GLOBAL_NO_CONFIGURADO_NOT_FOUND_TAMANO_MAXIMO,
                 normalizedPrefix + "_" + currentYear));
@@ -134,7 +134,7 @@ public class ValoresglobalesProcessor {
     }
 
     public ValoresglobalesDTO createTamanoMaximoArchivos(ValoresglobalesDTO dto) {
-        return createForPrefix("TAMANO_MAXIMO_ARCHIVOS", dto);
+        return createForPrefix("TAMANO_MAXIMO_ARCHIVOS", dto, "MB");
     }
 
     public ValoresglobalesDTO createSalarioMinimo(ValoresglobalesDTO dto) {
@@ -142,10 +142,14 @@ public class ValoresglobalesProcessor {
     }
 
     public ValoresglobalesDTO createValorInscripcion(ValoresglobalesDTO dto) {
-        return createForPrefix("VALOR_INSCRIPCION", dto);
+        return createForPrefix("VALOR_INSCRIPCION", dto, "SMMLV");
     }
 
     private ValoresglobalesDTO createForPrefix(String prefix, ValoresglobalesDTO dto) {
+        return createForPrefix(prefix, dto, null);
+    }
+
+    private ValoresglobalesDTO createForPrefix(String prefix, ValoresglobalesDTO dto, String requiredSuffix) {
         if (dto == null || dto.getClave() == null || dto.getValor() == null) {
             throw new DomainException(PagoErrorCode.VALOR_GLOBAL_FORMATO_INVALIDO, dto == null ? null : dto.getClave());
         }
@@ -160,6 +164,8 @@ public class ValoresglobalesProcessor {
             throw new DomainException(PagoErrorCode.VALOR_GLOBAL_FORMATO_INVALIDO, incoming);
         }
 
+        String normalizedValue = normalizeValueWithSuffix(dto.getValor(), requiredSuffix);
+
         int year = LocalDate.now().getYear();
         List<ValoresglobalesDTO> existing = findAll();
         int maxVersion = existing.stream()
@@ -173,10 +179,44 @@ public class ValoresglobalesProcessor {
 
         ValoresglobalesDTO toCreate = ValoresglobalesDTO.builder()
                 .clave(newKey)
-                .valor(dto.getValor())
+                .valor(normalizedValue)
                 .build();
 
         return valoresglobalesService.create(toCreate);
+    }
+
+    private String normalizeValueWithSuffix(String value, String requiredSuffix) {
+        if (value == null || value.isBlank() || requiredSuffix == null || requiredSuffix.isBlank()) {
+            return value;
+        }
+
+        String trimmedValue = value.trim();
+        String upperValue = trimmedValue.toUpperCase();
+        String upperSuffix = requiredSuffix.trim().toUpperCase();
+
+        if (upperValue.endsWith(upperSuffix)) {
+            return trimmedValue;
+        }
+
+        if (upperSuffix.equals("MB") && upperValue.matches("\\d+(\\.\\d+)?")) {
+            return trimmedValue + "MB";
+        }
+
+        if (upperSuffix.equals("SMMLV") && upperValue.matches("\\d+(\\.\\d+)?")) {
+            return trimmedValue + "SMMLV";
+        }
+
+        return trimmedValue;
+    }
+
+    private int extractVersionForAliases(String clave, String requestedPrefix, int year) {
+        for (String candidatePrefix : resolvePrefixAliases(requestedPrefix)) {
+            int version = extractVersion(clave, candidatePrefix, year);
+            if (version > 0) {
+                return version;
+            }
+        }
+        return 0;
     }
 
     private String normalizePrefix(String prefix) {
