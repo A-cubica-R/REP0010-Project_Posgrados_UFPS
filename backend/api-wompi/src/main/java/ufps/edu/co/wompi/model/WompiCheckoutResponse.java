@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 
 import lombok.Builder;
 
+import ufps.edu.co.rest.dto.PagoreciboinscripcionDTO;
+
 @Builder
 public record WompiCheckoutResponse(
                 Integer paymentId,
@@ -26,5 +28,6 @@ public record WompiCheckoutResponse(
                 String customerName,
                 WompiCustomerData customerData,
                 WompiReceiptData receiptData,
+                PagoreciboinscripcionDTO pagoreciboinscripcion,
                 String status) {
 }

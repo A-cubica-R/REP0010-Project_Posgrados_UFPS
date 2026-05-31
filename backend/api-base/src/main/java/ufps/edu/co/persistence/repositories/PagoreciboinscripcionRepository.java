@@ -4,6 +4,8 @@
  */
 package ufps.edu.co.persistence.repositories;
 
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -37,7 +39,11 @@ import ufps.edu.co.persistence.entities.PagoreciboinscripcionEntity;
 @Repository
 public interface PagoreciboinscripcionRepository extends JpaRepository<PagoreciboinscripcionEntity, Integer> {
 
-	// Insert specific finders here 
+	Optional<PagoreciboinscripcionEntity> findFirstByPago_IdAspiranteAndEstado_TipoIgnoreCaseAndEstado_EntidadIgnoreCaseOrderByIdDesc(
+			Integer idAspirante, String tipo, String entidad);
+
+	boolean existsByPago_IdAspiranteAndEstado_TipoIgnoreCaseAndEstado_EntidadIgnoreCase(Integer idAspirante,
+			String tipo, String entidad);
 
 	//List<PagoreciboinscripcionEntity> findByXxx(String xxx);
 

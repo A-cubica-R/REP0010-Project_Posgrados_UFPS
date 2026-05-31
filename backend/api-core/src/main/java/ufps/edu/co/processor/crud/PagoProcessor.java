@@ -20,6 +20,7 @@ import ufps.edu.co.maps.specific.PagoMap;
 import ufps.edu.co.rest.dto.AspiranteCheckoutDTO;
 import ufps.edu.co.rest.dto.PagoCheckoutPreviewDTO;
 import ufps.edu.co.rest.dto.PagoCheckoutPreviewDataDTO;
+import ufps.edu.co.rest.dto.PagoreciboinscripcionDTO;
 import ufps.edu.co.records.output.entity.PagoListadoOutput;
 import ufps.edu.co.records.output.entity.PagoconceptoResumenOutput;
 import ufps.edu.co.records.output.entity.PagoOutput;
@@ -32,6 +33,7 @@ import ufps.edu.co.rest.services.AspiranteService;
 import ufps.edu.co.rest.services.EstadoService;
 import ufps.edu.co.rest.services.PagoService;
 import ufps.edu.co.rest.services.PagoconceptoService;
+import ufps.edu.co.rest.services.PagoreciboinscripcionService;
 import ufps.edu.co.rest.services.UsuarioService;
 import ufps.edu.co.wompi.WompiGateway;
 import ufps.edu.co.wompi.config.WompiProperties;
@@ -71,6 +73,9 @@ public class PagoProcessor {
 
     @Autowired
     private WompiProperties wompiProperties;
+
+    @Autowired
+    private PagoreciboinscripcionService pagoreciboinscripcionService;
 
     @Transactional(readOnly = true)
         public List<PagoListadoOutput> findByAspirante(Integer idAspirante) {
@@ -138,6 +143,8 @@ public class PagoProcessor {
         String publicKey = resolverPublicKey();
         WompiCustomerData customerData = construirCustomerData(aspirante);
         WompiReceiptData receiptData = construirReceiptData(pago, aspirante, referencia, monto, montoEnCents, currency);
+        PagoreciboinscripcionDTO pagoreciboinscripcion = obtenerOCrearPagoreciboInscripcion(idAspirante, pago,
+            referencia, monto);
 
         WompiCheckoutRequest request = WompiCheckoutRequest.builder()
                 .paymentId(pago.id())
@@ -157,6 +164,7 @@ public class PagoProcessor {
                 .customerName(construirNombreAspirante(aspirante))
                 .customerData(customerData)
                 .receiptData(receiptData)
+                .pagoreciboinscripcion(pagoreciboinscripcion)
             .returnUrl(resolveReturnUrl())
             .webhookUrl(resolveWebhookUrl())
                 .metadata(Map.of(
@@ -304,6 +312,36 @@ public class PagoProcessor {
 
     private BigDecimal calcularMontoInscripcionEnPesos() {
         return valoresglobalesProcessor.calcularValorInscripcionPesos();
+    }
+
+    private PagoreciboinscripcionDTO obtenerOCrearPagoreciboInscripcion(Integer idAspirante, PagoResumenDTO pago,
+            String referencia, BigDecimal valorPago) {
+        PagoreciboinscripcionDTO existente = pagoreciboinscripcionService.findCurrentByIdAspirante(idAspirante);
+        if (existente != null) {
+            return existente;
+        }
+
+        EstadoDTO estadoEnCurso = resolveEstadoPagoInscripcionEnCurso();
+        PagoreciboinscripcionDTO nuevo = PagoreciboinscripcionDTO.builder()
+                .fechavencimiento(LocalDate.now().plusDays(5))
+                .referenciapago(referencia)
+                .valorpago(valorPago)
+                .idEstado(estadoEnCurso.getId())
+                .idPago(pago.id())
+                .build();
+
+        return pagoreciboinscripcionService.create(nuevo);
+    }
+
+    private EstadoDTO resolveEstadoPagoInscripcionEnCurso() {
+        EstadoDTO estado = estadoService.findByTipoAndEntidad("EN CURSO", "pagoinscripcion");
+        if (estado == null) {
+            estado = estadoService.findByTipoAndEntidad("EN CURSO", "PAGOINSCRIPCION");
+        }
+        if (estado == null) {
+            throw new DomainException(PagoErrorCode.PAGO_ESTADO_NOT_FOUND, "EN CURSO/pagoinscripcion");
+        }
+        return estado;
     }
 
     private BigDecimal calcularMontoMatriculaEnPesos(Integer idAspirante) {

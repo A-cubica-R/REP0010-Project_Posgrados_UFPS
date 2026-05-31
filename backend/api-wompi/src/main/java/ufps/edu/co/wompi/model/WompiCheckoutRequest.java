@@ -5,6 +5,8 @@ import java.util.Map;
 
 import lombok.Builder;
 
+import ufps.edu.co.rest.dto.PagoreciboinscripcionDTO;
+
 @Builder
 public record WompiCheckoutRequest(
         Integer paymentId,
@@ -23,6 +25,7 @@ public record WompiCheckoutRequest(
         String customerName,
         WompiCustomerData customerData,
         WompiReceiptData receiptData,
+        PagoreciboinscripcionDTO pagoreciboinscripcion,
         String returnUrl,
         String webhookUrl,
         Map<String, String> metadata) {
