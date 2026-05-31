@@ -24,7 +24,10 @@ public enum AspiranteErrorCode implements BaseErrorCode {
         "El teléfono de contacto debe tener exactamente 10 caracteres"),
     PERSONA_INSCRIPCION_YA_EXISTE_CONFLICT(
         "PERSONA_INSCRIPCION_YA_EXISTE_CONFLICT",
-        "La persona ya existe en la base de datos");
+        "La persona ya existe en la base de datos"),
+    INSCRIPCION_CORREO_NO_ENVIADO_CONFLICT(
+        "INSCRIPCION_CORREO_NO_ENVIADO_CONFLICT",
+        "No se pudo enviar el correo de confirmación de inscripción");
 
     private final String code;
     private final String defaultMessage;
