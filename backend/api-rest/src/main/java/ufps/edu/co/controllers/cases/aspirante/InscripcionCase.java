@@ -16,6 +16,8 @@ import ufps.edu.co.domain.exceptions.errorcodes.AspiranteErrorCode;
 import ufps.edu.co.records.output.entity.*;
 import ufps.edu.co.rest.dto.*;
 import ufps.edu.co.rest.services.*;
+import ufps.edu.co.services.SESService;
+import ufps.edu.co.utils.EmailTemplates;
 
 @RestController
 @RequestMapping(value = "/inscripciones", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -83,7 +85,13 @@ public class InscripcionCase {
 
         @Autowired
         RolProcessor rolProcessor = new RolProcessor();
-  
+
+        @Autowired
+        private SESService sesService;
+
+        // @Autowired
+        // private EmailTemplates emailTemplates;
+
         // ─── Records de petición ────────────────────────────────────────────────
 
         public record ExperienciaLaboralItem(String experienciaLaboral) {
@@ -264,7 +272,7 @@ public class InscripcionCase {
                                                 .build());
 
                 pagoProcessor.ensureInitialPaymentsForAspirante(aspirante.getId());
-
+                sesService.enviarCorreo(persona.getCorreo(), EmailTemplates.ASUNTO_INSCRIPCION, EmailTemplates.cuerpoInscripcion(persona.getNombres(), persona.getApellidos(), cohorte.getNombre(), cohorte.getPrograma().getNombre()));       
                 return ResponseEntity.status(HttpStatus.CREATED)
                                 .body(new FormularioInscripcionOutput(persona.getId(), aspirante.getId()));
         }

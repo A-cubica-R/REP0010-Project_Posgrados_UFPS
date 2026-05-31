@@ -25,7 +25,8 @@ import ufps.edu.co.rest.services.EstadoService;
 import ufps.edu.co.rest.services.PersonaService;
 import ufps.edu.co.rest.services.TipoentrevistaService;
 import ufps.edu.co.rest.services.UbicacionService;
-import ufps.edu.co.services.EmailService;
+import ufps.edu.co.services.*;
+import ufps.edu.co.utils.*;
 import ufps.edu.co.usecase.GlobalUseCase;
 
 @Service
@@ -56,7 +57,10 @@ public class EntrevistaProcessor implements
     private EntrevistaMap map;
 
     @Autowired
-    private EmailService emailService;
+    private SESService sesService;
+
+    // @Autowired
+    // private EmailTemplates emailTemplates;
 
     @Override
     public EntrevistaOutput create(ENTREVISTA_CREATE input) {
@@ -221,6 +225,10 @@ public class EntrevistaProcessor implements
             EntrevistaDTO updated = service.reschedule(
                     input.id(), input.fecha(), input.tiempo(),
                     tipoentrevista.getId(), ubicacion.getId(), input.motivocambio());
+            AspiranteDTO aspirante = aspiranteService.findById(updated.getIdAspirante());
+            sesService.enviarCorreo(aspirante.getPersona().getCorreo(), EmailTemplates.ASUNTO_REAGENDAR_ENTREVISTA,
+                    EmailTemplates.cuerpoReagendarEntrevista(aspirante.getPersona().getNombres(),
+                            input.fecha(), input.tiempo(), tipoentrevista.getTipo(), input.ubicacion()));
             return map.toOutput(updated);
         } catch (Exception e) {
             throw new RuntimeException("Error rescheduling Entrevista: " + e.getMessage(), e);
@@ -292,23 +300,14 @@ public class EntrevistaProcessor implements
 
             String nombre = persona.getNombres();
             String correoAspirante = persona.getCorreo();
-            String fecha = entrevista.getFecha() != null ? entrevista.getFecha().toString() : "No definida";
-            String hora = entrevista.getTiempo() != null ? entrevista.getTiempo().toString() : "No definida";
+            // String fecha = entrevista.getFecha() != null ? entrevista.getFecha().toString() : "No definida";
+            // String hora = entrevista.getTiempo() != null ? entrevista.getTiempo().toString() : "No definida";
             String tipo = entrevista.getTipoentrevista() != null ? entrevista.getTipoentrevista().getTipo()
                     : "No definido";
             String lugar = entrevista.getUbicacion() != null ? entrevista.getUbicacion().getDireccion() : "No definido";
 
-            String html = "<p>Hola <strong>" + nombre + "</strong>,</p>"
-                    + "<p>Se ha programado una entrevista para tu proceso de admisión en los Posgrados de la UFPS.</p>"
-                    + "<table style=\"border-collapse:collapse;font-family:Arial,sans-serif;\">"
-                    + "<tr><td style=\"padding:4px 12px 4px 0\"><strong>Fecha:</strong></td><td>" + fecha + "</td></tr>"
-                    + "<tr><td style=\"padding:4px 12px 4px 0\"><strong>Hora:</strong></td><td>" + hora + "</td></tr>"
-                    + "<tr><td style=\"padding:4px 12px 4px 0\"><strong>Tipo:</strong></td><td>" + tipo + "</td></tr>"
-                    + "<tr><td style=\"padding:4px 12px 4px 0\"><strong>Lugar:</strong></td><td>" + lugar + "</td></tr>"
-                    + "</table>"
-                    + "<p>Por favor asegúrate de asistir puntualmente.</p>";
-
-            emailService.sendEmail(correoAspirante, "Entrevista Programada - Posgrados UFPS", html);
+            sesService.enviarCorreo(correoAspirante, EmailTemplates.ASUNTO_AGENDAR_ENTREVISTA,
+                    EmailTemplates.cuerpoAgendarEntrevista(nombre, entrevista.getFecha(), entrevista.getTiempo(), tipo, lugar));
         } catch (Exception e) {
             logger.warn("No se pudo notificar entrevista creada al aspirante {}: {}", idAspirante, e.getMessage());
         }
@@ -330,7 +329,7 @@ public class EntrevistaProcessor implements
                     + "</strong> a las <strong>" + hora + "</strong> ha sido cancelada.</p>"
                     + "<p>Pronto te contactaremos con más detalles sobre los próximos pasos en tu proceso de admisión.</p>";
 
-            emailService.sendEmail(correoAspirante, "Entrevista Cancelada - Posgrados UFPS", html);
+            sesService.enviarCorreo(correoAspirante, "Entrevista Cancelada - Posgrados UFPS", html);
         } catch (Exception e) {
             logger.warn("No se pudo notificar entrevista eliminada para entrevista {}: {}", entrevista.getId(),
                     e.getMessage());

@@ -22,12 +22,14 @@ import org.springframework.web.server.ResponseStatusException;
 
 import ufps.edu.co.domain.exceptions.DomainException;
 import ufps.edu.co.domain.exceptions.errorcodes.AspiranteErrorCode;
+// import ufps.edu.co.persistence.entities.PersonaEntity;
 import ufps.edu.co.processor.cases.DocumentosrequisitoprogramaPE;
 import ufps.edu.co.processor.crud.AspiranteProcessor;
 import ufps.edu.co.processor.crud.DocumentoProcessor;
 import ufps.edu.co.processor.crud.EntrevistaProcessor;
 import ufps.edu.co.processor.crud.PruebaProcessor;
 import ufps.edu.co.records.input.entity.AspiranteInput.ASPIRANTE_FIND;
+// import ufps.edu.co.records.input.entity.DocumentoInput.DOCUMENTO_FIND;
 import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_CANCELAR_REQUEST;
 import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_FIND;
 import ufps.edu.co.records.input.entity.EntrevistaInput.ENTREVISTA_REQUEST_CHANGE;
@@ -38,10 +40,14 @@ import ufps.edu.co.records.output.entity.AspiranteIdOutput;
 import ufps.edu.co.records.output.entity.DocumentoOutput;
 import ufps.edu.co.records.output.entity.DocumentoRequeridoOutput;
 import ufps.edu.co.rest.dto.DocumentoDTO;
+import ufps.edu.co.rest.dto.PersonaDTO;
 import ufps.edu.co.rest.services.CohorteService;
 import ufps.edu.co.rest.services.DocumentoService;
 import ufps.edu.co.rest.services.EstadodocumentoService;
+import ufps.edu.co.rest.services.PersonaService;
 import ufps.edu.co.services.S3Service;
+import ufps.edu.co.services.SESService;
+import ufps.edu.co.utils.EmailTemplates;
 import ufps.edu.co.records.output.entity.EntrevistaOutput;
 import ufps.edu.co.records.output.entity.EntrevistaResumenOutput;
 import ufps.edu.co.records.output.entity.EntrevistaSimpleOutput;
@@ -88,6 +94,15 @@ public class AspiranteCase {
 
     @Autowired
     private PruebaProcessor pruebaProcessor;
+
+    @Autowired
+    private SESService sesService;
+
+    // @Autowired
+    // private EmailTemplates emailTemplates;
+
+    @Autowired
+    private PersonaService personaService;
 
     @GetMapping("/aspirante/{idUsuario}")
     public ResponseEntity<AspiranteIdOutput> getIdAspiranteByUsuario(@PathVariable Integer idUsuario) {
@@ -148,8 +163,8 @@ public class AspiranteCase {
         LocalDate fechafin = cohorteService.findById(idCohorte).getPlazo().getFechafin();
         if (LocalDate.now().isAfter(fechafin)) {
             throw new DomainException(
-                AspiranteErrorCode.DOCUMENTACION_FUERA_DE_PLAZO_FORBIDDEN,
-                java.util.Map.of("idAspirante", idAspirante, "idCohorte", idCohorte, "fechaLimite", fechafin));
+                    AspiranteErrorCode.DOCUMENTACION_FUERA_DE_PLAZO_FORBIDDEN,
+                    java.util.Map.of("idAspirante", idAspirante, "idCohorte", idCohorte, "fechaLimite", fechafin));
         }
 
         Optional<DocumentoDTO> existing = tieneConsejo
@@ -160,10 +175,10 @@ public class AspiranteCase {
 
         if (existing.isPresent()) {
             throw new DomainException(
-                AspiranteErrorCode.DOCUMENTO_REQUERIDO_YA_EXISTE_CONFLICT,
-                buildDocumentoRequeridoDetails(idAspirante,
-                    idDocumentosrequisitoconsejocohorte,
-                    idDocumentosrequisitoprogramacohorte));
+                    AspiranteErrorCode.DOCUMENTO_REQUERIDO_YA_EXISTE_CONFLICT,
+                    buildDocumentoRequeridoDetails(idAspirante,
+                            idDocumentosrequisitoconsejocohorte,
+                            idDocumentosrequisitoprogramacohorte));
         }
 
         S3Service.UploadResult upload = s3Service.uploadFile(file);
@@ -171,7 +186,10 @@ public class AspiranteCase {
                 idDocumentosrequisitoconsejocohorte,
                 idDocumentosrequisitoprogramacohorte,
                 upload);
-
+        String nombreDocumento = documentoProcessor.resolverNombreTitulo(doc);
+        PersonaDTO persona = personaService.findById(aspiranteService.findById(idAspirante).getIdPersona());
+        sesService.enviarCorreo(persona.getCorreo(), EmailTemplates.ASUNTO_SUBIDA_DOCUMENTO,
+                EmailTemplates.cuerpoSubidaDocumento(persona.getNombres(), nombreDocumento, LocalDate.now()));
         return ResponseEntity.status(HttpStatus.CREATED).body(toDocumentoOutput(documentoService.create(doc)));
     }
 
@@ -193,8 +211,8 @@ public class AspiranteCase {
         LocalDate fechafin = cohorteService.findById(idCohorte).getPlazo().getFechafin();
         if (LocalDate.now().isAfter(fechafin)) {
             throw new DomainException(
-                AspiranteErrorCode.DOCUMENTACION_FUERA_DE_PLAZO_FORBIDDEN,
-                java.util.Map.of("idAspirante", idAspirante, "idCohorte", idCohorte, "fechaLimite", fechafin));
+                    AspiranteErrorCode.DOCUMENTACION_FUERA_DE_PLAZO_FORBIDDEN,
+                    java.util.Map.of("idAspirante", idAspirante, "idCohorte", idCohorte, "fechaLimite", fechafin));
         }
 
         Optional<DocumentoDTO> existing = tieneConsejo
