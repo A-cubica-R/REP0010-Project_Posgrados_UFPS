@@ -17,6 +17,7 @@ import ufps.edu.co.records.input.entity.ProgramaInput;
 import ufps.edu.co.records.output.entity.*;
 import ufps.edu.co.rest.dto.*;
 import ufps.edu.co.rest.services.*;
+import ufps.edu.co.exception.SesEmailException;
 import ufps.edu.co.services.SESService;
 import ufps.edu.co.utils.EmailTemplates;
 
@@ -281,9 +282,16 @@ public class InscripcionCase {
                                                 .build());
 
                 pagoProcessor.ensureInitialPaymentsForAspirante(aspirante.getId());
-                sesService.enviarCorreo(persona.getCorreo(), EmailTemplates.ASUNTO_INSCRIPCION,
-                                EmailTemplates.cuerpoInscripcion(persona.getNombres(), persona.getApellidos(),
-                                                cohorte.getNombre(), programa.nombre()));
+                try {
+                        sesService.enviarCorreo(persona.getCorreo(), EmailTemplates.ASUNTO_INSCRIPCION,
+                                        EmailTemplates.cuerpoInscripcion(persona.getNombres(), persona.getApellidos(),
+                                                        cohorte.getNombre(), programa.nombre()));
+                } catch (SesEmailException ex) {
+                        // TODO [INSCRIPCION_EMAIL_VALIDACION]: Reactivar bloqueo cuando SES tenga
+                        // remitente/destinatarios verificados en producción.
+                        // throw new DomainException(AspiranteErrorCode.INSCRIPCION_CORREO_NO_ENVIADO_CONFLICT,
+                        //                 persona.getCorreo());
+                }
                 return ResponseEntity.status(HttpStatus.CREATED)
                                 .body(new FormularioInscripcionOutput(persona.getId(), aspirante.getId()));
         }
