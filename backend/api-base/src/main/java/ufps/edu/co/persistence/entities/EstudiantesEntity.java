@@ -95,10 +95,10 @@ public class EstudiantesEntity implements Serializable {
     //--- LINKS ( RELATIONSHIPS )
     @ManyToOne
     @JoinColumn(name="programa_id", referencedColumnName="id", insertable=false, updatable=false)
-    private ProgramaEntity  programas ; 
+    private ProgramaEntity  programa ; 
 
     @ManyToOne
     @JoinColumn(name="usuario_id", referencedColumnName="id", insertable=false, updatable=false)
-    private UsuarioEntity   usuarios ; 
+    private UsuarioEntity   usuario ; 
 
 }
