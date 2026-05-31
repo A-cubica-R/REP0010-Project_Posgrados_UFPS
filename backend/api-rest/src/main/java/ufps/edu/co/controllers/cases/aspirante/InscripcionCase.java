@@ -13,6 +13,7 @@ import ufps.edu.co.processor.crud.*;
 // import ufps.edu.co.rest.services.TipodocumentoService;
 import ufps.edu.co.domain.exceptions.DomainException;
 import ufps.edu.co.domain.exceptions.errorcodes.AspiranteErrorCode;
+import ufps.edu.co.records.input.entity.ProgramaInput;
 import ufps.edu.co.records.output.entity.*;
 import ufps.edu.co.rest.dto.*;
 import ufps.edu.co.rest.services.*;
@@ -262,6 +263,14 @@ public class InscripcionCase {
                         throw new RuntimeException("La cohorte indicada no está abierta");
                 }
 
+                if (cohorte.getIdPrograma() == null) {
+                        throw new RuntimeException("La cohorte indicada no tiene programa asociado");
+                }
+                ProgramaOutput programa = programaProcessor.findById(new ProgramaInput.PROGRAMA_FIND(cohorte.getIdPrograma()));
+                if (programa == null) {
+                        throw new RuntimeException("Programa no encontrado con id: " + cohorte.getIdPrograma());
+                }
+
                 // 11. Aspirante
                 AspiranteDTO aspirante = aspiranteService.create(
                                 AspiranteDTO.builder()
@@ -272,7 +281,9 @@ public class InscripcionCase {
                                                 .build());
 
                 pagoProcessor.ensureInitialPaymentsForAspirante(aspirante.getId());
-                sesService.enviarCorreo(persona.getCorreo(), EmailTemplates.ASUNTO_INSCRIPCION, EmailTemplates.cuerpoInscripcion(persona.getNombres(), persona.getApellidos(), cohorte.getNombre(), cohorte.getPrograma().getNombre()));       
+                sesService.enviarCorreo(persona.getCorreo(), EmailTemplates.ASUNTO_INSCRIPCION,
+                                EmailTemplates.cuerpoInscripcion(persona.getNombres(), persona.getApellidos(),
+                                                cohorte.getNombre(), programa.nombre()));
                 return ResponseEntity.status(HttpStatus.CREATED)
                                 .body(new FormularioInscripcionOutput(persona.getId(), aspirante.getId()));
         }
