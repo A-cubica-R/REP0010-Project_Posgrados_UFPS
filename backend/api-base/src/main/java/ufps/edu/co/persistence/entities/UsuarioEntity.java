@@ -67,19 +67,19 @@ public class UsuarioEntity implements Serializable {
     @Column(name="moodleld", length=100)
     private String     moodleld ;
 
-    @Column(name="nombreCompleto", length=100)
+    @Column(name="`nombreCompleto`", length=100)
     private String     nombrecompleto ;
 
-    @Column(name="primerApellido", length=100)
+    @Column(name="`primerApellido`", length=100)
     private String     primerapellido ;
 
-    @Column(name="primerNombre", length=100)
+    @Column(name="`primerNombre`", length=100)
     private String     primernombre ;
 
-    @Column(name="segundoApellido", length=100)
+    @Column(name="`segundoApellido`", length=100)
     private String     segundoapellido ;
 
-    @Column(name="segundoNombre", length=100)
+    @Column(name="`segundoNombre`", length=100)
     private String     segundonombre ;
 
     @Column(name="telefono", length=100)

@@ -106,19 +106,19 @@ public class ProgramaEntity implements Serializable {
     private Integer    directorId ;
 
     //--- LINKS ( RELATIONSHIPS )
-    @OneToMany(mappedBy="programas")
+    @OneToMany(mappedBy="programa")
     private List<CargoEntity> cargoList ; 
 
-    @OneToMany(mappedBy="programas")
+    @OneToMany(mappedBy="programa")
     private List<CohorteEntity> cohorteList ; 
 
-    @OneToMany(mappedBy="programas")
+    @OneToMany(mappedBy="programa")
     private List<CriterioevaluacionEntity> criterioevaluacionList ; 
 
-    @OneToMany(mappedBy="programas")
+    @OneToMany(mappedBy="programa")
     private List<DocumentosrequisitoprogramaEntity> documentosrequisitoprogramaList ; 
 
-    @OneToMany(mappedBy="programas")
+    @OneToMany(mappedBy="programa")
     private List<EstudiantesEntity> estudiantesList ;
     
     @ManyToOne

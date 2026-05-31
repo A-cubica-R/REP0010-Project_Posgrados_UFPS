@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 
 import ufps.edu.co.persistence.entities.AspiranteEntity;
 import ufps.edu.co.rest.dto.AspiranteCheckoutDTO;
+import ufps.edu.co.rest.dto.PagoCheckoutPreviewDataDTO;
 
 /**
  * Spring Data JPA repository for the AspiranteEntity entity.
@@ -68,6 +69,27 @@ public interface AspiranteRepository extends JpaRepository<AspiranteEntity, Inte
 			+ "left join dp.tipodocumentopersona tdp "
 			+ "where a.id = :idAspirante")
 	Optional<AspiranteCheckoutDTO> findCheckoutById(@Param("idAspirante") Integer idAspirante);
+
+	@Query("select new ufps.edu.co.rest.dto.PagoCheckoutPreviewDataDTO("
+			+ "a.id, "
+			+ "a.idPersona, "
+			+ "pr.nombre, "
+			+ "s.nombre, "
+			+ "p.nombres, "
+			+ "p.apellidos, "
+			+ "dp.numerodocumento, "
+			+ "f.nombre, "
+			+ "tv.tipo) "
+			+ "from AspiranteEntity a "
+			+ "join a.persona p "
+			+ "left join p.documentopersona dp "
+			+ "join a.cohorte c "
+			+ "join c.programa pr "
+			+ "join pr.facultad f "
+			+ "join c.semestre s "
+			+ "join a.tipovinculacion tv "
+			+ "where a.id = :idAspirante")
+	Optional<PagoCheckoutPreviewDataDTO> findCheckoutPreviewById(@Param("idAspirante") Integer idAspirante);
 
 	@Query("SELECT a.estado.tipo FROM AspiranteEntity a WHERE a.id = :id")
 	Optional<String> findEstadoTipoById(@Param("id") Integer id);
