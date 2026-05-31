@@ -7,10 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 import ufps.edu.co.processor.crud.ValoresglobalesProcessor;
 import ufps.edu.co.rest.dto.ValoresglobalesDTO;
@@ -38,5 +41,35 @@ public class ValoresglobalesAdminRestController {
     public ResponseEntity<ValoresglobalesDTO> createValorInscripcion(@RequestBody ValoresglobalesDTO dto) {
         ValoresglobalesDTO created = valoresglobalesProcessor.createValorInscripcion(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    }
+
+    @GetMapping(value = "/tamano-maximo-archivos")
+    public ResponseEntity<List<ValoresglobalesDTO>> findAllTamanoMaximoArchivos() {
+        return ResponseEntity.ok(valoresglobalesProcessor.findAllByPrefix("TAMANO_MAXIMO_ARCHIVOS"));
+    }
+
+    @GetMapping(value = "/tamano-maximo-archivos/actual")
+    public ResponseEntity<ValoresglobalesDTO> findCurrentTamanoMaximoArchivos() {
+        return ResponseEntity.ok(valoresglobalesProcessor.findCurrentByPrefix("TAMANO_MAXIMO_ARCHIVOS"));
+    }
+
+    @GetMapping(value = "/salario-minimo")
+    public ResponseEntity<List<ValoresglobalesDTO>> findAllSalarioMinimo() {
+        return ResponseEntity.ok(valoresglobalesProcessor.findAllByPrefix("SALARIO_MINIMO"));
+    }
+
+    @GetMapping(value = "/salario-minimo/actual")
+    public ResponseEntity<ValoresglobalesDTO> findCurrentSalarioMinimo() {
+        return ResponseEntity.ok(valoresglobalesProcessor.findCurrentByPrefix("SALARIO_MINIMO"));
+    }
+
+    @GetMapping(value = "/valor-inscripcion")
+    public ResponseEntity<List<ValoresglobalesDTO>> findAllValorInscripcion() {
+        return ResponseEntity.ok(valoresglobalesProcessor.findAllByPrefix("VALOR_INSCRIPCION"));
+    }
+
+    @GetMapping(value = "/valor-inscripcion/actual")
+    public ResponseEntity<ValoresglobalesDTO> findCurrentValorInscripcion() {
+        return ResponseEntity.ok(valoresglobalesProcessor.findCurrentByPrefix("VALOR_INSCRIPCION"));
     }
 }

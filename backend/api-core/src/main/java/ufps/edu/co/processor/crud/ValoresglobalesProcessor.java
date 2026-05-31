@@ -5,6 +5,7 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,6 +37,15 @@ public class ValoresglobalesProcessor {
                 .max(Comparator.comparingInt(item -> extractVersion(item.getClave(), prefix, currentYear)))
                 .orElseThrow(() -> new DomainException(PagoErrorCode.VALOR_GLOBAL_NO_CONFIGURADO_NOT_FOUND,
                         prefix + "_" + currentYear));
+    }
+
+    public List<ValoresglobalesDTO> findAllByPrefix(String prefix) {
+        String normalizedPrefix = normalizePrefix(prefix);
+        return findAll().stream()
+                .filter(item -> item.getClave() != null)
+                .filter(item -> item.getClave().startsWith(normalizedPrefix + "_"))
+                .sorted((left, right) -> right.getClave().compareToIgnoreCase(left.getClave()))
+                .collect(Collectors.toList());
     }
 
     public Long getCurrentSalaryMinimumPesos() {
@@ -128,5 +138,12 @@ public class ValoresglobalesProcessor {
                 .build();
 
         return valoresglobalesService.create(toCreate);
+    }
+
+    private String normalizePrefix(String prefix) {
+        if (prefix == null || prefix.isBlank()) {
+            throw new DomainException(PagoErrorCode.VALOR_GLOBAL_FORMATO_INVALIDO, prefix);
+        }
+        return prefix.trim().toUpperCase();
     }
 }
