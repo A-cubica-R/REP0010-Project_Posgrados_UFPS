@@ -53,19 +53,19 @@ public class EstudiantesEntity implements Serializable {
     @Column(name="email", length=200)
     private String     email ;
 
-    @Column(name="esPosgrado")
+    @Column(name="`esPosgrado`")
     private Boolean    esposgrado ;
 
-    @Column(name="fechalngreso")
+    @Column(name="`fechalngreso`")
     private LocalDate  fechalngreso ;
 
-    @Column(name="fechaNacimiento")
+    @Column(name="`fechaNacimiento`")
     private LocalDate  fechanacimiento ;
 
     @Column(name="migrado", length=200)
     private String     migrado ;
 
-    @Column(name="moodleld", length=200)
+    @Column(name="`moodleld`", length=200)
     private String     moodleld ;
 
     @Column(name="nombre", length=200)

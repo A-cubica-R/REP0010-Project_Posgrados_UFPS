@@ -90,10 +90,10 @@ public class ProgramaEntity implements Serializable {
     @Column(name="es_posgrado")
     private Boolean    esPosgrado ;
 
-    @Column(name="historicoMoodleld", length=100)
+    @Column(name="`historicoMoodleld`", length=100)
     private String     historicomoodleld ;
 
-    @Column(name="moodleld", length=100)
+    @Column(name="`moodleld`", length=100)
     private String     moodleld ;
 
     @Column(name="semestre_actual", length=100)
